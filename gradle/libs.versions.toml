@@ -16,7 +16,6 @@ comGoogleGmsGoogleServicesGradlePlugin = "4.4.2"
 coilCompose = "2.7.0"
 firebaseFirestore = "25.1.2"
 firebaseAuth = "23.2.0"
-firebaseAnalytics = "22.2.0"
 firebaseStorage = "21.0.1"
 composeNavigation = "2.8.7"
 roomRuntime = "2.7.0-beta01"
@@ -25,7 +24,6 @@ playServicesLocation = "21.3.0"
 appcompat = "1.7.0"
 materialIconsExtendedAndroid = "1.7.8"
 comGoogleDaggerHiltAndroidGradlePlugin = "2.55"
-material = "1.12.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -51,7 +49,6 @@ com-google-gms-google-services-gradle-plugin = { group = "com.google.gms.google-
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coilCompose" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
-google-firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics", version.ref = "firebaseAnalytics" }
 google-firebase-storage = { group = "com.google.firebase", name = "firebase-storage", version.ref = "firebaseStorage" }
 navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "composeNavigation" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.8.0" }
@@ -61,7 +58,6 @@ play-services-location = { group = "com.google.android.gms", name = "play-servic
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 androidx-material-icons-extended-android = { group = "androidx.compose.material", name = "material-icons-extended-android", version.ref = "materialIconsExtendedAndroid" }
 com-google-dagger-hilt-android-gradle-plugin = { group = "com.google.dagger.hilt.android", name = "com.google.dagger.hilt.android.gradle.plugin", version.ref = "comGoogleDaggerHiltAndroidGradlePlugin" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

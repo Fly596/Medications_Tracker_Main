@@ -31,6 +31,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.galeria.medicationstracker.data.UserMedication
 import com.galeria.medicationstracker.ui.components.GOutlinedButton
 import com.galeria.medicationstracker.ui.components.GPrimaryButton
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
@@ -39,215 +40,172 @@ import com.google.firebase.Timestamp
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-@Composable
-fun ConfirmationDialog(
-    onDismiss: () -> Unit,
-    onConfirmation: () -> Unit,
-    message: String,
-) {
-    Dialog(onDismissRequest = { onDismiss() }) {
-        // Draw a rectangle shape with rounded corners inside the dialog
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp)
-                .padding(16.dp),
-            colors = CardDefaults.elevatedCardColors(
-                containerColor = MedTrackerTheme.colors.primaryBackgroundGrouped,
-                contentColor = MedTrackerTheme.colors.primaryLabel,
-            ),
-            shape = RoundedCornerShape(16.dp),
-        ) {
-            Text(
-                text = message,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                style = MedTrackerTheme.typography.title3
-            )
-        }
-    }
-    
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LogMedicationTimeDialog(
-    onDismiss: () -> Unit = {},
-    onConfirmation: (String) -> Unit = {},
-    onConfirmTime: (Timestamp) -> Unit = {},
-    onAddNotes: () -> Unit = {},
+  medication: UserMedication,
+  onDismiss: () -> Unit = {},
+  onConfirmation: (String) -> Unit = {},
+  onConfirmTime: (Timestamp) -> Unit = {},
+  onAddNotes: () -> Unit = {},
 ) {
-    val currentDate = LocalDateTime.now()
-    val dateFormatter = DateTimeFormatter.ofPattern("MMM dd, hh:mm a")
-    val formattedCurrentDate = currentDate.format(dateFormatter)
-    val timeState = rememberTimePickerState(
-        is24Hour = false
-    )
-    var selectedTime: TimePickerState? by remember { mutableStateOf(null) }
-    
-    var timeSelected by remember { mutableStateOf("") }
-    var showDialog by remember { mutableStateOf(false) }
-    
-    Dialog(onDismissRequest = { onDismiss() }) {
-        // Draw a rectangle shape with rounded corners inside the dialog
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            colors = CardDefaults.elevatedCardColors(
-                containerColor = MedTrackerTheme.colors.primaryBackgroundGrouped,
-                contentColor = MedTrackerTheme.colors.primaryLabel,
-            ),
-            shape = RoundedCornerShape(16.dp),
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Text(
-                    text = "$formattedCurrentDate",
-                    modifier = Modifier.padding(16.dp),
-                    style = MedTrackerTheme.typography.title2Emphasized
-                )
-                
-                LogDialogMedicationCard(
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                GOutlinedButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = {
-                        showDialog = !showDialog
-                    }
-                ) {
-                    Text(
-                        modifier = Modifier,
-                        text = if (timeSelected.isEmpty()) "Select time" else timeSelected,
-                        textAlign = TextAlign.Center,
-                        style = MedTrackerTheme.typography.labelLarge
-                    )
-                }
-                
-                if (showDialog) {
-                    TimeInput(
-                        state = timeState,
-                    )
-                    GOutlinedButton(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 16.dp),
-                        onClick = {
-                            showDialog = false
-                            onDismiss.invoke()
-                        },
-                        isError = true
-                    ) {
-                        Text("Cancel")
-                    }
-                    GPrimaryButton(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 16.dp),
-                        onClick = {
-                            val timeStamp =
-                                timeToFirestoreTimestamp(
-                                    timeState.hour,
-                                    timeState.minute
-                                )
-                            
-                            onConfirmTime(timeStamp)
-                            showDialog = false
-                            onDismiss.invoke()
-                        }
-                    ) {
-                        Text("Confirm")
-                    }
-                    
-                }
-                /*                 GPrimaryButton(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    onClick = { onConfirmation.invoke(timeSelected) }, // Pass the selected time
-                                ) {
-                                    Text("Confirm")
-                                } */
+  val currentDate = LocalDateTime.now()
+  val dateFormatter = DateTimeFormatter.ofPattern("MMM dd, hh:mm a")
+  val formattedCurrentDate = currentDate.format(dateFormatter)
+  val timeState = rememberTimePickerState(
+    is24Hour = false
+  )
+  val timeSelected by remember { mutableStateOf("") }
+  var showDialog by remember { mutableStateOf(false) }
+  
+  Dialog(onDismissRequest = { onDismiss() }) {
+    // Draw a rectangle shape with rounded corners inside the dialog
+    Card(
+      modifier = Modifier
+        .fillMaxWidth(),
+      colors = CardDefaults.elevatedCardColors(
+        containerColor = MedTrackerTheme.colors.primaryBackgroundGrouped,
+        contentColor = MedTrackerTheme.colors.primaryLabel,
+      ),
+      shape = RoundedCornerShape(16.dp),
+    ) {
+      Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+      ) {
+        Text(
+          text = formattedCurrentDate,
+          modifier = Modifier.padding(bottom = 16.dp),
+          style = MedTrackerTheme.typography.title2Emphasized
+        )
+        
+        LogDialogMedicationCard(
+          medicationName = medication.name,
+          form = medication.form.toString(),
+          strength = medication.strength.toString(),
+          intakeTime = medication.intakeTime.toString(),
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        if (timeSelected.isNotEmpty()) {
+          Text(
+            text = "Selected Time: $timeSelected",
+            style = MedTrackerTheme.typography.bodyLarge
+          )
+        } else if (timeSelected.isEmpty() && !showDialog) {
+          GOutlinedButton(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = {
+              showDialog = !showDialog
             }
+          ) {
+            Text(
+              modifier = Modifier,
+              text = timeSelected.ifEmpty { "Select time" },
+              textAlign = TextAlign.Center,
+              style = MedTrackerTheme.typography.labelLarge
+            )
+          }
         }
+        
+        if (showDialog) {
+          TimeInput(
+            state = timeState,
+          )
+          GOutlinedButton(
+            modifier = Modifier
+              .fillMaxWidth(),
+            onClick = {
+              showDialog = false
+              onDismiss.invoke()
+            },
+            isError = true
+          ) {
+            Text("Cancel")
+          }
+          GPrimaryButton(
+            modifier = Modifier
+              .fillMaxWidth(),
+            onClick = {
+              val timeStamp =
+                timeToFirestoreTimestamp(
+                  timeState.hour,
+                  timeState.minute
+                )
+              
+              onConfirmTime(timeStamp)
+              showDialog = false
+              onDismiss.invoke()
+            }
+          ) {
+            Text("Confirm")
+          }
+          
+        }
+      }
     }
+  }
 }
 
 @Composable
 fun LogDialogMedicationCard(
-    medicationName: String = "Adderall",
-    form: String = "Tablet",
-    strength: String = "50.0",
-    intakeTime: String = "2:00 PM",
-    onSkipped: () -> Unit = {},
-    onTaken: () -> Unit = {},
-    dosageValues: List<Float> = emptyList(),
+  medicationName: String = "Adderall",
+  form: String = "Tablet",
+  strength: String = "50.0",
+  intakeTime: String = "2:00 PM",
 ) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth(),
-        colors = CardDefaults.elevatedCardColors(
-            containerColor = MedTrackerTheme.colors.secondaryBackgroundGrouped,
-            contentColor = MedTrackerTheme.colors.primaryLabel,
-        )
+  Card(
+    modifier = Modifier
+      .fillMaxWidth(),
+    colors = CardDefaults.elevatedCardColors(
+      containerColor = MedTrackerTheme.colors.secondaryBackgroundGrouped,
+      contentColor = MedTrackerTheme.colors.primaryLabel,
+    )
+  ) {
+    Column(
+      modifier = Modifier.padding(16.dp)
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            // Medication info.
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Medication,
-                    contentDescription = "Capsule Icon",
-                    modifier = Modifier.size(40.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Column {
-                    Text(
-                        text = medicationName,
-                    )
-                    Text(
-                        text = "$form, $strength",
-                    )
-                    Text(
-                        text = "1 capsule at $intakeTime",
-                    )
-                }
-            }
-            /*        Spacer(modifier = Modifier.height(16.dp))
-                   // Buttons.
-                   Row(
-                       horizontalArrangement = Arrangement.spacedBy(12.dp),
-                       modifier = Modifier.fillMaxWidth()
-                   ) {
-                       GTonalButton(
-                           modifier = Modifier.weight(0.5f),
-                           onClick = onSkipped,
-                       ) {
-                           Text(text = "Skipped")
-                       }
-                       GTonalButton(
-                           modifier = Modifier.weight(0.5f),
-                           onClick = onTaken,
-                       ) {
-                           Text(text = "Taken")
-                       }
-                   } */
+      // Medication info.
+      Row(
+        verticalAlignment = Alignment.CenterVertically
+      ) {
+        Icon(
+          imageVector = Icons.Default.Medication,
+          contentDescription = "Capsule Icon",
+          modifier = Modifier.size(48.dp)
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+          Text(
+            text = medicationName,
+            style = MedTrackerTheme.typography.title2Emphasized
+          )
+          Text(
+            text = "$form, $strength",
+          )
+          Text(
+            text = "1 capsule at $intakeTime",
+          )
         }
+      }
     }
+  }
 }
 
 @Preview
 @Composable
 fun DialogWithImagePreview() {
-    MedTrackerTheme {
-        LogMedicationTimeDialog({}, {})
-    }
+  MedTrackerTheme {
+    LogMedicationTimeDialog(
+      medication = UserMedication(
+        name = "Adderall",
+        form = "Tablet",
+        strength = 50.0f,
+        intakeTime = "2:00 PM"
+      ), {}, {})
+  }
 }

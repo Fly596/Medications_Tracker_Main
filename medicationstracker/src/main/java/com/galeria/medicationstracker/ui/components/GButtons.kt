@@ -248,7 +248,7 @@ fun GRadioButton(
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable
 fun GPrimaryButtonPreview() {
-    GAppTheme {
+    MedTrackerTheme {
         Column {
             Row {
                 GPrimaryButton(

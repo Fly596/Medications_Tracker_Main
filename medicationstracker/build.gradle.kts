@@ -51,7 +51,6 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.com.google.gms.google.services.gradle.plugin)
     implementation(platform(libs.firebase.bom))
-    implementation(libs.google.firebase.analytics)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
     implementation(libs.google.firebase.storage)

@@ -24,6 +24,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.galeria.medicationstracker.R
 import com.galeria.medicationstracker.data.UserType
+import com.galeria.medicationstracker.ui.components.GOutlinedButton
+import com.galeria.medicationstracker.ui.components.GPrimaryButton
 import com.galeria.medicationstracker.ui.componentsOld.FlyButton
 import com.galeria.medicationstracker.ui.componentsOld.FlyTextButton
 import com.galeria.medicationstracker.ui.componentsOld.FlyTonalButton
@@ -99,7 +101,7 @@ fun LoginScreen(
         Row(verticalAlignment = Alignment.CenterVertically) {
             val scope = rememberCoroutineScope()
 
-            FlyButton(
+            GPrimaryButton (
                 onClick = {
                     // Запрос типа пользователя.
                     viewModel.getUserType()
@@ -117,8 +119,8 @@ fun LoginScreen(
             }
 
             Spacer(modifier = Modifier.weight(1f))
-
-            FlyTonalButton(
+            
+            GOutlinedButton(
                 onClick = {
                     onRegistration()
                 },

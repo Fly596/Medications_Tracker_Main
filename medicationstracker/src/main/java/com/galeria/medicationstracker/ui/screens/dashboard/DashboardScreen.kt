@@ -61,12 +61,11 @@ fun DashboardScreen(
         )
         // Календарь на неделю.
         WeeklyCalendarView()
-
         // Medication Cards List.
         MedsByIntakeTimeList(
             viewModel = dashboardViewModel,
             onAddNoteClick = {
-                onAddMedClick
+                onAddMedClick.invoke()
             },
             medicationsForIntakeTime = uiState.value.currentTakenMedications
         )
@@ -179,12 +178,9 @@ fun MedicationItem(
         // Display the dialog when `showLogDialog.value` is true
         if (showLogDialog.value) {
             LogMedicationTimeDialog(
+                medication = medication,
                 onDismiss = {
-                    /*             viewModel.addNewIntake(
-                                    medication = medication,
-                                    status = false
-                                ) */
-                    showLogDialog.value = false
+                    //showLogDialog.value = false
                 },
                 onConfirmation = {
                     viewModel.addNewIntake(
@@ -194,7 +190,7 @@ fun MedicationItem(
                     showLogDialog.value = false
                 },
                 onAddNotes = {
-                    onAddNoteClick
+                    onAddNoteClick.invoke()
                     showLogDialog.value = false
                 },
                 onConfirmTime = { time ->

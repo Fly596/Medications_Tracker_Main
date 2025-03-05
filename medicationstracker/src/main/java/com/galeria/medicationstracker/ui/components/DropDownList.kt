@@ -30,7 +30,6 @@ fun GDropdownList(
             items.firstOrNull() ?: "No Items"
         )
     }
-    // val items = listOf("Item 1", "Item 2", "Item 3")
     Box(
         modifier = modifier/* .fillMaxSize() */,
         contentAlignment = Alignment.Center
@@ -74,12 +73,13 @@ fun GDropdownList(
     }
 }
 
-@Preview(showSystemUi = true, showBackground = true)
+@Preview(showSystemUi = false, showBackground = true)
 @Composable
 fun DropdownMenuExamplePreview() {
+     val items = listOf("Item 1", "Item 2", "Item 3")
     MedTrackerTheme {
         Column(modifier = Modifier.fillMaxSize()) {
-            // DropdownMenuExample()
+            GDropdownList(items = items, onItemSelected = { {}})
         }
     }
 }

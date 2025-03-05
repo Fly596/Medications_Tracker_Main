@@ -35,7 +35,7 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class HeadActivity : ComponentActivity() {
-
+    
     private lateinit var auth: FirebaseAuth
     private val startDestinations = listOf(
         Routes.NavigationRoutes.AUTH,
@@ -43,23 +43,23 @@ class HeadActivity : ComponentActivity() {
     )
     private var currentDestination: String = startDestinations[0]
     private val headViewModel: HeadViewModel by viewModels()
-
+    
     override fun onStart() {
         super.onStart()
-
+        
         auth = FirebaseAuth.getInstance()
         val currentUser = auth.currentUser
-        if (currentUser != null) {
-            currentDestination = startDestinations[1]
+        currentDestination = if (currentUser != null) {
+            startDestinations[1]
         } else {
-            currentDestination = startDestinations[0]
+            startDestinations[0]
         }
     }
-
+    
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        
         setContent {
             enableEdgeToEdge()
             val navController = rememberNavController()
@@ -79,14 +79,14 @@ class HeadActivity : ComponentActivity() {
                             actionLabel = event.action?.name,
                             duration = SnackbarDuration.Short,
                         )
-
+                        
                         if (result == SnackbarResult.ActionPerformed) {
                             event.action?.action?.invoke()
                         }
                     }
                 }
                 val items = bottomNavItems()
-
+                
                 Scaffold(
                     snackbarHost = {
                         SnackbarHost(
@@ -107,7 +107,7 @@ class HeadActivity : ComponentActivity() {
                             Routes.NavigationRoutes.DOC_DASHBOARD,
                             Routes.NavigationRoutes.DOC_PATIENTS_LIST
                         )
-
+                        
                         if (currentDestination !in routesWithoutBottomBar) {
                             BottomNavBar(items, navController, headViewModel)
                         }
@@ -125,28 +125,5 @@ class HeadActivity : ComponentActivity() {
             }
         }
     }
-
-}
-
-@Composable
-fun SnackbarHandler(snackbarHostState: SnackbarHostState) {
-    val scope = rememberCoroutineScope()
-    ObserveAsEvents(
-        flow = SnackbarController.events,
-        snackbarHostState
-    ) { event ->
-        scope.launch {
-            snackbarHostState.currentSnackbarData?.dismiss()
-            val result =
-                snackbarHostState.showSnackbar(
-                    message = event.message,
-                    actionLabel = event.action?.name,
-                    duration = SnackbarDuration.Short,
-                )
-
-            if (result == SnackbarResult.ActionPerformed) {
-                event.action?.action?.invoke()
-            }
-        }
-    }
+    
 }
