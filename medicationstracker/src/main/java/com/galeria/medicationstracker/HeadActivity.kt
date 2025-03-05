@@ -21,7 +21,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.galeria.medicationstracker.ui.HeadViewModel
@@ -118,7 +117,7 @@ class HeadActivity : ComponentActivity() {
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(it)
-                            .padding(start = 16.dp, end = 16.dp, top = 16.dp),
+                        /* .padding(start = 16.dp, end = 16.dp, top = 16.dp) */,
                         navController = navController,
                         startDestination = currentDestination
                     )

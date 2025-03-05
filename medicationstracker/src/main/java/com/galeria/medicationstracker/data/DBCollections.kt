@@ -7,7 +7,7 @@ import java.util.Locale
 
 data class UserMedication(
     val uid: String? = null,
-    val name: String? = null,
+    val name: String = "",
     val form: String? = null,
     val strength: Float? = null,
     val unit: String? = null,

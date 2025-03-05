@@ -2,37 +2,39 @@ package com.galeria.medicationstracker.ui.screens.profile.notes
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medicationstracker.ui.components.GBasicTextField
-import com.galeria.medicationstracker.ui.components.GOutlinedButton
 import com.galeria.medicationstracker.ui.components.GPrimaryButton
+import com.galeria.medicationstracker.ui.components.GTextField
+import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun NewNoteScreen(
     modifier: Modifier = Modifier,
@@ -40,73 +42,101 @@ fun NewNoteScreen(
     viewModel: NewNoteViewModel = hiltViewModel(),
 ) {
     val state = viewModel.uiState.collectAsStateWithLifecycle()
-    val interactionSource = remember { MutableInteractionSource() }
+    MedTrackerTheme {
+        Scaffold(
+            containerColor = MedTrackerTheme.colors.secondaryBackground,
+            topBar = {
+                Column(modifier = Modifier.padding(vertical = 16.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Start
+                    ) {
+                        IconButton(
+                            onBackClick,
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.ArrowBackIosNew,
+                                contentDescription = "Back"
+                            )
+                        }
+                        Text(
+                            text = "New Note",
+                            style = MedTrackerTheme.typography.display3Emphasized,
+                            modifier = Modifier.padding(start = 16.dp)
+                        )
+                    }
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
 
-    Column(
-        modifier = modifier
-            .padding(16.dp)
-            .fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        GOutlinedButton(
-            onBackClick
-        ) {
-            Text("Back")
-        }
-        GBasicTextField(
-            value = state.value.title,
-            onValueChange = {
-                viewModel.updateTitle(it)
-            },
-            modifier = Modifier,
-            interactionSource = interactionSource,
-            prefix = "Title",
-            prefixModifier = Modifier
-        )
-        // HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
-        TextField(
-            value = state.value.content,
-            onValueChange = {
-                viewModel.updateContent(it)
-            },
-            modifier = Modifier,
-            label = { Text("Note Content") }
-        )
+                }
 
-        // Medication Chips
-        Text(
-            text = "Medications",
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
-        )
-        FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            state.value.medications.forEach { medication ->
-                FilterChip(
-                    text = medication.name.toString(),
-                    isSelected = medication.name.toString() in state.value.selectedMedications,
-                    onSelected = { viewModel.toggleMedication(medication.name.toString()) }
+            }
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .padding(16.dp)
+                    .fillMaxSize()
+            ) {
+                GBasicTextField(
+                    value = state.value.title,
+                    onValueChange = {
+                        viewModel.updateTitle(it)
+                    },
+                    modifier = Modifier.padding(bottom = 24.dp),
+                    alignEnd = false,
+                    textStyle = MedTrackerTheme.typography.title2,
+                    prefix = "Title",
+                    prefixStyle = MedTrackerTheme.typography.title1Emphasized,
+                    prefixModifier = Modifier
                 )
+
+                GTextField(
+                    value = state.value.content,
+                    onValueChange = {
+                        viewModel.updateContent(it)
+                    },
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .weight(1f),
+                    singleLine = false,
+                    isPrimaryColor = true
+                )
+
+                // Medication Chips
+                Text(
+                    text = "Medications",
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+                )
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    items(state.value.medications) { medication ->
+                        FilterChip(
+                            text = medication.name,
+                            isSelected = medication.name in state.value.selectedMedications,
+                            onSelected = { viewModel.toggleMedication(medication.name) }
+                        )
+                    }
+
+                }
+
+                GPrimaryButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    onClick = {
+                        viewModel.saveNote()
+                    }
+                ) {
+                    Text("Save")
+                }
             }
-        }
-        // Display selected medications
-        if (state.value.selectedMedications.isNotEmpty()) {
-            Text(
-                text = "Selected: ${state.value.selectedMedications.joinToString()}",
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(top = 8.dp)
-            )
-        }
-        GPrimaryButton(
-            onClick = {
-                viewModel.saveNote()
-            }
-        ) {
-            Text("Save")
         }
     }
+
 }
 
 // Reusable FilterChip composable
@@ -119,13 +149,16 @@ fun FilterChip(
 ) {
     Surface(
         shape = RoundedCornerShape(16.dp),
-        color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+        color = if (isSelected) MedTrackerTheme.colors.primary400 else MedTrackerTheme.colors.secondaryBackground,
+        border = BorderStroke(
+            1.dp,
+            if (isSelected) MedTrackerTheme.colors.primary400 else MedTrackerTheme.colors.sysBlack.copy()
+        ),
         modifier = modifier.clickable { onSelected(!isSelected) }
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
         ) {
             if (isSelected) {
                 Icon(
@@ -139,7 +172,7 @@ fun FilterChip(
             Text(
                 text = text,
                 style = MaterialTheme.typography.bodySmall,
-                color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
+                color = if (isSelected) MedTrackerTheme.colors.primaryLabelDark else MedTrackerTheme.colors.primaryLabel
             )
         }
     }

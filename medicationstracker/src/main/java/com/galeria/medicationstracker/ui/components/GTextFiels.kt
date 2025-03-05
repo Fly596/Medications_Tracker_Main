@@ -128,7 +128,7 @@ fun GBasicTextField(
         end = 4.dp,
         start = 0.dp
     ),
-    interactionSource: InteractionSource,
+    interactionSource: InteractionSource = MutableInteractionSource(),
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
 ) {
