@@ -209,7 +209,7 @@ fun NavGraphBuilder.authGraph(navController: NavHostController) {
     navigation<AuthRoutes.Auth>(startDestination = AuthRoutes.Login) {
         composable<AuthRoutes.Login> {
             LoginScreen(
-                onLoginClick = { userType ->
+                onSignInSuccess = { userType ->
                     when (userType) {
                         UserType.PATIENT -> navController.navigate(
                             PatientRoutes.Patient
