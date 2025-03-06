@@ -25,8 +25,6 @@ import com.galeria.medicationstracker.ui.HeadViewModel
 import com.galeria.medicationstracker.ui.componentsOld.BottomNavBar
 import com.galeria.medicationstracker.ui.componentsOld.bottomNavItems
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
-import com.galeria.medicationstracker.utils.navigation.ApplicationNavHost
-import com.galeria.medicationstracker.utils.navigation.Routes
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch

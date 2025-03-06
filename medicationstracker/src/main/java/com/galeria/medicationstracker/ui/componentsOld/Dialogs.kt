@@ -200,12 +200,6 @@ fun LogDialogMedicationCard(
 @Composable
 fun DialogWithImagePreview() {
   MedTrackerTheme {
-    LogMedicationTimeDialog(
-      medication = UserMedication(
-        name = "Adderall",
-        form = "Tablet",
-        strength = 50.0f,
-        intakeTime = "2:00 PM"
-      ), {}, {})
+
   }
 }

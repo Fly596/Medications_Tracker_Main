@@ -1,4 +1,4 @@
-package com.galeria.medicationstracker.utils.navigation
+package com.galeria.medicationstracker
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -28,10 +28,10 @@ import com.galeria.medicationstracker.ui.screens.profile.appoinment.AppointmentS
 import com.galeria.medicationstracker.ui.screens.profile.notes.NewNoteScreen
 import com.galeria.medicationstracker.ui.screens.profile.notes.NotesScreen
 import com.galeria.medicationstracker.ui.screens.profile.profiledetails.ProfileDetailsScreen
-import com.galeria.medicationstracker.utils.navigation.Routes.AdminRoutes
-import com.galeria.medicationstracker.utils.navigation.Routes.AuthRoutes
-import com.galeria.medicationstracker.utils.navigation.Routes.DoctorRoutes
-import com.galeria.medicationstracker.utils.navigation.Routes.PatientRoutes
+import com.galeria.medicationstracker.Routes.AdminRoutes
+import com.galeria.medicationstracker.Routes.AuthRoutes
+import com.galeria.medicationstracker.Routes.DoctorRoutes
+import com.galeria.medicationstracker.Routes.PatientRoutes
 import kotlinx.serialization.Serializable
 
 @Composable
@@ -94,7 +94,7 @@ sealed class Routes {
     
     // Authentification pages.
     @Serializable
-    object Auth : AuthRoutes()
+    data object Auth : AuthRoutes()
     
     @Serializable
     data object Login : AuthRoutes()
@@ -223,10 +223,10 @@ fun NavGraphBuilder.authGraph(navController: NavHostController) {
             }
           }
         },
-        onRegistration = {
+        navigateToRegistration = {
           navController.navigate(AuthRoutes.Registration)
         },
-        onResetPassword = {
+        navigateToResetPassword = {
           navController.navigate(AuthRoutes.PasswordRecovery)
         },
       )

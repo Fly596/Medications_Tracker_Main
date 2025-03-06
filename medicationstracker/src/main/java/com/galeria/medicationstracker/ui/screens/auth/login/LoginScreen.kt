@@ -11,7 +11,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -33,9 +32,8 @@ import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
-    onLogin: () -> Unit = {},
-    onRegistration: () -> Unit = {},
-    onResetPassword: () -> Unit = {},
+    navigateToRegistration: () -> Unit = {},
+    navigateToResetPassword: () -> Unit = {},
     onSignInSuccess: (userType: UserType) -> Unit = {},
     viewModel: LoginScreenViewModel = viewModel(),
 ) {
@@ -101,12 +99,13 @@ fun LoginScreen(
             ) {
                 GPrimaryButton(
                     onClick = {
-                        viewModel.onSignInClick(
+                        viewModel.signIn()
+/*                         viewModel.onSignInClick(
                             state.value.email,
                             state.value.password
                         ) { userType ->
                             onSignInSuccess(userType)
-                        }
+                        } */
                     },
                     enabled = true,
                 ) {
@@ -115,7 +114,7 @@ fun LoginScreen(
                 
                 GOutlinedButton(
                     onClick = {
-                        onRegistration()
+                        navigateToRegistration()
                     },
                     enabled = true
                 ) {
@@ -126,7 +125,7 @@ fun LoginScreen(
             Spacer(modifier = Modifier.weight(1f))
             FlyTextButton(
                 onClick = {
-                    onResetPassword()
+                    navigateToResetPassword()
                 },
                 enabled = true
             ) {

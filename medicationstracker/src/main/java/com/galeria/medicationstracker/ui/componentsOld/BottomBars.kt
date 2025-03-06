@@ -15,7 +15,7 @@ import androidx.navigation.NavHostController
 import com.galeria.medicationstracker.R
 import com.galeria.medicationstracker.ui.HeadViewModel
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
-import com.galeria.medicationstracker.utils.navigation.Routes
+import com.galeria.medicationstracker.Routes
 
 data class BottomNavItem(
     val title: String,

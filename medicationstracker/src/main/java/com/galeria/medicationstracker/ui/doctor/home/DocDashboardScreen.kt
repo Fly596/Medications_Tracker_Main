@@ -30,7 +30,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.galeria.medicationstracker.R
-import com.galeria.medicationstracker.data.Appointment
 import com.galeria.medicationstracker.ui.componentsOld.FlySimpleCard
 import com.galeria.medicationstracker.ui.componentsOld.FlyTextButton
 import com.galeria.medicationstracker.ui.doctor.patients.PatientsListViewModel
@@ -42,7 +41,7 @@ fun DocDashboardScreen(
     viewModel: PatientsListViewModel = viewModel(),
     onPatientsClick: () -> Unit = {}
 ) {
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+/*     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val userid = viewModel.currentUser?.uid
     val userName = uiState.value.currentUser?.name
 
@@ -61,11 +60,11 @@ fun DocDashboardScreen(
         )
 
         AppointmentsStats()
-    }
+    } */
 
 }
 
-@Composable
+/* @Composable
 fun AppointmentsView(
     modifier: Modifier = Modifier,
     onSeeAllClick: () -> Unit = {},
@@ -104,7 +103,7 @@ fun AppointmentsView(
             }
         }
     }
-}
+} */
 
 @Composable
 fun AppointmentCard(

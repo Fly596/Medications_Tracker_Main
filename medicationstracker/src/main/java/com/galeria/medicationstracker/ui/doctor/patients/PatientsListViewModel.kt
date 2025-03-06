@@ -1,28 +1,19 @@
 package com.galeria.medicationstracker.ui.doctor.patients
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.galeria.medicationstracker.data.Appointment
-import com.galeria.medicationstracker.data.User
-import com.galeria.medicationstracker.utils.FirestoreFunctions.FirestoreService
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestoreException
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 
+/*
 data class PatientsListUiState(
     val patients: List<User> = emptyList(),
     val appointments: List<Appointment> = emptyList(),
     val selectedPatient: User? = null,
     val currentUser: User? = null
 )
+*/
 
 class PatientsListViewModel : ViewModel() {
 
-    private val db = FirestoreService.db
+/*     private val db = FirestoreService.db
     private val firebaseAuth = FirebaseAuth.getInstance()
     val currentUser = firebaseAuth.currentUser
     val userID = firebaseAuth.currentUser?.uid
@@ -107,5 +98,5 @@ class PatientsListViewModel : ViewModel() {
 
     fun updateAppointments(value: List<Appointment>) {
         _uiState.value = _uiState.value.copy(appointments = value)
-    }
+    } */
 }

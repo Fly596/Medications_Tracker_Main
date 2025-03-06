@@ -44,7 +44,6 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun DashboardScreen(
     modifier: Modifier = Modifier,
-    onViewLogsClick: () -> Unit = {},
     onAddMedClick: () -> Unit,
     dashboardViewModel: DashboardVM = hiltViewModel(),
 ) {
@@ -75,8 +74,9 @@ fun DashboardScreen(
 // Список лекарств по времени приема.
 @Composable
 fun MedsByIntakeTimeList(
-    viewModel: DashboardVM,
-    onAddNoteClick: () -> Unit = {},
+    medications: List<UserMedication>,
+    onLogIntakeClick: () -> Unit,
+    onAddNoteClick: () -> Unit,
     medicationsForIntakeTime: List<UserMedication> = emptyList()
 ) {
     // Группируем лекарства по времени приема.
