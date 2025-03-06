@@ -57,7 +57,7 @@ class UserRepositoryImpl @Inject constructor(
     firestore.collection("User")
       .document("${auth.currentUser?.email}")
       .collection("intakes")
-      .document("${intake.medicationName}_${intake.dateTime?.toLocalDateTime()?.dayOfYear}")
+      .document("${intake.medicationId}_${intake.dateTime?.toLocalDateTime()?.dayOfYear}")
       .set(
         intake
       )

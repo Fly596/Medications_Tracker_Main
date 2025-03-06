@@ -53,303 +53,312 @@ import com.galeria.medicationstracker.utils.formatTimestampTillTheHour
 
 @Composable
 fun AccountScreenHead(
-    modifier: Modifier = Modifier,
-    onWeightClick: () -> Unit = {},
-    onHeightClick: () -> Unit = {},
-    onProfileClick: () -> Unit = {},
-    onNotesClick: () -> Unit = {},
-    viewModel: ProfileVM = hiltViewModel(),
+  modifier: Modifier = Modifier,
+  onWeightClick: () -> Unit = {},
+  onHeightClick: () -> Unit = {},
+  onProfileClick: () -> Unit = {},
+  onNotesClick: () -> Unit = {},
+  viewModel: ProfileVM = hiltViewModel(),
 ) {
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
-
-    Column(modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.Start) {
-        // pfp, name, email.
-        Column(
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            // pfp, name, email.
-            Row(
-                modifier = Modifier.padding(bottom = 24.dp),
-                verticalAlignment = Alignment.Top,
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                Image(
-                    painter = painterResource(R.drawable.img_1543),
-                    contentDescription = "pfp",
-                    contentScale = ContentScale.Crop,
-                    modifier = modifier
-                        .clip(CircleShape)
-                        .size(108.dp),
-                )
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(
-                        text = uiState.value.user?.name.toString(),
-                        style = MedTrackerTheme.typography.display3Emphasized,
-                        color = colors.primaryLabel
-                    )
-                    Row(
-                        modifier = Modifier,
-                        verticalAlignment = Alignment.Top,
-                        horizontalArrangement = Arrangement.spacedBy(24.dp)
-                    ) {
-                        LabeledStat(uiState.value.user?.age.toString(), "Age")
-                        LabeledStat(uiState.value.user?.height.toString(), "Heigth")
-                        LabeledStat(uiState.value.user?.weight.toString(), "Weight")
-                    }
-                }
-            }
-
-            GPrimaryButton(
-                modifier = Modifier.fillMaxWidth()/* .padding(horizontal = 24.dp) */,
-                onClick = {
-                    onProfileClick.invoke()
-                    // Todo: open edit profile screen
-                }
-            ) {
-                Text(text = "Edit Profile")
-            }
-            GSecondaryButton(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = {
-                    onNotesClick.invoke()
-                }
-            ) {
-                Text(text = "Notes")
-            }
-        }
-        /*        LazyVerticalGrid(
-                   columns = GridCells.Fixed(2),
-                   modifier = Modifier.padding(top = 16.dp),
-                   horizontalArrangement = Arrangement.spacedBy(16.dp),
-                   verticalArrangement = Arrangement.spacedBy(8.dp),
-                   
-                   ) {
-                   item {
-                       GOutlinedButton(
-                           onClick = {
-                               // TODO: open health page
-                           },
-                       ) {
-                           
-                           Icon(
-                               imageVector = Icons.Default.Medication,
-                               contentDescription = "meds",
-                               tint = colors.primaryLabel
-                           )
-                           Spacer(modifier = Modifier.width(8.dp))
-                           Text(text = "Medications")
-                           Spacer(modifier = Modifier.weight(1f))
-                       }
-                   }
-                   item {
-                       GOutlinedButton(
-                           onClick = {
-                               // TODO: open health page
-                           },
-                       ) {
-                           Icon(
-                               imageVector = Icons.Default.History,
-                               contentDescription = "history",
-                               tint = colors.primaryLabel
-                           )
-                           Spacer(modifier = Modifier.width(8.dp))
-                           Text(text = "History")
-                           Spacer(modifier = Modifier.weight(1f))
-                       }
-                   }
-                   item {
-                       GOutlinedButton(
-                           onClick = {
-                               // TODO: open health page
-                           },
-                       ) {
-                           Icon(
-                               imageVector = Icons.Default.Book,
-                               contentDescription = "notes",
-                               tint = colors.primaryLabel
-                           )
-                           Spacer(modifier = Modifier.width(8.dp))
-                           Text(text = "Notes")
-                           Spacer(modifier = Modifier.weight(1f))
-                       }
-                   }
-                   
-               } */
-        // menu items.
-        TabsRow(
-            modifier = Modifier.padding(top = 16.dp, bottom = 12.dp),
-            tabs = listOf("Medications", "History"),
-            medications = uiState.value.medications,
-            intakes = uiState.value.intakes
+  val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+  
+  Column(
+    modifier = modifier.fillMaxWidth(),
+    horizontalAlignment = Alignment.Start
+  ) {
+    // pfp, name, email.
+    Column(
+      horizontalAlignment = Alignment.Start,
+      verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+      // pfp, name, email.
+      Row(
+        modifier = Modifier.padding(bottom = 24.dp),
+        verticalAlignment = Alignment.Top,
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
+      ) {
+        Image(
+          painter = painterResource(R.drawable.img_1543),
+          contentDescription = "pfp",
+          contentScale = ContentScale.Crop,
+          modifier = modifier
+              .clip(CircleShape)
+              .size(108.dp),
         )
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+          Text(
+            text = uiState.value.user?.name.toString(),
+            style = MedTrackerTheme.typography.display3Emphasized,
+            color = colors.primaryLabel
+          )
+          Row(
+            modifier = Modifier,
+            verticalAlignment = Alignment.Top,
+            horizontalArrangement = Arrangement.spacedBy(24.dp)
+          ) {
+            LabeledStat(uiState.value.user?.age.toString(), "Age")
+            LabeledStat(
+              uiState.value.user?.height.toString(),
+              "Heigth"
+            )
+            LabeledStat(
+              uiState.value.user?.weight.toString(),
+              "Weight"
+            )
+          }
+        }
+      }
+      
+      GPrimaryButton(
+        modifier = Modifier.fillMaxWidth()/* .padding(horizontal = 24.dp) */,
+        onClick = {
+          onProfileClick.invoke()
+          // Todo: open edit profile screen
+        }
+      ) {
+        Text(text = "Edit Profile")
+      }
+      GSecondaryButton(
+        modifier = Modifier.fillMaxWidth(),
+        onClick = {
+          onNotesClick.invoke()
+        }
+      ) {
+        Text(text = "Notes")
+      }
     }
-
+    /*        LazyVerticalGrid(
+               columns = GridCells.Fixed(2),
+               modifier = Modifier.padding(top = 16.dp),
+               horizontalArrangement = Arrangement.spacedBy(16.dp),
+               verticalArrangement = Arrangement.spacedBy(8.dp),
+               
+               ) {
+               item {
+                   GOutlinedButton(
+                       onClick = {
+                           // TODO: open health page
+                       },
+                   ) {
+                       
+                       Icon(
+                           imageVector = Icons.Default.Medication,
+                           contentDescription = "meds",
+                           tint = colors.primaryLabel
+                       )
+                       Spacer(modifier = Modifier.width(8.dp))
+                       Text(text = "Medications")
+                       Spacer(modifier = Modifier.weight(1f))
+                   }
+               }
+               item {
+                   GOutlinedButton(
+                       onClick = {
+                           // TODO: open health page
+                       },
+                   ) {
+                       Icon(
+                           imageVector = Icons.Default.History,
+                           contentDescription = "history",
+                           tint = colors.primaryLabel
+                       )
+                       Spacer(modifier = Modifier.width(8.dp))
+                       Text(text = "History")
+                       Spacer(modifier = Modifier.weight(1f))
+                   }
+               }
+               item {
+                   GOutlinedButton(
+                       onClick = {
+                           // TODO: open health page
+                       },
+                   ) {
+                       Icon(
+                           imageVector = Icons.Default.Book,
+                           contentDescription = "notes",
+                           tint = colors.primaryLabel
+                       )
+                       Spacer(modifier = Modifier.width(8.dp))
+                       Text(text = "Notes")
+                       Spacer(modifier = Modifier.weight(1f))
+                   }
+               }
+               
+           } */
+    // menu items.
+    TabsRow(
+      modifier = Modifier.padding(top = 16.dp, bottom = 12.dp),
+      tabs = listOf("Medications", "History"),
+      medications = uiState.value.medications,
+      intakes = uiState.value.intakes
+    )
+  }
+  
 }
 
 @Composable
 fun TabsRow(
-    modifier: Modifier = Modifier,
-    tabs: List<String>,
-    medications: List<UserMedication> = emptyList(),
-    intakes: List<UserIntake> = emptyList()
+  modifier: Modifier = Modifier,
+  tabs: List<String>,
+  medications: List<UserMedication> = emptyList(),
+  intakes: List<UserIntake> = emptyList()
 ) {
-    var selectedTabIndex by remember { mutableStateOf(0) }
-
-    Column(
-        modifier = modifier
+  var selectedTabIndex by remember { mutableStateOf(0) }
+  
+  Column(
+    modifier = modifier
+  ) {
+    TabRow(
+      selectedTabIndex = selectedTabIndex,
+      containerColor = colors.primaryBackground,
+      contentColor = colors.sysBlack,
+      indicator = { tabPositions ->
+        TabRowDefaults.SecondaryIndicator(
+          modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
+          color = colors.sysBlack
+        )
+      }
     ) {
-        TabRow(
-            selectedTabIndex = selectedTabIndex,
-            containerColor = colors.primaryBackground,
-            contentColor = colors.sysBlack,
-            indicator = { tabPositions ->
-                TabRowDefaults.SecondaryIndicator(
-                    modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
-                    color = colors.sysBlack
-                )
-            }
-        ) {
-            tabs.forEachIndexed { index, title ->
-                Tab(
-                    selected = selectedTabIndex == index,
-                    onClick = { selectedTabIndex = index },
-                    text = { Text(title) },
-                    selectedContentColor = colors.primaryLabel,
-                    unselectedContentColor = colors.secondaryLabel,
-                )
-            }
-        }
-
-        when (selectedTabIndex) {
-            0 -> UserMedications(medications)
-            1 -> UserHistory(intakes)
-        }
+      tabs.forEachIndexed { index, title ->
+        Tab(
+          selected = selectedTabIndex == index,
+          onClick = { selectedTabIndex = index },
+          text = { Text(title) },
+          selectedContentColor = colors.primaryLabel,
+          unselectedContentColor = colors.secondaryLabel,
+        )
+      }
     }
+    
+    when (selectedTabIndex) {
+      0 -> UserMedications(medications)
+      1 -> UserHistory(intakes)
+    }
+  }
 }
 
 @Composable
 fun UserMedications(mediations: List<UserMedication> = emptyList()) {
-    LazyColumn() {
-        items(mediations) { medication ->
-            MedicationCard(medication = medication)
-        }
+  LazyColumn() {
+    items(mediations) { medication ->
+      MedicationCard(medication = medication)
     }
+  }
 }
 
 @Composable
 fun UserHistory(intakes: List<UserIntake> = emptyList()) {
-    LazyColumn {
-        items(intakes) { intake ->
-            val formattedDate = if (intake.dateTime != null) {
-                formatTimestampTillTheDayMMMMddyyyy(intake.dateTime)
-            } else {
-                ""
-            }
-            val formatedTime = if (intake.dateTime != null) {
-                formatTimestampTillTheHour(intake.dateTime)
-            } else {
-                ""
-            }
-            LogsCard(
-                name = intake.medicationName.toString(),
-                status = intake.status.toString(),
-                date = formattedDate,
-                time = formatedTime
-            )
-        }
+  LazyColumn {
+    items(intakes) { intake ->
+      val formattedDate = if (intake.dateTime != null) {
+        formatTimestampTillTheDayMMMMddyyyy(intake.dateTime)
+      } else {
+        ""
+      }
+      val formatedTime = if (intake.dateTime != null) {
+        formatTimestampTillTheHour(intake.dateTime)
+      } else {
+        ""
+      }
+      LogsCard(
+        name = intake.medicationId.toString(),
+        status = intake.status.toString(),
+        date = formattedDate,
+        time = formatedTime
+      )
     }
+  }
 }
 
 @Composable
 fun MedicationCard(
-    modifier: Modifier = Modifier,
-    medication: UserMedication? = null
+  modifier: Modifier = Modifier,
+  medication: UserMedication? = null
 ) {
-    FlySimpleCard(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 6.dp),
+  FlySimpleCard(
+    modifier = modifier
+        .fillMaxWidth()
+        .padding(vertical = 6.dp),
+  ) {
+    Row(
+      modifier = Modifier.fillMaxWidth(),
+      verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = Icons.Default.LocalPharmacy,
-                contentDescription = "Pill Icon",
-                modifier = Modifier.size(56.dp)
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Column {
-                Row(verticalAlignment = Alignment.Bottom) {
-                    Text(
-                        text = medication?.name.toString(),
-                        style = MedTrackerTheme.typography.bodyLargeEmphasized,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Text(
-                        text = medication?.strength.toString() + "mg",
-                        style = MedTrackerTheme.typography.bodyLarge,
-                    )
-                }
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = medication?.intakeTime.toString(),
-                    style = MedTrackerTheme.typography.bodyLarge,
-                )
-
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    modifier = Modifier.width(250.dp),
-                    text = medication?.daysOfWeek.toString()
-                        .lowercase(),
-                    style = MedTrackerTheme.typography.bodyMedium,
-                )
-            }
-            Spacer(modifier = Modifier.weight(1f))
-            IconButton(
-                modifier = Modifier,
-                onClick = {}
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                    contentDescription = "More Info",
-                    tint = MedTrackerTheme.colors.primaryLabel,
-                    modifier = Modifier.size(36.dp)
-                )
-            }
+      Icon(
+        imageVector = Icons.Default.LocalPharmacy,
+        contentDescription = "Pill Icon",
+        modifier = Modifier.size(56.dp)
+      )
+      Spacer(modifier = Modifier.width(16.dp))
+      Column {
+        Row(verticalAlignment = Alignment.Bottom) {
+          Text(
+            text = medication?.name.toString(),
+            style = MedTrackerTheme.typography.bodyLargeEmphasized,
+            fontWeight = FontWeight.Bold
+          )
+          Spacer(modifier = Modifier.width(12.dp))
+          Text(
+            text = medication?.strength.toString() + "mg",
+            style = MedTrackerTheme.typography.bodyLarge,
+          )
         }
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+          text = medication?.intakeTime.toString(),
+          style = MedTrackerTheme.typography.bodyLarge,
+        )
+        
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+          modifier = Modifier.width(250.dp),
+          text = medication?.daysOfWeek.toString()
+            .lowercase(),
+          style = MedTrackerTheme.typography.bodyMedium,
+        )
+      }
+      Spacer(modifier = Modifier.weight(1f))
+      IconButton(
+        modifier = Modifier,
+        onClick = {}
+      ) {
+        Icon(
+          imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+          contentDescription = "More Info",
+          tint = MedTrackerTheme.colors.primaryLabel,
+          modifier = Modifier.size(36.dp)
+        )
+      }
     }
+  }
 }
 
 @Composable
 fun LabeledStat(count: String, label: String) {
-    Column(
-        modifier = Modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = count,
-            style = MedTrackerTheme.typography.bodyLargeEmphasized,
-            color = MedTrackerTheme.colors.primaryLabel
-        )
-        Text(
-            text = label,
-            style = MedTrackerTheme.typography.bodyLarge,
-            color = MedTrackerTheme.colors.primaryLabel
-        )
-    }
+  Column(
+    modifier = Modifier,
+    verticalArrangement = Arrangement.spacedBy(8.dp),
+    horizontalAlignment = Alignment.CenterHorizontally
+  ) {
+    Text(
+      text = count,
+      style = MedTrackerTheme.typography.bodyLargeEmphasized,
+      color = MedTrackerTheme.colors.primaryLabel
+    )
+    Text(
+      text = label,
+      style = MedTrackerTheme.typography.bodyLarge,
+      color = MedTrackerTheme.colors.primaryLabel
+    )
+  }
 }
 
 @Composable
 @Preview(showSystemUi = false, showBackground = true, device = "id:pixel_8")
 fun AccScreenPreview() {
-    MedTrackerTheme {
-        Column(modifier = Modifier.fillMaxSize()) {
-            AccountScreenHead()
-        }
+  MedTrackerTheme {
+    Column(modifier = Modifier.fillMaxSize()) {
+      AccountScreenHead()
     }
+  }
 }

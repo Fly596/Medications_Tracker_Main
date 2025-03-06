@@ -89,7 +89,7 @@ class DashboardVM @Inject constructor(
     viewModelScope.launch {
       val intake = UserIntake(
         uid = currentUserId.toString(),
-        medicationName = medication.name.toString(),
+        medicationId = medication.name.toString(),
         dose = medication.strength.toString(),
         status = status,
         dateTime = intakeTime
@@ -98,6 +98,7 @@ class DashboardVM @Inject constructor(
     }
     
   }
+  
   // Проверка на то, был ли сегодня прием или нет.
   // -1: error; 0: noData, 1: skipped, 2: taken
   suspend fun fetchIntakeStatus(medication: UserMedication): Int {
