@@ -186,3 +186,48 @@ fun NavigationRow(onClick: () -> Unit, label: String? = null) {
         }
     }
 }
+
+@Composable
+fun LogsCard(name: String, status: String, date: String, time: String) {
+    FlySimpleCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 6.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(4.dp),
+            verticalAlignment = Alignment.Top
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(
+                    text = name,
+                    style = MedTrackerTheme.typography.bodyLargeEmphasized,
+                    color = MedTrackerTheme.colors.primaryLabel
+                )
+                Text(
+                    text = (if (status == "true") "Taken" else "Not Taken"),
+                    style = MedTrackerTheme.typography.title2,
+                    color = MedTrackerTheme.colors.secondaryLabel
+                )
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalAlignment = Alignment.End
+            ) {
+                Text(
+                    text = date,
+                    style = MedTrackerTheme.typography.title2,
+                    color = MedTrackerTheme.colors.primaryLabel
+                )
+                Text(
+                    text = time,
+                    style = MedTrackerTheme.typography.title2Emphasized,
+                    color = MedTrackerTheme.colors.primaryLabel
+                )
+            }
+        }
+    }
+}

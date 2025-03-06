@@ -12,7 +12,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Medication
 import androidx.compose.material.icons.outlined.CheckCircle
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -29,7 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medicationstracker.data.UserMedication
 import com.galeria.medicationstracker.ui.componentsOld.FLySimpleCardContainer
@@ -37,15 +35,13 @@ import com.galeria.medicationstracker.ui.componentsOld.LogMedicationTimeDialog
 import com.galeria.medicationstracker.ui.componentsOld.WeeklyCalendarView
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme.typography
-import com.galeria.medicationstracker.utils.getTodaysDate
-import java.time.format.DateTimeFormatter
+import com.google.firebase.Timestamp
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
     modifier: Modifier = Modifier,
     onAddMedClick: () -> Unit,
-    dashboardViewModel: DashboardVM = hiltViewModel(),
+    dashboardViewModel: DashboardVM,
 ) {
     val uiState = dashboardViewModel.uiState.collectAsStateWithLifecycle()
     
@@ -55,18 +51,20 @@ fun DashboardScreen(
     ) {
         // today's date.
         Text(
-            text = getTodaysDate().format(DateTimeFormatter.ofPattern("MMM d")),
+            text = uiState.value.todayDate,
             style = typography.display3Emphasized
         )
         // Календарь на неделю.
         WeeklyCalendarView()
         // Medication Cards List.
+        val medicationsByIntakeTime =
+            dashboardViewModel.groupMedicationsByIntakeTime(uiState.value.currentTakenMedications)
         MedsByIntakeTimeList(
-            viewModel = dashboardViewModel,
             onAddNoteClick = {
                 onAddMedClick.invoke()
             },
-            medicationsForIntakeTime = uiState.value.currentTakenMedications
+            medicationsForIntakeTime = uiState.value.currentTakenMedications,
+            medicationsByIntakeTime = medicationsByIntakeTime
         )
     }
 }
@@ -74,15 +72,12 @@ fun DashboardScreen(
 // Список лекарств по времени приема.
 @Composable
 fun MedsByIntakeTimeList(
-    medications: List<UserMedication>,
-    onLogIntakeClick: () -> Unit,
+    onLogIntakeClick: () -> Unit = {},
     onAddNoteClick: () -> Unit,
-    medicationsForIntakeTime: List<UserMedication> = emptyList()
+    medicationsForIntakeTime: List<UserMedication> = emptyList(),
+    medicationsByIntakeTime: Map<String, List<UserMedication>> = emptyMap(),
 ) {
-    // Группируем лекарства по времени приема.
-    val medicationsByIntakeTime =
-        medicationsForIntakeTime.groupBy { it.intakeTime }
-    
+
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(24.dp)
@@ -104,9 +99,19 @@ fun MedsByIntakeTimeList(
                         // Лекарства на это время.
                         medications.forEach { medicationsForIntakeTime ->
                             MedicationItem(
-                                viewModel = viewModel,
+                                fetchIntakeStatus = { medication ->
+                                    dashboardViewModel.fetchIntakeStatus(
+                                        medication
+                                    )
+                                },
+                                addNewIntake = { time, medication, status ->
+                                    dashboardViewModel.addNewIntake(
+                                        time,
+                                        medication,
+                                        status
+                                    )
+                                }
                                 medication = medicationsForIntakeTime,
-                                onAddNoteClick = { onAddNoteClick.invoke() }
                             )
                         }
                     }
@@ -118,7 +123,8 @@ fun MedsByIntakeTimeList(
 
 @Composable
 fun MedicationItem(
-    viewModel: DashboardVM,
+    fetchIntakeStatus: (UserMedication) -> Int,
+    addNewIntake: (Timestamp, UserMedication, Boolean) -> Unit,
     medication: UserMedication,
     icon: ImageVector = Icons.Filled.Medication,
     onAddNoteClick: () -> Unit = {},
@@ -142,7 +148,7 @@ fun MedicationItem(
         // State to control the check icon.
         var status by remember { mutableIntStateOf(0) }
         LaunchedEffect(medication) {
-            status = viewModel.fetchIntakeStatus(medication)
+            status = fetchIntakeStatus(medication)
         }
         
         Text(
@@ -180,23 +186,16 @@ fun MedicationItem(
             LogMedicationTimeDialog(
                 medication = medication,
                 onDismiss = {
-                    //showLogDialog.value = false
-                },
-                onConfirmation = {
-                    viewModel.addNewIntake(
-                        medication = medication,
-                        status = true
-                    )
-                    showLogDialog.value = false
                 },
                 onAddNotes = {
                     onAddNoteClick.invoke()
                     showLogDialog.value = false
                 },
                 onConfirmTime = { time ->
-                    viewModel.addNewIntake(
-                        intakeTime = time,
-                        medication = medication
+                    addNewIntake(
+                        time,
+                        medication,
+                        false
                     )
                 }
             )

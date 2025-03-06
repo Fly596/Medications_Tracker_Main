@@ -2,6 +2,7 @@ package com.galeria.medicationstracker
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -11,6 +12,10 @@ import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import androidx.navigation.toRoute
+import com.galeria.medicationstracker.Routes.AdminRoutes
+import com.galeria.medicationstracker.Routes.AuthRoutes
+import com.galeria.medicationstracker.Routes.DoctorRoutes
+import com.galeria.medicationstracker.Routes.PatientRoutes
 import com.galeria.medicationstracker.data.UserType
 import com.galeria.medicationstracker.ui.doctor.home.DocDashboardScreen
 import com.galeria.medicationstracker.ui.doctor.patients.PatientsListScreen
@@ -18,6 +23,7 @@ import com.galeria.medicationstracker.ui.screens.auth.accountrecovery.AccountRec
 import com.galeria.medicationstracker.ui.screens.auth.login.LoginScreen
 import com.galeria.medicationstracker.ui.screens.auth.signup.SignupScreen
 import com.galeria.medicationstracker.ui.screens.dashboard.DashboardScreen
+import com.galeria.medicationstracker.ui.screens.dashboard.DashboardVM
 import com.galeria.medicationstracker.ui.screens.medications.MedicationsScreen
 import com.galeria.medicationstracker.ui.screens.medications.MedsPagesViewModel
 import com.galeria.medicationstracker.ui.screens.medications.mediinfo.ViewMedicationInfoScreen
@@ -28,10 +34,6 @@ import com.galeria.medicationstracker.ui.screens.profile.appoinment.AppointmentS
 import com.galeria.medicationstracker.ui.screens.profile.notes.NewNoteScreen
 import com.galeria.medicationstracker.ui.screens.profile.notes.NotesScreen
 import com.galeria.medicationstracker.ui.screens.profile.profiledetails.ProfileDetailsScreen
-import com.galeria.medicationstracker.Routes.AdminRoutes
-import com.galeria.medicationstracker.Routes.AuthRoutes
-import com.galeria.medicationstracker.Routes.DoctorRoutes
-import com.galeria.medicationstracker.Routes.PatientRoutes
 import kotlinx.serialization.Serializable
 
 @Composable
@@ -312,21 +314,17 @@ fun NavGraphBuilder.patientDashboardGraph(
 ) {
   navigation<PatientRoutes.PatientHome>(startDestination = PatientRoutes.PatientTodayMedications) {
     composable<PatientRoutes.PatientTodayMedications> {
+      val vm: DashboardVM = hiltViewModel()
+      
       DashboardScreen(
-        onViewLogsClick = {
-          // open logs history screen.
-          navController.navigate(PatientRoutes.PatientLogs) {
-            popUpTo(PatientRoutes.PatientTodayMedications) {
-            }
-          }
-        },
         onAddMedClick = {
           // open medications screen.
           navController.navigate(PatientRoutes.PatientMedications) {
             popUpTo(PatientRoutes.PatientTodayMedications) {
             }
           }
-        }
+        },
+        dashboardViewModel = vm
       )
     }
   }

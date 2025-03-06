@@ -19,10 +19,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 data class DashboardUiState(
   val currentTakenMedications: List<UserMedication> = emptyList(),
+  val todayDate: String = LocalDate.now()
+    .format(DateTimeFormatter.ofPattern("MMM d"))
 )
 
 @HiltViewModel
@@ -134,4 +137,17 @@ class DashboardVM @Inject constructor(
     
   }
   
+  fun groupMedicationsByIntakeTime(medications: List<UserMedication>): Map<String, List<UserMedication>> {
+    val groupedMedications = mutableMapOf<String, MutableList<UserMedication>>()
+    
+    medications.forEach { medication ->
+      medication.intakeTime?.let { intakeTime ->
+        val formattedTime = formatTimestampToWeekday(intakeTime)
+        if (!groupedMedications.containsKey(formattedTime)) {
+          groupedMedications[formattedTime] = mutableListOf()
+        }
+        groupedMedications[formattedTime]?.add(medication)
+      }
+    }
+  }
 }
