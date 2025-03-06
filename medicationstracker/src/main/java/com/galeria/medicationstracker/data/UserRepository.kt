@@ -17,13 +17,12 @@ interface UserRepository {
   suspend fun deleteUser()
   suspend fun addIntake(intake: UserIntake)
   suspend fun getUserData(): User
-  suspend fun updateUserData(user: UserProfile)
+  suspend fun updateUserData(user: User)
   suspend fun getUserDrugs(): List<UserMedication>
   suspend fun getUserIntakes(uid: String): List<UserIntake>
   suspend fun saveNote(note: Note)
   suspend fun getNotes(): List<Note>
   fun getUserIntakesFlow(uid: String): Flow<List<UserIntake>>
-  
 }
 
 class UserRepositoryImpl @Inject constructor(

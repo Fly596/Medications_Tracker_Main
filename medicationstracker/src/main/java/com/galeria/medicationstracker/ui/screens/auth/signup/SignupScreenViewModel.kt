@@ -6,14 +6,54 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.galeria.medicationstracker.SnackbarController
 import com.galeria.medicationstracker.SnackbarEvent
+import com.galeria.medicationstracker.data.AuthRepository
 import com.galeria.medicationstracker.data.BloodType
 import com.galeria.medicationstracker.data.UserProfile
 import com.galeria.medicationstracker.data.UserType
 import com.galeria.medicationstracker.utils.FirestoreFunctions
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+
+data class RegisterScreenState(
+    val email: String = "",
+    val emailErrorMessage: String? = null,
+    val password: String = "",
+    val passwordErrorMessage: String? = null,
+    val showPassword: Boolean = false,
+    val userType: UserType? = null,
+)
+
+@HiltViewModel
+class RegisterScreenViewModel @Inject constructor(private val repository: AuthRepository) :
+    ViewModel() {
+    private val _registerScreenState = MutableStateFlow(RegisterScreenState())
+    val registerScreenState = _registerScreenState.asStateFlow()
+
+    fun registerUser() {
+        val email = _registerScreenState.value.email
+        val password = _registerScreenState.value.password
+        viewModelScope.launch { repository.register(email, password) }
+    }
+    
+    fun updateEmail(input: String) {
+        _registerScreenState.value = _registerScreenState.value.copy(email = input)
+    }
+    
+    fun updatePassword(input: String) {
+        _registerScreenState.value = _registerScreenState.value.copy(password = input)
+    }
+
+    fun isShowPasswordChecked(input: Boolean) {
+        _registerScreenState.value = _registerScreenState.value.copy(showPassword = !input)
+    }
+    
+
+}
 
 data class SignupScreenState(
     val uid: String = "",
@@ -33,18 +73,19 @@ data class SignupScreenState(
     var userType: UserType = UserType.PATIENT,
 )
 
-class SignupScreenViewModel : ViewModel() {
-    
+/* class SignupScreenViewModel : ViewModel() {
+
     val auth = FirebaseAuth.getInstance()
     var signupScreenState = MutableStateFlow(SignupScreenState())
         private set
+
     private val db = FirestoreFunctions.FirestoreService.db
-    
+
     private fun validateEmail(): Boolean {
         val emailInput = signupScreenState.value.email.trim()
         var isValid = true
         var errorMessage = ""
-        
+
         if (emailInput.isBlank() || emailInput.isEmpty()) {
             errorMessage = "Email cannot be empty"
             isValid = false
@@ -52,17 +93,16 @@ class SignupScreenViewModel : ViewModel() {
             errorMessage = "Wrong email format"
             isValid = false
         }
-        
-        signupScreenState.value =
-            signupScreenState.value.copy(emailErrorMessage = errorMessage)
+
+        signupScreenState.value = signupScreenState.value.copy(emailErrorMessage = errorMessage)
         return isValid
     }
-    
+
     private fun validatePassword(): Boolean {
         val passwordInput = signupScreenState.value.password
         var isValid = true
         var errorMessage = ""
-        
+
         if (passwordInput.isBlank() || passwordInput.isEmpty()) {
             errorMessage = "Password cannot be empty"
             isValid = false
@@ -70,21 +110,20 @@ class SignupScreenViewModel : ViewModel() {
             errorMessage = "Password must be at least 6 characters"
             isValid = false
         }
-        
-        signupScreenState.value =
-            signupScreenState.value.copy(passwordErrorMessage = errorMessage)
+
+        signupScreenState.value = signupScreenState.value.copy(passwordErrorMessage = errorMessage)
         return isValid
     }
-    
+
     fun onRegisterClick(context: Context, onSignupSuccess: () -> Unit) {
         val isEmailValid = validateEmail()
         val isPasswordValid = validatePassword()
-        
+
         if (isEmailValid && isPasswordValid) {
             auth
                 .createUserWithEmailAndPassword(
                     signupScreenState.value.email.trim(),
-                    signupScreenState.value.password.trim()
+                    signupScreenState.value.password.trim(),
                 )
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
@@ -96,88 +135,89 @@ class SignupScreenViewModel : ViewModel() {
                         // Toast.makeText(context, "Account Created", Toast.LENGTH_SHORT).show()
                         viewModelScope.launch {
                             SnackbarController.sendEvent(
-                                event = SnackbarEvent(
-                                    message = "Account Created!"
-                                )
+                                event = SnackbarEvent(message = "Account Created!")
                             )
                         }
                         onSignupSuccess.invoke()
                     } else {
                         viewModelScope.launch {
                             SnackbarController.sendEvent(
-                                event = SnackbarEvent(message = "Account Creation Failed${task.exception?.message}")
+                                event =
+                                    SnackbarEvent(
+                                        message =
+                                            "Account Creation Failed${task.exception?.message}"
+                                    )
                             )
                         }
                     }
                 }
         } else {
             viewModelScope.launch {
-                SnackbarController.sendEvent(event = SnackbarEvent(message = "Invalid email or password."))
+                SnackbarController.sendEvent(
+                    event = SnackbarEvent(message = "Invalid email or password.")
+                )
             }
         }
     }
-    
+
     fun addUserData() {
-        val newUser = UserProfile(
-            signupScreenState.value.uid,
-            signupScreenState.value.firstName,
-            signupScreenState.value.lastName,
-            signupScreenState.value.weight,
-            signupScreenState.value.height,
-            signupScreenState.value.email,
-            signupScreenState.value.dateOfBirth,
-            signupScreenState.value.bloodType,
-            signupScreenState.value.sex
-        )
-        db.collection("User").document(newUser.email.toString()).set(newUser)
+        val newUser =
+            UserProfile(
+                signupScreenState.value.uid,
+                signupScreenState.value.firstName,
+                signupScreenState.value.lastName,
+                signupScreenState.value.weight,
+                signupScreenState.value.height,
+                signupScreenState.value.email,
+                signupScreenState.value.dateOfBirth,
+                signupScreenState.value.bloodType,
+                signupScreenState.value.sex,
+            )
+        db.collection("User")
+            .document(newUser.email.toString())
+            .set(newUser)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     viewModelScope.launch {
                         SnackbarController.sendEvent(
-                            event = SnackbarEvent(
-                                message = "Account Created!"
-                            )
+                            event = SnackbarEvent(message = "Account Created!")
                         )
                     }
                 } else {
                     viewModelScope.launch {
                         SnackbarController.sendEvent(
-                            event = SnackbarEvent(
-                                message = "Something went wrong :("
-                            )
+                            event = SnackbarEvent(message = "Something went wrong :(")
                         )
                     }
                 }
             }
     }
-    
+
     fun updateUserAge(input: Int) {
         signupScreenState.value = signupScreenState.value.copy(age = input)
     }
-    
+
     fun updateUserName(input: String) {
-        signupScreenState.value =
-            signupScreenState.value.copy(firstName = input)
+        signupScreenState.value = signupScreenState.value.copy(firstName = input)
     }
-    
+
     fun updateUserType(input: UserType) {
         signupScreenState.value = signupScreenState.value.copy(userType = input)
     }
-    
+
     fun updateUserId(input: String) {
         signupScreenState.value = signupScreenState.value.copy(uid = input)
     }
-    
+
     fun updateEmail(input: String) {
         signupScreenState.value = signupScreenState.value.copy(email = input)
     }
-    
+
     fun updatePassword(input: String) {
         signupScreenState.value = signupScreenState.value.copy(password = input)
     }
-    
+
     fun isShowPasswordChecked(input: Boolean) {
-        signupScreenState.value =
-            signupScreenState.value.copy(showPassword = !input)
+        signupScreenState.value = signupScreenState.value.copy(showPassword = !input)
     }
-}
+} */
