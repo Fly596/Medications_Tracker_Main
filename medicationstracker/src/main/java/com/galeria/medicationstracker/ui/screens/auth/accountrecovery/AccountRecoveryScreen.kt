@@ -78,13 +78,11 @@ fun AccountRecoveryScreen(
                 Text(text = "Reset Password")
             }
         }
-        // Spacer(modifier = Modifier.weight(1f))
         Spacer(
             modifier = Modifier
                 .height(40.dp)
                 .weight(1f)
         )
-        // endregion
     }
 }
 
