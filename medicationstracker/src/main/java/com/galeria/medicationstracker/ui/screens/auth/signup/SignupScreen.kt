@@ -1,22 +1,15 @@
 package com.galeria.medicationstracker.ui.screens.auth.signup
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -25,16 +18,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.galeria.medicationstracker.R
-import com.galeria.medicationstracker.data.UserType
 import com.galeria.medicationstracker.ui.components.GPrimaryButton
 import com.galeria.medicationstracker.ui.components.GTextButton
-import com.galeria.medicationstracker.ui.componentsOld.FlyButton
-import com.galeria.medicationstracker.ui.componentsOld.FlySimpleCard
-import com.galeria.medicationstracker.ui.componentsOld.FlyTextButton
-import com.galeria.medicationstracker.ui.componentsOld.MyRadioButton
 import com.galeria.medicationstracker.ui.componentsOld.MyTextField
 import com.galeria.medicationstracker.ui.screens.auth.login.RememberMeSwitch
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
@@ -44,10 +32,10 @@ fun SignupScreen(
   modifier: Modifier = Modifier,
   passedEmail: String = "",
   navigateHome: () -> Unit,
-  viewModel: SignupScreenViewModel = viewModel(),
+  viewModel: RegisterScreenViewModel = hiltViewModel(),
 ) {
-  LaunchedEffect(Unit) { viewModel.updateEmail(passedEmail) }
-  val state = viewModel.signupScreenState.collectAsStateWithLifecycle()
+  // LaunchedEffect(Unit) { viewModel.updateEmail(passedEmail) }
+  val state = viewModel.registerScreenState.collectAsStateWithLifecycle()
   
   Scaffold(
     containerColor = MedTrackerTheme.colors.secondaryBackground,
@@ -66,27 +54,12 @@ fun SignupScreen(
         .padding(16.dp)
     ) {
       MyTextField(
-        value = state.value.firstName,
-        onValueChange = { viewModel.updateUserName(it) },
+        value = state.value.name,
+        onValueChange = { viewModel.updateName(it) },
         isPrimaryColor = true,
         label = "Name",
         placeholder = "Name",
         modifier = Modifier.fillMaxWidth(),
-      )
-      MyTextField(
-        value = state.value.age.toString(),
-        onValueChange = {
-          if (it.isNotEmpty()) {
-            viewModel.updateUserAge(it.toInt())
-          } else {
-            viewModel.updateUserAge(0)
-          }
-        },
-        isPrimaryColor = true,
-        label = "Age",
-        placeholder = "Age",
-        modifier = Modifier.fillMaxWidth(),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
       )
       
       MyTextField(
@@ -120,7 +93,6 @@ fun SignupScreen(
         checked = state.value.showPassword,
         onCheckedChange = { viewModel.isShowPasswordChecked(state.value.showPassword) },
       )
-      
       val context = LocalContext.current
       
       Row(verticalAlignment = Alignment.CenterVertically) {
@@ -129,9 +101,8 @@ fun SignupScreen(
         Spacer(modifier = Modifier.weight(1f))
         
         GPrimaryButton(onClick = {
-          viewModel.onRegisterClick(
-            context,
-            onSignupSuccess = navigateHome
+          viewModel.registerUser(
+            onSuccessRegistration = navigateHome,
           )
         }) {
           Text(text = "Create Account")

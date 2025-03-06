@@ -1,78 +1,86 @@
 package com.galeria.medicationstracker.ui.screens.auth.signup
 
-import android.content.Context
-import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.galeria.medicationstracker.SnackbarController
-import com.galeria.medicationstracker.SnackbarEvent
 import com.galeria.medicationstracker.data.AuthRepository
 import com.galeria.medicationstracker.data.BloodType
-import com.galeria.medicationstracker.data.UserProfile
 import com.galeria.medicationstracker.data.UserType
-import com.galeria.medicationstracker.utils.FirestoreFunctions
 import com.google.firebase.Timestamp
-import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 data class RegisterScreenState(
-    val email: String = "",
-    val emailErrorMessage: String? = null,
-    val password: String = "",
-    val passwordErrorMessage: String? = null,
-    val showPassword: Boolean = false,
-    val userType: UserType? = null,
+  val name: String = "",
+  val email: String = "",
+  val emailErrorMessage: String? = null,
+  val password: String = "",
+  val passwordErrorMessage: String? = null,
+  val showPassword: Boolean = false,
+  val userType: UserType? = null,
 )
 
 @HiltViewModel
 class RegisterScreenViewModel @Inject constructor(private val repository: AuthRepository) :
-    ViewModel() {
-    private val _registerScreenState = MutableStateFlow(RegisterScreenState())
-    val registerScreenState = _registerScreenState.asStateFlow()
-
-    fun registerUser() {
-        val email = _registerScreenState.value.email
-        val password = _registerScreenState.value.password
-        viewModelScope.launch { repository.register(email, password) }
+  ViewModel() {
+  
+  private val _registerScreenState = MutableStateFlow(RegisterScreenState())
+  val registerScreenState = _registerScreenState.asStateFlow()
+  
+  fun registerUser(onSuccessRegistration: () -> Unit) {
+    val email = _registerScreenState.value.email
+    val password = _registerScreenState.value.password
+    viewModelScope.launch {
+      val regStatus = repository.register(email, password)
+      
+      if (regStatus.isSuccess) {
+        onSuccessRegistration.invoke()
+      }
     }
-    
-    fun updateEmail(input: String) {
-        _registerScreenState.value = _registerScreenState.value.copy(email = input)
-    }
-    
-    fun updatePassword(input: String) {
-        _registerScreenState.value = _registerScreenState.value.copy(password = input)
-    }
-
-    fun isShowPasswordChecked(input: Boolean) {
-        _registerScreenState.value = _registerScreenState.value.copy(showPassword = !input)
-    }
-    
-
+  }
+  
+  fun updateEmail(input: String) {
+    _registerScreenState.value =
+      _registerScreenState.value.copy(email = input)
+  }
+  
+  fun updatePassword(input: String) {
+    _registerScreenState.value =
+      _registerScreenState.value.copy(password = input)
+  }
+  
+  fun updateName(input: String) {
+    _registerScreenState.value =
+      _registerScreenState.value.copy(name = input)
+  }
+  
+  fun isShowPasswordChecked(input: Boolean) {
+    _registerScreenState.value =
+      _registerScreenState.value.copy(showPassword = !input)
+  }
+  
+  
 }
 
 data class SignupScreenState(
-    val uid: String = "",
-    val age: Int = 18,
-    val firstName: String = "",
-    val lastName: String = "",
-    val dateOfBirth: Timestamp = Timestamp.now(),
-    val sex: String = "",
-    val bloodType: BloodType = BloodType.UNKNOWN,
-    val weight: Float = 0.0f,
-    val height: Float = 0.0f,
-    val email: String = "",
-    val emailErrorMessage: String? = null,
-    val password: String = "",
-    val passwordErrorMessage: String? = null,
-    val showPassword: Boolean = false,
-    var userType: UserType = UserType.PATIENT,
+  val uid: String = "",
+  val age: Int = 18,
+  val firstName: String = "",
+  val lastName: String = "",
+  val dateOfBirth: Timestamp = Timestamp.now(),
+  val sex: String = "",
+  val bloodType: BloodType = BloodType.UNKNOWN,
+  val weight: Float = 0.0f,
+  val height: Float = 0.0f,
+  val email: String = "",
+  val emailErrorMessage: String? = null,
+  val password: String = "",
+  val passwordErrorMessage: String? = null,
+  val showPassword: Boolean = false,
+  var userType: UserType = UserType.PATIENT,
 )
-
 /* class SignupScreenViewModel : ViewModel() {
 
     val auth = FirebaseAuth.getInstance()
