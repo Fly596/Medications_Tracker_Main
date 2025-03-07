@@ -18,7 +18,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TimeInput
-import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -45,8 +44,8 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun LogMedicationTimeDialog(
   medication: UserMedication,
-  onDismiss: () -> Unit = {},
-  onConfirmation: (String) -> Unit = {},
+  onDialogDismissed: () -> Unit = {},
+  onTimeConfirmed: (String) -> Unit = {},
   onConfirmTime: (Timestamp) -> Unit = {},
   onAddNotes: () -> Unit = {},
 ) {
@@ -59,7 +58,7 @@ fun LogMedicationTimeDialog(
   val timeSelected by remember { mutableStateOf("") }
   var showDialog by remember { mutableStateOf(false) }
   
-  Dialog(onDismissRequest = { onDismiss() }) {
+  Dialog(onDismissRequest = { onDialogDismissed() }) {
     // Draw a rectangle shape with rounded corners inside the dialog
     Card(
       modifier = Modifier
@@ -72,8 +71,8 @@ fun LogMedicationTimeDialog(
     ) {
       Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
+          .fillMaxWidth()
+          .padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
       ) {
@@ -116,34 +115,35 @@ fun LogMedicationTimeDialog(
           TimeInput(
             state = timeState,
           )
-          GOutlinedButton(
-            modifier = Modifier
-              .fillMaxWidth(),
-            onClick = {
-              showDialog = false
-              onDismiss.invoke()
-            },
-            isError = true
-          ) {
-            Text("Cancel")
-          }
-          GPrimaryButton(
-            modifier = Modifier
-              .fillMaxWidth(),
-            onClick = {
-              val timeStamp =
-                timeToFirestoreTimestamp(
-                  timeState.hour,
-                  timeState.minute
-                )
-              
-              onConfirmTime(timeStamp)
-              showDialog = false
-              onDismiss.invoke()
+          Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            GPrimaryButton(
+              modifier = Modifier.weight(1f),
+              onClick = {
+                val timeStamp =
+                  timeToFirestoreTimestamp(
+                    timeState.hour,
+                    timeState.minute
+                  )
+                
+                onConfirmTime(timeStamp)
+                showDialog = false
+                onDialogDismissed.invoke()
+              }
+            ) {
+              Text("Confirm")
             }
-          ) {
-            Text("Confirm")
+            GOutlinedButton(
+              modifier = Modifier.weight(1f),
+              onClick = {
+                showDialog = false
+                onDialogDismissed.invoke()
+              },
+              isError = true
+            ) {
+              Text("Skip Intake")
+            }
           }
+  
           
         }
       }

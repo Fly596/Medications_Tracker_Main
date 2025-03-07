@@ -58,7 +58,7 @@ class HeadActivity : ComponentActivity() {
     super.onCreate(savedInstanceState)
     
     setContent {
-      enableEdgeToEdge()
+    enableEdgeToEdge()
       val navController = rememberNavController()
       MedTrackerTheme {
         val snackbarHostState = remember {
@@ -112,8 +112,8 @@ class HeadActivity : ComponentActivity() {
         ) {
           ApplicationNavHost(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(it),
+              .fillMaxSize()
+              .padding(it),
             navController = navController,
             startDestination = currentDestination
           )

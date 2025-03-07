@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CardElevation
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -43,54 +44,88 @@ fun MedicationsScreen(
   medsPagesVM: MedsPagesViewModel = viewModel(),
 ) {
   val uiState by medicationsViewModel.uiState.collectAsStateWithLifecycle()
-  
-  Column(
-    modifier = modifier
-        .fillMaxSize()
-        .padding(top = 8.dp),
-    verticalArrangement = Arrangement.spacedBy(16.dp)
-  ) {
-    Text(
-      text = "Medications",
-      style = typography.display3Emphasized
-    )
-    
-    LazyColumn(
-      verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-      items(uiState.userMedications) { med ->
-        FlyElevatedCardMedsList(
-          title = med.name,
-          dosage = ("${med.strength} ${
-            med.unit.toString()
-              .lowercase()
-          }"),
-          info = med.form.toString()
-            .lowercase(),
-          onEditClick = { onEditMedClick(med.name) },
-          onRemoveMedClick = {
-            medicationsViewModel.deleteMedicationFromFirestore(med.name)
-          },
-          onViewMed = {
-            medsPagesVM.getSelectedMed(med.name)
-            onViewMed()
-          }
-        )
+  Scaffold(
+    containerColor = MedTrackerTheme.colors.secondaryBackground,
+    topBar = {
+      // today's date.
+      Row(modifier = Modifier
+        .fillMaxWidth()
+        .padding(16.dp)) {
+        Text(text = "Medications", style = typography.display3Emphasized)
       }
-      
-      item {
-        // Button to add a new medication.
-        GPrimaryButton(
-          onClick = {
-            onAddMedClick.invoke()
-          },
-          Modifier.fillMaxWidth()
-        ) {
-          Text("+ Add Medication")
+    },
+  ) { innerPadding ->
+    Column(
+      modifier = modifier
+        .padding(innerPadding)
+        .padding(horizontal = 16.dp)
+    ) {
+      LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        items(uiState.userMedications) { med ->
+          FlyElevatedCardMedsList(
+            title = med.name,
+            dosage =
+              ("${med.strength} ${
+                med.unit.toString()
+                  .lowercase()
+              }"),
+            info = med.form.toString().lowercase(),
+            onEditClick = { onEditMedClick(med.name) },
+            onRemoveMedClick = {
+              medicationsViewModel.deleteMedicationFromFirestore(
+                med.name
+              )
+            },
+            onViewMed = {
+              medsPagesVM.getSelectedMed(med.name)
+              onViewMed()
+            },
+          )
+        }
+        
+        item {
+          // Button to add a new medication.
+          GPrimaryButton(
+            onClick = { onAddMedClick.invoke() },
+            Modifier.fillMaxWidth()
+          ) {
+            Text("+ Add Medication")
+          }
         }
       }
     }
   }
+  /*   Column(
+      modifier = modifier.fillMaxSize().padding(top = 8.dp),
+      verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+      LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        items(uiState.userMedications) { med ->
+          FlyElevatedCardMedsList(
+            title = med.name,
+            dosage =
+              ("${med.strength} ${
+              med.unit.toString()
+                .lowercase()
+            }"),
+            info = med.form.toString().lowercase(),
+            onEditClick = { onEditMedClick(med.name) },
+            onRemoveMedClick = { medicationsViewModel.deleteMedicationFromFirestore(med.name) },
+            onViewMed = {
+              medsPagesVM.getSelectedMed(med.name)
+              onViewMed()
+            },
+          )
+        }
+  
+        item {
+          // Button to add a new medication.
+          GPrimaryButton(onClick = { onAddMedClick.invoke() }, Modifier.fillMaxWidth()) {
+            Text("+ Add Medication")
+          }
+        }
+      }
+    } */
 }
 
 @Composable
@@ -109,56 +144,50 @@ fun FlyElevatedCardMedsList(
 ) {
   ElevatedCard(
     modifier = modifier
-        .fillMaxWidth()
-        .clickable {
-            onViewMed.invoke()
-        },
+      .fillMaxWidth()
+      .clickable { onViewMed.invoke() },
     shape = shape,
-    elevation = CardDefaults.elevatedCardElevation(
-      defaultElevation = 0.dp,
-      pressedElevation = 8.dp,
-      focusedElevation = 10.dp,
-    ),
+    elevation =
+      CardDefaults.elevatedCardElevation(
+        defaultElevation = 0.dp,
+        pressedElevation = 8.dp,
+        focusedElevation = 10.dp,
+      ),
     colors =
       CardDefaults.elevatedCardColors(
         containerColor = colors.primaryBackground,
         contentColor = colors.primaryLabel,
         disabledContainerColor = colors.primaryTinted,
-        disabledContentColor = colors.secondary600
-      )
+        disabledContentColor = colors.secondary600,
+      ),
   ) {
     Row(
       modifier = Modifier
-          .fillMaxSize()
-          .padding(16.dp),
-      verticalAlignment = Alignment.Top,
+        .fillMaxSize()
+        .padding(16.dp),
+      verticalAlignment = Alignment.Top
     ) {
       Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier,
+        modifier = Modifier
       ) {
         Text(title, style = typography.headline)
-        
+
         Spacer(modifier = Modifier.weight(1f))
-        
+
         Text(dosage, style = typography.bodyMedium)
         Text(info, style = typography.bodyMedium)
       }
-      
+
       Spacer(modifier = Modifier.weight(1f))
       
       Column(Modifier, horizontalAlignment = Alignment.End) {
-        GTextButton(
-          onEditClick
-        ) {
-          Text("Edit")
-        }
-        
-        
+        GTextButton(onEditClick) { Text("Edit") }
+
         GTextButton(
           errorButton = true,
           onClick = { onRemoveMedClick.invoke() },
-          textStyle = typography.labelLargeEmphasized
+          textStyle = typography.labelLargeEmphasized,
         ) {
           Text("Delete")
         }
@@ -171,15 +200,13 @@ fun FlyElevatedCardMedsList(
 @Composable
 fun FlyElevatedCardMedsListPreview() {
   MedTrackerTheme {
-    Column(
-      modifier = Modifier
-          .padding(16.dp)
-          .fillMaxSize()
-    ) {
+    Column(modifier = Modifier
+      .padding(16.dp)
+      .fillMaxSize()) {
       FlyElevatedCardMedsList(
         onEditClick = { /*TODO*/ },
         onRemoveMedClick = { /*TODO*/ },
-        onViewMed = { /*TODO*/ }
+        onViewMed = { /*TODO*/ },
       )
     }
   }

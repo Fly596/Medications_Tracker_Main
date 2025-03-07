@@ -61,7 +61,7 @@ fun AccountScreenHead(
     viewModel: ProfileVM = hiltViewModel(),
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
-
+    
     Column(modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.Start) {
         // pfp, name, email.
         Column(
