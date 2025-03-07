@@ -48,14 +48,14 @@ data class Note(
 
 data class UserProfile(
     val uid: String = "",
-    val firstName: String,
-    val lastName: String,
-    val weight: Float,
-    val height: Float,
-    val email: String,
-    val dateOfBirth: Timestamp,
-    val bloodType: BloodType,
-    val sex: String,
+    val firstName: String = "",
+    val lastName: String = "",
+    val weight: Float? = null,
+    val height: Float? = null,
+    val email: String = "",
+    val dateOfBirth: Timestamp = Timestamp.now(),
+    val bloodType: BloodType = BloodType.UNKNOWN,
+    val sex: String = "Unknown",
 )
 
 data class UserIntake(

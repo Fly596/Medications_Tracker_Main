@@ -33,8 +33,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medicationstracker.R
 import com.galeria.medicationstracker.ui.components.GBasicTextField
+import com.galeria.medicationstracker.ui.components.GPrimaryButton
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.utils.formatDateStringToTimestampMMMMddyyyy
+import com.galeria.medicationstracker.utils.formatTimestampTillTheDayMMMMddyyyy
 import com.google.firebase.Timestamp
 
 @Composable
@@ -61,6 +63,7 @@ fun ProfileDetailsScreen(
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             IconButton(
                 onClick = {
+                    onBackClick.invoke()
                     // Handle back button click
                 },
             ) {
@@ -102,7 +105,10 @@ fun ProfileDetailsScreen(
         }
 
 
-        HealthDetailItem("Date of Birth", state.value.dateOfBirth ?: Timestamp.now()) {
+        HealthDetailItem(
+            "Date of Birth",
+            formatTimestampTillTheDayMMMMddyyyy(state.value.dateOfBirth ?: Timestamp.now())
+        ) {
             viewModel.updateDateOfBirth(
                 formatDateStringToTimestampMMMMddyyyy(it)
             )
@@ -118,6 +124,17 @@ fun ProfileDetailsScreen(
         }
         HealthDetailItem("Height", state.value.height?.toString() ?: "") {
             viewModel.updateHeight(it.toFloat())
+        }
+
+        GPrimaryButton(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp),
+            onClick = {
+                viewModel.updateUser()
+            }
+        ) {
+            Text("Update")
         }
 
         Text(
@@ -142,7 +159,7 @@ fun HealthDetailItem(label: String, value: Any, onValueChange: (String) -> Unit 
         val interactionSource = remember { MutableInteractionSource() }
         GBasicTextField(
             value = value.toString(),
-            onValueChange = { onValueChange(value.toString()) },
+            onValueChange = { onValueChange(it) },
             modifier = Modifier.fillMaxWidth(),
             interactionSource = interactionSource,
             prefix = label,

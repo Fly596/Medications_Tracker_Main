@@ -35,6 +35,10 @@ class ProfileDetailsViewModel @Inject constructor(
     private val _state = MutableStateFlow(ProfileDetailsUiState())
     val state: StateFlow<ProfileDetailsUiState> = _state.asStateFlow()
 
+    init {
+        getUserData()
+    }
+
     fun updateUser() {
         viewModelScope.launch {
             val user = state.value
@@ -46,15 +50,28 @@ class ProfileDetailsViewModel @Inject constructor(
                 height = user.height ?: 0f,
                 dateOfBirth = user.dateOfBirth ?: Timestamp.now(),
                 bloodType = user.bloodType ?: BloodType.UNKNOWN,
-                sex = user.sex ?: "Unknown"
+                sex = user.sex ?: "Unknown",
+                uid = repository.getUserData().uid ?: ""
             )
             repository.updateUserData(newUser)
         }
     }
 
-    fun getUserData() {
+    private fun getUserData() {
+        var user = UserProfile()
+
         viewModelScope.launch {
-            repository.getUserData()
+            user = repository.getUserData()
+            _state.value = _state.value.copy(
+                firstName = user.firstName,
+                lastName = user.lastName,
+                email = user.email,
+                dateOfBirth = user.dateOfBirth,
+                sex = user.sex,
+                bloodType = user.bloodType,
+                weight = user.weight,
+                height = user.height
+            )
         }
     }
 

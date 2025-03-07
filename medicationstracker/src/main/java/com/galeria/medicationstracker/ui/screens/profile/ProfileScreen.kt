@@ -84,7 +84,7 @@ fun AccountScreenHead(
                 )
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
-                        text = uiState.value.user?.name.toString(),
+                        text = uiState.value.user?.firstName.toString(),
                         style = MedTrackerTheme.typography.display3Emphasized,
                         color = colors.primaryLabel
                     )
@@ -93,7 +93,7 @@ fun AccountScreenHead(
                         verticalAlignment = Alignment.Top,
                         horizontalArrangement = Arrangement.spacedBy(24.dp)
                     ) {
-                        LabeledStat(uiState.value.user?.age.toString(), "Age")
+                        // LabeledStat(uiState.value.user?.dateOfBirth.toString(), "Age")
                         LabeledStat(uiState.value.user?.height.toString(), "Heigth")
                         LabeledStat(uiState.value.user?.weight.toString(), "Weight")
                     }

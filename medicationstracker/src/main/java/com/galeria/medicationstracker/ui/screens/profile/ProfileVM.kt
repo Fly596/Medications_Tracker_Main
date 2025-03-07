@@ -3,9 +3,9 @@ package com.galeria.medicationstracker.ui.screens.profile
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.galeria.medicationstracker.data.User
 import com.galeria.medicationstracker.data.UserIntake
 import com.galeria.medicationstracker.data.UserMedication
+import com.galeria.medicationstracker.data.UserProfile
 import com.galeria.medicationstracker.data.UserRepository
 import com.galeria.medicationstracker.utils.FirestoreFunctions.FirestoreService
 import com.google.firebase.auth.FirebaseAuth
@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 data class ProfileScreenUiState(
     // val testData: String = "",
-    val user: User? = null,
+    val user: UserProfile? = null,
     // val doctors: List<User> = listOf(),
     // val selectedDoctor: User? = null,
     // val selectedTime: String = "",

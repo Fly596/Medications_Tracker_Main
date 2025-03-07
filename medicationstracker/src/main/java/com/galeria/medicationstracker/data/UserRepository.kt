@@ -1,5 +1,6 @@
 package com.galeria.medicationstracker.data
 
+import android.util.Log
 import com.galeria.medicationstracker.utils.FirestoreFunctions.FirestoreService.db
 import com.galeria.medicationstracker.utils.toLocalDateTime
 import com.google.firebase.auth.FirebaseAuth
@@ -16,7 +17,7 @@ interface UserRepository {
     suspend fun addUser()
     suspend fun deleteUser()
     suspend fun addIntake(intake: UserIntake)
-    suspend fun getUserData(): User
+    suspend fun getUserData(): UserProfile
     suspend fun updateUserData(user: UserProfile)
     suspend fun getUserDrugs(): List<UserMedication>
     suspend fun getUserIntakes(uid: String): List<UserIntake>
@@ -72,24 +73,24 @@ class UserRepositoryImpl @Inject constructor(
         TODO("Not yet implemented")
     }
 
-    override suspend fun getUserData(): User {
+    override suspend fun getUserData(): UserProfile {
         return try {
             val userRef = firestore.collection("User")
                 .document(auth.currentUser?.email.toString())
                 .get()
                 .await()
-            userRef.toObject(User::class.java)!!
+            userRef.toObject(UserProfile::class.java)!!
         } catch (e: Exception) {
-            User()
+            UserProfile()
         }
     }
 
     override suspend fun updateUserData(user: UserProfile) {
         firestore.collection("User").document(auth.currentUser?.email.toString())
             .set(user)
+            .addOnSuccessListener { Log.d("TAG", "DocumentSnapshot successfully written!") }
+            .addOnFailureListener { e -> Log.w("TAG", "Error writing document", e) }
 
-
-        TODO("Not yet implemented")
     }
 
     override suspend fun getUserIntakes(uid: String): List<UserIntake> {

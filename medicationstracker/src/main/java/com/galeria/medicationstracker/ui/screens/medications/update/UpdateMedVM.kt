@@ -28,6 +28,7 @@ data class UpdateMedUiState(
     val strength: Float = 0.0f,
     val strengthUnit: MedicationUnit = MedicationUnit.MG, // Add strength unit
     val selectedDays: List<String> = emptyList(),
+    val newSelectedDays: List<String> = emptyList()
 )
 
 class UpdateMedVM : ViewModel() {
@@ -73,7 +74,7 @@ class UpdateMedVM : ViewModel() {
                             intakeTime = _selectedMedication.value!!.intakeTime.toString(),
                             notes = _selectedMedication.value!!.notes.toString(),
                             strength = _selectedMedication.value!!.strength!!.toFloat(),
-                            selectedDays = _selectedMedication.value!!.daysOfWeek!!
+                            selectedDays = _selectedMedication.value!!.daysOfWeek
                         )
                     }
                 }
@@ -119,7 +120,7 @@ class UpdateMedVM : ViewModel() {
         val newValues: Map<String, Any?> = mapOf(
             "endDate" to uiState.endDate,
             "form" to uiState.medForm.toString(),
-            "daysOfWeek" to uiState.selectedDays,
+            "daysOfWeek" to uiState.newSelectedDays,
             "intakeTime" to uiState.intakeTime,
             "name" to uiState.medName,
             "notes" to uiState.notes,
@@ -160,7 +161,7 @@ class UpdateMedVM : ViewModel() {
     }
     
     fun updateSelectedDays(input: List<String>) {
-        uiState = uiState.copy(selectedDays = uiState.selectedDays + input)
+        uiState = uiState.copy(newSelectedDays = uiState.newSelectedDays + input)
     }
     
     fun updateMedName(input: String) {
