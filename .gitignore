@@ -18,7 +18,7 @@ release/
 # Gradle files
 .gradle/
 build/
-
+.idea/
 # Local configuration file (sdk path, etc)
 local.properties
 
@@ -101,3 +101,10 @@ gradle.properties
 /flyUiLibrary/build.gradle.kts
 /flyUiLibrary/consumer-rules.pro
 /flyUiLibrary/proguard-rules.pro
+.idea/misc.xml
+.idea/kotlinc.xml
+.idea/inspectionProfiles/Project_Default.xml
+.idea/discord.xml
+.idea/deploymentTargetSelector.xml
+.idea/codeStyles/Project.xml
+.idea/appInsightsSettings.xml

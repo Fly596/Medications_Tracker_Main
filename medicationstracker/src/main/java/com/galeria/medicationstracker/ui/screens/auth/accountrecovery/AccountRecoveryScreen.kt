@@ -20,8 +20,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.galeria.medicationstracker.R
-import com.galeria.medicationstracker.ui.componentsOld.FlyButton
-import com.galeria.medicationstracker.ui.componentsOld.FlyTextButton
+import com.galeria.medicationstracker.ui.components.GPrimaryButton
+import com.galeria.medicationstracker.ui.components.GTextButton
 import com.galeria.medicationstracker.ui.componentsOld.MyTextField
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 
@@ -39,7 +39,7 @@ fun AccountRecoveryScreen(
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.Top
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -48,7 +48,6 @@ fun AccountRecoveryScreen(
             style = MedTrackerTheme.typography.display2Emphasized,
         )
 
-        Spacer(modifier = Modifier.weight(1f))
 
         MyTextField(
             value = state.email,
@@ -62,13 +61,12 @@ fun AccountRecoveryScreen(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
-            FlyTextButton(onClick = { navigateHome.invoke() }) { Text(text = "Cancel") }
+            GTextButton(onClick = { navigateHome.invoke() }) { Text(text = "Cancel") }
 
             Spacer(modifier = Modifier.weight(1f))
-
-            FlyButton(
+            
+            GPrimaryButton(
                 onClick = {
                     viewModel.resetPassword(state.email)
                     navigateHome.invoke()
@@ -78,13 +76,11 @@ fun AccountRecoveryScreen(
                 Text(text = "Reset Password")
             }
         }
-        // Spacer(modifier = Modifier.weight(1f))
         Spacer(
             modifier = Modifier
                 .height(40.dp)
                 .weight(1f)
         )
-        // endregion
     }
 }
 

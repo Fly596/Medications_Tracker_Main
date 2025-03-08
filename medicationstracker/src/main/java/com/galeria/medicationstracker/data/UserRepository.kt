@@ -12,106 +12,134 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 interface UserRepository {
-    
-    suspend fun addUser()
-    suspend fun deleteUser()
-    suspend fun addIntake(intake: UserIntake)
-    suspend fun getUserData(uid: String): User
-    suspend fun updateUserData(user: User)
-    suspend fun getUserDrugs(uid: String): List<UserMedication>
-    suspend fun getUserIntakes(uid: String): List<UserIntake>
-    fun getUserIntakesFlow(uid: String): Flow<List<UserIntake>>
-    
+  
+  suspend fun addUser()
+  suspend fun deleteUser()
+  suspend fun addIntake(intake: UserIntake)
+  suspend fun getUserData(): User
+  suspend fun updateUserData(user: UserProfile)
+  suspend fun getUserDrugs(): List<UserMedication>
+  suspend fun getUserIntakes(uid: String): List<UserIntake>
+  suspend fun saveNote(note: Note)
+  suspend fun getNotes(): List<Note>
+  fun getUserIntakesFlow(uid: String): Flow<List<UserIntake>>
+  
 }
 
 class UserRepositoryImpl @Inject constructor(
-    private val firestore: FirebaseFirestore,
-    private val auth: FirebaseAuth,
+  private val firestore: FirebaseFirestore,
+  private val auth: FirebaseAuth,
 ) : UserRepository {
-    
-    override suspend fun addIntake(intake: UserIntake) {
-        firestore.collection("User")
-            .document("${auth.currentUser?.email}")
-            .collection("intakes")
-            .document("${intake.medicationName}_${intake.dateTime?.toLocalDateTime()?.dayOfYear}")
-            .set(
-                intake
-            )
+  
+  override suspend fun saveNote(note: Note) {
+    firestore.collection("User")
+      .document("${auth.currentUser?.email}")
+      .collection("notes")
+      .document("${note.title}_${note.date?.toLocalDateTime()?.dayOfYear}")
+      .set(
+        note
+      )
+  }
+  
+  override suspend fun getNotes(): List<Note> {
+    return try {
+      val userRef = firestore.collection("User")
+        .document(auth.currentUser?.email.toString())
+        .collection("notes")
+        .get()
+        .await()
+      userRef.toObjects(Note::class.java)
+    } catch (e: Exception) {
+      emptyList()
     }
-    
-    override suspend fun addUser() {
-        TODO("Not yet implemented")
+  }
+  
+  override suspend fun addIntake(intake: UserIntake) {
+    firestore.collection("User")
+      .document("${auth.currentUser?.email}")
+      .collection("intakes")
+      .document("${intake.medicationName}_${intake.dateTime?.toLocalDateTime()?.dayOfYear}")
+      .set(
+        intake
+      )
+  }
+  
+  override suspend fun addUser() {
+    TODO("Not yet implemented")
+  }
+  
+  override suspend fun deleteUser() {
+    TODO("Not yet implemented")
+  }
+  
+  override suspend fun getUserData(): User {
+    return try {
+      val userRef = firestore.collection("User")
+        .document(auth.currentUser?.email.toString())
+        .get()
+        .await()
+      userRef.toObject(User::class.java)!!
+    } catch (e: Exception) {
+      User()
     }
+  }
+  
+  override suspend fun updateUserData(user: UserProfile) {
+    firestore.collection("User").document(auth.currentUser?.email.toString())
+      .set(user)
     
-    override suspend fun deleteUser() {
-        TODO("Not yet implemented")
+    
+    TODO("Not yet implemented")
+  }
+  
+  override suspend fun getUserIntakes(uid: String): List<UserIntake> {
+    return try {
+      val userRef = firestore.collection("User")
+        .document(auth.currentUser?.email.toString())
+        .collection("intakes")
+        .get()
+        .await()
+      userRef.toObjects(UserIntake::class.java)
+    } catch (e: Exception) {
+      emptyList()
     }
-    
-    override suspend fun getUserData(uid: String): User {
-        return try {
-            val userRef = firestore.collection("User")
-                .document(auth.currentUser?.email.toString())
-                .get()
-                .await()
-            userRef.toObject(User::class.java)!!
-        } catch (e: Exception) {
-            User()
+  }
+  
+  override fun getUserIntakesFlow(uid: String): Flow<List<UserIntake>> {
+    return callbackFlow {
+      val listenerRegistration = firestore.collection("User")
+        .document(auth.currentUser?.email.toString())
+        .collection("intakes")
+        .orderBy("dateTime", Query.Direction.DESCENDING)
+        .whereEqualTo("uid", uid)
+        .addSnapshotListener { value, error ->
+          if (error != null) {
+            // Handle error
+            return@addSnapshotListener
+          }
+          
+          if (value != null) {
+            val userIntakes = value.toObjects(UserIntake::class.java)
+            trySend(userIntakes)
+          }
         }
-        
+      // Clean up the listener when the flow is cancelled
+      awaitClose {
+        listenerRegistration.remove()
+      }
+    }
+  }
+  
+  override suspend fun getUserDrugs(): List<UserMedication> {
+    return try {
+      val querySnapshot = db.collection("UserMedication")
+        .whereEqualTo("uid", auth.currentUser?.uid)
+        .get()
+        .await()
+      querySnapshot.toObjects(UserMedication::class.java)
+    } catch (e: Exception) {
+      emptyList()
     }
     
-    override suspend fun updateUserData(user: User) {
-        TODO("Not yet implemented")
-    }
-    
-    override suspend fun getUserIntakes(uid: String): List<UserIntake> {
-        return try {
-            val userRef = firestore.collection("User")
-                .document(auth.currentUser?.email.toString())
-                .collection("intakes")
-                .get()
-                .await()
-            userRef.toObjects(UserIntake::class.java)
-        } catch (e: Exception) {
-            emptyList()
-        }
-    }
-    
-    override fun getUserIntakesFlow(uid: String): Flow<List<UserIntake>> {
-        return callbackFlow {
-            val listenerRegistration = firestore.collection("User")
-                .document(auth.currentUser?.email.toString())
-                .collection("intakes")
-                .orderBy("dateTime", Query.Direction.DESCENDING)
-                .whereEqualTo("uid", uid)
-                .addSnapshotListener { value, error ->
-                    if (error != null) {
-                        // Handle error
-                        return@addSnapshotListener
-                    }
-                    
-                    if (value != null) {
-                        val userIntakes = value.toObjects(UserIntake::class.java)
-                        trySend(userIntakes)
-                    }
-                }
-            // Clean up the listener when the flow is cancelled
-            awaitClose {
-                listenerRegistration.remove()
-            }
-        }
-    }
-    
-    override suspend fun getUserDrugs(uid: String): List<UserMedication> {
-        return try {
-            val querySnapshot = db.collection("UserMedication")
-                .whereEqualTo("uid", uid)
-                .get()
-                .await()
-            querySnapshot.toObjects(UserMedication::class.java)
-        } catch (e: Exception) {
-            emptyList()
-        }
-        
-    }
+  }
 }

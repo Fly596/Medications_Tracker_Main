@@ -36,10 +36,10 @@ import com.galeria.medicationstracker.ui.componentsOld.FlyTonalButton
 import com.galeria.medicationstracker.ui.componentsOld.MyTextField
 import com.galeria.medicationstracker.ui.screens.medications.MedsPagesViewModel
 import com.galeria.medicationstracker.ui.screens.medications.newmed.DateRangePickerModal
-import com.galeria.medicationstracker.ui.screens.medications.newmed.convertMillisToDate
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
-import com.galeria.medicationstracker.utils.formatTimestampTillTheDay
-import com.galeria.medicationstracker.utils.parseDateForFirestore
+import com.galeria.medicationstracker.utils.convertMillisToDate
+import com.galeria.medicationstracker.utils.formatDateStringToTimestampMMMMddyyyy
+import com.galeria.medicationstracker.utils.formatTimestampTillTheDayMMMMddyyyy
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
@@ -232,10 +232,12 @@ fun DatePicker(
         if (showPicker) {
             DateRangePickerModal(
                 onDateRangeSelected = {
-                    viewModel.updateStartDate(parseDateForFirestore(
+                    viewModel.updateStartDate(
+                        formatDateStringToTimestampMMMMddyyyy(
                         convertMillisToDate(it.first)
                     ))
-                    viewModel.updateEndDate(parseDateForFirestore(
+                    viewModel.updateEndDate(
+                        formatDateStringToTimestampMMMMddyyyy(
                         convertMillisToDate(it.second)
                     ))
                     showPicker = !showPicker
@@ -245,8 +247,8 @@ fun DatePicker(
         }
         MyTextField(
             value = "",
-            label = "Start: ${formatTimestampTillTheDay(viewModel.uiState.startDate)}\nEnd: ${
-                formatTimestampTillTheDay(
+            label = "Start: ${formatTimestampTillTheDayMMMMddyyyy(viewModel.uiState.startDate)}\nEnd: ${
+                formatTimestampTillTheDayMMMMddyyyy(
                     viewModel.uiState.endDate
                 )
             }",

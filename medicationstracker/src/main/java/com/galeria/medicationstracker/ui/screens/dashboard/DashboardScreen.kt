@@ -15,6 +15,7 @@ import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -50,27 +51,43 @@ fun DashboardScreen(
 ) {
     val uiState = dashboardViewModel.uiState.collectAsStateWithLifecycle()
     
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        // today's date.
-        Text(
-            text = getTodaysDate().format(DateTimeFormatter.ofPattern("MMM d")),
-            style = typography.display3Emphasized
-        )
-        // Календарь на неделю.
-        WeeklyCalendarView()
-
-        // Medication Cards List.
-        MedsByIntakeTimeList(
-            viewModel = dashboardViewModel,
-            onAddNoteClick = {
-                onAddMedClick
-            },
-            medicationsForIntakeTime = uiState.value.currentTakenMedications
-        )
+    Scaffold(
+        containerColor = MedTrackerTheme.colors.secondaryBackground,
+        topBar = {
+            // today's date.
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+            ) {
+                Text(
+                    text = getTodaysDate().format(DateTimeFormatter.ofPattern("MMM d")),
+                    style = typography.display3Emphasized
+                )
+            }
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = modifier
+                .padding(innerPadding)
+                .padding(16.dp)
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            // Календарь на неделю.
+            WeeklyCalendarView()
+            // Medication Cards List.
+            MedsByIntakeTimeList(
+                viewModel = dashboardViewModel,
+                onAddNoteClick = {
+                    onAddMedClick.invoke()
+                },
+                medicationsForIntakeTime = uiState.value.currentTakenMedications
+            )
+        }
     }
+    
+
 }
 
 // Список лекарств по времени приема.
@@ -179,14 +196,11 @@ fun MedicationItem(
         // Display the dialog when `showLogDialog.value` is true
         if (showLogDialog.value) {
             LogMedicationTimeDialog(
-                onDismiss = {
-                    /*             viewModel.addNewIntake(
-                                    medication = medication,
-                                    status = false
-                                ) */
+                medication = medication,
+                onDialogDismissed = {
                     showLogDialog.value = false
                 },
-                onConfirmation = {
+                onTimeConfirmed = {
                     viewModel.addNewIntake(
                         medication = medication,
                         status = true
@@ -194,7 +208,7 @@ fun MedicationItem(
                     showLogDialog.value = false
                 },
                 onAddNotes = {
-                    onAddNoteClick
+                    onAddNoteClick.invoke()
                     showLogDialog.value = false
                 },
                 onConfirmTime = { time ->

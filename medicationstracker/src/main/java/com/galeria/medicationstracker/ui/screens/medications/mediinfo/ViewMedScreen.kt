@@ -18,7 +18,7 @@ import com.galeria.medicationstracker.ui.componentsOld.FlySimpleCard
 import com.galeria.medicationstracker.ui.componentsOld.FlyTonalButton
 import com.galeria.medicationstracker.ui.screens.medications.MedsPagesViewModel
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
-import com.galeria.medicationstracker.utils.formatTimestampTillTheDay
+import com.galeria.medicationstracker.utils.formatTimestampTillTheDayMMMMddyyyy
 import com.google.firebase.Timestamp
 
 @Composable
@@ -57,7 +57,7 @@ fun MedStatCard(
     totalSkipped: Int
 ) {
     if (startDate == null) return
-    val startDateFormatted = formatTimestampTillTheDay(startDate)
+    val startDateFormatted = formatTimestampTillTheDayMMMMddyyyy(startDate)
 
     FlySimpleCard(modifier = modifier) {
         // начальная дата.

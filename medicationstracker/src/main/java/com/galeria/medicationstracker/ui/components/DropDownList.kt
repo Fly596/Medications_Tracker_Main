@@ -18,68 +18,67 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 
-
 @Composable
 fun GDropdownList(
-    modifier: Modifier = Modifier,
-    items: List<String>, onItemSelected: (String) -> Unit
+  modifier: Modifier = Modifier,
+  items: List<String>, onItemSelected: (String) -> Unit
 ) {
-    var expanded by remember { mutableStateOf(false) }
-    var selectedItem by remember {
-        mutableStateOf(
-            items.firstOrNull() ?: "No Items"
-        )
-    }
-    // val items = listOf("Item 1", "Item 2", "Item 3")
-    Box(
-        modifier = modifier/* .fillMaxSize() */,
-        contentAlignment = Alignment.Center
-    ) {
-        Column {
-            GOutlinedButton(onClick = { expanded = true }) {
-                Text(selectedItem)
-            }
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false },
-                containerColor = MedTrackerTheme.colors.secondaryBackground,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                items.forEach { item ->
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                item,
-                                style = MedTrackerTheme.typography.bodyMedium
-                            )
-                        },
-                        onClick = {
-                            selectedItem = item
-                            expanded = false
-                            onItemSelected(item) // Call back with the selected item
-                        },
-                        colors = MenuItemColors(
-                            textColor = MedTrackerTheme.colors.sysBlack,
-                            leadingIconColor = MedTrackerTheme.colors.sysBlack,
-                            trailingIconColor = MedTrackerTheme.colors.sysBlack,
-                            disabledTextColor = MedTrackerTheme.colors.sysBlack,
-                            disabledLeadingIconColor = MedTrackerTheme.colors.sysBlack,
-                            disabledTrailingIconColor = MedTrackerTheme.colors.sysBlack
-                        ),
-                        modifier = Modifier
-                    )
-                }
-            }
+  var expanded by remember { mutableStateOf(false) }
+  var selectedItem by remember {
+    mutableStateOf(
+      items.firstOrNull() ?: "No Items"
+    )
+  }
+  Box(
+    modifier = modifier,
+    contentAlignment = Alignment.Center
+  ) {
+    Column {
+      GOutlinedButton(onClick = { expanded = true }) {
+        Text(selectedItem)
+      }
+      DropdownMenu(
+        expanded = expanded,
+        onDismissRequest = { expanded = false },
+        containerColor = MedTrackerTheme.colors.secondaryBackground,
+        modifier = Modifier.fillMaxWidth()
+      ) {
+        items.forEach { item ->
+          DropdownMenuItem(
+            text = {
+              Text(
+                item,
+                style = MedTrackerTheme.typography.bodyMedium
+              )
+            },
+            onClick = {
+              selectedItem = item
+              expanded = false
+              onItemSelected(item) // Call back with the selected item
+            },
+            colors = MenuItemColors(
+              textColor = MedTrackerTheme.colors.sysBlack,
+              leadingIconColor = MedTrackerTheme.colors.sysBlack,
+              trailingIconColor = MedTrackerTheme.colors.sysBlack,
+              disabledTextColor = MedTrackerTheme.colors.sysBlack,
+              disabledLeadingIconColor = MedTrackerTheme.colors.sysBlack,
+              disabledTrailingIconColor = MedTrackerTheme.colors.sysBlack
+            ),
+            modifier = Modifier
+          )
         }
+      }
     }
+  }
 }
 
-@Preview(showSystemUi = true, showBackground = true)
+@Preview(showSystemUi = false, showBackground = true)
 @Composable
 fun DropdownMenuExamplePreview() {
-    MedTrackerTheme {
-        Column(modifier = Modifier.fillMaxSize()) {
-            // DropdownMenuExample()
-        }
+  val items = listOf("Item 1", "Item 2", "Item 3")
+  MedTrackerTheme {
+    Column(modifier = Modifier.fillMaxSize()) {
+      GDropdownList(items = items, onItemSelected = { {} })
     }
+  }
 }

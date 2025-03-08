@@ -14,5 +14,12 @@
     <string name="title_activity_admin">AdminActivity</string>
     <string name="title_main_admin">Admin View</string>
     <string name="title_activity_doctor">DoctorActivity</string>
+    <string name="email_text_field_label">Email</string>
+    <string name="password_text_field_label">Password</string>
+    <string name="password_text_field_reqs_placeholder">6 or more characters</string>
+    <string name="sign_in_button_text">Sign In</string>
+    <string name="create_account_button_text">Create Account</string>
+    <string name="forgot_password_button_text">Forgot password?</string>
+    <string name="show_password_switch_text">Show password</string>
 
 </resources>

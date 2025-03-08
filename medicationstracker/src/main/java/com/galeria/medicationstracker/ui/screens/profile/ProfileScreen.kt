@@ -48,7 +48,7 @@ import com.galeria.medicationstracker.ui.componentsOld.FlySimpleCard
 import com.galeria.medicationstracker.ui.screens.dashboard.record.LogsCard
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme.colors
-import com.galeria.medicationstracker.utils.formatTimestampTillTheDay
+import com.galeria.medicationstracker.utils.formatTimestampTillTheDayMMMMddyyyy
 import com.galeria.medicationstracker.utils.formatTimestampTillTheHour
 
 @Composable
@@ -56,26 +56,13 @@ fun AccountScreenHead(
     modifier: Modifier = Modifier,
     onWeightClick: () -> Unit = {},
     onHeightClick: () -> Unit = {},
+    onProfileClick: () -> Unit = {},
     onNotesClick: () -> Unit = {},
     viewModel: ProfileVM = hiltViewModel(),
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
-
+    
     Column(modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.Start) {
-/*         // title and "edit" button.
-        Row(modifier = modifier.fillMaxWidth()) {
-            Spacer(modifier = Modifier.weight(1f))
-            
-            IconButton(
-                onClick = {}
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Menu,
-                    contentDescription = "edit",
-                    tint = MedTrackerTheme.colors.primaryLabel
-                )
-            }
-        } */
         // pfp, name, email.
         Column(
             horizontalAlignment = Alignment.Start,
@@ -116,6 +103,7 @@ fun AccountScreenHead(
             GPrimaryButton(
                 modifier = Modifier.fillMaxWidth()/* .padding(horizontal = 24.dp) */,
                 onClick = {
+                    onProfileClick.invoke()
                     // Todo: open edit profile screen
                 }
             ) {
@@ -254,7 +242,7 @@ fun UserHistory(intakes: List<UserIntake> = emptyList()) {
     LazyColumn {
         items(intakes) { intake ->
             val formattedDate = if (intake.dateTime != null) {
-                formatTimestampTillTheDay(intake.dateTime)
+                formatTimestampTillTheDayMMMMddyyyy(intake.dateTime)
             } else {
                 ""
             }

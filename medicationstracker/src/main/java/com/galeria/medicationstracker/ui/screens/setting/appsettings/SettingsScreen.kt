@@ -1,4 +1,4 @@
-package com.galeria.medicationstracker.ui.screens.profile.settings
+package com.galeria.medicationstracker.ui.screens.setting.appsettings
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -35,11 +35,10 @@ fun SettingsScreen(
   Column(
     modifier = modifier
       .fillMaxSize(),
-    //.padding(it),
     verticalArrangement = Arrangement.spacedBy(8.dp)
   ) {
     Spacer(modifier = Modifier.padding(8.dp))
-
+    
     HIGListButton(
       text = "Adjust Design",
       onClick = {
@@ -47,7 +46,7 @@ fun SettingsScreen(
       },
       leftIcon = Icons.Filled.Visibility
     )
-
+    
     HIGListButton(
       text = "Select Start Page",
       onClick = {
@@ -55,7 +54,7 @@ fun SettingsScreen(
       },
       leftIcon = Icons.Filled.Start
     )
-
+    
     HIGListButton(
       text = "Change Language",
       onClick = {
@@ -63,9 +62,8 @@ fun SettingsScreen(
       },
       leftIcon = Icons.Filled.Language
     )
-
   }
-
+  
 }
 
 @Preview
@@ -84,15 +82,16 @@ fun SettingsCardComponent(
   title: String = "category name",
   onClick: () -> Unit,
 ) {
-
   ElevatedCard(modifier = modifier.padding(vertical = 8.dp)) {
     Column(
       modifier =
         Modifier.padding(horizontal = 8.dp, vertical = 16.dp),
       // verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium)),
     ) {
-
-      Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+      Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+      ) {
         Row(
           horizontalArrangement = Arrangement.spacedBy(12.dp),
           verticalAlignment = Alignment.CenterVertically
@@ -105,13 +104,12 @@ fun SettingsCardComponent(
               modifier = Modifier.size(24.dp),
             )
           }
-
+          
           Text(title, style = MedTrackerTheme.typography.bodyMedium)
-
         }
-
+        
         Spacer(modifier.weight(1f))
-
+        
         Icon(
           imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
           contentDescription = null,
@@ -122,5 +120,5 @@ fun SettingsCardComponent(
       // Text(description, style = MedTrackerTheme.typography.subhead)
     }
   }
-
+  
 }

@@ -1,5 +1,5 @@
 [versions]
-agp = "8.10.0-alpha06"
+agp = "8.10.0-alpha07"
 firebaseBom = "33.9.0"
 hiltAndroid = "2.55"
 kotlin = "2.1.0"
@@ -16,7 +16,6 @@ comGoogleGmsGoogleServicesGradlePlugin = "4.4.2"
 coilCompose = "2.7.0"
 firebaseFirestore = "25.1.2"
 firebaseAuth = "23.2.0"
-firebaseAnalytics = "22.2.0"
 firebaseStorage = "21.0.1"
 composeNavigation = "2.8.7"
 roomRuntime = "2.7.0-beta01"
@@ -50,7 +49,6 @@ com-google-gms-google-services-gradle-plugin = { group = "com.google.gms.google-
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coilCompose" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
-google-firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics", version.ref = "firebaseAnalytics" }
 google-firebase-storage = { group = "com.google.firebase", name = "firebase-storage", version.ref = "firebaseStorage" }
 navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "composeNavigation" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.8.0" }
