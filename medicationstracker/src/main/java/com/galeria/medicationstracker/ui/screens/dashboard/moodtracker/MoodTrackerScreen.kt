@@ -1,4 +1,4 @@
-package com.galeria.medicationstracker.ui.screens.dashboard
+package com.galeria.medicationstracker.ui.screens.dashboard.moodtracker
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,6 +17,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -34,9 +35,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medicationstracker.data.UserMedication
 import com.galeria.medicationstracker.ui.components.GFABButton
+import com.galeria.medicationstracker.ui.components.GPrimaryButton
 import com.galeria.medicationstracker.ui.componentsOld.FLySimpleCardContainer
 import com.galeria.medicationstracker.ui.componentsOld.LogMedicationTimeDialog
-import com.galeria.medicationstracker.ui.componentsOld.WeeklyCalendarView
+import com.galeria.medicationstracker.ui.screens.dashboard.DashboardVM
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme.typography
 import com.galeria.medicationstracker.utils.getTodaysDate
@@ -44,13 +46,12 @@ import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DashboardScreen(
+fun MoodTrackerScreen(
     modifier: Modifier = Modifier,
-    onAddMood: () -> Unit = {},
-    onAddMedClick: () -> Unit,
-    dashboardViewModel: DashboardVM = hiltViewModel(),
+    onBackClick: () -> Unit = {},
+    viewModel: MoodTrackerVM = hiltViewModel(),
 ) {
-    val uiState = dashboardViewModel.uiState.collectAsStateWithLifecycle()
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     MedTrackerTheme {
         Scaffold(
             containerColor = MedTrackerTheme.colors.secondaryBackground,
@@ -66,7 +67,6 @@ fun DashboardScreen(
             floatingActionButton = {
                 GFABButton(
                     onClick = {
-                        onAddMood.invoke()
                         // mood tracker
                     }
                 )
@@ -78,18 +78,17 @@ fun DashboardScreen(
                     .padding(innerPadding),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-
-                // Календарь на неделю.
-                WeeklyCalendarView()
-
-                // Medication Cards List.
-                MedsByIntakeTimeList(
-                    viewModel = dashboardViewModel,
-                    onAddNoteClick = {
-                        onAddMedClick.invoke()
-                    },
-                    medicationsForIntakeTime = uiState.value.currentTakenMedications
+                TextField(
+                    value = uiState.value.mood.toString(),
+                    onValueChange = { viewModel.updateMood(it.toInt()) },
+                    label = { Text("Enter your mood") },
                 )
+
+                Text(text = "Your mood is ${uiState.value.mood}")
+
+                GPrimaryButton(onClick = { viewModel.addMood(uiState.value.mood) }) {
+                    Text(text = "Add mood")
+                }
             }
         }
 

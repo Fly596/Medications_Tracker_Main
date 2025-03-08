@@ -18,6 +18,7 @@ import com.galeria.medicationstracker.ui.screens.auth.accountrecovery.AccountRec
 import com.galeria.medicationstracker.ui.screens.auth.login.LoginScreen
 import com.galeria.medicationstracker.ui.screens.auth.signup.SignupScreen
 import com.galeria.medicationstracker.ui.screens.dashboard.DashboardScreen
+import com.galeria.medicationstracker.ui.screens.dashboard.moodtracker.MoodTrackerScreen
 import com.galeria.medicationstracker.ui.screens.medications.MedicationsScreen
 import com.galeria.medicationstracker.ui.screens.medications.MedsPagesViewModel
 import com.galeria.medicationstracker.ui.screens.medications.mediinfo.ViewMedicationInfoScreen
@@ -146,6 +147,9 @@ sealed class Routes {
         // profile screen.
         @Serializable
         object PatientInfo : PatientRoutes()
+
+        @Serializable
+        object MoodCheck : PatientRoutes()
         
         @Serializable
         data object PatientProfile : PatientRoutes()
@@ -318,9 +322,9 @@ fun NavGraphBuilder.patientDashboardGraph(
             /*  DashboardScreenNew(
              ) */
             DashboardScreen(
-                onViewLogsClick = {
+                onAddMood = {
                     // open logs history screen.
-                    navController.navigate(PatientRoutes.PatientLogs) {
+                    navController.navigate(PatientRoutes.MoodCheck) {
                         popUpTo(PatientRoutes.PatientTodayMedications) {
                         }
                     }
@@ -334,14 +338,14 @@ fun NavGraphBuilder.patientDashboardGraph(
                 }
             )
         }
-        /*         composable<PatientRoutes.PatientLogs> {
-                    IntakeRecordsScreen(
-                        onBackClick = {
-                            // go back to the dashboard.
-                            navController.navigateUp()
-                        }
-                    )
-                } */
+        composable<PatientRoutes.MoodCheck> {
+            MoodTrackerScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                }
+
+            )
+        }
     }
 }
 
