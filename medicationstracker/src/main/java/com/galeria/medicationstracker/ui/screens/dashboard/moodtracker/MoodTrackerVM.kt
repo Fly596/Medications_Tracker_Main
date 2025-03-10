@@ -16,6 +16,7 @@ import javax.inject.Inject
 
 data class MoodTrackerUiState(
     val mood: Int = 0,
+    val notes: String? = null
 )
 
 @HiltViewModel
@@ -36,7 +37,8 @@ class MoodTrackerVM @Inject constructor(
 
             val moodEntry = hashMapOf(
                 "mood" to mood,
-                "timestamp" to Timestamp.now()
+                "timestamp" to Timestamp.now(),
+                "notes" to uiState.value.notes
             )
 
             if (userId != null) {
@@ -59,5 +61,10 @@ class MoodTrackerVM @Inject constructor(
     fun updateMood(mood: Int) {
         _uiState.value = _uiState.value.copy(mood = mood)
     }
+
+    fun updateNotes(notes: String) {
+        _uiState.value = _uiState.value.copy(notes = notes)
+    }
+
 
 }

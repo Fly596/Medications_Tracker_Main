@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Medication
 import androidx.compose.material.icons.outlined.CheckCircle
@@ -16,11 +17,12 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,11 +33,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medicationstracker.data.UserMedication
-import com.galeria.medicationstracker.ui.components.GFABButton
 import com.galeria.medicationstracker.ui.components.GPrimaryButton
+import com.galeria.medicationstracker.ui.components.GTextField
 import com.galeria.medicationstracker.ui.componentsOld.FLySimpleCardContainer
 import com.galeria.medicationstracker.ui.componentsOld.LogMedicationTimeDialog
 import com.galeria.medicationstracker.ui.screens.dashboard.DashboardVM
@@ -49,27 +50,28 @@ import java.time.format.DateTimeFormatter
 fun MoodTrackerScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
-    viewModel: MoodTrackerVM = hiltViewModel(),
+    viewModel: MoodTrackerVM,
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+
     MedTrackerTheme {
         Scaffold(
             containerColor = MedTrackerTheme.colors.secondaryBackground,
             topBar = {
-                Column(modifier = Modifier.padding(vertical = 16.dp)) {
+                Row(modifier = Modifier.padding(vertical = 16.dp)) {
+                    IconButton(onClick = onBackClick) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBackIosNew,
+                            contentDescription = null,
+                            tint = MedTrackerTheme.colors.sysSuccess
+                        )
+                    }
                     // today's date.
                     Text(
                         text = getTodaysDate().format(DateTimeFormatter.ofPattern("MMM d")),
                         style = typography.display3Emphasized
                     )
                 }
-            },
-            floatingActionButton = {
-                GFABButton(
-                    onClick = {
-                        // mood tracker
-                    }
-                )
             }
         ) { innerPadding ->
             Column(
@@ -78,15 +80,29 @@ fun MoodTrackerScreen(
                     .padding(innerPadding),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                TextField(
-                    value = uiState.value.mood.toString(),
-                    onValueChange = { viewModel.updateMood(it.toInt()) },
-                    label = { Text("Enter your mood") },
+
+                var intensivity by remember { mutableFloatStateOf(5.0f) }
+                Slider(
+                    value = intensivity,
+                    valueRange = 1f..10f,
+                    onValueChange = { intensivity = it },
+                    modifier = Modifier.padding(top = 16.dp)
                 )
 
-                Text(text = "Your mood is ${uiState.value.mood}")
+                Text(text = "Your mood is ${intensivity.toInt()}")
 
-                GPrimaryButton(onClick = { viewModel.addMood(uiState.value.mood) }) {
+                GTextField(
+                    value = uiState.value.notes.toString(),
+                    onValueChange = { viewModel.updateNotes(it) },
+                    label = "Notes"
+                )
+
+                GPrimaryButton(onClick = {
+                    viewModel.addMood(
+                        intensivity.toInt()
+                    )
+                    onBackClick.invoke()
+                }) {
                     Text(text = "Add mood")
                 }
             }
