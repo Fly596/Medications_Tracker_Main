@@ -38,6 +38,7 @@ class SignupScreenViewModel : ViewModel() {
     val auth = FirebaseAuth.getInstance()
     var signupScreenState = MutableStateFlow(SignupScreenState())
         private set
+
     private val db = FirestoreFunctions.FirestoreService.db
 
     private fun validateEmail(): Boolean {
@@ -70,8 +71,7 @@ class SignupScreenViewModel : ViewModel() {
             isValid = false
         }
 
-        signupScreenState.value =
-            signupScreenState.value.copy(passwordErrorMessage = errorMessage)
+        signupScreenState.value = signupScreenState.value.copy(passwordErrorMessage = errorMessage)
         return isValid
     }
 
@@ -83,7 +83,7 @@ class SignupScreenViewModel : ViewModel() {
             auth
                 .createUserWithEmailAndPassword(
                     signupScreenState.value.email.trim(),
-                    signupScreenState.value.password.trim()
+                    signupScreenState.value.password.trim(),
                 )
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
@@ -94,63 +94,63 @@ class SignupScreenViewModel : ViewModel() {
                         addUserData()
                         // Toast.makeText(context, "Account Created", Toast.LENGTH_SHORT).show()
                         viewModelScope.launch {
-                            SnackbarController.sendEvent(event = SnackbarEvent(message = "Account Created!"))
+                            SnackbarController.sendEvent(
+                                event = SnackbarEvent(message = "Account Created!")
+                            )
                         }
                         onSignupSuccess.invoke()
                     } else {
                         viewModelScope.launch {
                             SnackbarController.sendEvent(
-                                event = SnackbarEvent(message = "Account Creation Failed${task.exception?.message}")
+                                event =
+                                    SnackbarEvent(
+                                        message =
+                                            "Account Creation Failed${task.exception?.message}"
+                                    )
                             )
                         }
                     }
                 }
         } else {
             viewModelScope.launch {
-                SnackbarController.sendEvent(event = SnackbarEvent(message = "Invalid email or password."))
+                SnackbarController.sendEvent(
+                    event = SnackbarEvent(message = "Invalid email or password.")
+                )
             }
         }
     }
 
     fun addUserData() {
-        val newUser = UserProfile(
-            signupScreenState.value.uid,
-            signupScreenState.value.firstName,
-            signupScreenState.value.lastName,
-            signupScreenState.value.weight,
-            signupScreenState.value.height,
-            signupScreenState.value.email,
-            signupScreenState.value.dateOfBirth,
-            signupScreenState.value.bloodType,
-            signupScreenState.value.sex
-
-        )
-        db.collection("User").document(newUser.email.toString()).set(newUser)
+        val newUser =
+            UserProfile(
+                signupScreenState.value.uid,
+                signupScreenState.value.firstName,
+                signupScreenState.value.lastName,
+                signupScreenState.value.weight,
+                signupScreenState.value.height,
+                signupScreenState.value.email,
+                signupScreenState.value.dateOfBirth,
+                signupScreenState.value.bloodType,
+                signupScreenState.value.sex,
+            )
+        db.collection("User")
+            .document(newUser.email.toString())
+            .set(newUser)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     viewModelScope.launch {
-                        SnackbarController.sendEvent(event = SnackbarEvent(message = "Account Created!"))
+                        SnackbarController.sendEvent(
+                            event = SnackbarEvent(message = "Account Created!")
+                        )
                     }
                 } else {
                     viewModelScope.launch {
-                        SnackbarController.sendEvent(event = SnackbarEvent(message = "Something went wrong :("))
+                        SnackbarController.sendEvent(
+                            event = SnackbarEvent(message = "Something went wrong :(")
+                        )
                     }
                 }
             }
-        /*     db.collection("users").add(newUser)
-              .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                  viewModelScope.launch {
-                    SnackbarController.sendEvent(event = SnackbarEvent(message = "Account Created!"))
-                  }
-                } else {
-                  viewModelScope.launch {
-                    SnackbarController.sendEvent(event = SnackbarEvent(message = "Something went wrong :("))
-
-                  }
-                }
-
-              } */
     }
 
     fun updateUserAge(input: Int) {
@@ -181,30 +181,3 @@ class SignupScreenViewModel : ViewModel() {
         signupScreenState.value = signupScreenState.value.copy(showPassword = !input)
     }
 }
-/*  fun onRegisterClick(context: Context, onSignupSuccess: () -> Unit) = viewModelScope.launch() {
-
-  if (validatePassword() && validateEmail()) {
-    auth
-      .createUserWithEmailAndPassword(signupScreenState.email, signupScreenState.password)
-      .addOnCompleteListener { task ->
-        if (task.isSuccessful) {
-
-          // Toast.makeText(context, "Account Created", Toast.LENGTH_SHORT).show()
-          viewModelScope.launch {
-            SnackbarController.sendEvent(event = SnackbarEvent(message = "Account Created!"))
-          }
-          onSignupSuccess.invoke()
-        } else {
-          viewModelScope.launch {
-            SnackbarController.sendEvent(
-              event = SnackbarEvent(message = "Account Creation Failed${task.exception?.message}")
-            )
-          }
-        }
-      }
-  } else {
-    viewModelScope.launch {
-      SnackbarController.sendEvent(event = SnackbarEvent(message = "Invalid email or password."))
-    }
-  }
-}*/

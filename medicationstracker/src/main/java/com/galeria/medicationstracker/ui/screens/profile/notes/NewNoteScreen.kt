@@ -28,7 +28,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medicationstracker.ui.components.GBasicTextField
 import com.galeria.medicationstracker.ui.components.GPrimaryButton
@@ -39,7 +38,7 @@ import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 fun NewNoteScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
-    viewModel: NewNoteViewModel = hiltViewModel(),
+    viewModel: NewNoteViewModel,
 ) {
     val state = viewModel.uiState.collectAsStateWithLifecycle()
     MedTrackerTheme {
@@ -67,13 +66,11 @@ fun NewNoteScreen(
                         )
                     }
                     HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
-
                 }
-
             }
         ) { innerPadding ->
             Column(
-                modifier = Modifier
+                modifier = modifier
                     .padding(innerPadding)
                     .padding(16.dp)
                     .fillMaxSize()
@@ -90,7 +87,7 @@ fun NewNoteScreen(
                     prefixStyle = MedTrackerTheme.typography.title1Emphasized,
                     prefixModifier = Modifier
                 )
-
+                
                 GTextField(
                     value = state.value.content,
                     onValueChange = {
@@ -102,7 +99,6 @@ fun NewNoteScreen(
                     singleLine = false,
                     isPrimaryColor = true
                 )
-
                 // Medication Chips
                 Text(
                     text = "Medications",
@@ -120,9 +116,8 @@ fun NewNoteScreen(
                             onSelected = { viewModel.toggleMedication(medication.name) }
                         )
                     }
-
                 }
-
+                
                 GPrimaryButton(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -136,7 +131,7 @@ fun NewNoteScreen(
             }
         }
     }
-
+    
 }
 
 // Reusable FilterChip composable

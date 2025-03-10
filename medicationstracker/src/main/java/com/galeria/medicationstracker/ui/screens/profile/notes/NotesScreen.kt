@@ -25,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medicationstracker.ui.components.GTextField
 import com.galeria.medicationstracker.ui.componentsOld.FlySimpleCard
@@ -37,42 +36,32 @@ fun NotesScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
     onNewNoteClick: () -> Unit = {},
-    viewModel: NotesScreenViewModel = hiltViewModel(),
+    viewModel: NotesScreenViewModel,
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     Column(
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalAlignment = Alignment.Start
+        horizontalAlignment = Alignment.Start,
     ) {
         // title and "edit" button.
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            Text(
-                text = "Notes",
-                style = MedTrackerTheme.typography.display3Emphasized
-            )
-            IconButton(
-                modifier = Modifier,
-                onClick = {
-                    onNewNoteClick.invoke()
-                }
-            ) {
+            Text(text = "Notes", style = MedTrackerTheme.typography.display3Emphasized)
+            IconButton(modifier = Modifier, onClick = { onNewNoteClick.invoke() }) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = "new note",
                     tint = MedTrackerTheme.colors.primaryLabel,
-                    modifier = Modifier.size(36.dp)
+                    modifier = Modifier.size(36.dp),
                 )
             }
         }
 
-        LazyColumn(
-        ) {
+        LazyColumn() {
             items(uiState.value.notes.size) { note ->
                 UserNoteCard(
                     title = uiState.value.notes[note].title.toString(),
@@ -80,12 +69,8 @@ fun NotesScreen(
                     date = formatTimestampToMinutemmmmddyyyyhm(uiState.value.notes[note].date),
                     tags = uiState.value.notes[note].tags,
                     medication = uiState.value.notes[note].medication,
-
-                    )
+                )
             }
-            /* items(4) {
-                UserNoteCard()
-            } */
         }
     }
 }
@@ -103,15 +88,8 @@ fun UserNoteCard(
 ) {
     var tfVal by remember { mutableStateOf("content") }
     val interactionSource = remember { MutableInteractionSource() }
-    FlySimpleCard(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-    ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-            modifier = Modifier
-        ) {
+    FlySimpleCard(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier) {
             Text(text = date, style = MedTrackerTheme.typography.title3)
             Text(text = title, style = MedTrackerTheme.typography.title1Emphasized)
 
@@ -120,19 +98,10 @@ fun UserNoteCard(
                 value = content,
                 onValueChange = { onContentValueChange(it) },
                 label = "Content",
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             )
-            /*       GBasicTextField(
-                      modifier = Modifier.fillMaxWidth(),
-                      value = content,
-                      onValueChange = { onContentValueChange(it) },
-                      interactionSource = interactionSource,
-                      readOnly = true,
-                      alignEnd = false
-                  ) */
         }
     }
-
 }
 
 @Composable
@@ -140,7 +109,7 @@ fun UserNoteCard(
 fun NotesScreenPreview() {
     MedTrackerTheme {
         Column(modifier = Modifier.fillMaxSize()) {
-            NotesScreen()
+            // NotesScreen()
         }
     }
 }

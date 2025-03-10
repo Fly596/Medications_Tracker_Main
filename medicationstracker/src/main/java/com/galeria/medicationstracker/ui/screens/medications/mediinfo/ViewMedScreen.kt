@@ -31,22 +31,15 @@ fun ViewMedicationInfoScreen(
 
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         // имя и дни приема.
-        MedInfoHeader(
-            medName = uiState.selectedMed?.name ?: ""
-        )
+        MedInfoHeader(medName = uiState.selectedMed?.name ?: "")
         // начальная дата, total taken/skipped.
         MedStatCard(
             startDate = uiState.selectedMed?.startDate,
             totalTaken = uiState.intakesCount,
-            totalSkipped = uiState.skipCount
+            totalSkipped = uiState.skipCount,
         )
-        FlyTonalButton(
-            onClick = onReturn
-        ) {
-            Text(text = "Return")
-        }
+        FlyTonalButton(onClick = onReturn) { Text(text = "Return") }
     }
-
 }
 
 @Composable
@@ -54,7 +47,7 @@ fun MedStatCard(
     modifier: Modifier = Modifier,
     startDate: Timestamp? = null,
     totalTaken: Int,
-    totalSkipped: Int
+    totalSkipped: Int,
 ) {
     if (startDate == null) return
     val startDateFormatted = formatTimestampTillTheDayMMMMddyyyy(startDate)
@@ -74,33 +67,22 @@ fun MedStatCard(
 @Composable
 fun MedStatCardBody(totalTaken: Int, totalSkipped: Int) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 12.dp),
+        modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text("Total Taken", style = MedTrackerTheme.typography.bodyMedium)
-            Text(
-                "${totalTaken} times",
-                style = MedTrackerTheme.typography.title2Emphasized
-            )
+            Text("${totalTaken} times", style = MedTrackerTheme.typography.title2Emphasized)
         }
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text("Total Skipped", style = MedTrackerTheme.typography.bodyMedium)
-            Text(
-                "${totalSkipped} times",
-                style = MedTrackerTheme.typography.title2Emphasized
-            )
+            Text("$totalSkipped times", style = MedTrackerTheme.typography.title2Emphasized)
         }
     }
 }
 
 @Composable
-fun MedInfoHeader(
-    modifier: Modifier = Modifier,
-    medName: String = "Oxycodone"
-) {
+fun MedInfoHeader(modifier: Modifier = Modifier, medName: String = "Oxycodone") {
     Column(modifier.padding(vertical = 16.dp)) {
         Text(text = medName, style = MedTrackerTheme.typography.title1Emphasized)
     }
@@ -109,9 +91,5 @@ fun MedInfoHeader(
 @Preview(backgroundColor = 0xFFF2F2F7, showBackground = true)
 @Composable
 fun ViewMedicationInfoScreenPreview() {
-    MedTrackerTheme {
-        ViewMedicationInfoScreen(
-        )
-    }
-
+    MedTrackerTheme { ViewMedicationInfoScreen() }
 }

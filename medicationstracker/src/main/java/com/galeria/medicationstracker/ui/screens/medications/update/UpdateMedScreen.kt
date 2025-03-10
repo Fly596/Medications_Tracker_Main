@@ -34,7 +34,6 @@ import com.galeria.medicationstracker.ui.componentsOld.FlyErrorButton
 import com.galeria.medicationstracker.ui.componentsOld.FlySimpleCard
 import com.galeria.medicationstracker.ui.componentsOld.FlyTonalButton
 import com.galeria.medicationstracker.ui.componentsOld.MyTextField
-import com.galeria.medicationstracker.ui.screens.medications.MedsPagesViewModel
 import com.galeria.medicationstracker.ui.screens.medications.newmed.DateRangePickerModal
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.utils.convertMillisToDate
@@ -44,37 +43,28 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UpdateMedScreen(
     passedMedName: String,
     modifier: Modifier = Modifier,
     viewModel: UpdateMedVM = viewModel(),
-    medsPagesVM: MedsPagesViewModel = viewModel(),
     onConfirmEdit: () -> Unit = {},
 ) {
     LaunchedEffect(Unit) { viewModel.fetchSelectedMedication(passedMedName) }
-    
+
     val state = viewModel.uiState
     val currentMed by viewModel.selectedMedication.collectAsStateWithLifecycle()
 
-    Column(
-        modifier = modifier
-            .fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
+    Column(modifier = modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Spacer(modifier = Modifier.padding(8.dp))
 
         LazyColumn(
             modifier = modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             // Name input.
             item {
-                Text(
-                    text = "Name",
-                    style = MedTrackerTheme.typography.title2,
-                )
+                Text(text = "Name", style = MedTrackerTheme.typography.title2)
                 Spacer(modifier = Modifier.padding(4.dp))
 
                 MyTextField(
@@ -92,76 +82,59 @@ fun UpdateMedScreen(
                 val options = MedicationForm.entries.toTypedArray()
 
                 FlySimpleCard {
-                    Text(
-                        text = "Form",
-                        style = MedTrackerTheme.typography.title2,
-                    )
+                    Text(text = "Form", style = MedTrackerTheme.typography.title2)
                     Spacer(modifier = Modifier.padding(4.dp))
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        horizontalArrangement = Arrangement.SpaceBetween,
                     ) {
                         options.forEach { form ->
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(text = form.toString().lowercase())
                                 RadioButton(
                                     selected = selectedForm == form,
-                                    onClick = { selectedForm = form })
+                                    onClick = { selectedForm = form },
+                                )
                             }
                         }
                     }
                 }
             }
             // Start and End Date input
-            item {
-                FlySimpleCard {
-                    DatePicker(viewModel)
-                }
-            }
+            item { FlySimpleCard { DatePicker(viewModel) } }
 
             item {
                 FlySimpleCard {
-                    Text(
-                        text = "Schedule",
-                        style = MedTrackerTheme.typography.title2,
-                    )
+                    Text(text = "Schedule", style = MedTrackerTheme.typography.title2)
                     Spacer(modifier = Modifier.padding(4.dp))
-                    DayOfWeekSelector(
-                        viewModelUpd = viewModel
-                    )
+                    DayOfWeekSelector(viewModelUpd = viewModel)
                 }
             }
             // Intake Time input
             item {
                 var showTimePicker by remember { mutableStateOf(false) }
 
-                FlyButton(
-                    onClick = { showTimePicker = true }) {
-                    Text("Set time")
-                }
+                FlyButton(onClick = { showTimePicker = true }) { Text("Set time") }
 
                 if (showTimePicker) {
                     NewIntakeTimePicker(
-                        onConfirm = {
-                            showTimePicker = false
-                        },
+                        onConfirm = { showTimePicker = false },
                         onDismiss = { showTimePicker = false },
-                        viewModel
+                        viewModel,
                     )
                 }
             }
             // Notes input
             item {
-                Text(
-                    text = "Notes",
-                    style = MedTrackerTheme.typography.title2,
-                )
+                Text(text = "Notes", style = MedTrackerTheme.typography.title2)
                 Spacer(modifier = Modifier.padding(4.dp))
 
                 MyTextField(
                     value = state.notes, // Assuming you have a medNotes state property
-                    onValueChange = { viewModel.updateNotes(it) }, // Update the notes state property
+                    onValueChange = {
+                        viewModel.updateNotes(it)
+                    }, // Update the notes state property
                     label = "Medication notes",
                     placeholder = currentMed?.notes,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
@@ -171,15 +144,15 @@ fun UpdateMedScreen(
             }
             // Strength input
             item {
-                Text(
-                    text = "Strength",
-                    style = MedTrackerTheme.typography.title2,
-                )
+                Text(text = "Strength", style = MedTrackerTheme.typography.title2)
                 Spacer(modifier = Modifier.padding(4.dp))
 
                 MyTextField(
-                    value = state.strength.toString(), // Assuming you have a medStrength state property
-                    onValueChange = { viewModel.updateStrength(it.toFloat()) }, // Update the strength state property
+                    value =
+                        state.strength.toString(), // Assuming you have a medStrength state property
+                    onValueChange = {
+                        viewModel.updateStrength(it.toFloat())
+                    }, // Update the strength state property
                     label = "Medication strength",
                     placeholder = currentMed?.strength.toString(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -194,7 +167,7 @@ fun UpdateMedScreen(
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     FlyButton(
                         // TODO: Add editing medication logic.
@@ -216,30 +189,22 @@ fun UpdateMedScreen(
             }
         }
     }
-
 }
 
 @Composable
-fun DatePicker(
-    viewModel: UpdateMedVM
-) {
+fun DatePicker(viewModel: UpdateMedVM) {
     var showPicker by remember { mutableStateOf(false) }
 
-    Column(
-        horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.Center
-    ) {
+    Column(horizontalAlignment = Alignment.Start, verticalArrangement = Arrangement.Center) {
         if (showPicker) {
             DateRangePickerModal(
                 onDateRangeSelected = {
                     viewModel.updateStartDate(
-                        formatDateStringToTimestampMMMMddyyyy(
-                        convertMillisToDate(it.first)
-                    ))
+                        formatDateStringToTimestampMMMMddyyyy(convertMillisToDate(it.first))
+                    )
                     viewModel.updateEndDate(
-                        formatDateStringToTimestampMMMMddyyyy(
-                        convertMillisToDate(it.second)
-                    ))
+                        formatDateStringToTimestampMMMMddyyyy(convertMillisToDate(it.second))
+                    )
                     showPicker = !showPicker
                 },
                 onDismiss = { showPicker = !showPicker },
@@ -247,7 +212,8 @@ fun DatePicker(
         }
         MyTextField(
             value = "",
-            label = "Start: ${formatTimestampTillTheDayMMMMddyyyy(viewModel.uiState.startDate)}\nEnd: ${
+            label =
+                "Start: ${formatTimestampTillTheDayMMMMddyyyy(viewModel.uiState.startDate)}\nEnd: ${
                 formatTimestampTillTheDayMMMMddyyyy(
                     viewModel.uiState.endDate
                 )
@@ -256,10 +222,7 @@ fun DatePicker(
             isPrimaryColor = false,
             readOnly = true,
         )
-        FlyButton(
-            onClick = { showPicker = !showPicker },
-            modifier = Modifier.fillMaxWidth()
-        ) {
+        FlyButton(onClick = { showPicker = !showPicker }, modifier = Modifier.fillMaxWidth()) {
             Text(text = "Choose start and end dates")
         }
     }
@@ -267,32 +230,27 @@ fun DatePicker(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NewIntakeTimePicker(
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit,
-    viewModel: UpdateMedVM
-) {
+fun NewIntakeTimePicker(onConfirm: () -> Unit, onDismiss: () -> Unit, viewModel: UpdateMedVM) {
     val currentTime = Calendar.getInstance()
-    val timePickerState = rememberTimePickerState(
-        initialHour = currentTime.get(Calendar.HOUR_OF_DAY),
-        initialMinute = currentTime.get(Calendar.MINUTE),
-        is24Hour = false,
-    )
+    val timePickerState =
+        rememberTimePickerState(
+            initialHour = currentTime.get(Calendar.HOUR_OF_DAY),
+            initialMinute = currentTime.get(Calendar.MINUTE),
+            is24Hour = false,
+        )
     val time = LocalTime.of(timePickerState.hour, timePickerState.minute)
     val dtf = DateTimeFormatter.ofPattern("HH:mm")
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        TimePicker(
-            state = timePickerState,
-        )
-        FlyButton(onClick = {
-            viewModel.updateIntakeTime(time.format(dtf))
-            onDismiss.invoke();
-        }) {
+        TimePicker(state = timePickerState)
+        FlyButton(
+            onClick = {
+                viewModel.updateIntakeTime(time.format(dtf))
+                onDismiss.invoke()
+            }
+        ) {
             Text("Confirm Time")
         }
-        FlyTonalButton(onClick = onDismiss) {
-            Text("Dismiss")
-        }
+        FlyTonalButton(onClick = onDismiss) { Text("Dismiss") }
     }
 }

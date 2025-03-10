@@ -36,10 +36,8 @@ fun AccountRecoveryScreen(
     val state = viewModel.accountRecoveryScreenState
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.Top
+        modifier = modifier.fillMaxSize().padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.Top,
     ) {
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -78,13 +76,7 @@ fun AccountRecoveryScreen(
                 Text(text = "Reset Password")
             }
         }
-        // Spacer(modifier = Modifier.weight(1f))
-        Spacer(
-            modifier = Modifier
-                .height(40.dp)
-                .weight(1f)
-        )
-        // endregion
+        Spacer(modifier = Modifier.height(40.dp).weight(1f))
     }
 }
 

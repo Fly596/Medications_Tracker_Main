@@ -12,7 +12,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Medication
 import androidx.compose.material.icons.outlined.CheckCircle
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -30,7 +29,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medicationstracker.data.UserMedication
 import com.galeria.medicationstracker.ui.components.GFABButton
@@ -42,13 +40,12 @@ import com.galeria.medicationstracker.ui.theme.MedTrackerTheme.typography
 import com.galeria.medicationstracker.utils.getTodaysDate
 import java.time.format.DateTimeFormatter
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
     modifier: Modifier = Modifier,
     onAddMood: () -> Unit = {},
     onAddMedClick: () -> Unit,
-    dashboardViewModel: DashboardVM = hiltViewModel(),
+    dashboardViewModel: DashboardVM,
 ) {
     val uiState = dashboardViewModel.uiState.collectAsStateWithLifecycle()
     MedTrackerTheme {
@@ -59,7 +56,7 @@ fun DashboardScreen(
                     // today's date.
                     Text(
                         text = getTodaysDate().format(DateTimeFormatter.ofPattern("MMM d")),
-                        style = typography.display3Emphasized
+                        style = typography.display3Emphasized,
                     )
                 }
             },
@@ -70,12 +67,10 @@ fun DashboardScreen(
                         // mood tracker
                     }
                 )
-            }
+            },
         ) { innerPadding ->
             Column(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .padding(innerPadding),
+                modifier = modifier.fillMaxWidth().padding(innerPadding),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
 
@@ -85,14 +80,11 @@ fun DashboardScreen(
                 // Medication Cards List.
                 MedsByIntakeTimeList(
                     viewModel = dashboardViewModel,
-                    onAddNoteClick = {
-                        onAddMedClick.invoke()
-                    },
-                    medicationsForIntakeTime = uiState.value.currentTakenMedications
+                    onAddNoteClick = { onAddMedClick.invoke() },
+                    medicationsForIntakeTime = uiState.value.currentTakenMedications,
                 )
             }
         }
-
     }
 }
 
@@ -101,15 +93,14 @@ fun DashboardScreen(
 fun MedsByIntakeTimeList(
     viewModel: DashboardVM,
     onAddNoteClick: () -> Unit = {},
-    medicationsForIntakeTime: List<UserMedication> = emptyList()
+    medicationsForIntakeTime: List<UserMedication> = emptyList(),
 ) {
     // Группируем лекарства по времени приема.
-    val medicationsByIntakeTime =
-        medicationsForIntakeTime.groupBy { it.intakeTime }
+    val medicationsByIntakeTime = medicationsForIntakeTime.groupBy { it.intakeTime }
 
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(24.dp)
+        verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         medicationsByIntakeTime.forEach { (intakeTime, medications) ->
             item {
@@ -117,20 +108,20 @@ fun MedsByIntakeTimeList(
                 FLySimpleCardContainer(modifier = Modifier.fillMaxWidth()) {
                     Column(
                         modifier = Modifier.padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
                         // Время приема.
                         Text(
                             text = intakeTime.toString(),
                             style = typography.title1Emphasized,
-                            modifier = Modifier.padding(0.dp)
+                            modifier = Modifier.padding(0.dp),
                         )
                         // Лекарства на это время.
                         medications.forEach { medicationsForIntakeTime ->
                             MedicationItem(
                                 viewModel = viewModel,
                                 medication = medicationsForIntakeTime,
-                                onAddNoteClick = { onAddNoteClick.invoke() }
+                                onAddNoteClick = { onAddNoteClick.invoke() },
                             )
                         }
                     }
@@ -152,80 +143,66 @@ fun MedicationItem(
     Row(
         modifier = Modifier,
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            modifier = Modifier.size(32.dp)
-        )
+        Icon(imageVector = icon, contentDescription = null, modifier = Modifier.size(32.dp))
 
         Text(text = medication.name.toString(), style = typography.bodyLarge)
 
         Spacer(modifier = Modifier.weight(1f))
         // State to control the check icon.
         var status by remember { mutableIntStateOf(0) }
-        LaunchedEffect(medication) {
-            status = viewModel.fetchIntakeStatus(medication)
-        }
+        LaunchedEffect(medication) { status = viewModel.fetchIntakeStatus(medication) }
 
         Text(
-            text = when (status) {
-                2 -> "Taken"
-                1 -> "Skipped"
-                else -> ""
-            },
+            text =
+                when (status) {
+                    2 -> "Taken"
+                    1 -> "Skipped"
+                    else -> ""
+                },
             style = typography.bodySmall,
-            color = MedTrackerTheme.colors.secondaryLabel
+            color = MedTrackerTheme.colors.secondaryLabel,
         )
 
         IconButton(
             onClick = {
                 // Add logic to log medication here.
                 showLogDialog.value = !showLogDialog.value
-            }) {
+            }
+        ) {
             Icon(
-                imageVector = when (status) {
-                    2 -> Icons.Filled.CheckCircle
-                    1 -> Icons.Filled.CheckCircle
-                    else -> Icons.Outlined.CheckCircle
-                },
+                imageVector =
+                    when (status) {
+                        2 -> Icons.Filled.CheckCircle
+                        1 -> Icons.Filled.CheckCircle
+                        else -> Icons.Outlined.CheckCircle
+                    },
                 contentDescription = null,
                 modifier = Modifier.size(32.dp),
-                tint = when (status) {
-                    2 -> MedTrackerTheme.colors.sysSuccess
-                    1 -> MedTrackerTheme.colors.sysWarning
-                    else -> MedTrackerTheme.colors.tertiaryLabel
-                }
+                tint =
+                    when (status) {
+                        2 -> MedTrackerTheme.colors.sysSuccess
+                        1 -> MedTrackerTheme.colors.sysWarning
+                        else -> MedTrackerTheme.colors.tertiaryLabel
+                    },
             )
         }
         // Display the dialog when `showLogDialog.value` is true
         if (showLogDialog.value) {
             LogMedicationTimeDialog(
-                onDismiss = {
-                    /*             viewModel.addNewIntake(
-                                    medication = medication,
-                                    status = false
-                                ) */
-                    showLogDialog.value = false
-                },
+                onDismiss = { showLogDialog.value = false },
                 onConfirmation = {
-                    viewModel.addNewIntake(
-                        medication = medication,
-                        status = true
-                    )
+                    viewModel.addNewIntake(medication = medication, status = true)
                     showLogDialog.value = false
                 },
                 onAddNotes = {
-                    onAddNoteClick
+                    onAddNoteClick.invoke()
                     showLogDialog.value = false
                 },
                 onConfirmTime = { time ->
-                    viewModel.addNewIntake(
-                        intakeTime = time,
-                        medication = medication
-                    )
-                }
+                    viewModel.addNewIntake(intakeTime = time, medication = medication)
+                },
             )
         }
     }

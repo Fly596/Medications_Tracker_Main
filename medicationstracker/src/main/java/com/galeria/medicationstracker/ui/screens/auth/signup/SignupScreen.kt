@@ -47,10 +47,8 @@ fun SignupScreen(
     val state = viewModel.signupScreenState.collectAsStateWithLifecycle()
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.Top
+        modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.Top,
     ) {
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -108,7 +106,8 @@ fun SignupScreen(
             supportingText = "6 or more characters",
             modifier = Modifier.fillMaxWidth(),
             visualTransformation =
-                if (state.value.showPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                if (state.value.showPassword) VisualTransformation.None
+                else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         )
         // Show password switch.
@@ -122,15 +121,11 @@ fun SignupScreen(
 
         FlySimpleCard(
             content = {
-                Text(
-                    "Account Type",
-                    style = MedTrackerTheme.typography.title2,
-                )
-
+                Text("Account Type", style = MedTrackerTheme.typography.title2)
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     options.forEach { type ->
                         Column(verticalArrangement = Arrangement.Center) {
@@ -140,9 +135,8 @@ fun SignupScreen(
                                     viewModel.updateUserType(selectedType)
                                     selectedType = type
                                 },
-                                caption = type.toString().lowercase()
+                                caption = type.toString().lowercase(),
                             )
-                            // Text(text = form.toString().lowercase())
                         }
                     }
                 }
@@ -157,12 +151,9 @@ fun SignupScreen(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            FlyButton(onClick = {
-                viewModel.onRegisterClick(
-                    context,
-                    onSignupSuccess = navigateHome
-                )
-            }) {
+            FlyButton(
+                onClick = { viewModel.onRegisterClick(context, onSignupSuccess = navigateHome) }
+            ) {
                 Text(text = "Create Account")
             }
         }
@@ -176,10 +167,11 @@ fun SignupScreen(
 /**
  * Composable function that displays a radio button group for selecting user types.
  *
- * This function iterates through available user types and renders a radio button for each type.
- * The selected type is tracked and updated based on user interaction.
+ * This function iterates through available user types and renders a radio button for each type. The
+ * selected type is tracked and updated based on user interaction.
  *
- * @param viewModel The SignupScreenViewModel instance providing data and state.value for the signup screen.
+ * @param viewModel The SignupScreenViewModel instance providing data and state.value for the signup
+ *   screen.
  */
 @Composable
 fun UserTypesSelection(viewModel: SignupScreenViewModel) {
@@ -189,19 +181,16 @@ fun UserTypesSelection(viewModel: SignupScreenViewModel) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalAlignment = Alignment.Start
+        horizontalAlignment = Alignment.Start,
     ) {
         options.forEach { type ->
             Row {
                 MyRadioButton(
                     selected = selectedType == type,
-                    onClick = {
-                        selectedType = type
-                    },
-                    caption = type.toString().lowercase()
+                    onClick = { selectedType = type },
+                    caption = type.toString().lowercase(),
                 )
             }
         }
     }
-
 }
