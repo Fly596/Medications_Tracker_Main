@@ -3,7 +3,6 @@ package com.galeria.medicationstracker.utils.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -282,7 +281,7 @@ fun NavGraphBuilder.patientDashboardGraph(navController: NavHostController) {
             )
         }
         composable<PatientRoutes.MoodCheck> {
-            val vm: MoodTrackerVM = viewModel()
+            val vm: MoodTrackerVM = hiltViewModel()
             MoodTrackerScreen(onBackClick = { navController.popBackStack() }, viewModel = vm)
         }
     }

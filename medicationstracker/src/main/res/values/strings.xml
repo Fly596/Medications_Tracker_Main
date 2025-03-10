@@ -14,5 +14,6 @@
     <string name="title_activity_admin">AdminActivity</string>
     <string name="title_main_admin">Admin View</string>
     <string name="title_activity_doctor">DoctorActivity</string>
+    <string name="mood_check_title_how_are_you_feeling">How are you feeling?</string>
 
 </resources>

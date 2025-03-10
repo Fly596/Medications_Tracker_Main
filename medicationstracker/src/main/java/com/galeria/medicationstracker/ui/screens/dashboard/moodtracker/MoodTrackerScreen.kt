@@ -9,12 +9,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Medication
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -28,19 +30,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.galeria.medicationstracker.R
 import com.galeria.medicationstracker.data.UserMedication
-import com.galeria.medicationstracker.ui.components.GFABButton
 import com.galeria.medicationstracker.ui.components.GPrimaryButton
 import com.galeria.medicationstracker.ui.componentsOld.FLySimpleCardContainer
 import com.galeria.medicationstracker.ui.componentsOld.LogMedicationTimeDialog
 import com.galeria.medicationstracker.ui.screens.dashboard.DashboardVM
+import com.galeria.medicationstracker.ui.screens.dashboard.MedicationItem
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme.typography
-import com.galeria.medicationstracker.utils.getTodaysDate
-import java.time.format.DateTimeFormatter
 
 @Composable
 fun MoodTrackerScreen(
@@ -49,37 +51,53 @@ fun MoodTrackerScreen(
     viewModel: MoodTrackerVM,
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+
     MedTrackerTheme {
         Scaffold(
             containerColor = MedTrackerTheme.colors.secondaryBackground,
             topBar = {
-                Column(modifier = Modifier.padding(vertical = 16.dp)) {
-                    // today's date.
+                Row(
+                    modifier = Modifier.padding(
+                        horizontal = 16.dp,
+                        vertical = 24.dp
+                    )
+                ) {
+                    IconButton(onClick = onBackClick) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBackIosNew,
+                            contentDescription = "Back",
+                            tint = MedTrackerTheme.colors.primaryLabel,
+                            modifier = Modifier.size(28.dp),
+                        )
+                    }
                     Text(
-                        text = getTodaysDate().format(DateTimeFormatter.ofPattern("MMM d")),
+                        text = (stringResource(R.string.mood_check_title_how_are_you_feeling)),
                         style = typography.display3Emphasized,
                     )
                 }
             },
-            floatingActionButton = {
-                GFABButton(
-                    onClick = {
-                        // mood tracker
-                    }
-                )
-            },
         ) { innerPadding ->
             Column(
-                modifier = modifier.fillMaxWidth().padding(innerPadding),
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(innerPadding)
+                    .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                TextField(
-                    value = uiState.value.mood.toString(),
+                Slider(
+                    value = uiState.value.mood.toFloat(),
                     onValueChange = { viewModel.updateMood(it.toInt()) },
-                    label = { Text("Enter your mood") },
+                    valueRange = 1f..10f,
+                    steps = 9,
+                    modifier = Modifier.fillMaxWidth(),
                 )
+                Text(text = "${uiState.value.mood}")
 
-                Text(text = "Your mood is ${uiState.value.mood}")
+                TextField(
+                    value = uiState.value.notes ?: "",
+                    onValueChange = { viewModel.updateNotes(it) },
+                    label = { Text("Notes") },
+                )
 
                 GPrimaryButton(onClick = { viewModel.addMood(uiState.value.mood) }) {
                     Text(text = "Add mood")

@@ -15,7 +15,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class MoodTrackerUiState(
-    val mood: Int = 0,
+    val mood: Int = 5,
+    val notes: String? = null
 )
 
 @HiltViewModel
@@ -36,6 +37,7 @@ class MoodTrackerVM @Inject constructor(
 
             val moodEntry = hashMapOf(
                 "mood" to mood,
+                "notes" to _uiState.value.notes,
                 "timestamp" to Timestamp.now()
             )
 
@@ -58,6 +60,11 @@ class MoodTrackerVM @Inject constructor(
 
     fun updateMood(mood: Int) {
         _uiState.value = _uiState.value.copy(mood = mood)
+    }
+    
+    fun updateNotes(notes: String) {
+        _uiState.value = _uiState.value.copy(notes = notes)
+        
     }
 
 }
