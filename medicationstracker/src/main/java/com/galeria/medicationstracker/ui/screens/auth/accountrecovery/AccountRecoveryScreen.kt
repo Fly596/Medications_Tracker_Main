@@ -27,16 +27,18 @@ import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 
 @Composable
 fun AccountRecoveryScreen(
+    modifier: Modifier = Modifier,
     passedEmail: String = "",
     navigateHome: () -> Unit,
-    modifier: Modifier = Modifier,
     viewModel: AccountRecoveryScreenViewModel = viewModel(),
 ) {
     LaunchedEffect(Unit) { viewModel.updateEmail(passedEmail) }
     val state = viewModel.accountRecoveryScreenState
 
     Column(
-        modifier = modifier.fillMaxSize().padding(horizontal = 16.dp),
+        modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.Top,
     ) {
         Spacer(modifier = Modifier.height(16.dp))
@@ -62,7 +64,13 @@ fun AccountRecoveryScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
-            FlyTextButton(onClick = { navigateHome.invoke() }) { Text(text = "Cancel") }
+            FlyTextButton(onClick = { navigateHome.invoke() }) {
+                Text(
+                    text = stringResource(
+                        R.string.cancel
+                    )
+                )
+            }
 
             Spacer(modifier = Modifier.weight(1f))
 
@@ -73,10 +81,14 @@ fun AccountRecoveryScreen(
                 },
                 enabled = true,
             ) {
-                Text(text = "Reset Password")
+                Text(text = stringResource(R.string.reset_password))
             }
         }
-        Spacer(modifier = Modifier.height(40.dp).weight(1f))
+        Spacer(
+            modifier = Modifier
+                .height(40.dp)
+                .weight(1f)
+        )
     }
 }
 

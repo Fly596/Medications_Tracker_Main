@@ -52,7 +52,12 @@ fun DashboardScreen(
         Scaffold(
             containerColor = MedTrackerTheme.colors.secondaryBackground,
             topBar = {
-                Column(modifier = Modifier.padding(vertical = 16.dp)) {
+                Column(
+                    modifier = Modifier.padding(
+                        vertical = 24.dp,
+                        horizontal = 16.dp
+                    )
+                ) {
                     // today's date.
                     Text(
                         text = getTodaysDate().format(DateTimeFormatter.ofPattern("MMM d")),
@@ -70,7 +75,10 @@ fun DashboardScreen(
             },
         ) { innerPadding ->
             Column(
-                modifier = modifier.fillMaxWidth().padding(innerPadding),
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(innerPadding)
+                    .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
 

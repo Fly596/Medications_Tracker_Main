@@ -58,7 +58,6 @@ fun MoodTrackerScreen(
             topBar = {
                 Row(
                     modifier = Modifier.padding(
-                        horizontal = 16.dp,
                         vertical = 24.dp
                     )
                 ) {
@@ -96,11 +95,11 @@ fun MoodTrackerScreen(
                 TextField(
                     value = uiState.value.notes ?: "",
                     onValueChange = { viewModel.updateNotes(it) },
-                    label = { Text("Notes") },
+                    label = { Text(stringResource(R.string.notes)) },
                 )
 
                 GPrimaryButton(onClick = { viewModel.addMood(uiState.value.mood) }) {
-                    Text(text = "Add mood")
+                    Text(text = stringResource(R.string.add_mood))
                 }
             }
         }

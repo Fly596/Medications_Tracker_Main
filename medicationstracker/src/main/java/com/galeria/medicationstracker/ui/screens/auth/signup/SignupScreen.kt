@@ -29,7 +29,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.galeria.medicationstracker.R
 import com.galeria.medicationstracker.data.UserType
 import com.galeria.medicationstracker.ui.componentsOld.FlyButton
-import com.galeria.medicationstracker.ui.componentsOld.FlySimpleCard
 import com.galeria.medicationstracker.ui.componentsOld.FlyTextButton
 import com.galeria.medicationstracker.ui.componentsOld.MyRadioButton
 import com.galeria.medicationstracker.ui.componentsOld.MyTextField
@@ -47,7 +46,9 @@ fun SignupScreen(
     val state = viewModel.signupScreenState.collectAsStateWithLifecycle()
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.Top,
     ) {
         Spacer(modifier = Modifier.height(16.dp))
@@ -63,8 +64,8 @@ fun SignupScreen(
             value = state.value.firstName,
             onValueChange = { viewModel.updateUserName(it) },
             isPrimaryColor = true,
-            label = "Name",
-            placeholder = "Name",
+            label = stringResource(R.string.name),
+            placeholder = stringResource(R.string.name),
             modifier = Modifier.fillMaxWidth(),
         )
         MyTextField(
@@ -77,8 +78,8 @@ fun SignupScreen(
                 }
             },
             isPrimaryColor = true,
-            label = "Age",
-            placeholder = "Age",
+            label = stringResource(R.string.age),
+            placeholder = stringResource(R.string.age),
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         )
@@ -101,9 +102,9 @@ fun SignupScreen(
             isPrimaryColor = true,
             isError = state.value.passwordErrorMessage?.isNotEmpty() ?: false,
             errorMessage = state.value.passwordErrorMessage,
-            label = "Password",
-            placeholder = "6 or more characters",
-            supportingText = "6 or more characters",
+            label = stringResource(R.string.password),
+            placeholder = stringResource(R.string._6_or_more_characters),
+            supportingText = stringResource(R.string._6_or_more_characters),
             modifier = Modifier.fillMaxWidth(),
             visualTransformation =
                 if (state.value.showPassword) VisualTransformation.None
@@ -119,42 +120,18 @@ fun SignupScreen(
         var selectedType by remember { mutableStateOf(state.value.userType) }
         val options = UserType.entries.toTypedArray()
 
-        FlySimpleCard(
-            content = {
-                Text("Account Type", style = MedTrackerTheme.typography.title2)
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    options.forEach { type ->
-                        Column(verticalArrangement = Arrangement.Center) {
-                            MyRadioButton(
-                                selected = selectedType == type,
-                                onClick = {
-                                    viewModel.updateUserType(selectedType)
-                                    selectedType = type
-                                },
-                                caption = type.toString().lowercase(),
-                            )
-                        }
-                    }
-                }
-            }
-        )
-
         Spacer(modifier = Modifier.height(16.dp))
         val context = LocalContext.current
 
         Row(verticalAlignment = Alignment.CenterVertically) {
-            FlyTextButton(onClick = navigateHome) { Text(text = "Cancel") }
+            FlyTextButton(onClick = navigateHome) { Text(stringResource(R.string.cancel)) }
 
             Spacer(modifier = Modifier.weight(1f))
 
             FlyButton(
                 onClick = { viewModel.onRegisterClick(context, onSignupSuccess = navigateHome) }
             ) {
-                Text(text = "Create Account")
+                Text(text = stringResource(R.string.create_account))
             }
         }
 
