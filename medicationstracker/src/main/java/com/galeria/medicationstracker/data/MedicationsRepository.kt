@@ -101,9 +101,35 @@ constructor(private val firestore: FirebaseFirestore, private val auth: Firebase
         strengthUnit: String,
         uid: String,
     ) {
-        // val docId = "${userLogin}_${medName}"
-        db.collection("UserMedication")
-        TODO("Not yet implemented")
+        val newValues: Map<String, Any?> =
+            mapOf(
+                "endDate" to endDate,
+                "form" to medForm,
+                "daysOfWeek" to selectedDays,
+                "intakeTime" to intakeTime,
+                "name" to medName,
+                "notes" to notes,
+                "strength" to strength,
+                "unit" to strengthUnit,
+                "startDate" to startDate,
+                "uid" to uid,
+            )
+        val medicationRef =
+            db.collection(
+                "UserMedication"
+            )
+        medicationRef
+            .whereEqualTo("uid", uid)
+            .whereEqualTo("name", medName)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                querySnapshot.toObjects(UserMedication::class.java)[0]
+                val documentId = querySnapshot.documents[0].id
+                medicationRef.document(documentId).update(newValues)
+            }
+            .addOnFailureListener { exception ->
+                // Toast.makeText(context, "Error updating medication", Toast.LENGTH_SHORT).show()
+            }
     }
     
     override suspend fun deleteDrug(drugName: String) {
