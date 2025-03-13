@@ -56,5 +56,6 @@
     <string name="update">Update</string>
     <string name="edit_profile">Edit Profile</string>
     <string name="history">History</string>
+    <string name="unit">Unit</string>
 
 </resources>

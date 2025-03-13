@@ -19,13 +19,20 @@ data class UserMedication(
     val chosenStrengths: List<Float> = emptyList(),
 )
 
-data class HospitalDrugs(
-    val name: String? = null, // Drisdol.
-    val drugClass: String? = null, // vitamins d derivatives.
-    val availability: String? = null, // prescription sometimes needed.
-    val strength: Float? = null, // 1.25.
-    val unit: String? = null, // MG.
-    val form: String? = null, // capsules.
+data class Medication(
+    val drugId: String = "",
+    val name: String = "",
+    val classType: String = "", // Переименовал class, потому что это зарезервированное слово в Kotlin
+    val form: String = "",
+    val strength: Float = 0f,
+    val unit: String = "",
+    val requiresPrescription: Boolean = false,
+    val manufacturer: String = "",
+    val sideEffects: List<String> = emptyList(),
+    val contraindications: List<String> = emptyList(),
+    val dosageInstructions: String = "",
+    val createdAt: String = "",
+    val updatedAt: String = ""
 )
 
 data class User(

@@ -6,8 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.galeria.medicationstracker.data.MedicationForm
 import com.galeria.medicationstracker.data.MedicationUnit
-import com.galeria.medicationstracker.data.MedicationsRepository
 import com.galeria.medicationstracker.data.UserMedication
+import com.galeria.medicationstracker.data.UserMedicationsRepository
 import com.galeria.medicationstracker.utils.FirestoreFunctions.FirestoreService
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -33,7 +33,8 @@ data class UpdateMedUiState(
 )
 
 @HiltViewModel
-class UpdateMedVM @Inject constructor(private val repository: MedicationsRepository) : ViewModel() {
+class UpdateMedVM @Inject constructor(private val repository: UserMedicationsRepository) :
+  ViewModel() {
 
     private val _uiState = MutableStateFlow(UpdateMedUiState())
     val uiState = _uiState.asStateFlow()

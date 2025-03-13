@@ -2,8 +2,8 @@ package com.galeria.medicationstracker.ui.screens.medications
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.galeria.medicationstracker.data.MedicationsRepository
 import com.galeria.medicationstracker.data.UserMedication
+import com.galeria.medicationstracker.data.UserMedicationsRepository
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +14,7 @@ import javax.inject.Inject
 data class MedicationsUiState(val userMedications: List<UserMedication> = emptyList())
 
 @HiltViewModel
-class MedicationsViewModel @Inject constructor(private val repository: MedicationsRepository) :
+class MedicationsViewModel @Inject constructor(private val repository: UserMedicationsRepository) :
     ViewModel() {
 
     private val _uiState = MutableStateFlow(MedicationsUiState())

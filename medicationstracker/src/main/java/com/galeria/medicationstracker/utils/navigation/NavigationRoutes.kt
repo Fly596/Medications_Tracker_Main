@@ -13,6 +13,8 @@ import androidx.navigation.toRoute
 import com.galeria.medicationstracker.data.UserType
 import com.galeria.medicationstracker.ui.doctor.home.DocDashboardScreen
 import com.galeria.medicationstracker.ui.doctor.patients.PatientsListScreen
+import com.galeria.medicationstracker.ui.screens.admin.AddMedicationScreen
+import com.galeria.medicationstracker.ui.screens.admin.AddMedicationsViewModel
 import com.galeria.medicationstracker.ui.screens.auth.accountrecovery.AccountRecoveryScreen
 import com.galeria.medicationstracker.ui.screens.auth.login.LoginScreen
 import com.galeria.medicationstracker.ui.screens.auth.signup.SignupScreen
@@ -123,6 +125,9 @@ sealed class Routes {
         @Serializable data object PatientListMedications : PatientRoutes()
 
         @Serializable data object PatientAddMedication : PatientRoutes()
+        
+        @Serializable
+        data object AdminAddMedication : PatientRoutes()
 
         @Serializable data object PatientViewMedication : PatientRoutes()
 
@@ -313,6 +318,9 @@ fun NavGraphBuilder.patientMedsGraph(navController: NavHostController) {
                     navController.navigate(PatientRoutes.PatientUpdateMedication(name))
                 },
                 medicationsViewModel = vm,
+                onAddAdminMedClick = {
+                    navController.navigate(PatientRoutes.AdminAddMedication)
+                }
             )
         }
 
@@ -320,6 +328,16 @@ fun NavGraphBuilder.patientMedsGraph(navController: NavHostController) {
             val vm: AddNewMedViewModel = hiltViewModel()
             NewMedicationDataScreen(
                 onConfirmClick = { navController.popBackStack() },
+                viewModel = vm,
+            )
+        }
+        
+        composable<PatientRoutes.AdminAddMedication> {
+            val vm: AddMedicationsViewModel = hiltViewModel()
+            AddMedicationScreen(
+                modifier = Modifier,
+                onConfirmClick = { navController.popBackStack() },
+                onBackClick = { navController.navigateUp() },
                 viewModel = vm,
             )
         }

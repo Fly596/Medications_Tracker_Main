@@ -8,11 +8,16 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AcUnit
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CardElevation
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,18 +46,29 @@ fun MedicationsScreen(
     onEditMedClick: (String) -> Unit = {},
     medicationsViewModel: MedicationsViewModel,
     medsPagesVM: MedsPagesViewModel = viewModel(),
+    onAddAdminMedClick: () -> Unit = {},
 ) {
     val uiState by medicationsViewModel.uiState.collectAsStateWithLifecycle()
     MedTrackerTheme {
         Scaffold(
             containerColor = MedTrackerTheme.colors.secondaryBackground,
             topBar = {
-                Column(
+                Row(
                     modifier = Modifier.padding(
                         vertical = 24.dp,
                         horizontal = 16.dp
                     )
                 ) {
+                    IconButton(
+                        onClick = { onAddAdminMedClick.invoke() }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.AcUnit,
+                            contentDescription = "Back",
+                            tint = MedTrackerTheme.colors.primaryLabel,
+                            modifier = Modifier.size(28.dp),
+                        )
+                    }
                     // today's date.
                     Text(
                         text = stringResource(R.string.medications),

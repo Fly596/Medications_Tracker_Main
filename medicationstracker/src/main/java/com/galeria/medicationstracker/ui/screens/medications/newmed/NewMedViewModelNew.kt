@@ -1,7 +1,7 @@
 package com.galeria.medicationstracker.ui.screens.medications.newmed
 
 import androidx.lifecycle.ViewModel
-import com.galeria.medicationstracker.data.MedicationsRepository
+import com.galeria.medicationstracker.data.UserMedicationsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,7 +22,7 @@ data class NewMedUiStateNew(
 
 
 class NewMedViewModelNew @Inject constructor(
-    private val repository: MedicationsRepository
+    private val repository: UserMedicationsRepository
 ) : ViewModel() {
     
     private val _uiState = MutableStateFlow(NewMedUiStateNew())

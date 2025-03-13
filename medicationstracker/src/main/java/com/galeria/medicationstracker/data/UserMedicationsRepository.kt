@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
-interface MedicationsRepository {
+interface UserMedicationsRepository {
     
     suspend fun getDrug(drugName: String): UserMedication
 
@@ -37,16 +37,16 @@ interface MedicationsRepository {
     fun getDrugsStream(uid: String): Flow<List<UserMedication>>
 }
 
-class MedicationsRepositoryImpl
+class UserMedicationsRepositoryImpl
 @Inject
 constructor(private val firestore: FirebaseFirestore, private val auth: FirebaseAuth) :
-    MedicationsRepository {
-
-    private val medicationsCollection = firestore.collection("UserMedication")
+    UserMedicationsRepository {
+    
+    private val userMedicationsCollection = firestore.collection("UserMedication")
     
     override fun getDrugsStream(uid: String): Flow<List<UserMedication>> = callbackFlow {
         val listenerRegistration =
-            medicationsCollection.whereEqualTo("uid", uid).addSnapshotListener { value, error ->
+            userMedicationsCollection.whereEqualTo("uid", uid).addSnapshotListener { value, error ->
                 if (error != null) {
                     // Handle error
                     return@addSnapshotListener
@@ -133,7 +133,7 @@ constructor(private val firestore: FirebaseFirestore, private val auth: Firebase
     }
     
     override suspend fun deleteDrug(drugName: String) {
-        medicationsCollection
+        userMedicationsCollection
             .whereEqualTo("name", drugName)
             .get()
             .addOnSuccessListener { querySnapshot ->
