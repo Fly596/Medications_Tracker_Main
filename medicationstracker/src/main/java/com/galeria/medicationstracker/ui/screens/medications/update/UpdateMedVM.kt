@@ -3,19 +3,19 @@ package com.galeria.medicationstracker.ui.screens.medications.update
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.galeria.medicationstracker.data.MedicationForm
 import com.galeria.medicationstracker.data.MedicationUnit
+import com.galeria.medicationstracker.data.MedicationsRepository
 import com.galeria.medicationstracker.data.UserMedication
 import com.galeria.medicationstracker.utils.FirestoreFunctions.FirestoreService
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.toObject
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import javax.inject.Inject
 
 data class UpdateMedUiState(
     val medName: String = "",
@@ -31,10 +31,13 @@ data class UpdateMedUiState(
     val newSelectedDays: List<String> = emptyList(),
 )
 
-class UpdateMedVM : ViewModel() {
-
-    var uiState by mutableStateOf(UpdateMedUiState())
-        private set
+@HiltViewModel
+class UpdateMedVM @Inject constructor(private val repository: MedicationsRepository) :
+    ViewModel() {
+    
+    private val _uiState = MutableStateFlow(UpdateMedUiState())
+    val uiState = _uiState.asStateFlow()
+    
 
     val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
     val db = FirestoreService.db
@@ -62,8 +65,8 @@ class UpdateMedVM : ViewModel() {
                     _selectedMedication.value = document.toObject<UserMedication>()
                     _selectedDocumentId.value = document.id // Save the document ID
                     if (_selectedMedication.value != null) {
-                        uiState =
-                            uiState.copy(
+                        _uiState.value =
+                            _uiState.value.copy(
                                 medName = _selectedMedication.value!!.name.toString(),
                                 medForm =
                                     MedicationForm.valueOf(
@@ -85,15 +88,15 @@ class UpdateMedVM : ViewModel() {
     fun updateMedicationFromFirestore(context: Context) {
         val newValues: Map<String, Any?> =
             mapOf(
-                "endDate" to uiState.endDate,
-                "form" to uiState.medForm.toString(),
-                "daysOfWeek" to uiState.newSelectedDays,
-                "intakeTime" to uiState.intakeTime,
-                "name" to uiState.medName,
-                "notes" to uiState.notes,
-                "strength" to uiState.strength,
-                "unit" to uiState.unit.toString(),
-                "startDate" to uiState.startDate,
+                "endDate" to _uiState.value.endDate,
+                "form" to _uiState.value.medForm.toString(),
+                "daysOfWeek" to _uiState.value.newSelectedDays,
+                "intakeTime" to _uiState.value.intakeTime,
+                "name" to _uiState.value.medName,
+                "notes" to _uiState.value.notes,
+                "strength" to _uiState.value.strength,
+                "unit" to _uiState.value.unit.toString(),
+                "startDate" to _uiState.value.startDate,
                 "uid" to currentUserId,
             )
         val documentId = _selectedDocumentId.value
@@ -118,38 +121,40 @@ class UpdateMedVM : ViewModel() {
     }
 
     fun updateSelectedDays(input: List<String>) {
-        uiState = uiState.copy(newSelectedDays = uiState.newSelectedDays + input)
+        _uiState.value =
+            _uiState.value.copy(newSelectedDays = _uiState.value.newSelectedDays + input)
     }
 
     fun updateMedName(input: String) {
-        uiState = uiState.copy(medName = input)
+        _uiState.value = _uiState.value.copy(medName = input)
     }
 
     fun updateMedForm(input: MedicationForm) {
-        uiState = uiState.copy(medForm = input)
+        _uiState.value = _uiState.value.copy(medForm = input)
     }
 
     fun updateEndDate(date: Timestamp?) {
-        uiState = uiState.copy(endDate = date ?: Timestamp.now())
+        _uiState.value = _uiState.value.copy(endDate = date ?: Timestamp.now())
     }
 
     fun updateStartDate(date: Timestamp?) {
-        uiState = uiState.copy(startDate = date ?: Timestamp.now())
+        _uiState.value =
+            _uiState.value.copy(startDate = date ?: Timestamp.now())
     }
 
     fun updateIntakeTime(time: String) {
-        uiState = uiState.copy(intakeTime = time)
+        _uiState.value = _uiState.value.copy(intakeTime = time)
     }
 
     fun updateNotes(input: String) {
-        uiState = uiState.copy(notes = input)
+        _uiState.value = _uiState.value.copy(notes = input)
     }
 
     fun updateStrength(input: Float) {
-        uiState = uiState.copy(strength = input)
+        _uiState.value = _uiState.value.copy(strength = input)
     }
 
     fun updateStrengthUnit(input: MedicationUnit) {
-        uiState = uiState.copy(strengthUnit = input)
+        _uiState.value = uiState.value.copy(strengthUnit = input)
     }
 }
