@@ -37,15 +37,11 @@ class UpdateMedVM @Inject constructor(private val repository: MedicationsReposit
 
     private val _uiState = MutableStateFlow(UpdateMedUiState())
     val uiState = _uiState.asStateFlow()
-
-    val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+    private val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
     val db = FirestoreService.db
-    val userEmail = FirebaseAuth.getInstance().currentUser?.email
 
     private var _selectedMedication = MutableStateFlow<UserMedication?>(null)
-    var selectedMedication = _selectedMedication.asStateFlow()
     private var _selectedDocumentId = MutableStateFlow<String?>(null)
-    var selectedDocumentId = _selectedDocumentId.asStateFlow()
     
     fun deleteMedicationFromFirestore(medName: String) {
         viewModelScope.launch { repository.deleteDrug(medName) }
@@ -57,43 +53,6 @@ class UpdateMedVM @Inject constructor(private val repository: MedicationsReposit
             _uiState.value = _uiState.value.copy(medication = drug)
         }
     }
-
-    // для получения выбранного лекарства.
-    /*     fun fetchSelectedMedication(medName: String) {
-        val docRef = db.collection("UserMedication")
-
-        docRef
-            .whereEqualTo("uid", currentUserId)
-            .whereEqualTo("name", medName)
-            .addSnapshotListener { value, error ->
-                if (error != null) {
-                    return@addSnapshotListener
-                }
-
-                if (value != null && value.documents.isNotEmpty()) {
-                    val document = value.documents[0]
-
-                    _selectedMedication.value = document.toObject<UserMedication>()
-                    _selectedDocumentId.value = document.id // Save the document ID
-                    if (_selectedMedication.value != null) {
-                        _uiState.value =
-                            _uiState.value.copy(
-                                medName = _selectedMedication.value!!.name.toString(),
-                                medForm =
-                                    MedicationForm.valueOf(
-                                        _selectedMedication.value!!.form.toString()
-                                    ),
-                                endDate = _selectedMedication.value!!.endDate!!,
-                                startDate = _selectedMedication.value!!.startDate!!,
-                                intakeTime = _selectedMedication.value!!.intakeTime.toString(),
-                                notes = _selectedMedication.value!!.notes.toString(),
-                                strength = _selectedMedication.value!!.strength!!.toFloat(),
-                                selectedDays = _selectedMedication.value!!.daysOfWeek,
-                            )
-                    }
-                }
-            }
-    } */
 
     // Обновление данных о лекарстве в Firestore.
     fun updateMedicationFromFirestore(context: Context) {
