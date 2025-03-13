@@ -32,7 +32,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.galeria.medicationstracker.R
 import com.galeria.medicationstracker.data.MedicationForm
 import com.galeria.medicationstracker.ui.componentsOld.DayOfWeekSelector
@@ -46,7 +45,7 @@ import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme.typography
 import com.galeria.medicationstracker.utils.convertMillisToDate
 import com.galeria.medicationstracker.utils.formatDateStringToTimestampMMMMddyyyy
-import com.galeria.medicationstracker.utils.formatTimestampTillTheDayMMMMddyyyy
+import com.google.firebase.Timestamp
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
@@ -55,24 +54,19 @@ import java.util.Calendar
 fun UpdateMedScreen(
     passedMedName: String,
     modifier: Modifier = Modifier,
-    viewModel: UpdateMedVM = viewModel(),
-    onConfirmEdit: () -> Unit = {},
+    viewModel: UpdateMedVM,
+    onBack: () -> Unit = {},
 ) {
-    LaunchedEffect(Unit) { viewModel.fetchSelectedMedication(passedMedName) }
+    LaunchedEffect(passedMedName) { viewModel.fetchSelectedMedication(passedMedName) }
+    val state = viewModel.uiState.collectAsStateWithLifecycle()
+    val currentMed = state.value.medication
 
-    val state = viewModel.uiState
-    val currentMed by viewModel.selectedMedication.collectAsStateWithLifecycle()
-    
     MedTrackerTheme {
         Scaffold(
             containerColor = MedTrackerTheme.colors.secondaryBackground,
             topBar = {
-                Row(
-                    modifier = Modifier.padding(
-                        vertical = 24.dp
-                    )
-                ) {
-                    IconButton(onClick = onConfirmEdit) {
+                Row(modifier = Modifier.padding(vertical = 24.dp)) {
+                    IconButton(onClick = onBack) {
                         Icon(
                             imageVector = Icons.Default.ArrowBackIosNew,
                             contentDescription = "Back",
@@ -81,13 +75,18 @@ fun UpdateMedScreen(
                         )
                     }
                     Text(
-                        text = (stringResource(R.string.mood_check_title_how_are_you_feeling)),
+                        text = (stringResource(R.string.update_medication_title)),
                         style = typography.display3Emphasized,
                     )
                 }
             },
         ) { innerPadding ->
-            Column(
+            /*  Column(
+                modifier =
+                    modifier.fillMaxWidth().padding(innerPadding).padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) { */
+            LazyColumn(
                 modifier =
                     modifier
                         .fillMaxWidth()
@@ -95,194 +94,213 @@ fun UpdateMedScreen(
                         .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                LazyColumn(
-                    modifier = modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    // Name input.
-                    item {
-                        Text(
-                            text = "Name",
-                            style = MedTrackerTheme.typography.title2
-                        )
-                        Spacer(modifier = Modifier.padding(4.dp))
-                        
-                        MyTextField(
-                            value = state.medName,
-                            onValueChange = { viewModel.updateMedName(it) },
-                            label = stringResource(R.string.medication_name),
-                            placeholder = currentMed?.name,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                            modifier = Modifier.fillMaxWidth(),
-                        )
-                    }
-                    // form.
-                    item {
-                        var selectedForm by remember { mutableStateOf(state.medForm) }
-                        val options = MedicationForm.entries.toTypedArray()
-                        
-                        FlySimpleCard {
-                            Text(
-                                text = stringResource(R.string.form),
-                                style = MedTrackerTheme.typography.title2
-                            )
-                            Spacer(modifier = Modifier.padding(4.dp))
-                            
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                            ) {
-                                options.forEach { form ->
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Text(text = form.toString().lowercase())
-                                        RadioButton(
-                                            selected = selectedForm == form,
-                                            onClick = { selectedForm = form },
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    // Start and End Date input
-                    item { FlySimpleCard { DatePicker(viewModel) } }
+                // Name input.
+                item {
+                    Text(text = "Name", style = MedTrackerTheme.typography.title2)
+                    Spacer(modifier = Modifier.padding(4.dp))
                     
-                    item {
-                        FlySimpleCard {
-                            Text(
-                                text = stringResource(R.string.schedule),
-                                style = MedTrackerTheme.typography.title2
-                            )
-                            Spacer(modifier = Modifier.padding(4.dp))
-                            DayOfWeekSelector(viewModelUpd = viewModel)
-                        }
-                    }
-                    // Intake Time input
-                    item {
-                        var showTimePicker by remember { mutableStateOf(false) }
-                        
-                        FlyButton(onClick = { showTimePicker = true }) {
-                            Text(
-                                stringResource(R.string.set_time)
-                            )
-                        }
-                        
-                        if (showTimePicker) {
-                            NewIntakeTimePicker(
-                                onConfirm = { showTimePicker = false },
-                                onDismiss = { showTimePicker = false },
-                                viewModel,
-                            )
-                        }
-                    }
-                    // Notes input
-                    item {
-                        Text(
-                            text = stringResource(R.string.notes),
-                            style = MedTrackerTheme.typography.title2
-                        )
-                        Spacer(modifier = Modifier.padding(4.dp))
-                        
-                        MyTextField(
-                            value = state.notes, // Assuming you have a medNotes state property
-                            onValueChange = {
-                                viewModel.updateNotes(it)
-                            }, // Update the notes state property
-                            label = stringResource(R.string.medication_notes),
-                            placeholder = currentMed?.notes,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                            modifier = Modifier.fillMaxWidth(),
-                            // maxLines = 4, // Adjust max lines as needed
-                        )
-                    }
-                    // Strength input
-                    item {
-                        Text(
-                            text = stringResource(R.string.medication_strength),
-                            style = MedTrackerTheme.typography.title2
-                        )
-                        Spacer(modifier = Modifier.padding(4.dp))
-                        
-                        MyTextField(
-                            value =
-                                state.strength
-                                    .toString(), // Assuming you have a medStrength state property
-                            onValueChange = {
-                                viewModel.updateStrength(it.toFloat())
-                            }, // Update the strength state property
-                            label = stringResource(R.string.medication_strength),
-                            placeholder = currentMed?.strength.toString(),
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                            modifier = Modifier.fillMaxWidth(),
-                        )
-                        // Add a unit selector or dropdown for strength units (e.g., MG, ML)
-                        // ...
-                    }
+                    MyTextField(
+                        value = state.value.medName,
+                        onValueChange = { viewModel.updateMedName(it) },
+                        label = stringResource(R.string.medication_name),
+                        placeholder = currentMed?.name,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+                // form.
+                item {
+                    var selectedForm by remember { mutableStateOf(state.value.medForm) }
+                    // var selectedForm = state.value.medForm
+                    val options = MedicationForm.entries.toTypedArray()
                     
-                    item {
-                        val context = LocalContext.current
+                    FlySimpleCard {
+                        Text(
+                            text = stringResource(R.string.form),
+                            style = MedTrackerTheme.typography.title2,
+                        )
+                        Spacer(modifier = Modifier.padding(4.dp))
                         
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
                         ) {
-                            FlyButton(
-                                // TODO: Add editing medication logic.
-                                onClick = {
-                                    viewModel.updateMedicationFromFirestore(
-                                        context
+                            options.forEach { form ->
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(text = form.toString().lowercase())
+                                    RadioButton(
+                                        selected = selectedForm == form,
+                                        onClick = { viewModel.updateMedForm(form) },
                                     )
-                                    onConfirmEdit.invoke()
                                 }
-                            ) {
-                                Text("Confirm")
-                            }
-                            
-                            FlyErrorButton(
-                                // TODO: Add editing medication logic.
-                                onClick = onConfirmEdit
-                            ) {
-                                Text(stringResource(R.string.delete_medication))
                             }
                         }
                     }
                 }
+                // Start and End Date input
+                val start = state.value.startDate
+                val end = state.value.endDate
+                item {
+                    FlySimpleCard {
+                        DatePicker(
+                            { viewModel.updateStartDate(it) },
+                            { viewModel.updateEndDate(it) },
+                        )
+                    }
+                }
+                
+                item {
+                    FlySimpleCard {
+                        Text(
+                            text = stringResource(R.string.schedule),
+                            style = MedTrackerTheme.typography.title2,
+                        )
+                        Spacer(modifier = Modifier.padding(4.dp))
+                        DayOfWeekSelector(viewModelUpd = viewModel)
+                    }
+                }
+                // Intake Time input
+                item {
+                    var showTimePicker by remember { mutableStateOf(false) }
+                    
+                    FlyButton(onClick = { showTimePicker = true }) {
+                        Text(stringResource(R.string.set_time))
+                    }
+                    
+                    if (showTimePicker) {
+                        NewIntakeTimePicker(
+                            onConfirm = { showTimePicker = false },
+                            onDismiss = { showTimePicker = false },
+                            viewModel,
+                        )
+                    }
+                }
+                // Notes input
+                item {
+                    Text(
+                        text = stringResource(R.string.notes),
+                        style = MedTrackerTheme.typography.title2,
+                    )
+                    Spacer(modifier = Modifier.padding(4.dp))
+                    
+                    MyTextField(
+                        value = state.value.notes, // Assuming you have a medNotes state property
+                        onValueChange = {
+                            viewModel.updateNotes(it)
+                        }, // Update the notes state property
+                        label = stringResource(R.string.medication_notes),
+                        placeholder = currentMed?.notes,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                        modifier = Modifier.fillMaxWidth(),
+                        // maxLines = 4, // Adjust max lines as needed
+                    )
+                }
+                // Strength input
+                item {
+                    Text(
+                        text = stringResource(R.string.medication_strength),
+                        style = MedTrackerTheme.typography.title2,
+                    )
+                    Spacer(modifier = Modifier.padding(4.dp))
+                    
+                    MyTextField(
+                        value =
+                            state.value.strength
+                                .toString(), // Assuming you have a medStrength state property
+                        onValueChange = {
+                            if (it.isEmpty()) {
+                                viewModel.updateStrength(0f)
+                            } else {
+                                it.toFloatOrNull()?.let { strength ->
+                                    viewModel.updateStrength(strength)
+                                }
+                            }
+                        }, // Update the strength state property
+                        label = stringResource(R.string.medication_strength),
+                        placeholder = currentMed?.strength.toString(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                    // Add a unit selector or dropdown for strength units (e.g., MG, ML)
+                    // ...
+                }
+                
+                item {
+                    val context = LocalContext.current
+                    
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        FlyButton(
+                            onClick = {
+                                viewModel.updateMedicationFromFirestore(context)
+                                onBack.invoke()
+                            }
+                        ) {
+                            Text("Confirm")
+                        }
+                        
+                        FlyErrorButton(
+                            onClick = { viewModel.deleteMedicationFromFirestore(currentMed!!.name) }
+                        ) {
+                            Text(stringResource(R.string.delete_medication))
+                        }
+                    }
+                }
             }
+            // }
         }
     }
 }
 
 @Composable
-fun DatePicker(viewModel: UpdateMedVM) {
+fun DatePicker(
+    // viewModel: UpdateMedVM,
+    updateStartDate: (Timestamp) -> Unit,
+    updateEndDate: (Timestamp) -> Unit,
+) {
     var showPicker by remember { mutableStateOf(false) }
 
     Column(horizontalAlignment = Alignment.Start, verticalArrangement = Arrangement.Center) {
         if (showPicker) {
             DateRangePickerModal(
                 onDateRangeSelected = {
-                    viewModel.updateStartDate(
+                    formatDateStringToTimestampMMMMddyyyy(convertMillisToDate(it.first))?.let { it1
+                        ->
+                        updateStartDate(it1)
+                    }
+                    formatDateStringToTimestampMMMMddyyyy(convertMillisToDate(it.second))?.let { it1
+                        ->
+                        updateEndDate(it1)
+                    }
+                    /*      viewModel.updateStartDate(
                         formatDateStringToTimestampMMMMddyyyy(convertMillisToDate(it.first))
                     )
                     viewModel.updateEndDate(
                         formatDateStringToTimestampMMMMddyyyy(convertMillisToDate(it.second))
-                    )
+                    ) */
                     showPicker = !showPicker
                 },
                 onDismiss = { showPicker = !showPicker },
             )
         }
+        /*         Text(
+            text =
+                "Start: ${formatTimestampTillTheDayMMMMddyyyy(viewModel.uiState.value.startDate)}"
+        )
         MyTextField(
             value = "",
             label =
-                "Start: ${formatTimestampTillTheDayMMMMddyyyy(viewModel.uiState.startDate)}\nEnd: ${
+                "Start: ${formatTimestampTillTheDayMMMMddyyyy(viewModel.uiState.value.startDate)}\nEnd: ${
                 formatTimestampTillTheDayMMMMddyyyy(
-                    viewModel.uiState.endDate
+                    viewModel.uiState.value.endDate
                 )
             }",
             onValueChange = {},
             isPrimaryColor = false,
             readOnly = true,
-        )
+        ) */
         FlyButton(onClick = { showPicker = !showPicker }, modifier = Modifier.fillMaxWidth()) {
             Text(text = stringResource(R.string.choose_start_and_end_dates))
         }

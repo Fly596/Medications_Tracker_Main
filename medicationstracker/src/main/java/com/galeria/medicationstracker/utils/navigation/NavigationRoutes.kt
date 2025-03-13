@@ -27,6 +27,7 @@ import com.galeria.medicationstracker.ui.screens.medications.mediinfo.ViewMedica
 import com.galeria.medicationstracker.ui.screens.medications.newmed.AddNewMedViewModel
 import com.galeria.medicationstracker.ui.screens.medications.newmed.NewMedicationDataScreen
 import com.galeria.medicationstracker.ui.screens.medications.update.UpdateMedScreen
+import com.galeria.medicationstracker.ui.screens.medications.update.UpdateMedVM
 import com.galeria.medicationstracker.ui.screens.profile.AccountScreenHead
 import com.galeria.medicationstracker.ui.screens.profile.ProfileVM
 import com.galeria.medicationstracker.ui.screens.profile.notes.NewNoteScreen
@@ -333,11 +334,13 @@ fun NavGraphBuilder.patientMedsGraph(navController: NavHostController) {
         }
 
         composable<PatientRoutes.PatientUpdateMedication> { backStackEntry ->
+            val vm: UpdateMedVM = hiltViewModel()
             val args = backStackEntry.toRoute<PatientRoutes.PatientUpdateMedication>()
 
             UpdateMedScreen(
                 passedMedName = args.medicationName ?: "",
-                onConfirmEdit = { navController.navigateUp() },
+                viewModel = vm,
+                onBack = { navController.navigateUp() },
             )
         }
     }

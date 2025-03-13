@@ -85,7 +85,7 @@ fun MedicationsScreen(
                                         .lowercase()
                                 }"),
                             info = med.form.toString().lowercase(),
-                            onEditClick = { onEditMedClick(med.name.toString()) },
+                            onEditClick = { onEditMedClick(med.name) },
                             onRemoveMedClick = {
                                 medicationsViewModel.deleteMedicationFromFirestore(
                                     med.name.toString()

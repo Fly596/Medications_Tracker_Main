@@ -3,6 +3,7 @@ package com.galeria.medicationstracker.data
 import com.galeria.medicationstracker.utils.FirestoreFunctions
 import com.galeria.medicationstracker.utils.FirestoreFunctions.FirestoreService.db
 import com.google.firebase.Timestamp
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -12,12 +13,14 @@ import javax.inject.Inject
 
 interface MedicationsRepository {
     
-    suspend fun getDrug(): UserMedication
+    suspend fun getDrug(drugName: String): UserMedication
+
     suspend fun getDrugs(uid: String): List<UserMedication>
+
     suspend fun deleteDrug(drugName: String)
-    
+
     suspend fun addDrug(drug: UserMedication)
-    
+
     suspend fun updateDrug(
         endDate: Timestamp,
         startDate: Timestamp,
@@ -28,57 +31,58 @@ interface MedicationsRepository {
         notes: String,
         strength: Float,
         strengthUnit: String,
-        uid: String
+        uid: String,
     )
-    
+
     fun getDrugsStream(uid: String): Flow<List<UserMedication>>
-    
 }
 
-class MedicationsRepositoryImpl @Inject constructor(
-    private val firestore: FirebaseFirestore
-) : MedicationsRepository {
-    
+class MedicationsRepositoryImpl
+@Inject
+constructor(private val firestore: FirebaseFirestore, private val auth: FirebaseAuth) :
+    MedicationsRepository {
+
     private val medicationsCollection = firestore.collection("UserMedication")
     
-    
-    override fun getDrugsStream(uid: String): Flow<List<UserMedication>> {
-        return callbackFlow {
-            val listenerRegistration = medicationsCollection
-                .whereEqualTo("uid", uid)
-                .addSnapshotListener { value, error ->
-                    if (error != null) {
-                        // Handle error
-                        return@addSnapshotListener
-                    }
-                    
-                    if (value != null) {
-                        val medsList = value.toObjects(UserMedication::class.java)
-                        trySend(medsList)
-                    }
+    override fun getDrugsStream(uid: String): Flow<List<UserMedication>> = callbackFlow {
+        val listenerRegistration =
+            medicationsCollection.whereEqualTo("uid", uid).addSnapshotListener { value, error ->
+                if (error != null) {
+                    // Handle error
+                    return@addSnapshotListener
                 }
-            // Clean up the listener when the flow is cancelled
-            awaitClose {
-                listenerRegistration.remove()
+                
+                if (value != null) {
+                    val medsList = value.toObjects(UserMedication::class.java)
+                    trySend(medsList)
+                }
             }
-        }
+        // Clean up the listener when the flow is cancelled
+        awaitClose { listenerRegistration.remove() }
     }
     
-    override suspend fun getDrug(): UserMedication {
-        TODO("Not yet implemented")
+    override suspend fun getDrug(drugName: String): UserMedication {
+        return try {
+            val querySnapshot =
+                db.collection("UserMedication")
+                    .whereEqualTo("name", drugName)
+                    .whereEqualTo("uid", auth.currentUser?.uid)
+                    .get()
+                    .await()
+            querySnapshot.toObjects(UserMedication::class.java)[0]
+        } catch (e: Exception) {
+            UserMedication()
+        }
     }
     
     override suspend fun getDrugs(uid: String): List<UserMedication> {
         return try {
-            val querySnapshot = db.collection("UserMedication")
-                .whereEqualTo("uid", uid)
-                .get()
-                .await()
+            val querySnapshot =
+                db.collection("UserMedication").whereEqualTo("uid", uid).get().await()
             querySnapshot.toObjects(UserMedication::class.java)
         } catch (e: Exception) {
             emptyList()
         }
-        
     }
     
     override suspend fun addDrug(drug: UserMedication) {
@@ -95,8 +99,10 @@ class MedicationsRepositoryImpl @Inject constructor(
         notes: String,
         strength: Float,
         strengthUnit: String,
-        uid: String
+        uid: String,
     ) {
+        // val docId = "${userLogin}_${medName}"
+        db.collection("UserMedication")
         TODO("Not yet implemented")
     }
     
@@ -107,7 +113,8 @@ class MedicationsRepositoryImpl @Inject constructor(
             .addOnSuccessListener { querySnapshot ->
                 if (!querySnapshot.isEmpty) {
                     for (document in querySnapshot.documents) {
-                        FirestoreFunctions.FirestoreService.db.collection("UserMedication")
+                        FirestoreFunctions.FirestoreService.db
+                            .collection("UserMedication")
                             .document(document.id)
                             .delete()
                             .addOnSuccessListener {
@@ -121,9 +128,6 @@ class MedicationsRepositoryImpl @Inject constructor(
                     println("No document found with the name: ${drugName}")
                 }
             }
-            .addOnFailureListener { e ->
-                println("Error finding documents to delete: $e")
-            }
+            .addOnFailureListener { e -> println("Error finding documents to delete: $e") }
     }
-    
 }

@@ -27,9 +27,10 @@ object AppModule {
     
     @Provides
     fun provideFirestoreRepository(
-        firestore: FirebaseFirestore
+        firestore: FirebaseFirestore,
+        auth: FirebaseAuth
     ): MedicationsRepository {
-        return MedicationsRepositoryImpl(firestore)
+        return MedicationsRepositoryImpl(firestore, auth)
     }
     
     @Provides
