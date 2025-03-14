@@ -20,20 +20,43 @@ data class UserMedication(
 )
 
 data class Medication(
-    val drugId: String = "",
     val name: String = "",
     val classType: String = "", // Переименовал class, потому что это зарезервированное слово в Kotlin
-    val form: String = "",
+    val form: MedicationForm = MedicationForm.UNKNOWN,
     val strength: Float = 0f,
-    val unit: String = "",
+    val unit: MedicationUnit = MedicationUnit.MG,
     val requiresPrescription: Boolean = false,
-    val manufacturer: String = "",
     val sideEffects: List<String> = emptyList(),
     val contraindications: List<String> = emptyList(),
+    val interactions: Map<String, InteractionType> = emptyMap(),
     val dosageInstructions: String = "",
-    val createdAt: String = "",
-    val updatedAt: String = ""
 )
+
+
+sealed class InteractionType(val severity: String) {
+    object Major : InteractionType("Высокий риск")
+    object Moderate : InteractionType("Средний риск")
+    object Minor : InteractionType("Низкий риск")
+    object Unknown : InteractionType("Неизвестно")
+    
+    companion object {
+        
+        fun fromString(value: String): InteractionType {
+            return when (value.uppercase()) {
+                "MAJOR" -> Major
+                "MODERATE" -> Moderate
+                "MINOR" -> Minor
+                else -> Unknown
+            }
+        }
+    }
+}
+
+enum class Symptom {
+    FATIGUE,
+    FEVER,
+    
+}
 
 data class User(
     val uid: String = "",
@@ -69,9 +92,27 @@ data class UserIntake(
     val uid: String? = null,
     val medicationName: String? = null,
     val dose: String? = null,
-    val status: Boolean? = null,
+    val status: UserIntakeStatus = UserIntakeStatus.Pending,
     val dateTime: Timestamp? = null,
 )
+
+sealed class UserIntakeStatus {
+    object Taken : UserIntakeStatus() // Принято
+    object Skipped : UserIntakeStatus() // Пропущено
+    object Pending : UserIntakeStatus() // Ожидает приема
+    
+    companion object {
+        
+        fun fromBoolean(status: Boolean?): UserIntakeStatus {
+            return when (status) {
+                true -> Taken
+                false -> Skipped
+                null -> Pending
+            }
+        }
+    }
+}
+
 
 data class Appointment(
     val date: Timestamp? = null,
@@ -94,6 +135,7 @@ enum class MedicationForm {
     LIQUID,
     INJECTION,
     POWDER,
+    UNKNOWN,
     /*     TOPICAL,
         CREAM,
         DEVICE,

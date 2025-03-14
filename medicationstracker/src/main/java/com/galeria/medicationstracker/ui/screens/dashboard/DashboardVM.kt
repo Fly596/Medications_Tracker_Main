@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.galeria.medicationstracker.data.UserIntake
+import com.galeria.medicationstracker.data.UserIntakeStatus
 import com.galeria.medicationstracker.data.UserMedication
 import com.galeria.medicationstracker.data.UserRepository
 import com.galeria.medicationstracker.utils.FirestoreFunctions.FirestoreService
@@ -86,7 +87,7 @@ class DashboardVM @Inject constructor(private val repository: UserRepository) : 
     fun addNewIntake(
         intakeTime: Timestamp = Timestamp.now(),
         medication: UserMedication = UserMedication(),
-        status: Boolean = true,
+        status: UserIntakeStatus = UserIntakeStatus.Pending,
     ) {
         viewModelScope.launch {
             val intake =
@@ -121,7 +122,7 @@ class DashboardVM @Inject constructor(private val repository: UserRepository) : 
                     .await()
 
             if (!querySnapshot.isEmpty) {
-                if (querySnapshot.toObjects(UserIntake::class.java)[0].status == true) 2 else 1
+                if (querySnapshot.toObjects(UserIntake::class.java)[0].status.toString() == "Taken") 2 else 1
             } else {
                 0
             }

@@ -35,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medicationstracker.R
+import com.galeria.medicationstracker.data.UserIntakeStatus
 import com.galeria.medicationstracker.data.UserMedication
 import com.galeria.medicationstracker.ui.components.GPrimaryButton
 import com.galeria.medicationstracker.ui.componentsOld.FLySimpleCardContainer
@@ -217,7 +218,7 @@ fun MedicationItem(
                     showLogDialog.value = false
                 },
                 onConfirmation = {
-                    viewModel.addNewIntake(medication = medication, status = true)
+                    viewModel.addNewIntake(medication = medication, status = UserIntakeStatus.Taken)
                     showLogDialog.value = false
                 },
                 onAddNotes = {

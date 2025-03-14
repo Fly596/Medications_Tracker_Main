@@ -45,7 +45,7 @@ fun AddMedicationScreen(
     viewModel: AddMedicationsViewModel,
 ) {
     val state = viewModel.uiState.collectAsStateWithLifecycle()
-    
+
     MedTrackerTheme {
         Scaffold(
             containerColor = MedTrackerTheme.colors.secondaryBackground,
@@ -99,7 +99,8 @@ fun AddMedicationScreen(
                                 MedicationForm.entries.toTypedArray()
                             val opList: List<String> = optionsArray.map { it.toString() }
                             GDropdownList(items = opList) { selected ->
-                                viewModel.updateForm(selected)
+                                val selectedForm = MedicationForm.valueOf(selected.uppercase())
+                                viewModel.updateForm(selectedForm)
                             }
                         }
                     }
@@ -122,13 +123,13 @@ fun AddMedicationScreen(
                                         KeyboardOptions(keyboardType = KeyboardType.Number),
                                     modifier = Modifier.fillMaxWidth(),
                                 )
-                                // Units.
-                                GTextField(
-                                    value = state.value.unit,
-                                    onValueChange = { viewModel.updateUnit(it) },
-                                    label = stringResource(R.string.unit),
-                                    isPrimaryColor = true,
-                                )
+                                val optionsArray: Array<MedicationUnit> =
+                                    MedicationUnit.entries.toTypedArray()
+                                val opList: List<String> = optionsArray.map { it.toString() }
+                                GDropdownList(items = opList) { selected ->
+                                    val selectedUnit = MedicationUnit.valueOf(selected.uppercase())
+                                    viewModel.updateUnit(selectedUnit)
+                                }
                             },
                         )
                         Spacer(modifier = Modifier.padding(16.dp))
