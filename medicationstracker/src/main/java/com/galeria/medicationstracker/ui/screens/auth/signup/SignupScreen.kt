@@ -12,6 +12,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -23,9 +27,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.galeria.medicationstracker.R
+import com.galeria.medicationstracker.data.UserType
 import com.galeria.medicationstracker.ui.componentsOld.FlyButton
-import com.galeria.medicationstracker.ui.componentsOld.FlySimpleCard
 import com.galeria.medicationstracker.ui.componentsOld.FlyTextButton
+import com.galeria.medicationstracker.ui.componentsOld.MyRadioButton
 import com.galeria.medicationstracker.ui.componentsOld.MyTextField
 import com.galeria.medicationstracker.ui.screens.auth.login.RememberMeSwitch
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
@@ -44,7 +49,7 @@ fun SignupScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.Top
+        verticalArrangement = Arrangement.Top,
     ) {
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -59,8 +64,8 @@ fun SignupScreen(
             value = state.value.firstName,
             onValueChange = { viewModel.updateUserName(it) },
             isPrimaryColor = true,
-            label = "Name",
-            placeholder = "Name",
+            label = stringResource(R.string.name),
+            placeholder = stringResource(R.string.name),
             modifier = Modifier.fillMaxWidth(),
         )
         MyTextField(
@@ -73,8 +78,8 @@ fun SignupScreen(
                 }
             },
             isPrimaryColor = true,
-            label = "Age",
-            placeholder = "Age",
+            label = stringResource(R.string.age),
+            placeholder = stringResource(R.string.age),
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         )
@@ -97,12 +102,13 @@ fun SignupScreen(
             isPrimaryColor = true,
             isError = state.value.passwordErrorMessage?.isNotEmpty() ?: false,
             errorMessage = state.value.passwordErrorMessage,
-            label = "Password",
-            placeholder = "6 or more characters",
-            supportingText = "6 or more characters",
+            label = stringResource(R.string.password),
+            placeholder = stringResource(R.string._6_or_more_characters),
+            supportingText = stringResource(R.string._6_or_more_characters),
             modifier = Modifier.fillMaxWidth(),
             visualTransformation =
-                if (state.value.showPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                if (state.value.showPassword) VisualTransformation.None
+                else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         )
         // Show password switch.
@@ -111,32 +117,21 @@ fun SignupScreen(
             onCheckedChange = { viewModel.isShowPasswordChecked(state.value.showPassword) },
         )
         // Список типов пользователя.
-
-        FlySimpleCard(
-            content = {
-                Text(
-                    "Account Type",
-                    style = MedTrackerTheme.typography.title2,
-                )
-
-            }
-        )
+        var selectedType by remember { mutableStateOf(state.value.userType) }
+        val options = UserType.entries.toTypedArray()
 
         Spacer(modifier = Modifier.height(16.dp))
         val context = LocalContext.current
 
         Row(verticalAlignment = Alignment.CenterVertically) {
-            FlyTextButton(onClick = navigateHome) { Text(text = "Cancel") }
+            FlyTextButton(onClick = navigateHome) { Text(stringResource(R.string.cancel)) }
 
             Spacer(modifier = Modifier.weight(1f))
 
-            FlyButton(onClick = {
-                viewModel.onRegisterClick(
-                    context,
-                    onSignupSuccess = navigateHome
-                )
-            }) {
-                Text(text = "Create Account")
+            FlyButton(
+                onClick = { viewModel.onRegisterClick(context, onSignupSuccess = navigateHome) }
+            ) {
+                Text(text = stringResource(R.string.create_account))
             }
         }
 
@@ -149,9 +144,30 @@ fun SignupScreen(
 /**
  * Composable function that displays a radio button group for selecting user types.
  *
- * This function iterates through available user types and renders a radio button for each type.
- * The selected type is tracked and updated based on user interaction.
+ * This function iterates through available user types and renders a radio button for each type. The
+ * selected type is tracked and updated based on user interaction.
  *
- * @param viewModel The SignupScreenViewModel instance providing data and state.value for the signup screen.
+ * @param viewModel The SignupScreenViewModel instance providing data and state.value for the signup
+ *   screen.
  */
+@Composable
+fun UserTypesSelection(viewModel: SignupScreenViewModel) {
+    var selectedType by remember { mutableStateOf(viewModel.signupScreenState.value.userType) }
+    val options = UserType.entries.toTypedArray()
 
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalAlignment = Alignment.Start,
+    ) {
+        options.forEach { type ->
+            Row {
+                MyRadioButton(
+                    selected = selectedType == type,
+                    onClick = { selectedType = type },
+                    caption = type.toString().lowercase(),
+                )
+            }
+        }
+    }
+}

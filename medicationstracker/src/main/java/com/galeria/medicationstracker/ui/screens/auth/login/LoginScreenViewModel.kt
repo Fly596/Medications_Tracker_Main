@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.galeria.medicationstracker.SnackbarController
 import com.galeria.medicationstracker.SnackbarEvent
+import com.galeria.medicationstracker.data.UserType
 import com.galeria.medicationstracker.utils.FirestoreFunctions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
@@ -17,11 +18,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 data class LoginScreenState(
-    val email: String = "tom@gmail.com",/* "ggsell@gmail.com", *//* "docadam@gmail.com" */
+    val email: String = "tom@gmail.com",
     val emailError: String? = null,
-    val password: String = "tomtom",/*"password" "docadam" */
+    val password: String = "tomtom",
     val passwordError: String? = null,
     val showPassword: Boolean = false,
+    val userType: UserType = UserType.PATIENT,
 )
 
 class LoginScreenViewModel : ViewModel() {
@@ -45,10 +47,7 @@ class LoginScreenViewModel : ViewModel() {
             }
 
             try {
-                val snapshot = db.collection("User")
-                    .document(userEmail)
-                    .get()
-                    .await()
+                val snapshot = db.collection("User").document(userEmail).get().await()
 
                 if (snapshot.exists()) {
                     currentUserType.value = snapshot.data?.get("type") as? String
@@ -56,14 +55,9 @@ class LoginScreenViewModel : ViewModel() {
                     currentUserType.value = null
                 }
             } catch (exception: FirebaseFirestoreException) {
-                Log.e(
-                    "MainViewModel",
-                    "Error getting user type",
-                    exception
-                )
+                Log.e("MainViewModel", "Error getting user type", exception)
             }
         }
-
     }
 
     private fun validateEmail(): Boolean {
@@ -74,9 +68,7 @@ class LoginScreenViewModel : ViewModel() {
         if (emailInput.isBlank() || emailInput.isEmpty()) {
             errorMessage = "Email cannot be empty"
             isValid = false
-        } else if (!Patterns.EMAIL_ADDRESS.matcher(emailInput)
-                .matches()
-        ) {
+        } else if (!Patterns.EMAIL_ADDRESS.matcher(emailInput).matches()) {
             errorMessage = "Wrong email format"
             isValid = false
         }
@@ -102,53 +94,85 @@ class LoginScreenViewModel : ViewModel() {
         return isValid
     }
 
-    fun onSignInClick(
-        email: String,
-        password: String,
-        onLoginClick: () -> Unit
-    ) {
+    fun onSignInClick(email: String, password: String, onLoginClick: (userType: UserType) -> Unit) {
         viewModelScope.launch {
             val isEmailValid = validateEmail()
             val isPasswordValid = validatePassword()
 
             if (isEmailValid && isPasswordValid) {
-                firebaseAuth.signInWithEmailAndPassword(
-                    email,
-                    password
-                )
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            val userId = task.result?.user?.uid
+                firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
+                    task ->
+                    if (task.isSuccessful) {
+                        val userId = task.result?.user?.uid
 
-                            if (userId != null) {
-                                val dataBase = FirestoreFunctions.FirestoreService.db
+                        if (userId != null) {
+                            val dataBase = FirestoreFunctions.FirestoreService.db
 
+                            dataBase
+                                .collection("User")
+                                .document(email)
+                                .get()
+                                .addOnSuccessListener { snapshot ->
+                                    if (snapshot.exists()) {
+                                        val userTypeString = snapshot.getString("type")
 
-                            } else {
-                                viewModelScope.launch {
-                                    SnackbarController.sendEvent(
-                                        event = SnackbarEvent("User ID is null. Login failed.")
-                                    )
+                                        if (userTypeString != null) {
+                                            val docUserType =
+                                                UserType.valueOf(userTypeString.uppercase())
+                                            _loginScreenState.value =
+                                                _loginScreenState.value.copy(userType = docUserType)
+                                            onLoginClick.invoke(docUserType)
+
+                                            viewModelScope.launch {
+                                                SnackbarController.sendEvent(
+                                                    SnackbarEvent("Login Successful!")
+                                                )
+                                            }
+                                        } else {
+                                            viewModelScope.launch {
+                                                SnackbarController.sendEvent(
+                                                    event = SnackbarEvent("User data not found.")
+                                                )
+                                            }
+                                        }
+                                    }
                                 }
-                            }
+                                .addOnFailureListener { exception ->
+                                    viewModelScope.launch {
+                                        SnackbarController.sendEvent(
+                                            event =
+                                                SnackbarEvent(
+                                                    "Error fetching user data: ${exception.message}"
+                                                )
+                                        )
+                                    }
+                                }
                         } else {
-                            val errorMessage = when (task.exception) {
+                            viewModelScope.launch {
+                                SnackbarController.sendEvent(
+                                    event = SnackbarEvent("User ID is null. Login failed.")
+                                )
+                            }
+                        }
+                    } else {
+                        val errorMessage =
+                            when (task.exception) {
                                 is FirebaseAuthInvalidUserException -> "Invalid email or password."
                                 is FirebaseAuthInvalidCredentialsException -> "Invalid password."
                                 else -> "Authentication failed: ${task.exception?.message}"
                             }
 
-                            viewModelScope.launch {
-                                SnackbarController.sendEvent(event = SnackbarEvent(message = errorMessage))
-                            }
+                        viewModelScope.launch {
+                            SnackbarController.sendEvent(
+                                event = SnackbarEvent(message = errorMessage)
+                            )
                         }
                     }
+                }
             } else {
-                /*           viewModelScope.launch {
-                              SnackbarController.sendEvent(event = SnackbarEvent(message = "Invalid email or password."))
-                          } */
-                SnackbarController.sendEvent(event = SnackbarEvent(message = "Invalid email or password."))
-
+                SnackbarController.sendEvent(
+                    event = SnackbarEvent(message = "Invalid email or password.")
+                )
             }
         }
     }
@@ -164,5 +188,4 @@ class LoginScreenViewModel : ViewModel() {
     fun isShowPasswordChecked(input: Boolean) {
         _loginScreenState.value = _loginScreenState.value.copy(showPassword = !input)
     }
-
 }

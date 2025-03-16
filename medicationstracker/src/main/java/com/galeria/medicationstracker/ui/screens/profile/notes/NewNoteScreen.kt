@@ -27,9 +27,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.galeria.medicationstracker.R
 import com.galeria.medicationstracker.ui.components.GBasicTextField
 import com.galeria.medicationstracker.ui.components.GPrimaryButton
 import com.galeria.medicationstracker.ui.components.GTextField
@@ -39,7 +40,7 @@ import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 fun NewNoteScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
-    viewModel: NewNoteViewModel = hiltViewModel(),
+    viewModel: NewNoteViewModel,
 ) {
     val state = viewModel.uiState.collectAsStateWithLifecycle()
     MedTrackerTheme {
@@ -61,19 +62,17 @@ fun NewNoteScreen(
                             )
                         }
                         Text(
-                            text = "New Note",
+                            text = stringResource(R.string.new_note),
                             style = MedTrackerTheme.typography.display3Emphasized,
                             modifier = Modifier.padding(start = 16.dp)
                         )
                     }
                     HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
-
                 }
-
             }
         ) { innerPadding ->
             Column(
-                modifier = Modifier
+                modifier = modifier
                     .padding(innerPadding)
                     .padding(16.dp)
                     .fillMaxSize()
@@ -90,7 +89,7 @@ fun NewNoteScreen(
                     prefixStyle = MedTrackerTheme.typography.title1Emphasized,
                     prefixModifier = Modifier
                 )
-
+                
                 GTextField(
                     value = state.value.content,
                     onValueChange = {
@@ -102,10 +101,9 @@ fun NewNoteScreen(
                     singleLine = false,
                     isPrimaryColor = true
                 )
-
                 // Medication Chips
                 Text(
-                    text = "Medications",
+                    text = stringResource(R.string.medications),
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
                 )
@@ -120,9 +118,8 @@ fun NewNoteScreen(
                             onSelected = { viewModel.toggleMedication(medication.name) }
                         )
                     }
-
                 }
-
+                
                 GPrimaryButton(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -136,7 +133,7 @@ fun NewNoteScreen(
             }
         }
     }
-
+    
 }
 
 // Reusable FilterChip composable

@@ -78,7 +78,7 @@ fun LoginScreen(
                 isError = state.value.passwordError?.isNotEmpty() ?: false,
                 errorMessage = state.value.passwordError,
                 label = "Password",
-                placeholder = "6 or more characters",
+                placeholder = stringResource(R.string._6_or_more_characters),
                 // supportingText = "6 or more characters",
                 modifier = Modifier.fillMaxWidth(),
                 visualTransformation =
@@ -111,7 +111,7 @@ fun LoginScreen(
                 },
                 enabled = true,
             ) {
-                Text(text = "Sign In")
+                Text(text = stringResource(R.string.sign_in))
             }
 
             Spacer(modifier = Modifier.weight(1f))
@@ -122,7 +122,7 @@ fun LoginScreen(
                 },
                 enabled = true
             ) {
-                Text(text = "Create Account")
+                Text(text = stringResource(R.string.create_account))
             }
         }
 
@@ -134,7 +134,7 @@ fun LoginScreen(
             },
             enabled = true
         ) {
-            Text(text = "Forgot password?")
+            Text(text = stringResource(R.string.forgot_password))
         }
     }
 }
@@ -146,7 +146,7 @@ fun RememberMeSwitch(
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Text(
-            "Show password",
+            stringResource(R.string.show_password),
             style = MedTrackerTheme.typography.bodyMedium
         )
         Spacer(modifier = Modifier.width(12.dp))

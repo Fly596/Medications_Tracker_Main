@@ -1,7 +1,9 @@
 package com.galeria.medicationstracker.di
 
-import com.galeria.medicationstracker.data.MedicationsRepository
-import com.galeria.medicationstracker.data.MedicationsRepositoryImpl
+import com.galeria.medicationstracker.data.MedicationRepository
+import com.galeria.medicationstracker.data.MedicationRepositoryImpl
+import com.galeria.medicationstracker.data.UserMedicationsRepository
+import com.galeria.medicationstracker.data.UserMedicationsRepositoryImpl
 import com.galeria.medicationstracker.data.UserRepository
 import com.galeria.medicationstracker.data.UserRepositoryImpl
 import com.google.firebase.auth.FirebaseAuth
@@ -27,9 +29,10 @@ object AppModule {
     
     @Provides
     fun provideFirestoreRepository(
-        firestore: FirebaseFirestore
-    ): MedicationsRepository {
-        return MedicationsRepositoryImpl(firestore)
+        firestore: FirebaseFirestore,
+        auth: FirebaseAuth
+    ): UserMedicationsRepository {
+        return UserMedicationsRepositoryImpl(firestore, auth)
     }
     
     @Provides
@@ -39,5 +42,14 @@ object AppModule {
         auth: FirebaseAuth
     ): UserRepository {
         return UserRepositoryImpl(firestore, auth)
+    }
+    
+    @Provides
+    @Singleton
+    fun provideMedicationRepository(
+        firestore: FirebaseFirestore,
+        auth: FirebaseAuth
+    ): MedicationRepository {
+        return MedicationRepositoryImpl(firestore, auth)
     }
 }

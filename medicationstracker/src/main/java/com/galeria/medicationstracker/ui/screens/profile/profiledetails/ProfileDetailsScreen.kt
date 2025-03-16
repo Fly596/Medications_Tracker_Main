@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -26,10 +25,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medicationstracker.R
 import com.galeria.medicationstracker.ui.components.GBasicTextField
@@ -43,43 +42,36 @@ import com.google.firebase.Timestamp
 fun ProfileDetailsScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
-    viewModel: ProfileDetailsViewModel = hiltViewModel()
+    viewModel: ProfileDetailsViewModel,
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
-    /*     var firstName by remember { mutableStateOf("Eugen") }
-        var lastName by remember { mutableStateOf("Krylov") }
-        var dateOfBirth by remember { mutableStateOf("Not Set") }
-        var sex by remember { mutableStateOf("Not Set") }
-        var bloodType by remember { mutableStateOf("Not Set") }
-        var fitzpatrickSkinType by remember { mutableStateOf("Not Set") }
-        var wheelchair by remember { mutableStateOf("Not Set") } */
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             IconButton(
                 onClick = {
                     onBackClick.invoke()
                     // Handle back button click
-                },
+                }
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBackIosNew,
                     contentDescription = "Back",
                     tint = MedTrackerTheme.colors.sysBlack,
-                    modifier = Modifier
+                    modifier = Modifier,
                 )
             }
             Spacer(modifier = Modifier.weight(1f))
 
             Text(
-                text = "Health Details",
+                text = stringResource(R.string.health_details),
                 style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier
+                modifier = Modifier,
             )
             Spacer(modifier = Modifier.weight(1f))
         }
@@ -93,36 +85,40 @@ fun ProfileDetailsScreen(
                 .clip(CircleShape)
                 .size(108.dp),
         )
-
-        HealthDetailItem("First Name", state.value.firstName ?: "") {
+        
+        HealthDetailItem(
+            stringResource(R.string.first_name),
+            state.value.firstName ?: ""
+        ) {
             viewModel.updateFirstName(it)
         }
-        HealthDetailItem("Last Name", state.value.lastName ?: "") {
-            viewModel.updateLastName(it)
-        }
-        HealthDetailItem("Email", state.value.email ?: "") {
-            viewModel.updateEmail(it)
-        }
-
+        HealthDetailItem(
+            stringResource(R.string.last_name),
+            state.value.lastName ?: ""
+        ) { viewModel.updateLastName(it) }
+        HealthDetailItem("Email", state.value.email ?: "") { viewModel.updateEmail(it) }
 
         HealthDetailItem(
-            "Date of Birth",
-            formatTimestampTillTheDayMMMMddyyyy(state.value.dateOfBirth ?: Timestamp.now())
+            stringResource(R.string.date_of_birth),
+            formatTimestampTillTheDayMMMMddyyyy(state.value.dateOfBirth ?: Timestamp.now()),
         ) {
-            viewModel.updateDateOfBirth(
-                formatDateStringToTimestampMMMMddyyyy(it)
-            )
+            viewModel.updateDateOfBirth(formatDateStringToTimestampMMMMddyyyy(it))
         }
-        HealthDetailItem("Sex", state.value.sex?.toString() ?: "") {
-            viewModel.updateSex(it)
-        }
-        /*        HealthDetailItem("Blood Type", state.value.bloodType?.toString() ?: ""){
-                   viewModel.updateBloodType(it)
-               } */
-        HealthDetailItem("Weight", state.value.weight?.toString() ?: "") {
+        HealthDetailItem(
+            stringResource(R.string.sex),
+            state.value.sex?.toString() ?: ""
+        ) { viewModel.updateSex(it) }
+        
+        HealthDetailItem(
+            stringResource(R.string.weight),
+            state.value.weight?.toString() ?: ""
+        ) {
             viewModel.updateWeight(it.toFloat())
         }
-        HealthDetailItem("Height", state.value.height?.toString() ?: "") {
+        HealthDetailItem(
+            stringResource(R.string.height),
+            state.value.height?.toString() ?: ""
+        ) {
             viewModel.updateHeight(it.toFloat())
         }
 
@@ -130,19 +126,18 @@ fun ProfileDetailsScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp),
-            onClick = {
-                viewModel.updateUser()
-            }
+            onClick = { viewModel.updateUser() },
         ) {
-            Text("Update")
+            Text(stringResource(R.string.update))
         }
 
         Text(
-            text = "Track pushes instead of steps on Apple Watch in the Activity app, and in wheelchair workouts in the Workout app, and record them to Health. When this setting is on, your...",
+            text =
+                "Track pushes instead of steps on Apple Watch in the Activity app, and in wheelchair workouts in the Workout app, and record them to Health. When this setting is on, your...",
             style = MaterialTheme.typography.bodySmall,
             textAlign = TextAlign.Center,
             color = Color.Gray,
-            modifier = Modifier.padding(top = 16.dp)
+            modifier = Modifier.padding(top = 16.dp),
         )
     }
 }
@@ -154,7 +149,7 @@ fun HealthDetailItem(label: String, value: Any, onValueChange: (String) -> Unit 
             .fillMaxWidth()
             .padding(vertical = 4.dp),
         horizontalArrangement = Arrangement.Start,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         val interactionSource = remember { MutableInteractionSource() }
         GBasicTextField(
@@ -163,33 +158,13 @@ fun HealthDetailItem(label: String, value: Any, onValueChange: (String) -> Unit 
             modifier = Modifier.fillMaxWidth(),
             interactionSource = interactionSource,
             prefix = label,
-            prefixModifier = Modifier.padding(end = 16.dp)
+            prefixModifier = Modifier.padding(end = 16.dp),
         )
     }
 }
 
 @Preview
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileDetailsScreenPreview() {
-    MedTrackerTheme {
-        ProfileDetailsScreen()
-    }
+    MedTrackerTheme {}
 }
-/*
-@Composable
-fun HealthDetailItem2(label: String, value: String) {
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Divider(color = Color.Gray.copy(alpha = 0.3f))
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(text = label, fontSize = 16.sp, fontWeight = FontWeight.Medium)
-            Text(text = value, fontSize = 16.sp, color = Color.Gray)
-        }
-    }
-}
-*/

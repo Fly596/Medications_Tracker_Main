@@ -15,18 +15,58 @@ data class UserMedication(
     val endDate: Timestamp? = null,
     val daysOfWeek: List<String> = emptyList(),
     val intakeTime: String? = null,
-    val notes: String? = null
+    val notes: String? = null,
+    val chosenStrengths: List<Float> = emptyList(),
 )
 
-data class HospitalDrugs(
-    val name: String? = null, // Drisdol.
-    val drugClass: String? = null, // vitamins d derivatives.
-    val availability: String? = null, // prescription sometimes needed.
-    val strength: Float? = null, // 1.25.
-    val unit: String? = null, // MG.
-    val form: String? = null, // capsules.
+data class Medication(
+    val name: String = "",
+    val classType: String = "", // Переименовал class, потому что это зарезервированное слово в Kotlin
+    val form: MedicationForm = MedicationForm.UNKNOWN,
+    val strength: Float = 0f,
+    val unit: MedicationUnit = MedicationUnit.MG,
+    val requiresPrescription: Boolean = false,
+    val sideEffects: List<String> = emptyList(),
+    val contraindications: List<String> = emptyList(),
+    val interactions: Map<String, InteractionType> = emptyMap(),
+    val dosageInstructions: String = "",
 )
 
+
+sealed class InteractionType(val severity: String) {
+    object Major : InteractionType("Высокий риск")
+    object Moderate : InteractionType("Средний риск")
+    object Minor : InteractionType("Низкий риск")
+    object Unknown : InteractionType("Неизвестно")
+    
+    companion object {
+        
+        fun fromString(value: String): InteractionType {
+            return when (value.uppercase()) {
+                "MAJOR" -> Major
+                "MODERATE" -> Moderate
+                "MINOR" -> Minor
+                else -> Unknown
+            }
+        }
+    }
+}
+
+enum class Symptom {
+    FATIGUE,
+    FEVER,
+    
+}
+
+data class User(
+    val uid: String = "",
+    val login: String = "",
+    val type: UserType = UserType.PATIENT,
+    val age: Int? = null,
+    val name: String? = null,
+    val weight: Float? = null,
+    val height: Float? = null,
+)
 
 data class Note(
     val title: String = "",
@@ -52,9 +92,40 @@ data class UserIntake(
     val uid: String? = null,
     val medicationName: String? = null,
     val dose: String? = null,
-    val status: Boolean? = null,
+    val status: UserIntakeStatus = UserIntakeStatus.Pending,
     val dateTime: Timestamp? = null,
 )
+
+sealed class UserIntakeStatus {
+    object Taken : UserIntakeStatus() // Принято
+    object Skipped : UserIntakeStatus() // Пропущено
+    object Pending : UserIntakeStatus() // Ожидает приема
+    
+    companion object {
+        
+        fun fromBoolean(status: Boolean?): UserIntakeStatus {
+            return when (status) {
+                true -> Taken
+                false -> Skipped
+                null -> Pending
+            }
+        }
+    }
+}
+
+
+data class Appointment(
+    val date: Timestamp? = null,
+    val time: String? = null,
+    val doctor: String? = null,
+    val patient: String? = null,
+)
+
+enum class UserType {
+    ADMIN,
+    PATIENT,
+    DOCTOR,
+}
 
 
 
@@ -64,6 +135,7 @@ enum class MedicationForm {
     LIQUID,
     INJECTION,
     POWDER,
+    UNKNOWN,
     /*     TOPICAL,
         CREAM,
         DEVICE,

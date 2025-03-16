@@ -18,10 +18,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,19 +30,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.galeria.medicationstracker.R
+import com.galeria.medicationstracker.data.UserIntakeStatus
 import com.galeria.medicationstracker.data.UserMedication
 import com.galeria.medicationstracker.ui.components.GPrimaryButton
-import com.galeria.medicationstracker.ui.components.GTextField
 import com.galeria.medicationstracker.ui.componentsOld.FLySimpleCardContainer
 import com.galeria.medicationstracker.ui.componentsOld.LogMedicationTimeDialog
 import com.galeria.medicationstracker.ui.screens.dashboard.DashboardVM
+import com.galeria.medicationstracker.ui.screens.dashboard.MedicationItem
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme.typography
-import com.galeria.medicationstracker.utils.getTodaysDate
-import java.time.format.DateTimeFormatter
 
 @Composable
 fun MoodTrackerScreen(
@@ -56,21 +57,25 @@ fun MoodTrackerScreen(
         Scaffold(
             containerColor = MedTrackerTheme.colors.secondaryBackground,
             topBar = {
-                Row(modifier = Modifier.padding(vertical = 16.dp)) {
+                Row(
+                    modifier = Modifier.padding(
+                        vertical = 24.dp
+                    )
+                ) {
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.Default.ArrowBackIosNew,
-                            contentDescription = null,
-                            tint = MedTrackerTheme.colors.sysSuccess
+                            contentDescription = "Back",
+                            tint = MedTrackerTheme.colors.primaryLabel,
+                            modifier = Modifier.size(28.dp),
                         )
                     }
-                    // today's date.
                     Text(
-                        text = getTodaysDate().format(DateTimeFormatter.ofPattern("MMM d")),
-                        style = typography.display3Emphasized
+                        text = (stringResource(R.string.update_medication_title)),
+                        style = typography.display3Emphasized,
                     )
                 }
-            }
+            },
         ) { innerPadding ->
             Column(
                 modifier = modifier
@@ -79,34 +84,26 @@ fun MoodTrackerScreen(
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-
-                var intensivity by remember { mutableFloatStateOf(5.0f) }
                 Slider(
-                    value = intensivity,
+                    value = uiState.value.mood.toFloat(),
+                    onValueChange = { viewModel.updateMood(it.toInt()) },
                     valueRange = 1f..10f,
-                    onValueChange = { intensivity = it },
-                    modifier = Modifier.padding(top = 16.dp)
+                    steps = 9,
+                    modifier = Modifier.fillMaxWidth(),
                 )
+                Text(text = "${uiState.value.mood}")
 
-                Text(text = "Your mood is ${intensivity.toInt()}")
-
-                GTextField(
-                    value = uiState.value.notes.toString(),
+                TextField(
+                    value = uiState.value.notes ?: "",
                     onValueChange = { viewModel.updateNotes(it) },
-                    label = "Notes"
+                    label = { Text(stringResource(R.string.notes)) },
                 )
 
-                GPrimaryButton(onClick = {
-                    viewModel.addMood(
-                        intensivity.toInt()
-                    )
-                    onBackClick.invoke()
-                }) {
-                    Text(text = "Add mood")
+                GPrimaryButton(onClick = { viewModel.addMood(uiState.value.mood) }) {
+                    Text(text = stringResource(R.string.add_mood))
                 }
             }
         }
-
     }
 }
 
@@ -115,15 +112,14 @@ fun MoodTrackerScreen(
 fun MedsByIntakeTimeList(
     viewModel: DashboardVM,
     onAddNoteClick: () -> Unit = {},
-    medicationsForIntakeTime: List<UserMedication> = emptyList()
+    medicationsForIntakeTime: List<UserMedication> = emptyList(),
 ) {
     // Группируем лекарства по времени приема.
-    val medicationsByIntakeTime =
-        medicationsForIntakeTime.groupBy { it.intakeTime }
+    val medicationsByIntakeTime = medicationsForIntakeTime.groupBy { it.intakeTime }
 
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(24.dp)
+        verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         medicationsByIntakeTime.forEach { (intakeTime, medications) ->
             item {
@@ -131,20 +127,20 @@ fun MedsByIntakeTimeList(
                 FLySimpleCardContainer(modifier = Modifier.fillMaxWidth()) {
                     Column(
                         modifier = Modifier.padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
                         // Время приема.
                         Text(
                             text = intakeTime.toString(),
                             style = typography.title1Emphasized,
-                            modifier = Modifier.padding(0.dp)
+                            modifier = Modifier.padding(0.dp),
                         )
                         // Лекарства на это время.
                         medications.forEach { medicationsForIntakeTime ->
                             MedicationItem(
                                 viewModel = viewModel,
                                 medication = medicationsForIntakeTime,
-                                onAddNoteClick = { onAddNoteClick.invoke() }
+                                onAddNoteClick = { onAddNoteClick.invoke() },
                             )
                         }
                     }
@@ -166,51 +162,49 @@ fun MedicationItem(
     Row(
         modifier = Modifier,
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            modifier = Modifier.size(32.dp)
-        )
+        Icon(imageVector = icon, contentDescription = null, modifier = Modifier.size(32.dp))
 
         Text(text = medication.name.toString(), style = typography.bodyLarge)
 
         Spacer(modifier = Modifier.weight(1f))
         // State to control the check icon.
         var status by remember { mutableIntStateOf(0) }
-        LaunchedEffect(medication) {
-            status = viewModel.fetchIntakeStatus(medication)
-        }
+        LaunchedEffect(medication) { status = viewModel.fetchIntakeStatus(medication) }
 
         Text(
-            text = when (status) {
-                2 -> "Taken"
-                1 -> "Skipped"
-                else -> ""
-            },
+            text =
+                when (status) {
+                    2 -> "Taken"
+                    1 -> "Skipped"
+                    else -> ""
+                },
             style = typography.bodySmall,
-            color = MedTrackerTheme.colors.secondaryLabel
+            color = MedTrackerTheme.colors.secondaryLabel,
         )
 
         IconButton(
             onClick = {
                 // Add logic to log medication here.
                 showLogDialog.value = !showLogDialog.value
-            }) {
+            }
+        ) {
             Icon(
-                imageVector = when (status) {
-                    2 -> Icons.Filled.CheckCircle
-                    1 -> Icons.Filled.CheckCircle
-                    else -> Icons.Outlined.CheckCircle
-                },
+                imageVector =
+                    when (status) {
+                        2 -> Icons.Filled.CheckCircle
+                        1 -> Icons.Filled.CheckCircle
+                        else -> Icons.Outlined.CheckCircle
+                    },
                 contentDescription = null,
                 modifier = Modifier.size(32.dp),
-                tint = when (status) {
-                    2 -> MedTrackerTheme.colors.sysSuccess
-                    1 -> MedTrackerTheme.colors.sysWarning
-                    else -> MedTrackerTheme.colors.tertiaryLabel
-                }
+                tint =
+                    when (status) {
+                        2 -> MedTrackerTheme.colors.sysSuccess
+                        1 -> MedTrackerTheme.colors.sysWarning
+                        else -> MedTrackerTheme.colors.tertiaryLabel
+                    },
             )
         }
         // Display the dialog when `showLogDialog.value` is true
@@ -218,28 +212,22 @@ fun MedicationItem(
             LogMedicationTimeDialog(
                 onDismiss = {
                     /*             viewModel.addNewIntake(
-                                    medication = medication,
-                                    status = false
-                                ) */
+                        medication = medication,
+                        status = false
+                    ) */
                     showLogDialog.value = false
                 },
                 onConfirmation = {
-                    viewModel.addNewIntake(
-                        medication = medication,
-                        status = true
-                    )
+                    viewModel.addNewIntake(medication = medication, status = UserIntakeStatus.Taken)
                     showLogDialog.value = false
                 },
                 onAddNotes = {
-                    onAddNoteClick
+                    onAddNoteClick.invoke()
                     showLogDialog.value = false
                 },
                 onConfirmTime = { time ->
-                    viewModel.addNewIntake(
-                        intakeTime = time,
-                        medication = medication
-                    )
-                }
+                    viewModel.addNewIntake(intakeTime = time, medication = medication)
+                },
             )
         }
     }

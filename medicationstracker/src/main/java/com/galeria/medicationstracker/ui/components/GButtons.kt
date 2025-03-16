@@ -21,6 +21,7 @@ import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
@@ -32,11 +33,22 @@ import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme.colors
 
 @Composable
-fun GFABButton(onClick: () -> Unit) {
+fun GFABButton(
+    onClick: () -> Unit,
+    text: String? = null
+) {
     FloatingActionButton(
         onClick = { onClick() },
     ) {
-        Icon(Icons.Filled.Add, "Floating action button.")
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+        ) {
+            if (text != null) {
+                Text(text = text)
+            }
+            Icon(Icons.Filled.Add, "Floating action button.")
+        }
     }
 }
 
