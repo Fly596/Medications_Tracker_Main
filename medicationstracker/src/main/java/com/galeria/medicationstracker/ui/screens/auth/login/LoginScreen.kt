@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.galeria.medicationstracker.R
-import com.galeria.medicationstracker.data.UserType
 import com.galeria.medicationstracker.ui.componentsOld.FlyButton
 import com.galeria.medicationstracker.ui.componentsOld.FlyTextButton
 import com.galeria.medicationstracker.ui.componentsOld.FlyTonalButton
@@ -37,7 +36,6 @@ fun LoginScreen(
     onLogin: () -> Unit = {},
     onRegistration: () -> Unit = {},
     onResetPassword: () -> Unit = {},
-    onLoginClick: (userType: UserType) -> Unit = {},
     viewModel: LoginScreenViewModel = viewModel(),
 ) {
     val state = viewModel.loginScreenState.collectAsStateWithLifecycle()
@@ -107,8 +105,8 @@ fun LoginScreen(
                     viewModel.onSignInClick(
                         state.value.email,
                         state.value.password
-                    ) { userType ->
-                        onLoginClick(userType)
+                    ) {
+                        onLogin()
                     }
                 },
                 enabled = true,

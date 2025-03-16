@@ -12,10 +12,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -27,11 +23,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.galeria.medicationstracker.R
-import com.galeria.medicationstracker.data.UserType
 import com.galeria.medicationstracker.ui.componentsOld.FlyButton
 import com.galeria.medicationstracker.ui.componentsOld.FlySimpleCard
 import com.galeria.medicationstracker.ui.componentsOld.FlyTextButton
-import com.galeria.medicationstracker.ui.componentsOld.MyRadioButton
 import com.galeria.medicationstracker.ui.componentsOld.MyTextField
 import com.galeria.medicationstracker.ui.screens.auth.login.RememberMeSwitch
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
@@ -117,8 +111,6 @@ fun SignupScreen(
             onCheckedChange = { viewModel.isShowPasswordChecked(state.value.showPassword) },
         )
         // Список типов пользователя.
-        var selectedType by remember { mutableStateOf(state.value.userType) }
-        val options = UserType.entries.toTypedArray()
 
         FlySimpleCard(
             content = {
@@ -127,25 +119,6 @@ fun SignupScreen(
                     style = MedTrackerTheme.typography.title2,
                 )
 
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    options.forEach { type ->
-                        Column(verticalArrangement = Arrangement.Center) {
-                            MyRadioButton(
-                                selected = selectedType == type,
-                                onClick = {
-                                    viewModel.updateUserType(selectedType)
-                                    selectedType = type
-                                },
-                                caption = type.toString().lowercase()
-                            )
-                            // Text(text = form.toString().lowercase())
-                        }
-                    }
-                }
             }
         )
 
@@ -181,27 +154,4 @@ fun SignupScreen(
  *
  * @param viewModel The SignupScreenViewModel instance providing data and state.value for the signup screen.
  */
-@Composable
-fun UserTypesSelection(viewModel: SignupScreenViewModel) {
-    var selectedType by remember { mutableStateOf(viewModel.signupScreenState.value.userType) }
-    val options = UserType.entries.toTypedArray()
 
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalAlignment = Alignment.Start
-    ) {
-        options.forEach { type ->
-            Row {
-                MyRadioButton(
-                    selected = selectedType == type,
-                    onClick = {
-                        selectedType = type
-                    },
-                    caption = type.toString().lowercase()
-                )
-            }
-        }
-    }
-
-}

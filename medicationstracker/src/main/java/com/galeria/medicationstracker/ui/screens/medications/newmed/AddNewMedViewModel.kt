@@ -89,8 +89,7 @@ class AddNewMedViewModel : ViewModel() {
                         uiState.value.medEndDate,
                         uiState.value.intakeDays,
                         uiState.value.medIntakeTime,
-                        uiState.value.medNotes,
-                        uiState.value.chosenStrengths
+                        uiState.value.medNotes
                     )
 
                     medicationRef.document(documentId)

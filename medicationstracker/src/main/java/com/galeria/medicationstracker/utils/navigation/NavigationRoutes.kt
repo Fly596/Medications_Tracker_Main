@@ -12,9 +12,6 @@ import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import androidx.navigation.toRoute
-import com.galeria.medicationstracker.data.UserType
-import com.galeria.medicationstracker.ui.doctor.home.DocDashboardScreen
-import com.galeria.medicationstracker.ui.doctor.patients.PatientsListScreen
 import com.galeria.medicationstracker.ui.screens.auth.accountrecovery.AccountRecoveryScreen
 import com.galeria.medicationstracker.ui.screens.auth.login.LoginScreen
 import com.galeria.medicationstracker.ui.screens.auth.signup.SignupScreen
@@ -31,9 +28,7 @@ import com.galeria.medicationstracker.ui.screens.profile.appoinment.AppointmentS
 import com.galeria.medicationstracker.ui.screens.profile.notes.NewNoteScreen
 import com.galeria.medicationstracker.ui.screens.profile.notes.NotesScreen
 import com.galeria.medicationstracker.ui.screens.profile.profiledetails.ProfileDetailsScreen
-import com.galeria.medicationstracker.utils.navigation.Routes.AdminRoutes
 import com.galeria.medicationstracker.utils.navigation.Routes.AuthRoutes
-import com.galeria.medicationstracker.utils.navigation.Routes.DoctorRoutes
 import com.galeria.medicationstracker.utils.navigation.Routes.PatientRoutes
 import kotlinx.serialization.Serializable
 
@@ -54,9 +49,6 @@ fun ApplicationNavHost(
         patientGraph(
             navController,
             medsPagesVM,
-        )
-        docGraph(
-            navController
         )
         // userMedsGraph(navController)
     }
@@ -177,30 +169,7 @@ sealed class Routes {
         @Serializable
         data object PatientAppointment : PatientRoutes() // dialog.
     }
-    
-    @Serializable
-    sealed class DoctorRoutes {
-        
-        @Serializable
-        object Doctor : DoctorRoutes()
-        
-        // home screens. Расписание на день.
-        @Serializable
-        object DocHome : DoctorRoutes()
-        
-        @Serializable
-        data object DocDashboard : DoctorRoutes()
-        
-        @Serializable
-        object DocPatients : DoctorRoutes()
-        
-        @Serializable
-        data object DocPatientsList : DoctorRoutes()
-        
-        @Serializable
-        data object DocPatientInfo : DoctorRoutes()
-    }
-    
+
     @Serializable
     sealed class AdminRoutes {
         
@@ -215,21 +184,11 @@ fun NavGraphBuilder.authGraph(navController: NavHostController) {
     navigation<AuthRoutes.Auth>(startDestination = AuthRoutes.Login) {
         composable<AuthRoutes.Login> {
             LoginScreen(
-                onLoginClick = { userType ->
-                    when (userType) {
-                        UserType.PATIENT -> navController.navigate(
-                            PatientRoutes.Patient
-                        ) {
-                            popUpTo(AuthRoutes.Login) { inclusive = true }
-                        }
-                        
-                        UserType.DOCTOR -> navController.navigate(DoctorRoutes.Doctor) {
-                            popUpTo(AuthRoutes.Login) { inclusive = true }
-                        }
-                        
-                        UserType.ADMIN -> navController.navigate(AdminRoutes.AdminDashboard) {
-                            popUpTo(AuthRoutes.Login) { inclusive = true }
-                        }
+                onLogin = {
+                    navController.navigate(
+                        PatientRoutes.Patient
+                    ) {
+                        popUpTo(AuthRoutes.Login) { inclusive = true }
                     }
                 },
                 onRegistration = {
@@ -259,45 +218,7 @@ fun NavGraphBuilder.authGraph(navController: NavHostController) {
     }
 }
 
-fun NavGraphBuilder.docGraph(
-    navController: NavHostController
-) {
-    navigation<DoctorRoutes.Doctor>(startDestination = DoctorRoutes.DocHome) {
-        docHomeGraph(navController)
-        
-        docPatientsGraph(navController)
-        composable<DoctorRoutes.DocPatients> {
-        }
-    }
-}
 
-fun NavGraphBuilder.docPatientsGraph(
-    navController: NavHostController
-) {
-    navigation<DoctorRoutes.DocPatients>(startDestination = DoctorRoutes.DocPatientsList) {
-        composable<DoctorRoutes.DocPatientsList> {
-            PatientsListScreen()
-        }
-        
-        composable<DoctorRoutes.DocPatientInfo> {
-            /* TODO: Patient Info */
-        }
-    }
-}
-
-fun NavGraphBuilder.docHomeGraph(
-    navController: NavHostController
-) {
-    navigation<DoctorRoutes.DocHome>(startDestination = DoctorRoutes.DocDashboard) {
-        composable<DoctorRoutes.DocDashboard> {
-            DocDashboardScreen(
-                onPatientsClick = {
-                    /* navController.navigate(DoctorRoutes.DocPatientInfo) */
-                }
-            )
-        }
-    }
-}
 
 // Граф для страниц приложения.
 fun NavGraphBuilder.patientGraph(

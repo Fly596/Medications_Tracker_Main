@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.galeria.medicationstracker.SnackbarController
 import com.galeria.medicationstracker.SnackbarEvent
-import com.galeria.medicationstracker.data.UserType
 import com.galeria.medicationstracker.utils.FirestoreFunctions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
@@ -23,7 +22,6 @@ data class LoginScreenState(
     val password: String = "tomtom",/*"password" "docadam" */
     val passwordError: String? = null,
     val showPassword: Boolean = false,
-    val userType: UserType = UserType.PATIENT,
 )
 
 class LoginScreenViewModel : ViewModel() {
@@ -107,7 +105,7 @@ class LoginScreenViewModel : ViewModel() {
     fun onSignInClick(
         email: String,
         password: String,
-        onLoginClick: (userType: UserType) -> Unit
+        onLoginClick: () -> Unit
     ) {
         viewModelScope.launch {
             val isEmailValid = validateEmail()
@@ -125,39 +123,6 @@ class LoginScreenViewModel : ViewModel() {
                             if (userId != null) {
                                 val dataBase = FirestoreFunctions.FirestoreService.db
 
-                                dataBase.collection("User")
-                                    .document(email)
-                                    .get()
-                                    .addOnSuccessListener { snapshot ->
-                                        if (snapshot.exists()) {
-                                            val userTypeString = snapshot.getString("type")
-
-                                            if (userTypeString != null) {
-                                                val docUserType =
-                                                    UserType.valueOf(userTypeString.uppercase())
-                                                _loginScreenState.value =
-                                                    _loginScreenState.value.copy(userType = docUserType)
-                                                onLoginClick.invoke(docUserType)
-
-                                                viewModelScope.launch {
-                                                    SnackbarController.sendEvent(SnackbarEvent("Login Successful!"))
-                                                }
-                                            } else {
-                                                viewModelScope.launch {
-                                                    SnackbarController.sendEvent(
-                                                        event = SnackbarEvent("User data not found.")
-                                                    )
-                                                }
-                                            }
-                                        }
-                                    }
-                                    .addOnFailureListener { exception ->
-                                        viewModelScope.launch {
-                                            SnackbarController.sendEvent(
-                                                event = SnackbarEvent("Error fetching user data: ${exception.message}")
-                                            )
-                                        }
-                                    }
 
                             } else {
                                 viewModelScope.launch {

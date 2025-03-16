@@ -8,7 +8,6 @@ import com.galeria.medicationstracker.SnackbarController
 import com.galeria.medicationstracker.SnackbarEvent
 import com.galeria.medicationstracker.data.BloodType
 import com.galeria.medicationstracker.data.UserProfile
-import com.galeria.medicationstracker.data.UserType
 import com.galeria.medicationstracker.utils.FirestoreFunctions
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -30,7 +29,6 @@ data class SignupScreenState(
     val password: String = "",
     val passwordErrorMessage: String? = null,
     val showPassword: Boolean = false,
-    var userType: UserType = UserType.PATIENT,
 )
 
 class SignupScreenViewModel : ViewModel() {
@@ -161,9 +159,6 @@ class SignupScreenViewModel : ViewModel() {
         signupScreenState.value = signupScreenState.value.copy(firstName = input)
     }
 
-    fun updateUserType(input: UserType) {
-        signupScreenState.value = signupScreenState.value.copy(userType = input)
-    }
 
     fun updateUserId(input: String) {
         signupScreenState.value = signupScreenState.value.copy(uid = input)

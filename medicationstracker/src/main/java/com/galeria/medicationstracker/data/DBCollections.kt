@@ -15,8 +15,7 @@ data class UserMedication(
     val endDate: Timestamp? = null,
     val daysOfWeek: List<String> = emptyList(),
     val intakeTime: String? = null,
-    val notes: String? = null,
-    val chosenStrengths: List<Float> = emptyList(),
+    val notes: String? = null
 )
 
 data class HospitalDrugs(
@@ -28,15 +27,6 @@ data class HospitalDrugs(
     val form: String? = null, // capsules.
 )
 
-data class User(
-    val uid: String = "",
-    val login: String = "",
-    val type: UserType = UserType.PATIENT,
-    val age: Int? = null,
-    val name: String? = null,
-    val weight: Float? = null,
-    val height: Float? = null,
-)
 
 data class Note(
     val title: String = "",
@@ -65,19 +55,6 @@ data class UserIntake(
     val status: Boolean? = null,
     val dateTime: Timestamp? = null,
 )
-
-data class Appointment(
-    val date: Timestamp? = null,
-    val time: String? = null,
-    val doctor: String? = null,
-    val patient: String? = null,
-)
-
-enum class UserType {
-    ADMIN,
-    PATIENT,
-    DOCTOR,
-}
 
 
 
