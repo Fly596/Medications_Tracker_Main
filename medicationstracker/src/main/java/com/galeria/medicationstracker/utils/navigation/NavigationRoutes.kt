@@ -10,9 +10,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import androidx.navigation.toRoute
-import com.galeria.medicationstracker.data.UserType
-import com.galeria.medicationstracker.ui.doctor.home.DocDashboardScreen
-import com.galeria.medicationstracker.ui.doctor.patients.PatientsListScreen
 import com.galeria.medicationstracker.ui.screens.admin.AddMedicationScreen
 import com.galeria.medicationstracker.ui.screens.admin.AddMedicationsViewModel
 import com.galeria.medicationstracker.ui.screens.auth.accountrecovery.AccountRecoveryScreen
@@ -38,9 +35,7 @@ import com.galeria.medicationstracker.ui.screens.profile.notes.NotesScreen
 import com.galeria.medicationstracker.ui.screens.profile.notes.NotesScreenViewModel
 import com.galeria.medicationstracker.ui.screens.profile.profiledetails.ProfileDetailsScreen
 import com.galeria.medicationstracker.ui.screens.profile.profiledetails.ProfileDetailsViewModel
-import com.galeria.medicationstracker.utils.navigation.Routes.AdminRoutes
 import com.galeria.medicationstracker.utils.navigation.Routes.AuthRoutes
-import com.galeria.medicationstracker.utils.navigation.Routes.DoctorRoutes
 import com.galeria.medicationstracker.utils.navigation.Routes.PatientRoutes
 import kotlinx.serialization.Serializable
 
@@ -53,12 +48,11 @@ fun ApplicationNavHost(
 
     NavHost(
         navController = navController,
-        startDestination = startDestination,
+        startDestination = startDestination,/* HH */
         modifier = modifier,
     ) {
         authGraph(navController)
         patientGraph(navController)
-        docGraph(navController)
         // userMedsGraph(navController)
     }
 }
@@ -97,55 +91,73 @@ sealed class Routes {
     sealed class AuthRoutes {
 
         // Authentification pages.
-        @Serializable data object Auth : AuthRoutes()
+        @Serializable
+        data object Auth : AuthRoutes()
 
-        @Serializable data object Login : AuthRoutes()
+        @Serializable
+        data object Login : AuthRoutes()
 
-        @Serializable data object Registration : AuthRoutes()
+        @Serializable
+        data object Registration : AuthRoutes()
 
-        @Serializable data object PasswordRecovery : AuthRoutes()
+        @Serializable
+        data object PasswordRecovery : AuthRoutes()
     }
 
     // TODO: extract to separate file.
     @Serializable
     sealed class PatientRoutes {
 
-        @Serializable object Patient : PatientRoutes()
+        @Serializable
+        object Patient : PatientRoutes()
 
         // home screens.
-        @Serializable object PatientHome : PatientRoutes()
+        @Serializable
+        object PatientHome : PatientRoutes()
 
-        @Serializable data object PatientTodayMedications : PatientRoutes()
+        @Serializable
+        data object PatientTodayMedications : PatientRoutes()
 
-        @Serializable data object PatientLogs : PatientRoutes()
+        @Serializable
+        data object PatientLogs : PatientRoutes()
 
         // medications screens.
-        @Serializable object PatientMedications : PatientRoutes()
+        @Serializable
+        object PatientMedications : PatientRoutes()
 
-        @Serializable data object PatientListMedications : PatientRoutes()
+        @Serializable
+        data object PatientListMedications : PatientRoutes()
 
-        @Serializable data object PatientAddMedication : PatientRoutes()
-        
+        @Serializable
+        data object PatientAddMedication : PatientRoutes()
+
         @Serializable
         data object AdminAddMedication : PatientRoutes()
 
-        @Serializable data object PatientViewMedication : PatientRoutes()
+        @Serializable
+        data object PatientViewMedication : PatientRoutes()
 
         @Serializable
         data class PatientUpdateMedication(val medicationName: String?) : PatientRoutes()
 
         // profile screen.
-        @Serializable object PatientInfo : PatientRoutes()
+        @Serializable
+        object PatientInfo : PatientRoutes()
 
-        @Serializable object MoodCheck : PatientRoutes()
+        @Serializable
+        object MoodCheck : PatientRoutes()
 
-        @Serializable data object PatientProfile : PatientRoutes()
+        @Serializable
+        data object PatientProfile : PatientRoutes()
 
-        @Serializable data object PatientProfileOverview : PatientRoutes()
+        @Serializable
+        data object PatientProfileOverview : PatientRoutes()
 
-        @Serializable data object PatientNotes : PatientRoutes()
+        @Serializable
+        data object PatientNotes : PatientRoutes()
 
-        @Serializable data object PatientNewNote : PatientRoutes()
+        @Serializable
+        data object PatientNewNote : PatientRoutes()
 
         @Serializable
         data object PatientWeightDialog : PatientRoutes() // dialog.
@@ -163,24 +175,31 @@ sealed class Routes {
     @Serializable
     sealed class DoctorRoutes {
 
-        @Serializable object Doctor : DoctorRoutes()
+        @Serializable
+        object Doctor : DoctorRoutes()
 
         // home screens. Расписание на день.
-        @Serializable object DocHome : DoctorRoutes()
+        @Serializable
+        object DocHome : DoctorRoutes()
 
-        @Serializable data object DocDashboard : DoctorRoutes()
+        @Serializable
+        data object DocDashboard : DoctorRoutes()
 
-        @Serializable object DocPatients : DoctorRoutes()
+        @Serializable
+        object DocPatients : DoctorRoutes()
 
-        @Serializable data object DocPatientsList : DoctorRoutes()
+        @Serializable
+        data object DocPatientsList : DoctorRoutes()
 
-        @Serializable data object DocPatientInfo : DoctorRoutes()
+        @Serializable
+        data object DocPatientInfo : DoctorRoutes()
     }
 
     @Serializable
     sealed class AdminRoutes {
 
-        @Serializable data object AdminDashboard : AdminRoutes()
+        @Serializable
+        data object AdminDashboard : AdminRoutes()
     }
 }
 
@@ -189,22 +208,10 @@ fun NavGraphBuilder.authGraph(navController: NavHostController) {
     navigation<AuthRoutes.Auth>(startDestination = AuthRoutes.Login) {
         composable<AuthRoutes.Login> {
             LoginScreen(
-                onLoginClick = { userType ->
-                    when (userType) {
-                        UserType.PATIENT ->
-                            navController.navigate(PatientRoutes.Patient) {
-                                popUpTo(AuthRoutes.Login) { inclusive = true }
-                            }
 
-                        UserType.DOCTOR ->
-                            navController.navigate(DoctorRoutes.Doctor) {
-                                popUpTo(AuthRoutes.Login) { inclusive = true }
-                            }
-
-                        UserType.ADMIN ->
-                            navController.navigate(AdminRoutes.AdminDashboard) {
-                                popUpTo(AuthRoutes.Login) { inclusive = true }
-                            }
+                onLogin = {
+                    navController.navigate(PatientRoutes.Patient) {
+                        popUpTo(AuthRoutes.Login) { inclusive = true }
                     }
                 },
                 onRegistration = { navController.navigate(AuthRoutes.Registration) },
@@ -218,37 +225,6 @@ fun NavGraphBuilder.authGraph(navController: NavHostController) {
 
         composable<AuthRoutes.PasswordRecovery> {
             AccountRecoveryScreen(navigateHome = { navController.navigateUp() })
-        }
-    }
-}
-
-fun NavGraphBuilder.docGraph(navController: NavHostController) {
-    navigation<DoctorRoutes.Doctor>(startDestination = DoctorRoutes.DocHome) {
-        docHomeGraph(navController)
-
-        docPatientsGraph(navController)
-        composable<DoctorRoutes.DocPatients> {}
-    }
-}
-
-fun NavGraphBuilder.docPatientsGraph(navController: NavHostController) {
-    navigation<DoctorRoutes.DocPatients>(startDestination = DoctorRoutes.DocPatientsList) {
-        composable<DoctorRoutes.DocPatientsList> { PatientsListScreen() }
-
-        composable<DoctorRoutes.DocPatientInfo> {
-            /* TODO: Patient Info */
-        }
-    }
-}
-
-fun NavGraphBuilder.docHomeGraph(navController: NavHostController) {
-    navigation<DoctorRoutes.DocHome>(startDestination = DoctorRoutes.DocDashboard) {
-        composable<DoctorRoutes.DocDashboard> {
-            DocDashboardScreen(
-                onPatientsClick = {
-                    /* navController.navigate(DoctorRoutes.DocPatientInfo) */
-                }
-            )
         }
     }
 }
@@ -331,7 +307,7 @@ fun NavGraphBuilder.patientMedsGraph(navController: NavHostController) {
                 viewModel = vm,
             )
         }
-        
+
         composable<PatientRoutes.AdminAddMedication> {
             val vm: AddMedicationsViewModel = hiltViewModel()
             AddMedicationScreen(

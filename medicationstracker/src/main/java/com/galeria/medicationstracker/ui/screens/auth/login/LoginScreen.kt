@@ -100,11 +100,11 @@ fun LoginScreen(
             FlyButton(
                 onClick = {
                     // Запрос типа пользователя.
-                    viewModel.getUserType()
+                    // viewModel.getUserType()
 
                     viewModel.onSignInClick(
                         state.value.email,
-                        state.value.password
+                        state.value.password,
                     ) {
                         onLogin()
                     }

@@ -71,7 +71,7 @@ fun MoodTrackerScreen(
                         )
                     }
                     Text(
-                        text = (stringResource(R.string.update_medication_title)),
+                        text = (stringResource(R.string.how_are_you_feeling_today)),
                         style = typography.display3Emphasized,
                     )
                 }

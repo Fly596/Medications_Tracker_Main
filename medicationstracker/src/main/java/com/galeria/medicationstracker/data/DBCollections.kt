@@ -32,15 +32,14 @@ data class Medication(
     val dosageInstructions: String = "",
 )
 
-
 sealed class InteractionType(val severity: String) {
     object Major : InteractionType("Высокий риск")
     object Moderate : InteractionType("Средний риск")
     object Minor : InteractionType("Низкий риск")
     object Unknown : InteractionType("Неизвестно")
-    
+
     companion object {
-        
+
         fun fromString(value: String): InteractionType {
             return when (value.uppercase()) {
                 "MAJOR" -> Major
@@ -55,18 +54,7 @@ sealed class InteractionType(val severity: String) {
 enum class Symptom {
     FATIGUE,
     FEVER,
-    
 }
-
-data class User(
-    val uid: String = "",
-    val login: String = "",
-    val type: UserType = UserType.PATIENT,
-    val age: Int? = null,
-    val name: String? = null,
-    val weight: Float? = null,
-    val height: Float? = null,
-)
 
 data class Note(
     val title: String = "",
@@ -100,9 +88,9 @@ sealed class UserIntakeStatus {
     object Taken : UserIntakeStatus() // Принято
     object Skipped : UserIntakeStatus() // Пропущено
     object Pending : UserIntakeStatus() // Ожидает приема
-    
+
     companion object {
-        
+
         fun fromBoolean(status: Boolean?): UserIntakeStatus {
             return when (status) {
                 true -> Taken
@@ -114,20 +102,11 @@ sealed class UserIntakeStatus {
 }
 
 
-data class Appointment(
-    val date: Timestamp? = null,
-    val time: String? = null,
-    val doctor: String? = null,
-    val patient: String? = null,
-)
-
 enum class UserType {
     ADMIN,
     PATIENT,
     DOCTOR,
 }
-
-
 
 enum class MedicationForm {
     TABLET,
@@ -177,23 +156,9 @@ data class MoodLog(
     val date: LocalDateTime = LocalDateTime.now()
     // TODO
 )
-/* data class Users(
-  val name: String = "",
-  val email: String = "",
-  val pfp: String = ""  *//* url to pic*//* ,
-  val born: String = ""  *//*yyyy-MM-dd*//* ,
-  val notificationPreferences: NotificationPreferences = NotificationPreferences()
-) */
 
 data class NotificationPreferences(
     val sound: Boolean = true,
     val vibration: Boolean = true,
 )
-/* data class UserMedication(
-  val medication: Medication = Medication(),
-  val notes: String = "",
-  val startDate: LocalDate = LocalDate.now(),
-  val endDate: LocalDate? = null,
-  val frequency: String = "",
-  val time: LocalTime = LocalTime.now(),
-) */
+

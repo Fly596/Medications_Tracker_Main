@@ -12,10 +12,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -27,10 +23,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.galeria.medicationstracker.R
-import com.galeria.medicationstracker.data.UserType
 import com.galeria.medicationstracker.ui.componentsOld.FlyButton
 import com.galeria.medicationstracker.ui.componentsOld.FlyTextButton
-import com.galeria.medicationstracker.ui.componentsOld.MyRadioButton
 import com.galeria.medicationstracker.ui.componentsOld.MyTextField
 import com.galeria.medicationstracker.ui.screens.auth.login.RememberMeSwitch
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
@@ -117,8 +111,6 @@ fun SignupScreen(
             onCheckedChange = { viewModel.isShowPasswordChecked(state.value.showPassword) },
         )
         // Список типов пользователя.
-        var selectedType by remember { mutableStateOf(state.value.userType) }
-        val options = UserType.entries.toTypedArray()
 
         Spacer(modifier = Modifier.height(16.dp))
         val context = LocalContext.current
@@ -141,33 +133,3 @@ fun SignupScreen(
     }
 }
 
-/**
- * Composable function that displays a radio button group for selecting user types.
- *
- * This function iterates through available user types and renders a radio button for each type. The
- * selected type is tracked and updated based on user interaction.
- *
- * @param viewModel The SignupScreenViewModel instance providing data and state.value for the signup
- *   screen.
- */
-@Composable
-fun UserTypesSelection(viewModel: SignupScreenViewModel) {
-    var selectedType by remember { mutableStateOf(viewModel.signupScreenState.value.userType) }
-    val options = UserType.entries.toTypedArray()
-
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalAlignment = Alignment.Start,
-    ) {
-        options.forEach { type ->
-            Row {
-                MyRadioButton(
-                    selected = selectedType == type,
-                    onClick = { selectedType = type },
-                    caption = type.toString().lowercase(),
-                )
-            }
-        }
-    }
-}
