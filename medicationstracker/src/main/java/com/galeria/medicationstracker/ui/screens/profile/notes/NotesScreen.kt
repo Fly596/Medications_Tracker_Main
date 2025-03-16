@@ -144,6 +144,14 @@ fun UserNoteCard(
                 label = "Content",
                 modifier = Modifier.fillMaxWidth(),
             )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                medication.forEach { med ->
+
+                    Text(text = med, style = typography.title3)
+                }
+            }
         }
     }
 }
