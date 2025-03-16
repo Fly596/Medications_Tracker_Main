@@ -26,6 +26,8 @@ data class AddMedicationsScreenUiState(
     val interactions: Map<String, InteractionType> = emptyMap(),
     val dosageInstructions: String = "",
     val duration: Float = 0f,
+    val medication1: String = "",
+    val medication2: String = "",
 )
 
 @HiltViewModel

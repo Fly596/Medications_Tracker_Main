@@ -30,7 +30,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.galeria.medicationstracker.data.UserIntakeStatus
+import com.galeria.medicationstracker.data.IntakeStatus
 import com.galeria.medicationstracker.data.UserMedication
 import com.galeria.medicationstracker.ui.components.GFABButton
 import com.galeria.medicationstracker.ui.componentsOld.FLySimpleCardContainer
@@ -202,7 +202,7 @@ fun MedicationItem(
             LogMedicationTimeDialog(
                 onDismiss = { showLogDialog.value = false },
                 onConfirmation = {
-                    viewModel.addNewIntake(medication = medication, status = UserIntakeStatus.Taken)
+                    viewModel.addNewIntake(medication = medication, status = IntakeStatus.TAKEN)
                     showLogDialog.value = false
                 },
                 onAddNotes = {
@@ -210,7 +210,11 @@ fun MedicationItem(
                     showLogDialog.value = false
                 },
                 onConfirmTime = { time ->
-                    viewModel.addNewIntake(intakeTime = time, medication = medication)
+                    viewModel.addNewIntake(
+                        intakeTime = time,
+                        medication = medication,
+                        status = IntakeStatus.TAKEN
+                    )
                 },
             )
         }

@@ -108,7 +108,7 @@ fun AddMedicationScreen(
                     item {
                         var selectedUnit by remember { mutableStateOf(state.value.unit) }
                         val unitOptions = MedicationUnit.entries.toTypedArray()
-                        
+
                         FlySimpleCard(
                             isPrimaryBackground = true,
                             modifier = Modifier.fillMaxWidth(),
@@ -134,6 +134,17 @@ fun AddMedicationScreen(
                         )
                         Spacer(modifier = Modifier.padding(16.dp))
                     }
+                    // prescription?
+                    item {
+                        val selected by remember { mutableStateOf(state.value.requiresPrescription) }
+                        val isPrescription: Array<Boolean> = arrayOf(true, false)
+                        Text(text = "is required for prescription?")
+                        GDropdownList(items = isPrescription.map { it.toString() }) { selected ->
+                            viewModel.updateRequiresPrescription(selected.toBoolean())
+                        }
+
+                    }
+
                     // button to add medication.
                     item {
                         val context = LocalContext.current
@@ -144,6 +155,26 @@ fun AddMedicationScreen(
                                 onConfirmClick.invoke()
                             },
                             content = { Text(text = stringResource(R.string.add_medication)) },
+                        )
+                    }
+
+                    item {
+                        Text(text = "contraindications", style = typography.display3Emphasized)
+                        GTextField(
+                            value = state.value.medication1,
+                            onValueChange = { viewModel.updateMedicationName(it) },
+                            label = "Name1",
+                            isPrimaryColor = true,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                            modifier = Modifier.weight(1f),
+                        )
+                        GTextField(
+                            value = state.value.medication2,
+                            onValueChange = { viewModel.updateMedicationName(it) },
+                            label = "Name2",
+                            isPrimaryColor = true,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                            modifier = Modifier.weight(1f),
                         )
                     }
                 }

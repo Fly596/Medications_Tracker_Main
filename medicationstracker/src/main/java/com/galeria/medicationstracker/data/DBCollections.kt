@@ -32,6 +32,13 @@ data class Medication(
     val dosageInstructions: String = "",
 )
 
+data class Interaction(
+    val medication1: String = "",
+    val medication2: String = "",
+    val effect: String = "",
+    val severity: String = "",
+)
+
 sealed class InteractionType(val severity: String) {
     object Major : InteractionType("Высокий риск")
     object Moderate : InteractionType("Средний риск")
@@ -80,9 +87,15 @@ data class UserIntake(
     val uid: String? = null,
     val medicationName: String? = null,
     val dose: String? = null,
-    val status: UserIntakeStatus = UserIntakeStatus.Pending,
+    val status: IntakeStatus = IntakeStatus.PENDING,
     val dateTime: Timestamp? = null,
 )
+
+enum class IntakeStatus {
+    TAKEN,
+    SKIPPED,
+    PENDING,
+}
 
 sealed class UserIntakeStatus {
     object Taken : UserIntakeStatus() // Принято
