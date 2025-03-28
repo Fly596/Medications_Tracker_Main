@@ -29,6 +29,7 @@ import com.galeria.medicationstracker.ui.componentsOld.FlyTonalButton
 import com.galeria.medicationstracker.ui.componentsOld.MySwitch
 import com.galeria.medicationstracker.ui.componentsOld.MyTextField
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
+import com.google.firebase.Timestamp
 
 @Composable
 fun LoginScreen(
@@ -38,6 +39,9 @@ fun LoginScreen(
     onResetPassword: () -> Unit = {},
     viewModel: LoginScreenViewModel = viewModel(),
 ) {
+    val temp: Timestamp = Timestamp.now()
+    temp.toDate()
+
     val state = viewModel.loginScreenState.collectAsStateWithLifecycle()
 
     Column(

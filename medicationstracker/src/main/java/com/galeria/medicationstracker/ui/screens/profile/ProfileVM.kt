@@ -35,32 +35,36 @@ data class ProfileScreenUiState(
 class ProfileVM @Inject constructor(
     private val repository: UserRepository
 ) : ViewModel() {
-    
+
     private val _uiState = MutableStateFlow(ProfileScreenUiState())
     val uiState = _uiState.asStateFlow()
     val db = FirestoreService.db
     private val firebaseAuth = FirebaseAuth.getInstance()
     val currentUser = firebaseAuth.currentUser
     private val currentUserId = firebaseAuth.currentUser?.uid
-    
+
     init {
         viewModelScope.launch {
-            val user = repository.getUserData()
-            val medications = repository.getUserDrugs()
+            val repoUser = repository.getUserData()
+            val repoIntakes = repository.getUserIntakes(currentUserId.toString())
+            _uiState.value = _uiState.value.copy(user = repoUser, intakes = repoIntakes)
+        }
+
+        viewModelScope.launch {
+            // val user = repository.getUserData()
+            // val medications = repository.getUserDrugs()
             /*             _uiState.value =
                             _uiState.value.copy(user = user, medications = medications) */
-            
+
             repository.getUserIntakesFlow((currentUserId.toString()))
                 .collect { intakes ->
                     _uiState.value = _uiState.value.copy(
                         intakes = intakes,
-                        user = user,
-                        medications = medications
                     )
                 }
         }
     }
-    
+
     /*     private fun fetchUserData() {
             viewModelScope.launch {
                 val userRef = db.collection("User")
@@ -82,12 +86,11 @@ class ProfileVM @Inject constructor(
             }
             
         } */
-    
-    
+
     fun updateAgeFirestore() {
         val userRef = db.collection("User")
             .document(currentUser?.email.toString())
-        
+
         userRef.set(
             mapOf("age" to _uiState.value.age),
             merge()
@@ -99,11 +102,11 @@ class ProfileVM @Inject constructor(
                 Log.w("ProfileVM", "Error adding document", e)
             }
     }
-    
+
     fun updateWeightFirestore() {
         val userRef = db.collection("User")
             .document(currentUser?.email.toString())
-        
+
         userRef.set(
             mapOf("weight" to _uiState.value.weight),
             merge()
@@ -115,11 +118,11 @@ class ProfileVM @Inject constructor(
                 Log.w("ProfileVM", "Error adding document", e)
             }
     }
-    
+
     fun updateHeightFirestore() {
         val userRef = db.collection("User")
             .document(currentUser?.email.toString())
-        
+
         userRef.set(
             mapOf("height" to _uiState.value.height),
             merge()
@@ -131,7 +134,7 @@ class ProfileVM @Inject constructor(
                 Log.w("ProfileVM", "Error adding document", e)
             }
     }
-    
+
     fun updateNameFirestore() {
         val userRef = db.collection("User")
             .document(currentUser?.email.toString())
@@ -146,19 +149,19 @@ class ProfileVM @Inject constructor(
                 Log.w("ProfileVM", "Error adding document", e)
             }
     }
-    
+
     fun updateName(name: String) {
         _uiState.value = _uiState.value.copy(name = name)
     }
-    
+
     fun updateAge(age: Int) {
         _uiState.value = _uiState.value.copy(age = age)
     }
-    
+
     fun updateWeight(weight: Float) {
         _uiState.value = _uiState.value.copy(weight = weight)
     }
-    
+
     fun updateHeight(height: Float) {
         _uiState.value = _uiState.value.copy(height = height)
     }
