@@ -77,6 +77,7 @@ fun LogMedicationTimeDialog(
     onConfirmation: (String) -> Unit = {},
     onConfirmTime: (Timestamp) -> Unit = {},
     onAddNotes: () -> Unit = {},
+    onSkipIntake: () -> Unit = {},
 ) {
     val currentDate = LocalDateTime.now()
     val dateFormatter = DateTimeFormatter.ofPattern("MMM dd, hh:mm a")
@@ -117,7 +118,7 @@ fun LogMedicationTimeDialog(
                 LogDialogMedicationCard(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                GOutlinedButton(
+                GPrimaryButton(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
                         showDialog = !showDialog
@@ -130,7 +131,19 @@ fun LogMedicationTimeDialog(
                         style = MedTrackerTheme.typography.labelLarge
                     )
                 }
-                
+                GOutlinedButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {
+                        onSkipIntake.invoke()
+                    }
+                ) {
+                    Text(
+                        modifier = Modifier,
+                        text = "Skip intake",
+                        textAlign = TextAlign.Center,
+                        style = MedTrackerTheme.typography.labelLarge
+                    )
+                }
                 if (showDialog) {
                     TimeInput(
                         state = timeState,

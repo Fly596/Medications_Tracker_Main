@@ -216,6 +216,10 @@ fun MedicationItem(
                         status = IntakeStatus.TAKEN
                     )
                 },
+                onSkipIntake = {
+                    viewModel.addNewIntake(medication = medication, status = IntakeStatus.SKIPPED)
+                    showLogDialog.value = false
+                }
             )
         }
     }
