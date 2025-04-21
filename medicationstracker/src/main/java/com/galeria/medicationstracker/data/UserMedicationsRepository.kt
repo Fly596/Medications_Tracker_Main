@@ -12,8 +12,10 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 interface UserMedicationsRepository {
-    
+
     suspend fun getDrug(drugName: String): UserMedication
+
+    suspend fun getPredefinedDrug(drugName: String): Medication?
 
     suspend fun getDrugs(uid: String): List<UserMedication>
 
@@ -41,9 +43,31 @@ class UserMedicationsRepositoryImpl
 @Inject
 constructor(private val firestore: FirebaseFirestore, private val auth: FirebaseAuth) :
     UserMedicationsRepository {
-    
+
     private val userMedicationsCollection = firestore.collection("UserMedication")
-    
+
+    override suspend fun getPredefinedDrug(drugName: String): Medication? {
+        return try {
+            val querySnapshot =
+                db.collection("HospitalDrugs")
+                    .whereEqualTo("name", drugName)
+                    .limit(1)
+                    .get()
+                    .await()
+            if (!querySnapshot.isEmpty) {
+                val document = querySnapshot.documents[0]
+                val medication = document.toObject(Medication::class.java)
+                medication
+            } else {
+                null
+            }
+            //   .await()
+            // querySnapshot.toObjects(Medication::class.java)
+        } catch (e: Exception) {
+            return null
+        }
+    }
+
     override fun getDrugsStream(uid: String): Flow<List<UserMedication>> = callbackFlow {
         val listenerRegistration =
             userMedicationsCollection.whereEqualTo("uid", uid).addSnapshotListener { value, error ->
@@ -51,7 +75,7 @@ constructor(private val firestore: FirebaseFirestore, private val auth: Firebase
                     // Handle error
                     return@addSnapshotListener
                 }
-                
+
                 if (value != null) {
                     val medsList = value.toObjects(UserMedication::class.java)
                     trySend(medsList)
@@ -60,7 +84,7 @@ constructor(private val firestore: FirebaseFirestore, private val auth: Firebase
         // Clean up the listener when the flow is cancelled
         awaitClose { listenerRegistration.remove() }
     }
-    
+
     override suspend fun getDrug(drugName: String): UserMedication {
         return try {
             val querySnapshot =
@@ -74,7 +98,7 @@ constructor(private val firestore: FirebaseFirestore, private val auth: Firebase
             UserMedication()
         }
     }
-    
+
     override suspend fun getDrugs(uid: String): List<UserMedication> {
         return try {
             val querySnapshot =
@@ -84,11 +108,11 @@ constructor(private val firestore: FirebaseFirestore, private val auth: Firebase
             emptyList()
         }
     }
-    
+
     override suspend fun addDrug(drug: UserMedication) {
         TODO("Not yet implemented")
     }
-    
+
     override suspend fun updateDrug(
         endDate: Timestamp,
         startDate: Timestamp,
@@ -131,7 +155,7 @@ constructor(private val firestore: FirebaseFirestore, private val auth: Firebase
                 // Toast.makeText(context, "Error updating medication", Toast.LENGTH_SHORT).show()
             }
     }
-    
+
     override suspend fun deleteDrug(drugName: String) {
         userMedicationsCollection
             .whereEqualTo("name", drugName)

@@ -21,11 +21,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.galeria.medicationstracker.ui.HeadViewModel
 import com.galeria.medicationstracker.ui.componentsOld.BottomNavBar
 import com.galeria.medicationstracker.ui.componentsOld.bottomNavItems
+import com.galeria.medicationstracker.ui.screens.medications.MedicationsViewModel
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.utils.navigation.ApplicationNavHost
 import com.galeria.medicationstracker.utils.navigation.Routes
@@ -41,6 +43,7 @@ class HeadActivity : ComponentActivity() {
         listOf(Routes.NavigationRoutes.AUTH, Routes.NavigationRoutes.PATIENT_DASHBOARD)
     private var currentDestination: String = startDestinations[0]
     private val headViewModel: HeadViewModel by viewModels()
+    private val medicationsViewModel: MedicationsViewModel by viewModels()
 
     override fun onStart() {
         super.onStart()
@@ -62,6 +65,8 @@ class HeadActivity : ComponentActivity() {
             enableEdgeToEdge()
             val navController = rememberNavController()
             MedTrackerTheme {
+                val uiState by medicationsViewModel.uiState.collectAsStateWithLifecycle()
+
                 val snackbarHostState = remember { SnackbarHostState() }
                 val scope = rememberCoroutineScope()
                 ObserveAsEvents(flow = SnackbarController.events, snackbarHostState) { event ->
@@ -103,7 +108,9 @@ class HeadActivity : ComponentActivity() {
                     },
                 ) {
                     ApplicationNavHost(
-                        modifier = Modifier.fillMaxSize().padding(it),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(it),
                         /* .padding(start = 16.dp, end = 16.dp, top = 16.dp) */
                         navController = navController,
                         startDestination = currentDestination,
