@@ -20,8 +20,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.galeria.medicationstracker.R
 import com.galeria.medicationstracker.ui.componentsOld.FlyButton
 import com.galeria.medicationstracker.ui.componentsOld.FlyTextButton
@@ -34,10 +34,10 @@ fun SignupScreen(
     modifier: Modifier = Modifier,
     passedEmail: String = "",
     navigateHome: () -> Unit,
-    viewModel: SignupScreenViewModel = viewModel(),
+    viewModel: SignupScreenViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(Unit) { viewModel.updateEmail(passedEmail) }
-    val state = viewModel.signupScreenState.collectAsStateWithLifecycle()
+    val state = viewModel.uiState.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -55,29 +55,15 @@ fun SignupScreen(
         Spacer(modifier = Modifier.weight(1f))
 
         MyTextField(
-            value = state.value.firstName,
+            value = state.value.name,
             onValueChange = { viewModel.updateUserName(it) },
             isPrimaryColor = true,
             label = stringResource(R.string.name),
             placeholder = stringResource(R.string.name),
             modifier = Modifier.fillMaxWidth(),
         )
-        MyTextField(
-            value = state.value.age.toString(),
-            onValueChange = {
-                if (it.isNotEmpty()) {
-                    viewModel.updateUserAge(it.toInt())
-                } else {
-                    viewModel.updateUserAge(0)
-                }
-            },
-            isPrimaryColor = true,
-            label = stringResource(R.string.age),
-            placeholder = stringResource(R.string.age),
-            modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        )
-
+        
+        
         MyTextField(
             value = state.value.email,
             onValueChange = { viewModel.updateEmail(it) },

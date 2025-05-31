@@ -20,7 +20,6 @@ import com.galeria.medicationstracker.ui.screens.dashboard.DashboardVM
 import com.galeria.medicationstracker.ui.screens.dashboard.moodtracker.MoodTrackerScreen
 import com.galeria.medicationstracker.ui.screens.dashboard.moodtracker.MoodTrackerVM
 import com.galeria.medicationstracker.ui.screens.medications.MedicationsScreen
-import com.galeria.medicationstracker.ui.screens.medications.MedicationsViewModel
 import com.galeria.medicationstracker.ui.screens.medications.MedsPagesViewModel
 import com.galeria.medicationstracker.ui.screens.medications.mediinfo.ViewMedicationInfoScreen
 import com.galeria.medicationstracker.ui.screens.medications.newmed.AddNewMedViewModel
@@ -275,10 +274,7 @@ fun NavGraphBuilder.patientMedsGraph(navController: NavHostController) {
         startDestination = PatientRoutes.PatientListMedications
     ) {
         composable<PatientRoutes.PatientListMedications> {
-            val medsPagesVM: MedsPagesViewModel = hiltViewModel()
-            val vm: MedicationsViewModel = hiltViewModel()
             MedicationsScreen(
-                medsPagesVM = medsPagesVM,
                 onAddMedClick = {
                     // Добавление лекарства.
                     navController.navigate(PatientRoutes.PatientAddMedication)
@@ -293,7 +289,6 @@ fun NavGraphBuilder.patientMedsGraph(navController: NavHostController) {
                     // Редактирование лекарства.
                     navController.navigate(PatientRoutes.PatientUpdateMedication(name))
                 },
-                medicationsViewModel = vm,
                 onAddAdminMedClick = {
                     navController.navigate(PatientRoutes.AdminAddMedication)
                 }

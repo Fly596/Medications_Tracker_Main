@@ -18,7 +18,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medicationstracker.R
 import com.galeria.medicationstracker.ui.componentsOld.FlyButton
 import com.galeria.medicationstracker.ui.componentsOld.FlyTextButton
@@ -30,10 +31,10 @@ fun AccountRecoveryScreen(
     modifier: Modifier = Modifier,
     passedEmail: String = "",
     navigateHome: () -> Unit,
-    viewModel: AccountRecoveryScreenViewModel = viewModel(),
+    viewModel: AccountRecoveryScreenViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(Unit) { viewModel.updateEmail(passedEmail) }
-    val state = viewModel.accountRecoveryScreenState
+    val state = viewModel.uiState.collectAsStateWithLifecycle()
 
     Column(
         modifier = modifier
@@ -51,11 +52,11 @@ fun AccountRecoveryScreen(
         Spacer(modifier = Modifier.weight(1f))
 
         MyTextField(
-            value = state.email,
+            value = state.value.email,
             onValueChange = { viewModel.updateEmail(it) },
-            isError = state.emailError?.isNotEmpty() ?: false,
+            isError = state.value.emailError?.isNotEmpty() ?: false,
             isPrimaryColor = true,
-            errorMessage = state.emailError,
+            errorMessage = state.value.emailError,
             label = "Email",
             placeholder = "Email",
             modifier = Modifier.fillMaxWidth(),
@@ -76,7 +77,7 @@ fun AccountRecoveryScreen(
 
             FlyButton(
                 onClick = {
-                    viewModel.resetPassword(state.email)
+                    viewModel.resetPassword(state.value.email)
                     navigateHome.invoke()
                 },
                 enabled = true,

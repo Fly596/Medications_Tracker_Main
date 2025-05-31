@@ -20,8 +20,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.galeria.medicationstracker.R
 import com.galeria.medicationstracker.ui.componentsOld.FlyButton
 import com.galeria.medicationstracker.ui.componentsOld.FlyTextButton
@@ -37,7 +37,7 @@ fun LoginScreen(
     onLogin: () -> Unit = {},
     onRegistration: () -> Unit = {},
     onResetPassword: () -> Unit = {},
-    viewModel: LoginScreenViewModel = viewModel(),
+    viewModel: LoginScreenViewModel = hiltViewModel(),
 ) {
     val temp: Timestamp = Timestamp.now()
     temp.toDate()
