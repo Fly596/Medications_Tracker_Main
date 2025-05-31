@@ -15,8 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.galeria.medicationstracker.R
 import com.galeria.medicationstracker.ui.componentsOld.FlySimpleCard
 import com.galeria.medicationstracker.ui.componentsOld.FlyTonalButton
@@ -32,7 +32,7 @@ import java.time.format.DateTimeFormatter
 fun ViewMedicationInfoScreen(
     modifier: Modifier = Modifier,
     onReturn: () -> Unit = {},
-    medsViewModel: MedsPagesViewModel = viewModel(),
+    medsViewModel: MedsPagesViewModel = hiltViewModel(),
 ) {
     val uiState by medsViewModel.uiState.collectAsStateWithLifecycle()
     MedTrackerTheme {

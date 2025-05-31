@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medicationstracker.R
 import com.galeria.medicationstracker.ui.components.GPrimaryButton
@@ -28,7 +29,7 @@ import com.galeria.medicationstracker.ui.theme.MedTrackerTheme.typography
 fun MoodTrackerScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
-    viewModel: MoodTrackerVM,
+    viewModel: MoodTrackerVM = hiltViewModel(),
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 

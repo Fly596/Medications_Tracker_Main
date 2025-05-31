@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medicationstracker.data.IntakeStatus
 import com.galeria.medicationstracker.data.UserMedication
@@ -46,7 +47,7 @@ fun DashboardScreen(
     modifier: Modifier = Modifier,
     onAddMood: () -> Unit = {},
     onAddMedClick: () -> Unit,
-    dashboardViewModel: DashboardVM,
+    dashboardViewModel: DashboardVM = hiltViewModel(),
 ) {
     val uiState = dashboardViewModel.uiState.collectAsStateWithLifecycle()
     MedTrackerTheme {

@@ -9,10 +9,12 @@ import com.google.firebase.appcheck.internal.util.Logger.TAG
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.AggregateSource.SERVER
 import com.google.firebase.firestore.Source
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 data class MedsPagesUiState(
     val medications: List<UserMedication> = emptyList(),
@@ -21,7 +23,8 @@ data class MedsPagesUiState(
     val skipCount: Int = 0
 )
 
-class MedsPagesViewModel : ViewModel() {
+@HiltViewModel
+class MedsPagesViewModel @Inject constructor() : ViewModel() {
 
     private var _uiState = MutableStateFlow(MedsPagesUiState())
     val uiState: StateFlow<MedsPagesUiState> = _uiState.asStateFlow()

@@ -31,7 +31,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.galeria.medicationstracker.R
 import com.galeria.medicationstracker.data.UserMedication
 import com.galeria.medicationstracker.ui.components.GFABButton
@@ -46,7 +45,7 @@ fun MedicationsScreen(
     onViewMed: () -> Unit,
     onEditMedClick: (String) -> Unit = {},
     medicationsViewModel: MedicationsViewModel = hiltViewModel(),
-    medsPagesVM: MedsPagesViewModel = viewModel(),
+    medsPagesVM: MedsPagesViewModel = hiltViewModel(),
     onAddAdminMedClick: () -> Unit = {},
 ) {
     val uiState by medicationsViewModel.uiState.collectAsStateWithLifecycle()

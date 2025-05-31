@@ -41,6 +41,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medicationstracker.R
 import com.galeria.medicationstracker.data.MedicationForm
@@ -65,7 +66,7 @@ import java.util.Calendar
 @Composable
 fun NewMedicationDataScreen(
     modifier: Modifier = Modifier,
-    onConfirmClick: () -> Unit, viewModel: AddNewMedViewModel
+    onConfirmClick: () -> Unit, viewModel: AddNewMedViewModel = hiltViewModel()
 ) {
     val state = viewModel.uiState.collectAsStateWithLifecycle()
     MedTrackerTheme {

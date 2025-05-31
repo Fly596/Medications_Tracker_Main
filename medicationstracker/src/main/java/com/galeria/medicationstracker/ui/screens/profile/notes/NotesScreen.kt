@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medicationstracker.R
 import com.galeria.medicationstracker.ui.components.GTextField
@@ -41,7 +42,7 @@ fun NotesScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
     onNewNoteClick: () -> Unit = {},
-    viewModel: NotesScreenViewModel,
+    viewModel: NotesScreenViewModel = hiltViewModel(),
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     

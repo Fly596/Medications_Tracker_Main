@@ -29,6 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medicationstracker.R
 import com.galeria.medicationstracker.ui.components.GBasicTextField
@@ -42,7 +43,7 @@ import com.google.firebase.Timestamp
 fun ProfileDetailsScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
-    viewModel: ProfileDetailsViewModel,
+    viewModel: ProfileDetailsViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
 

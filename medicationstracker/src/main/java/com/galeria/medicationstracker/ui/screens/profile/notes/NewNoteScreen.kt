@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medicationstracker.R
 import com.galeria.medicationstracker.ui.components.GBasicTextField
@@ -40,7 +41,7 @@ import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 fun NewNoteScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
-    viewModel: NewNoteViewModel,
+    viewModel: NewNoteViewModel = hiltViewModel(),
 ) {
     val state = viewModel.uiState.collectAsStateWithLifecycle()
     MedTrackerTheme {
