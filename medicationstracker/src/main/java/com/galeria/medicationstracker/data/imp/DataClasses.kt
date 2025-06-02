@@ -32,3 +32,12 @@ data class NewUserIntake(
     val status: String = IntakeStatus.PENDING.name,
     val timestamp: Date? = null,
 )
+
+data class NewUserNote(
+    @DocumentId val id: String = "",
+    val userId: String = "",
+    val title: String = "",
+    val content: String = "",
+    val tags: List<String> = emptyList(),
+    val timestamp: Date? = null,
+)
