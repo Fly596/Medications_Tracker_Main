@@ -41,3 +41,9 @@ data class NewUserNote(
     val tags: List<String> = emptyList(),
     val timestamp: Date? = null,
 )
+data class NewUserMood(
+    @DocumentId val id: String = "",
+    val userId: String = "",
+    val moodValue: Int? = null,
+    val timestamp: Date? = null,
+)

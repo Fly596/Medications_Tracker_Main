@@ -9,7 +9,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import androidx.navigation.toRoute
-import com.galeria.medicationstracker.ui.screens.admin.AddMedicationScreen
 import com.galeria.medicationstracker.ui.screens.auth.accountrecovery.AccountRecoveryScreen
 import com.galeria.medicationstracker.ui.screens.auth.login.LoginScreen
 import com.galeria.medicationstracker.ui.screens.auth.signup.SignupScreen
@@ -274,22 +273,16 @@ fun NavGraphBuilder.patientMedsGraph(navController: NavHostController) {
                     // Редактирование лекарства.
                     navController.navigate(PatientRoutes.PatientUpdateMedication(name))
                 },
-                onAddAdminMedClick = { navController.navigate(PatientRoutes.AdminAddMedication) },
+                onAddAdminMedClick = { },
             )
         }
 
         composable<PatientRoutes.PatientAddMedication> {
             NewMedicationDataScreen(onConfirmClick = { navController.popBackStack() })
         }
-
-        composable<PatientRoutes.AdminAddMedication> {
-            AddMedicationScreen(
-                modifier = Modifier,
-                onConfirmClick = { navController.popBackStack() },
-                onBackClick = { navController.navigateUp() },
-            )
-        }
-
+        
+        
+        
         composable<PatientRoutes.PatientViewMedication> {
             ViewMedicationInfoScreen(onReturn = { navController.navigateUp() })
         }
