@@ -37,7 +37,7 @@ class NewMedicationRepositoryImpl @Inject constructor(private val firestore: Fir
                 firestore
                     .collection(USERS_COLLECTION)
                     .document(userId)
-                    .collection(USERS_COLLECTION)
+                    .collection(MEDICATIONS_SUBCOLLECTION)
                     .orderBy("name")
                     .addSnapshotListener { snapshot, error ->
                         if (error != null) {
