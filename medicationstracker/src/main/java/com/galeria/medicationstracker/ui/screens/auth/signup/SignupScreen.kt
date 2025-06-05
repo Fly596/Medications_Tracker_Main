@@ -40,9 +40,7 @@ fun SignupScreen(
     val state = viewModel.uiState.collectAsStateWithLifecycle()
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
+        modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.Top,
     ) {
         Spacer(modifier = Modifier.height(16.dp))
@@ -62,8 +60,7 @@ fun SignupScreen(
             placeholder = stringResource(R.string.name),
             modifier = Modifier.fillMaxWidth(),
         )
-        
-        
+
         MyTextField(
             value = state.value.email,
             onValueChange = { viewModel.updateEmail(it) },
@@ -106,9 +103,7 @@ fun SignupScreen(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            FlyButton(
-                onClick = { viewModel.onRegisterClick(context, onSignupSuccess = navigateHome) }
-            ) {
+            FlyButton(onClick = { viewModel.onRegisterClick() }) {
                 Text(text = stringResource(R.string.create_account))
             }
         }
@@ -118,4 +113,3 @@ fun SignupScreen(
         FlyTextButton(onClick = {}, enabled = false) { Text(text = "") }
     }
 }
-

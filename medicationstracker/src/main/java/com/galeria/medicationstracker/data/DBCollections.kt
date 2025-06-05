@@ -1,6 +1,8 @@
 package com.galeria.medicationstracker.data
 
 import android.icu.text.SimpleDateFormat
+import com.galeria.medicationstracker.data.imp.IntakeStatus
+import com.galeria.medicationstracker.data.imp.MedicationForm
 import com.google.firebase.Timestamp
 import java.time.LocalDateTime
 import java.util.Locale
@@ -21,7 +23,8 @@ data class UserMedication(
 
 data class Medication(
     val name: String = "",
-    val classType: String = "", // Переименовал class, потому что это зарезервированное слово в Kotlin
+    val classType: String =
+        "", // Переименовал class, потому что это зарезервированное слово в Kotlin
     val form: MedicationForm = MedicationForm.UNKNOWN,
     val strength: Float = 0f,
     val unit: MedicationUnit = MedicationUnit.MG,
@@ -41,8 +44,11 @@ data class Interaction(
 
 sealed class InteractionType(val severity: String) {
     object Major : InteractionType("Высокий риск")
+
     object Moderate : InteractionType("Средний риск")
+
     object Minor : InteractionType("Низкий риск")
+
     object Unknown : InteractionType("Неизвестно")
 
     companion object {
@@ -91,15 +97,11 @@ data class UserIntake(
     val dateTime: Timestamp? = null,
 )
 
-enum class IntakeStatus {
-    TAKEN,
-    SKIPPED,
-    PENDING,
-}
-
 sealed class UserIntakeStatus {
     object Taken : UserIntakeStatus() // Принято
+
     object Skipped : UserIntakeStatus() // Пропущено
+
     object Pending : UserIntakeStatus() // Ожидает приема
 
     companion object {
@@ -114,32 +116,10 @@ sealed class UserIntakeStatus {
     }
 }
 
-
 enum class UserType {
     ADMIN,
     PATIENT,
     DOCTOR,
-}
-
-enum class MedicationForm {
-    TABLET,
-    CAPSULE,
-    LIQUID,
-    INJECTION,
-    POWDER,
-    UNKNOWN,
-    /*     TOPICAL,
-        CREAM,
-        DEVICE,
-        DROPS,
-        FOAM,
-        GEL,
-        INHALER,
-        LOTION,
-        OINTMENT,
-        PATCH,
-        SPRAY,
-        SUPPOSITORY */
 }
 
 enum class MedicationUnit {
@@ -159,7 +139,7 @@ enum class BloodType {
     AB_NEGATIVE,
     O_POSITIVE,
     O_NEGATIVE,
-    UNKNOWN
+    UNKNOWN,
 }
 
 val sdf = SimpleDateFormat("MMMM dd, yyyy", Locale.US)
@@ -170,8 +150,4 @@ data class MoodLog(
     // TODO
 )
 
-data class NotificationPreferences(
-    val sound: Boolean = true,
-    val vibration: Boolean = true,
-)
-
+data class NotificationPreferences(val sound: Boolean = true, val vibration: Boolean = true)

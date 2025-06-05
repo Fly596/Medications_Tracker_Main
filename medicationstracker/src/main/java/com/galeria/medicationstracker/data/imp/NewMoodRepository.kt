@@ -37,7 +37,6 @@ class NewMoodRepositoryImpl @Inject constructor(private val firestore: FirebaseF
                 .collection(USERS_COLLECTION)
                 .document(userId)
                 .collection(MOODS_SUBCOLLECTION)
-                .orderBy("timestamp")
                 .addSnapshotListener { snapshot, error ->
                     if (error != null) {
                         close(error)

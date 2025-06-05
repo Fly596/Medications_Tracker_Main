@@ -78,73 +78,54 @@ sealed class Routes {
     sealed class AuthRoutes {
 
         // Authentification pages.
-        @Serializable
-        data object Auth : AuthRoutes()
-        
-        @Serializable
-        data object Login : AuthRoutes()
-        
-        @Serializable
-        data object Registration : AuthRoutes()
-        
-        @Serializable
-        data object PasswordRecovery : AuthRoutes()
+        @Serializable data object Auth : AuthRoutes()
+
+        @Serializable data object Login : AuthRoutes()
+
+        @Serializable data object Registration : AuthRoutes()
+
+        @Serializable data object PasswordRecovery : AuthRoutes()
     }
 
     // TODO: extract to separate file.
     @Serializable
     sealed class PatientRoutes {
-        
-        @Serializable
-        object Patient : PatientRoutes()
+
+        @Serializable object Patient : PatientRoutes()
 
         // home screens.
-        @Serializable
-        object PatientHome : PatientRoutes()
-        
-        @Serializable
-        data object PatientTodayMedications : PatientRoutes()
-        
-        @Serializable
-        data object PatientLogs : PatientRoutes()
+        @Serializable object PatientHome : PatientRoutes()
+
+        @Serializable data object PatientTodayMedications : PatientRoutes()
+
+        @Serializable data object PatientLogs : PatientRoutes()
 
         // medications screens.
-        @Serializable
-        object PatientMedications : PatientRoutes()
-        
-        @Serializable
-        data object PatientListMedications : PatientRoutes()
-        
-        @Serializable
-        data object PatientAddMedication : PatientRoutes()
-        
-        @Serializable
-        data object AdminAddMedication : PatientRoutes()
-        
-        @Serializable
-        data object PatientViewMedication : PatientRoutes()
+        @Serializable object PatientMedications : PatientRoutes()
+
+        @Serializable data object PatientListMedications : PatientRoutes()
+
+        @Serializable data object PatientAddMedication : PatientRoutes()
+
+        @Serializable data object AdminAddMedication : PatientRoutes()
+
+        @Serializable data object PatientViewMedication : PatientRoutes()
 
         @Serializable
         data class PatientUpdateMedication(val medicationName: String?) : PatientRoutes()
 
         // profile screen.
-        @Serializable
-        object PatientInfo : PatientRoutes()
-        
-        @Serializable
-        object MoodCheck : PatientRoutes()
-        
-        @Serializable
-        data object PatientProfile : PatientRoutes()
-        
-        @Serializable
-        data object PatientProfileOverview : PatientRoutes()
-        
-        @Serializable
-        data object PatientNotes : PatientRoutes()
-        
-        @Serializable
-        data object PatientNewNote : PatientRoutes()
+        @Serializable object PatientInfo : PatientRoutes()
+
+        @Serializable object MoodCheck : PatientRoutes()
+
+        @Serializable data object PatientProfile : PatientRoutes()
+
+        @Serializable data object PatientProfileOverview : PatientRoutes()
+
+        @Serializable data object PatientNotes : PatientRoutes()
+
+        @Serializable data object PatientNewNote : PatientRoutes()
 
         @Serializable
         data object PatientWeightDialog : PatientRoutes() // dialog.
@@ -161,32 +142,25 @@ sealed class Routes {
 
     @Serializable
     sealed class DoctorRoutes {
-        
-        @Serializable
-        object Doctor : DoctorRoutes()
+
+        @Serializable object Doctor : DoctorRoutes()
 
         // home screens. Расписание на день.
-        @Serializable
-        object DocHome : DoctorRoutes()
-        
-        @Serializable
-        data object DocDashboard : DoctorRoutes()
-        
-        @Serializable
-        object DocPatients : DoctorRoutes()
-        
-        @Serializable
-        data object DocPatientsList : DoctorRoutes()
-        
-        @Serializable
-        data object DocPatientInfo : DoctorRoutes()
+        @Serializable object DocHome : DoctorRoutes()
+
+        @Serializable data object DocDashboard : DoctorRoutes()
+
+        @Serializable object DocPatients : DoctorRoutes()
+
+        @Serializable data object DocPatientsList : DoctorRoutes()
+
+        @Serializable data object DocPatientInfo : DoctorRoutes()
     }
 
     @Serializable
     sealed class AdminRoutes {
-        
-        @Serializable
-        data object AdminDashboard : AdminRoutes()
+
+        @Serializable data object AdminDashboard : AdminRoutes()
     }
 }
 
@@ -195,7 +169,7 @@ fun NavGraphBuilder.authGraph(navController: NavHostController) {
     navigation<AuthRoutes.Auth>(startDestination = AuthRoutes.Login) {
         composable<AuthRoutes.Login> {
             LoginScreen(
-                onLogin = {
+                onLoginSuccessNavigation = {
                     navController.navigate(PatientRoutes.Patient) {
                         popUpTo(AuthRoutes.Login) { inclusive = true }
                     }
@@ -273,16 +247,14 @@ fun NavGraphBuilder.patientMedsGraph(navController: NavHostController) {
                     // Редактирование лекарства.
                     navController.navigate(PatientRoutes.PatientUpdateMedication(name))
                 },
-                onAddAdminMedClick = { },
+                onAddAdminMedClick = {},
             )
         }
 
         composable<PatientRoutes.PatientAddMedication> {
             NewMedicationDataScreen(onConfirmClick = { navController.popBackStack() })
         }
-        
-        
-        
+
         composable<PatientRoutes.PatientViewMedication> {
             ViewMedicationInfoScreen(onReturn = { navController.navigateUp() })
         }

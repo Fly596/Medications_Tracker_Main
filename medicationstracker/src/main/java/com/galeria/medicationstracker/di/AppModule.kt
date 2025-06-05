@@ -18,28 +18,23 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    @Provides
-    @Singleton
-    fun provideFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
+    @Provides @Singleton fun provideFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
 
-    @Provides
-    @Singleton
-    fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
+    @Provides @Singleton fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
+
+    // region OLD FirebaseRepositoryModule
 
     @Provides
     fun provideFirestoreRepository(
         firestore: FirebaseFirestore,
-        auth: FirebaseAuth
+        auth: FirebaseAuth,
     ): UserMedicationsRepository {
         return UserMedicationsRepositoryImpl(firestore, auth)
     }
 
     @Provides
     @Singleton
-    fun provideUserRepository(
-        firestore: FirebaseFirestore,
-        auth: FirebaseAuth
-    ): UserRepository {
+    fun provideUserRepository(firestore: FirebaseFirestore, auth: FirebaseAuth): UserRepository {
         return UserRepositoryImpl(firestore, auth)
     }
 
@@ -47,8 +42,9 @@ object AppModule {
     @Singleton
     fun provideMedicationRepository(
         firestore: FirebaseFirestore,
-        auth: FirebaseAuth
+        auth: FirebaseAuth,
     ): MedicationRepository {
         return MedicationRepositoryImpl(firestore, auth)
     }
+    // endregion
 }

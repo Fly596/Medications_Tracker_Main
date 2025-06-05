@@ -37,7 +37,6 @@ class NewIntakeRepositoryImpl @Inject constructor(private val firestore: Firebas
                 .collection(USERS_COLLECTION)
                 .document(userId)
                 .collection(INTAKES_SUBCOLLECTION)
-                .orderBy("timestamp")
                 .addSnapshotListener { snapshot, error ->
                     if (error != null) {
                         close(error)

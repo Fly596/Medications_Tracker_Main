@@ -1,19 +1,18 @@
 package com.galeria.medicationstracker.ui.screens.auth.signup
 
-import android.content.Context
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.galeria.medicationstracker.SnackbarController
-import com.galeria.medicationstracker.SnackbarEvent
 import com.galeria.medicationstracker.data.imp.AuthRepository
 import com.galeria.medicationstracker.data.imp.NewUser
 import com.galeria.medicationstracker.data.imp.NewUserRepository
-import com.galeria.medicationstracker.utils.FirestoreFunctions
-import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,6 +23,8 @@ data class SignupScreenState(
     val password: String = "",
     val passwordErrorMessage: String? = null,
     val showPassword: Boolean = false,
+    val isLoading: Boolean = false,
+    val generalError: String? = null,
 )
 
 @HiltViewModel
@@ -32,17 +33,42 @@ class SignupScreenViewModel
 constructor(private val repository: AuthRepository, private val userRepo: NewUserRepository) :
     ViewModel() {
 
-    val auth = FirebaseAuth.getInstance()
+    // val auth = FirebaseAuth.getInstance()
     private val _uiState = MutableStateFlow(SignupScreenState())
     val uiState = _uiState.asStateFlow()
+    private val _signupSuccessEvent = MutableSharedFlow<Unit>()
+    val signupSuccessEvent: SharedFlow<Unit> = _signupSuccessEvent.asSharedFlow()
 
-    private val db = FirestoreFunctions.FirestoreService.db
+    // private val db = FirestoreFunctions.FirestoreService.db
+    fun onRegisterClick() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, generalError = null) }
+            val result = repository.signUp(_uiState.value.email, _uiState.value.password)
 
-    fun onRegisterClick(context: Context, onSignupSuccess: () -> Unit) {
+            result.fold(
+                onSuccess = {
+                    _uiState.update { it.copy(isLoading = false) }
+                    val user: NewUser =
+                        NewUser(name = _uiState.value.name, email = _uiState.value.email)
+                    userRepo.addUser(user)
+                },
+                onFailure = { exception ->
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            generalError = exception.message ?: "Signup failed.",
+                        )
+                    }
+                },
+            )
+        }
+    }
+
+    /*     fun onRegisterClick() {
         viewModelScope.launch {
             val isEmailValid = validateEmail()
             val isPasswordValid = validatePassword()
-            
+
             if (isEmailValid && isPasswordValid) {
                 repository.signUp(_uiState.value.email, _uiState.value.password)
             } else {
@@ -53,36 +79,32 @@ constructor(private val repository: AuthRepository, private val userRepo: NewUse
                 }
             }
         }
-        
-    }
+
+    } */
 
     fun addUserData() {
         viewModelScope.launch {
-            val newUser =
-                NewUser(
-                    name = _uiState.value.name,
-                    email = _uiState.value.email,
-                )
+            val newUser = NewUser(name = _uiState.value.name, email = _uiState.value.email)
             userRepo.addUser(newUser)
         }
         /*         db.collection("User")
-                    .document(newUser.email.toString())
-                    .set(newUser)
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            viewModelScope.launch {
-                                SnackbarController.sendEvent(
-                                    event = SnackbarEvent(message = "Account Created!")
-                                )
-                            }
-                        } else {
-                            viewModelScope.launch {
-                                SnackbarController.sendEvent(
-                                    event = SnackbarEvent(message = "Something went wrong :(")
-                                )
-                            }
-                        }
-                    } */
+        .document(newUser.email.toString())
+        .set(newUser)
+        .addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                viewModelScope.launch {
+                    SnackbarController.sendEvent(
+                        event = SnackbarEvent(message = "Account Created!")
+                    )
+                }
+            } else {
+                viewModelScope.launch {
+                    SnackbarController.sendEvent(
+                        event = SnackbarEvent(message = "Something went wrong :(")
+                    )
+                }
+            }
+        } */
     }
 
     fun updateUserName(input: String) {
@@ -100,12 +122,12 @@ constructor(private val repository: AuthRepository, private val userRepo: NewUse
     fun isShowPasswordChecked(input: Boolean) {
         _uiState.value = _uiState.value.copy(showPassword = !input)
     }
-    
+
     private fun validateEmail(): Boolean {
         val emailInput = _uiState.value.email.trim()
         var isValid = true
         var errorMessage = ""
-        
+
         if (emailInput.isBlank() || emailInput.isEmpty()) {
             errorMessage = "Email cannot be empty"
             isValid = false
@@ -113,16 +135,16 @@ constructor(private val repository: AuthRepository, private val userRepo: NewUse
             errorMessage = "Wrong email format"
             isValid = false
         }
-        
+
         _uiState.value = _uiState.value.copy(emailErrorMessage = errorMessage)
         return isValid
     }
-    
+
     private fun validatePassword(): Boolean {
         val passwordInput = _uiState.value.password
         var isValid = true
         var errorMessage = ""
-        
+
         if (passwordInput.isBlank() || passwordInput.isEmpty()) {
             errorMessage = "Password cannot be empty"
             isValid = false
@@ -130,7 +152,7 @@ constructor(private val repository: AuthRepository, private val userRepo: NewUse
             errorMessage = "Password must be at least 6 characters"
             isValid = false
         }
-        
+
         _uiState.value = _uiState.value.copy(passwordErrorMessage = errorMessage)
         return isValid
     }

@@ -37,7 +37,6 @@ class NewNoteRepositoryImpl @Inject constructor(private val firestore: FirebaseF
                 .collection(USERS_COLLECTION)
                 .document(userId)
                 .collection(NOTES_SUBCOLLECTION)
-                .orderBy("timestamp")
                 .addSnapshotListener { snapshot, error ->
                     if (error != null) {
                         close(error)

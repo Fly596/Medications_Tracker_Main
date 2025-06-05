@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,26 +30,25 @@ import com.galeria.medicationstracker.ui.componentsOld.FlyTonalButton
 import com.galeria.medicationstracker.ui.componentsOld.MySwitch
 import com.galeria.medicationstracker.ui.componentsOld.MyTextField
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
-import com.google.firebase.Timestamp
 
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
-    onLogin: () -> Unit = {},
+    onLoginSuccessNavigation: () -> Unit = {},
     onRegistration: () -> Unit = {},
     onResetPassword: () -> Unit = {},
     viewModel: LoginScreenViewModel = hiltViewModel(),
 ) {
-    val temp: Timestamp = Timestamp.now()
-    temp.toDate()
 
     val state = viewModel.loginScreenState.collectAsStateWithLifecycle()
 
+    LaunchedEffect(key1 = Unit) {
+        viewModel.loginSuccessEvent.collect { onLoginSuccessNavigation() }
+    }
+
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.Top
+        modifier = modifier.fillMaxSize().padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.Top,
     ) {
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -59,10 +59,7 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        Column(
-            verticalArrangement = Arrangement.spacedBy(2.dp),
-            modifier = Modifier
-        ) {
+        Column(verticalArrangement = Arrangement.spacedBy(2.dp), modifier = Modifier) {
             MyTextField(
                 value = state.value.email,
                 onValueChange = { viewModel.updateEmail(it) },
@@ -86,7 +83,8 @@ fun LoginScreen(
                 // supportingText = "6 or more characters",
                 modifier = Modifier.fillMaxWidth(),
                 visualTransformation =
-                    if (state.value.showPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                    if (state.value.showPassword) VisualTransformation.None
+                    else PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             )
         }
@@ -105,13 +103,7 @@ fun LoginScreen(
                 onClick = {
                     // Запрос типа пользователя.
                     // viewModel.getUserType()
-
-                    viewModel.onSignInClick(
-                        state.value.email,
-                        state.value.password,
-                    ) {
-                        onLogin()
-                    }
+                    viewModel.onSignInClick() { onLoginSuccessNavigation() }
                 },
                 enabled = true,
             ) {
@@ -120,44 +112,25 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            FlyTonalButton(
-                onClick = {
-                    onRegistration()
-                },
-                enabled = true
-            ) {
+            FlyTonalButton(onClick = { onRegistration() }, enabled = true) {
                 Text(text = stringResource(R.string.create_account))
             }
         }
 
         Spacer(modifier = Modifier.weight(1f))
 
-        FlyTextButton(
-            onClick = {
-                onResetPassword()
-            },
-            enabled = true
-        ) {
+        FlyTextButton(onClick = { onResetPassword() }, enabled = true) {
             Text(text = stringResource(R.string.forgot_password))
         }
     }
 }
 
 @Composable
-fun RememberMeSwitch(
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit
-) {
+fun RememberMeSwitch(checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(
-            stringResource(R.string.show_password),
-            style = MedTrackerTheme.typography.bodyMedium
-        )
+        Text(stringResource(R.string.show_password), style = MedTrackerTheme.typography.bodyMedium)
         Spacer(modifier = Modifier.width(12.dp))
 
-        MySwitch(
-            checked = checked,
-            onCheckedChange = onCheckedChange
-        )
+        MySwitch(checked = checked, onCheckedChange = onCheckedChange)
     }
 }

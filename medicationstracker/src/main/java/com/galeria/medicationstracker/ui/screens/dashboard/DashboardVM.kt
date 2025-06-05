@@ -3,10 +3,10 @@ package com.galeria.medicationstracker.ui.screens.dashboard
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.galeria.medicationstracker.data.IntakeStatus
 import com.galeria.medicationstracker.data.UserIntake
 import com.galeria.medicationstracker.data.UserMedication
 import com.galeria.medicationstracker.data.UserRepository
+import com.galeria.medicationstracker.data.imp.IntakeStatus
 import com.galeria.medicationstracker.utils.FirestoreFunctions.FirestoreService
 import com.galeria.medicationstracker.utils.formatTimestampToWeekday
 import com.galeria.medicationstracker.utils.toTimestamp
