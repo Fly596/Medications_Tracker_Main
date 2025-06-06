@@ -33,6 +33,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medicationstracker.data.UserMedication
 import com.galeria.medicationstracker.data.imp.IntakeStatus
+import com.galeria.medicationstracker.data.imp.NewUserMedication
 import com.galeria.medicationstracker.ui.components.GFABButton
 import com.galeria.medicationstracker.ui.componentsOld.FLySimpleCardContainer
 import com.galeria.medicationstracker.ui.componentsOld.LogMedicationTimeDialog
@@ -196,10 +197,7 @@ fun MedicationItem(
             LogMedicationTimeDialog(
                 onDismiss = { showLogDialog.value = false },
                 onConfirmation = {
-                    viewModel.oldAddNewIntake(
-                        medicationOld = medication,
-                        status = IntakeStatus.TAKEN,
-                    )
+                    viewModel.oldAddNewIntake(medication = medication, status = IntakeStatus.TAKEN)
                     showLogDialog.value = false
                 },
                 onAddNotes = {
@@ -224,6 +222,48 @@ fun MedicationItem(
         }
     }
 }
+
+@Composable
+fun DashboardScreenNew(
+    modifier: Modifier = Modifier,
+    onAddMood: () -> Unit,
+    dashboardViewModel: DashboardVM = hiltViewModel(),
+) {
+    val state = dashboardViewModel.uiState.collectAsStateWithLifecycle()
+
+    MedTrackerTheme {
+        Scaffold(
+            containerColor = MedTrackerTheme.colors.secondaryBackground,
+            topBar = {
+                Column(modifier = Modifier.padding(vertical = 24.dp, horizontal = 16.dp)) {
+                    // today's date.
+                    Text(
+                        text = getTodaysDate().format(DateTimeFormatter.ofPattern("MMM d")),
+                        style = typography.display3Emphasized,
+                    )
+                }
+            },
+            floatingActionButton = { GFABButton(onClick = { onAddMood.invoke() }) },
+        ) { innerPadding ->
+            Column(
+                modifier =
+                    modifier.fillMaxWidth().padding(innerPadding).padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                // Календарь на неделю.
+                WeeklyCalendarView()
+                // Medication Cards List.
+            }
+        }
+    }
+}
+
+@Composable
+fun MedicationItemNew(
+    medication: NewUserMedication,
+    onLogTaken: () -> Unit,
+    onLogSkipped: () -> Unit,
+) {}
 
 @Preview(name = "StartScreen")
 @Composable

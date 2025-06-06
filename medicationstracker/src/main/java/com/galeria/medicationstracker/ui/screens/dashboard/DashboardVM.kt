@@ -10,10 +10,10 @@ import com.galeria.medicationstracker.data.imp.NewIntakeRepository
 import com.galeria.medicationstracker.data.imp.NewMedicationRepository
 import com.galeria.medicationstracker.data.imp.NewUserIntake
 import com.galeria.medicationstracker.data.imp.NewUserMedication
-import com.galeria.medicationstracker.utils.FirestoreFunctions.FirestoreService
 import com.galeria.medicationstracker.utils.toTimestamp
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Source
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,6 +28,11 @@ import java.time.ZoneId
 import javax.inject.Inject
 
 data class DashboardUiState(
+    val formattedDate: String = "",
+    val medicationsGroupedByTime: Map<String?, List<MedicationWithStatus>> = emptyMap(),
+    val isLoading: Boolean = true, // Добавим состояние загрузки
+    val errorMessage: String? = null // Для отображения ошибок
+    
     val oldCurrentTakenMedications: List<UserMedication> = emptyList(),
     val currentTakenMedications: List<NewUserMedication> = emptyList(),
 )
@@ -38,20 +43,25 @@ class DashboardVM
 constructor(
     private val intakeRepository: NewIntakeRepository,
     private val medicationRepository: NewMedicationRepository,
+    private val firebaseAuth: FirebaseAuth,
+    private val db: FirebaseFirestore,
 ) : ViewModel() {
-
-    val db = FirestoreService.db
+    
+    // val db = FirestoreService.db
     private val _uiState = MutableStateFlow(DashboardUiState())
     val uiState: StateFlow<DashboardUiState> = _uiState.asStateFlow()
 
     // Лекарства, которые нужно принимать.
-    private val firebaseAuth = FirebaseAuth.getInstance()
     private val currentUserId = firebaseAuth.currentUser?.uid
 
     init {
         // Получение списка активных лекарств пациента.
 
         getCurrentMedications()
+    }
+    
+    fun loadDashboardDate() {
+        _uiState.update {}
     }
 
     private var showToastCallback: ((String) -> Unit)? = null
@@ -70,37 +80,6 @@ constructor(
                     }
             }
         }
-        // TODO:
-        /* val todayEnd = LocalDate.now().plusDays(1).atStartOfDay().toTimestamp()
-        val todayWeekDay = formatTimestampToWeekday(Timestamp.now()).uppercase()
-
-        viewModelScope.launch {
-            db.collection("UserMedication")
-                .whereEqualTo("uid", currentUserId)
-                .whereGreaterThanOrEqualTo("endDate", todayEnd)
-                .whereArrayContains("daysOfWeek", todayWeekDay)
-                .addSnapshotListener { medicationSnapshots, error ->
-                    if (error != null) {
-                        Log.e(
-                            "DashboardVM",
-                            "Error fetching current medications: ${error.message}",
-                            error,
-                        )
-                        showToastCallback?.invoke("Error loading medications")
-                        return@addSnapshotListener
-                    }
-
-                    medicationSnapshots?.let {
-                        _uiState.value =
-                            _uiState.value.copy(
-                                oldCurrentTakenMedications =
-                                    it.toObjects(UserMedication::class.java)
-                            )
-
-                        showToastCallback?.invoke("Medications loaded successfully")
-                    }
-                }
-        } */
     }
 
     fun oldAddNewIntake(
@@ -114,17 +93,7 @@ constructor(
                 medicationId = medication.id,
                 status = status.name,
             )
-        viewModelScope.launch {
-            intakeRepository.addUserIntake(currentUserId.toString(), intake)
-            /*   val intake =
-                NewUserIntake(
-                    userId = currentUserId.toString(),
-                    medicationId = medication.id,
-                    status = status.name,
-                    timestamp = intakeTime.toDate(),
-                )
-            intakeRepository.addUserIntake(userId = currentUserId.toString(), intake) */
-        }
+        viewModelScope.launch { intakeRepository.addUserIntake(currentUserId.toString(), intake) }
     }
 
     // Проверка на то, был ли сегодня прием или нет.
