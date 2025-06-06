@@ -54,12 +54,7 @@ fun DashboardScreen(
         Scaffold(
             containerColor = MedTrackerTheme.colors.secondaryBackground,
             topBar = {
-                Column(
-                    modifier = Modifier.padding(
-                        vertical = 24.dp,
-                        horizontal = 16.dp
-                    )
-                ) {
+                Column(modifier = Modifier.padding(vertical = 24.dp, horizontal = 16.dp)) {
                     // today's date.
                     Text(
                         text = getTodaysDate().format(DateTimeFormatter.ofPattern("MMM d")),
@@ -77,10 +72,8 @@ fun DashboardScreen(
             },
         ) { innerPadding ->
             Column(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .padding(innerPadding)
-                    .padding(horizontal = 16.dp),
+                modifier =
+                    modifier.fillMaxWidth().padding(innerPadding).padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
 
@@ -91,7 +84,7 @@ fun DashboardScreen(
                 MedsByIntakeTimeList(
                     viewModel = dashboardViewModel,
                     onAddNoteClick = { onAddMedClick.invoke() },
-                    medicationsForIntakeTime = uiState.value.currentTakenMedications,
+                    medicationsForIntakeTime = uiState.value.oldCurrentTakenMedications,
                 )
             }
         }
@@ -203,7 +196,10 @@ fun MedicationItem(
             LogMedicationTimeDialog(
                 onDismiss = { showLogDialog.value = false },
                 onConfirmation = {
-                    viewModel.addNewIntake(medication = medication, status = IntakeStatus.TAKEN)
+                    viewModel.oldAddNewIntake(
+                        medicationOld = medication,
+                        status = IntakeStatus.TAKEN,
+                    )
                     showLogDialog.value = false
                 },
                 onAddNotes = {
@@ -211,16 +207,19 @@ fun MedicationItem(
                     showLogDialog.value = false
                 },
                 onConfirmTime = { time ->
-                    viewModel.addNewIntake(
+                    viewModel.oldAddNewIntake(
                         intakeTime = time,
-                        medication = medication,
-                        status = IntakeStatus.TAKEN
+                        medicationOld = medication,
+                        status = IntakeStatus.TAKEN,
                     )
                 },
                 onSkipIntake = {
-                    viewModel.addNewIntake(medication = medication, status = IntakeStatus.SKIPPED)
+                    viewModel.oldAddNewIntake(
+                        medicationOld = medication,
+                        status = IntakeStatus.SKIPPED,
+                    )
                     showLogDialog.value = false
-                }
+                },
             )
         }
     }

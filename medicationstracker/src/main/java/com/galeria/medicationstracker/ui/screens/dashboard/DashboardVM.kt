@@ -5,10 +5,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.galeria.medicationstracker.data.UserIntake
 import com.galeria.medicationstracker.data.UserMedication
-import com.galeria.medicationstracker.data.UserRepository
 import com.galeria.medicationstracker.data.imp.IntakeStatus
+import com.galeria.medicationstracker.data.imp.NewIntakeRepository
+import com.galeria.medicationstracker.data.imp.NewMedicationRepository
+import com.galeria.medicationstracker.data.imp.NewUserIntake
+import com.galeria.medicationstracker.data.imp.NewUserMedication
 import com.galeria.medicationstracker.utils.FirestoreFunctions.FirestoreService
-import com.galeria.medicationstracker.utils.formatTimestampToWeekday
 import com.galeria.medicationstracker.utils.toTimestamp
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -17,6 +19,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDate
@@ -24,10 +27,18 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import javax.inject.Inject
 
-data class DashboardUiState(val currentTakenMedications: List<UserMedication> = emptyList())
+data class DashboardUiState(
+    val oldCurrentTakenMedications: List<UserMedication> = emptyList(),
+    val currentTakenMedications: List<NewUserMedication> = emptyList(),
+)
 
 @HiltViewModel
-class DashboardVM @Inject constructor(private val repository: UserRepository) : ViewModel() {
+class DashboardVM
+@Inject
+constructor(
+    private val intakeRepository: NewIntakeRepository,
+    private val medicationRepository: NewMedicationRepository,
+) : ViewModel() {
 
     val db = FirestoreService.db
     private val _uiState = MutableStateFlow(DashboardUiState())
@@ -39,21 +50,28 @@ class DashboardVM @Inject constructor(private val repository: UserRepository) : 
 
     init {
         // Получение списка активных лекарств пациента.
+
         getCurrentMedications()
     }
 
-    var showToastCallback: ((String) -> Unit)? = null
-
-    fun localDateTimeToTimestamp(localDateTime: LocalDateTime): Timestamp {
-        val secs = localDateTime.atZone(ZoneId.systemDefault()).toEpochSecond()
-        val nanos = localDateTime.nano
-
-        return Timestamp(secs, nanos)
-    }
+    private var showToastCallback: ((String) -> Unit)? = null
 
     // Фильтрация лекарств, прием которых окончен для использования при выводе на главный экран.
     private fun getCurrentMedications() {
-        val todayEnd = LocalDate.now().plusDays(1).atStartOfDay().toTimestamp()
+        viewModelScope.launch {
+            if (currentUserId != null) {
+                val intakes =
+                    medicationRepository.getTodaysIntakes(currentUserId).collect { intakesList ->
+                        if (intakesList.isEmpty()) {
+                            //
+                        } else {
+                            _uiState.update { it.copy(currentTakenMedications = intakesList) }
+                        }
+                    }
+            }
+        }
+        // TODO:
+        /* val todayEnd = LocalDate.now().plusDays(1).atStartOfDay().toTimestamp()
         val todayWeekDay = formatTimestampToWeekday(Timestamp.now()).uppercase()
 
         viewModelScope.launch {
@@ -75,30 +93,37 @@ class DashboardVM @Inject constructor(private val repository: UserRepository) : 
                     medicationSnapshots?.let {
                         _uiState.value =
                             _uiState.value.copy(
-                                currentTakenMedications = it.toObjects(UserMedication::class.java)
+                                oldCurrentTakenMedications =
+                                    it.toObjects(UserMedication::class.java)
                             )
 
                         showToastCallback?.invoke("Medications loaded successfully")
                     }
                 }
-        }
+        } */
     }
 
-    fun addNewIntake(
+    fun oldAddNewIntake(
         intakeTime: Timestamp = Timestamp.now(),
-        medication: UserMedication = UserMedication(),
+        medication: NewUserMedication = NewUserMedication(),
         status: IntakeStatus,
     ) {
+        val intake: NewUserIntake =
+            NewUserIntake(
+                userId = currentUserId.toString(),
+                medicationId = medication.id,
+                status = status.name,
+            )
         viewModelScope.launch {
-            val intake =
-                UserIntake(
-                    uid = currentUserId.toString(),
-                    medicationName = medication.name.toString(),
-                    dose = medication.strength.toString(),
-                    status = status,
-                    dateTime = intakeTime,
+            intakeRepository.addUserIntake(currentUserId.toString(), intake)
+            /*   val intake =
+                NewUserIntake(
+                    userId = currentUserId.toString(),
+                    medicationId = medication.id,
+                    status = status.name,
+                    timestamp = intakeTime.toDate(),
                 )
-            repository.addIntake(intake)
+            intakeRepository.addUserIntake(userId = currentUserId.toString(), intake) */
         }
     }
 
@@ -120,7 +145,9 @@ class DashboardVM @Inject constructor(private val repository: UserRepository) : 
                     .await()
 
             if (!querySnapshot.isEmpty) {
-                if (querySnapshot.toObjects(UserIntake::class.java)[0].status.toString() == "TAKEN") 2 else 1
+                if (querySnapshot.toObjects(UserIntake::class.java)[0].status.toString() == "TAKEN")
+                    2
+                else 1
             } else {
                 0
             }
@@ -128,5 +155,12 @@ class DashboardVM @Inject constructor(private val repository: UserRepository) : 
             Log.e("checkIntake", "Error fetching intake data", e)
             -1
         }
+    }
+
+    fun localDateTimeToTimestamp(localDateTime: LocalDateTime): Timestamp {
+        val secs = localDateTime.atZone(ZoneId.systemDefault()).toEpochSecond()
+        val nanos = localDateTime.nano
+
+        return Timestamp(secs, nanos)
     }
 }

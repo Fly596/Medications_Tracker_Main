@@ -1,10 +1,14 @@
 package com.galeria.medicationstracker.data.imp
 
+import com.galeria.medicationstracker.utils.formatTimestampToWeekday
+import com.galeria.medicationstracker.utils.toTimestamp
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
+import java.time.LocalDate
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -19,6 +23,8 @@ interface NewMedicationRepository {
     suspend fun updateMedication(userId: String, medication: NewUserMedication): Result<Unit>
 
     suspend fun deleteMedication(userId: String, medicationId: String): Result<Unit>
+
+    fun getTodaysIntakes(userId: String): Flow<List<NewUserMedication>>
 }
 
 @Singleton
@@ -146,5 +152,28 @@ class NewMedicationRepositoryImpl @Inject constructor(private val firestore: Fir
         } catch (e: Exception) {
             Result.failure(e)
         }
+    }
+
+    override fun getTodaysIntakes(userId: String): Flow<List<NewUserMedication>> = callbackFlow {
+        val todayEnd = LocalDate.now().plusDays(1).atStartOfDay().toTimestamp()
+        val todayWeekDay = formatTimestampToWeekday(Timestamp.now()).uppercase()
+        val listenerRegistration =
+            firestore
+                .collection(USERS_COLLECTION)
+                .document(userId)
+                .collection(MEDICATIONS_SUBCOLLECTION)
+                .whereGreaterThanOrEqualTo("endDate", todayEnd)
+                .whereArrayContains("daysOfWeek", todayWeekDay)
+                .addSnapshotListener { snapshot, error ->
+                    if (error != null) {
+                        close(error)
+                        return@addSnapshotListener
+                    }
+                    if (snapshot != null) {
+                        val medications = snapshot.toObjects(NewUserMedication::class.java)
+                        trySend(medications).isSuccess
+                    }
+                }
+        awaitClose { listenerRegistration.remove() }
     }
 }
