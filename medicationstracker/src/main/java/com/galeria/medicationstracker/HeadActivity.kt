@@ -28,7 +28,7 @@ import com.galeria.medicationstracker.ui.componentsOld.BottomNavBar
 import com.galeria.medicationstracker.ui.componentsOld.bottomNavItems
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.utils.navigation.ApplicationNavHost
-import com.galeria.medicationstracker.utils.navigation.Routes
+import com.galeria.medicationstracker.utils.navigation.RoutesOld
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -38,9 +38,10 @@ class HeadActivity : ComponentActivity() {
 
     private lateinit var auth: FirebaseAuth
     private val startDestinations =
-        listOf(Routes.NavigationRoutes.AUTH, Routes.NavigationRoutes.PATIENT_DASHBOARD)
+        listOf(RoutesOld.NavigationRoutes.AUTH, RoutesOld.NavigationRoutes.PATIENT_DASHBOARD)
     private var currentDestination: String = startDestinations[0]
     private val headViewModel: HeadViewModel by viewModels()
+
     // private val medicationsViewModel: MedicationsViewModel by viewModels()
 
     override fun onStart() {
@@ -91,24 +92,22 @@ class HeadActivity : ComponentActivity() {
                     bottomBar = {
                         val navBackStackEntry by navController.currentBackStackEntryAsState()
                         val currentDestination = navBackStackEntry?.destination?.route
-                        val routesWithoutBottomBar =
+                        val routesOldWithoutBottomBar =
                             listOf(
-                                Routes.NavigationRoutes.LOGIN,
-                                Routes.NavigationRoutes.REGISTRATION,
-                                Routes.NavigationRoutes.PASSWORD_RECOVERY,
-                                Routes.NavigationRoutes.DOC_DASHBOARD,
-                                Routes.NavigationRoutes.DOC_PATIENTS_LIST,
+                                RoutesOld.NavigationRoutes.LOGIN,
+                                RoutesOld.NavigationRoutes.REGISTRATION,
+                                RoutesOld.NavigationRoutes.PASSWORD_RECOVERY,
+                                RoutesOld.NavigationRoutes.DOC_DASHBOARD,
+                                RoutesOld.NavigationRoutes.DOC_PATIENTS_LIST,
                             )
 
-                        if (currentDestination !in routesWithoutBottomBar) {
+                        if (currentDestination !in routesOldWithoutBottomBar) {
                             BottomNavBar(items, navController, headViewModel)
                         }
                     },
                 ) {
                     ApplicationNavHost(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(it),
+                        modifier = Modifier.fillMaxSize().padding(it),
                         /* .padding(start = 16.dp, end = 16.dp, top = 16.dp) */
                         navController = navController,
                         startDestination = currentDestination,

@@ -15,28 +15,28 @@ import androidx.navigation.NavHostController
 import com.galeria.medicationstracker.R
 import com.galeria.medicationstracker.ui.HeadViewModel
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
-import com.galeria.medicationstracker.utils.navigation.Routes
+import com.galeria.medicationstracker.utils.navigation.RoutesOld
 
 data class BottomNavItem(
     val title: String,
-    val route: Routes.PatientRoutes,
+    val route: RoutesOld.PatientRoutes,
     val selectedIcon: Int,
     val unselectedIcon: Int,
     val hasNews: Boolean = false,
-    val badgeCount: Int? = null
+    val badgeCount: Int? = null,
 )
 
 fun bottomNavItems(): List<BottomNavItem> {
     return listOf(
         BottomNavItem(
             title = "Dashboard",
-            route = Routes.PatientRoutes.PatientHome,
+            route = RoutesOld.PatientRoutes.PatientHome,
             selectedIcon = R.drawable.home_fill,
-            unselectedIcon = R.drawable.home
+            unselectedIcon = R.drawable.home,
         ),
         BottomNavItem(
             title = "Medications",
-            route = Routes.PatientRoutes.PatientMedications,
+            route = RoutesOld.PatientRoutes.PatientMedications,
             selectedIcon = R.drawable.lab_profile_fill,
             unselectedIcon = R.drawable.lab_profile,
             hasNews = false,
@@ -44,7 +44,7 @@ fun bottomNavItems(): List<BottomNavItem> {
         ),
         BottomNavItem(
             title = "Profile",
-            route = Routes.PatientRoutes.PatientProfile,
+            route = RoutesOld.PatientRoutes.PatientProfile,
             selectedIcon = R.drawable.profile_fill,
             unselectedIcon = R.drawable.profile,
             hasNews = false,
@@ -70,22 +70,22 @@ fun BottomNavBar(
             navItems.forEachIndexed { navItemIndex, navItem ->
                 NavigationBarItem(
                     selected = currentNavItemIndex == navItemIndex,
-                    colors = NavigationBarItemDefaults.colors(
-                        indicatorColor = MedTrackerTheme.colors.primaryTinted
-                    ),
+                    colors =
+                        NavigationBarItemDefaults.colors(
+                            indicatorColor = MedTrackerTheme.colors.primaryTinted
+                        ),
                     onClick = {
                         viewModel.updateSelectedItemIndex(navItemIndex)
                         navController.navigate(navItem.route)
                     },
                     label = {
-                        Text(
-                            text = navItem.title,
-                            style = MedTrackerTheme.typography.bodyMedium
-                        )
+                        Text(text = navItem.title, style = MedTrackerTheme.typography.bodyMedium)
                     },
                     icon = {
                         IconWithBadge(
-                            icon = if (navItemIndex == currentNavItemIndex) navItem.selectedIcon else navItem.unselectedIcon,
+                            icon =
+                                if (navItemIndex == currentNavItemIndex) navItem.selectedIcon
+                                else navItem.unselectedIcon,
                             badgeCount = navItem.badgeCount,
                             showUnreadBadge = navItem.hasNews,
                             contentDescription = navItem.title,
@@ -114,10 +114,6 @@ fun IconWithBadge(
             }
         }
     ) {
-        Icon(
-            painter = painterResource(id = icon),
-            contentDescription = contentDescription,
-        )
+        Icon(painter = painterResource(id = icon), contentDescription = contentDescription)
     }
 }
-

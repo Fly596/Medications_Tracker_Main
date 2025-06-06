@@ -22,15 +22,15 @@ import com.galeria.medicationstracker.ui.screens.profile.AccountScreenHead
 import com.galeria.medicationstracker.ui.screens.profile.notes.NewNoteScreen
 import com.galeria.medicationstracker.ui.screens.profile.notes.NotesScreen
 import com.galeria.medicationstracker.ui.screens.profile.profiledetails.ProfileDetailsScreen
-import com.galeria.medicationstracker.utils.navigation.Routes.AuthRoutes
-import com.galeria.medicationstracker.utils.navigation.Routes.PatientRoutes
+import com.galeria.medicationstracker.utils.navigation.RoutesOld.AuthRoutes
+import com.galeria.medicationstracker.utils.navigation.RoutesOld.PatientRoutes
 import kotlinx.serialization.Serializable
 
 @Composable
 fun ApplicationNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    startDestination: String = Routes.NavigationRoutes.AUTH,
+    startDestination: String = RoutesOld.NavigationRoutes.AUTH,
 ) {
 
     NavHost(
@@ -45,7 +45,7 @@ fun ApplicationNavHost(
 }
 
 @Serializable
-sealed class Routes {
+sealed class RoutesOld {
 
     object NavigationRoutes {
 

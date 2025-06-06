@@ -9,14 +9,12 @@ import javax.inject.Inject
 
 // TODO: What is this?
 @HiltViewModel
-class HeadViewModel @Inject constructor(
-  private val repository: UserRepository
-) : ViewModel() {
+class HeadViewModel @Inject constructor(private val repository: UserRepository) : ViewModel() {
 
-  private val _selectedItemIndex = MutableStateFlow(0)
-  val selectedItemIndex = _selectedItemIndex.asStateFlow()
+    private val _selectedItemIndex = MutableStateFlow(0)
+    val selectedItemIndex = _selectedItemIndex.asStateFlow()
 
-  fun updateSelectedItemIndex(index: Int) {
-    _selectedItemIndex.value = index
-  }
+    fun updateSelectedItemIndex(index: Int) {
+        _selectedItemIndex.value = index
+    }
 }
