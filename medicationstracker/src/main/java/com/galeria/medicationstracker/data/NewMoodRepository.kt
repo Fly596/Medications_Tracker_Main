@@ -1,4 +1,4 @@
-package com.galeria.medicationstracker.data.imp
+package com.galeria.medicationstracker.data
 
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.awaitClose

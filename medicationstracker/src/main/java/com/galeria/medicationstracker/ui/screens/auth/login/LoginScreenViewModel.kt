@@ -3,8 +3,7 @@ package com.galeria.medicationstracker.ui.screens.auth.login
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.galeria.medicationstracker.data.UserType
-import com.galeria.medicationstracker.data.imp.AuthRepository
+import com.galeria.medicationstracker.data.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +21,6 @@ data class LoginScreenState(
     val password: String = "tomtom",
     val passwordError: String? = null,
     val showPassword: Boolean = false,
-    val userType: UserType = UserType.PATIENT,
     val isLoading: Boolean = false,
     val generalError: String? = null, // Для общих ошибок от репозитория
 )

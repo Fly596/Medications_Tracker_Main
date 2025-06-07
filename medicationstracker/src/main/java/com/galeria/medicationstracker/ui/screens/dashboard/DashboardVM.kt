@@ -3,16 +3,16 @@ package com.galeria.medicationstracker.ui.screens.dashboard
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.galeria.medicationstracker.data.UserIntake
-import com.galeria.medicationstracker.data.imp.IntakeStatus
-import com.galeria.medicationstracker.data.imp.NewIntakeRepository
-import com.galeria.medicationstracker.data.imp.NewMedicationRepository
-import com.galeria.medicationstracker.data.imp.NewUserIntake
-import com.galeria.medicationstracker.data.imp.NewUserMedication
+import com.galeria.medicationstracker.data.AuthRepository
+import com.galeria.medicationstracker.data.IntakeStatus
+import com.galeria.medicationstracker.data.NewIntakeRepository
+import com.galeria.medicationstracker.data.NewMedicationRepository
+import com.galeria.medicationstracker.data.NewUserIntake
+import com.galeria.medicationstracker.data.NewUserMedication
+import com.galeria.medicationstracker.utils.FirestoreFunctions.FirestoreService.db
 import com.galeria.medicationstracker.utils.toTimestamp
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Source
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,18 +40,22 @@ class DashboardVM
 constructor(
     private val intakeRepository: NewIntakeRepository,
     private val medicationRepository: NewMedicationRepository,
-    private val firebaseAuth: FirebaseAuth,
-    private val db: FirebaseFirestore,
+    private val authRepository: AuthRepository,
 ) : ViewModel() {
 
-    // val db = FirestoreService.db
     private val _uiState = MutableStateFlow(DashboardUiState())
     val uiState: StateFlow<DashboardUiState> = _uiState.asStateFlow()
-
-    // Лекарства, которые нужно принимать.
-    private val currentUserId = firebaseAuth.currentUser?.uid
+    // private val currentUserId = firebaseAuth.currentUser?.uid
+    private lateinit var currentUserId: String
 
     init {
+        viewModelScope.launch {
+            // Получение id пользователя.
+            val temp = authRepository.getUserId()
+            if (temp.isSuccess) {
+                currentUserId = temp.getOrNull().toString()
+            }
+        }
         // Получение списка активных лекарств пациента.
         getCurrentMedications()
     }
@@ -61,16 +65,14 @@ constructor(
     // Фильтрация лекарств, прием которых окончен для использования при выводе на главный экран.
     private fun getCurrentMedications() {
         viewModelScope.launch {
-            if (currentUserId != null) {
-                val intakes =
-                    medicationRepository.getTodaysIntakes(currentUserId).collect { intakesList ->
-                        if (intakesList.isEmpty()) {
-                            //
-                        } else {
-                            _uiState.update { it.copy(currentTakenMedications = intakesList) }
-                        }
+            val intakes =
+                medicationRepository.getTodaysIntakes(currentUserId).collect { intakesList ->
+                    if (intakesList.isEmpty()) {
+                        //
+                    } else {
+                        _uiState.update { it.copy(currentTakenMedications = intakesList) }
                     }
-            }
+                }
         }
     }
 
@@ -106,7 +108,10 @@ constructor(
                     .await()
 
             if (!querySnapshot.isEmpty) {
-                if (querySnapshot.toObjects(UserIntake::class.java)[0].status.toString() == "TAKEN")
+                if (
+                    querySnapshot.toObjects(NewUserIntake::class.java)[0].status.toString() ==
+                        "TAKEN"
+                )
                     2
                 else 1
             } else {

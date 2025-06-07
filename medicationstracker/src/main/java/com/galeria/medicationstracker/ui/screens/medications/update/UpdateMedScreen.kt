@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medicationstracker.R
-import com.galeria.medicationstracker.data.imp.MedicationForm
+import com.galeria.medicationstracker.data.MedicationForm
 import com.galeria.medicationstracker.ui.componentsOld.DayOfWeekSelector
 import com.galeria.medicationstracker.ui.componentsOld.FlyButton
 import com.galeria.medicationstracker.ui.componentsOld.FlyErrorButton
@@ -89,17 +89,14 @@ fun UpdateMedScreen(
             ) { */
             LazyColumn(
                 modifier =
-                    modifier
-                        .fillMaxWidth()
-                        .padding(innerPadding)
-                        .padding(horizontal = 16.dp),
+                    modifier.fillMaxWidth().padding(innerPadding).padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 // Name input.
                 item {
                     Text(text = "Name", style = MedTrackerTheme.typography.title2)
                     Spacer(modifier = Modifier.padding(4.dp))
-                    
+
                     MyTextField(
                         value = state.value.medName,
                         onValueChange = { viewModel.updateMedName(it) },
@@ -114,14 +111,14 @@ fun UpdateMedScreen(
                     var selectedForm by remember { mutableStateOf(state.value.medForm) }
                     // var selectedForm = state.value.medForm
                     val options = MedicationForm.entries.toTypedArray()
-                    
+
                     FlySimpleCard {
                         Text(
                             text = stringResource(R.string.form),
                             style = MedTrackerTheme.typography.title2,
                         )
                         Spacer(modifier = Modifier.padding(4.dp))
-                        
+
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
@@ -149,7 +146,7 @@ fun UpdateMedScreen(
                         )
                     }
                 }
-                
+
                 item {
                     FlySimpleCard {
                         Text(
@@ -163,11 +160,11 @@ fun UpdateMedScreen(
                 // Intake Time input
                 item {
                     var showTimePicker by remember { mutableStateOf(false) }
-                    
+
                     FlyButton(onClick = { showTimePicker = true }) {
                         Text(stringResource(R.string.set_time))
                     }
-                    
+
                     if (showTimePicker) {
                         NewIntakeTimePicker(
                             onConfirm = { showTimePicker = false },
@@ -183,7 +180,7 @@ fun UpdateMedScreen(
                         style = MedTrackerTheme.typography.title2,
                     )
                     Spacer(modifier = Modifier.padding(4.dp))
-                    
+
                     MyTextField(
                         value = state.value.notes, // Assuming you have a medNotes state property
                         onValueChange = {
@@ -203,7 +200,7 @@ fun UpdateMedScreen(
                         style = MedTrackerTheme.typography.title2,
                     )
                     Spacer(modifier = Modifier.padding(4.dp))
-                    
+
                     MyTextField(
                         value =
                             state.value.strength
@@ -225,10 +222,10 @@ fun UpdateMedScreen(
                     // Add a unit selector or dropdown for strength units (e.g., MG, ML)
                     // ...
                 }
-                
+
                 item {
                     val context = LocalContext.current
-                    
+
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -241,7 +238,7 @@ fun UpdateMedScreen(
                         ) {
                             Text("Confirm")
                         }
-                        
+
                         FlyErrorButton(
                             onClick = { viewModel.deleteMedicationFromFirestore(currentMed!!.name) }
                         ) {

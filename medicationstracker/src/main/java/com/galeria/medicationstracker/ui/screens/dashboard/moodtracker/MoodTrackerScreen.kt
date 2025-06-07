@@ -25,6 +25,7 @@ import com.galeria.medicationstracker.ui.components.GPrimaryButton
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme.typography
 
+// Для записи оценки самочувствия.
 @Composable
 fun MoodTrackerScreen(
     modifier: Modifier = Modifier,
@@ -37,11 +38,7 @@ fun MoodTrackerScreen(
         Scaffold(
             containerColor = MedTrackerTheme.colors.secondaryBackground,
             topBar = {
-                Row(
-                    modifier = Modifier.padding(
-                        vertical = 24.dp
-                    )
-                ) {
+                Row(modifier = Modifier.padding(vertical = 24.dp)) {
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.Default.ArrowBackIosNew,
@@ -58,20 +55,17 @@ fun MoodTrackerScreen(
             },
         ) { innerPadding ->
             Column(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .padding(innerPadding)
-                    .padding(16.dp),
+                modifier = modifier.fillMaxWidth().padding(innerPadding).padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 Slider(
-                    value = uiState.value.mood.toFloat(),
+                    value = uiState.value.moodValue.toFloat(),
                     onValueChange = { viewModel.updateMood(it.toInt()) },
                     valueRange = 1f..10f,
                     steps = 9,
                     modifier = Modifier.fillMaxWidth(),
                 )
-                Text(text = "${uiState.value.mood}")
+                Text(text = "${uiState.value.moodValue}")
 
                 TextField(
                     value = uiState.value.notes ?: "",
@@ -79,7 +73,7 @@ fun MoodTrackerScreen(
                     label = { Text(stringResource(R.string.notes)) },
                 )
 
-                GPrimaryButton(onClick = { viewModel.addMood(uiState.value.mood) }) {
+                GPrimaryButton(onClick = { viewModel.addMood() }) {
                     Text(text = stringResource(R.string.add_mood))
                 }
             }

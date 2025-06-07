@@ -1,17 +1,5 @@
-package com.galeria.medicationstracker.data
-
-import android.util.Log
-import com.galeria.medicationstracker.utils.FirestoreFunctions.FirestoreService.db
-import com.galeria.medicationstracker.utils.toLocalDateTime
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.tasks.await
-import javax.inject.Inject
-
+package com.galeria.medicationstracker.data.old
+/*
 interface UserRepository {
 
     suspend fun addUser()
@@ -143,4 +131,4 @@ class UserRepositoryImpl @Inject constructor(
         }
 
     }
-}
+}*/

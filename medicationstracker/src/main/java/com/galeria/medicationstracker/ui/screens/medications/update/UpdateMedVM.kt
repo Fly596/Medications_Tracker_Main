@@ -4,10 +4,10 @@ import android.content.Context
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.galeria.medicationstracker.data.MedicationUnit
+import com.galeria.medicationstracker.data.MedicationForm
 import com.galeria.medicationstracker.data.UserMedication
 import com.galeria.medicationstracker.data.UserMedicationsRepository
-import com.galeria.medicationstracker.data.imp.MedicationForm
+import com.galeria.medicationstracker.data.old.MedicationUnit
 import com.galeria.medicationstracker.utils.FirestoreFunctions.FirestoreService
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -34,7 +34,7 @@ data class UpdateMedUiState(
 
 @HiltViewModel
 class UpdateMedVM @Inject constructor(private val repository: UserMedicationsRepository) :
-  ViewModel() {
+    ViewModel() {
 
     private val _uiState = MutableStateFlow(UpdateMedUiState())
     val uiState = _uiState.asStateFlow()
@@ -43,11 +43,11 @@ class UpdateMedVM @Inject constructor(private val repository: UserMedicationsRep
 
     private var _selectedMedication = MutableStateFlow<UserMedication?>(null)
     private var _selectedDocumentId = MutableStateFlow<String?>(null)
-    
+
     fun deleteMedicationFromFirestore(medName: String) {
         viewModelScope.launch { repository.deleteDrug(medName) }
     }
-    
+
     fun fetchSelectedMedication(medName: String) {
         viewModelScope.launch {
             val drug = repository.getDrug(medName)

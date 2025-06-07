@@ -44,8 +44,8 @@ import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medicationstracker.R
-import com.galeria.medicationstracker.data.MedicationUnit
-import com.galeria.medicationstracker.data.imp.MedicationForm
+import com.galeria.medicationstracker.data.MedicationForm
+import com.galeria.medicationstracker.data.old.MedicationUnit
 import com.galeria.medicationstracker.ui.components.GDropdownList
 import com.galeria.medicationstracker.ui.components.GOutlinedButton
 import com.galeria.medicationstracker.ui.components.GPrimaryButton
@@ -66,18 +66,15 @@ import java.util.Calendar
 @Composable
 fun NewMedicationDataScreen(
     modifier: Modifier = Modifier,
-    onConfirmClick: () -> Unit, viewModel: AddNewMedViewModel = hiltViewModel()
+    onConfirmClick: () -> Unit,
+    viewModel: AddNewMedViewModel = hiltViewModel(),
 ) {
     val state = viewModel.uiState.collectAsStateWithLifecycle()
     MedTrackerTheme {
         Scaffold(
             containerColor = MedTrackerTheme.colors.secondaryBackground,
             topBar = {
-                Row(
-                    modifier = Modifier.padding(
-                        vertical = 24.dp
-                    )
-                ) {
+                Row(modifier = Modifier.padding(vertical = 24.dp)) {
                     IconButton(onClick = onConfirmClick) {
                         Icon(
                             imageVector = Icons.Default.ArrowBackIosNew,
@@ -95,16 +92,11 @@ fun NewMedicationDataScreen(
         ) { innerPadding ->
             Column(
                 modifier =
-                    modifier
-                        .fillMaxWidth()
-                        .padding(innerPadding)
-                        .padding(horizontal = 16.dp),
+                    modifier.fillMaxWidth().padding(innerPadding).padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp),
+                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
                     horizontalAlignment = Alignment.Start,
                 ) {
                     // Name input.
@@ -124,12 +116,9 @@ fun NewMedicationDataScreen(
                             )
                             val optionsArray: Array<MedicationForm> =
                                 MedicationForm.entries.toTypedArray()
-                            val opList: List<String> =
-                                optionsArray.map { it.toString() }
+                            val opList: List<String> = optionsArray.map { it.toString() }
                             GDropdownList(items = opList) { selected ->
-                                viewModel.updateMedForm(
-                                    selected
-                                )
+                                viewModel.updateMedForm(selected)
                             }
                         }
                     }
@@ -137,7 +126,7 @@ fun NewMedicationDataScreen(
                     item {
                         var selectedUnit by remember { mutableStateOf(state.value.medUnit) }
                         val unitOptions = MedicationUnit.entries.toTypedArray()
-                        
+
                         FlySimpleCard(
                             isPrimaryBackground = true,
                             modifier = Modifier.fillMaxWidth(),
@@ -145,16 +134,11 @@ fun NewMedicationDataScreen(
                                 // Spacer(modifier = Modifier.padding(8.dp))
                                 GTextField(
                                     value = state.value.medStrength.toString(),
-                                    onValueChange = {
-                                        viewModel.updateMedStrength(
-                                            it.toFloat()
-                                        )
-                                    },
+                                    onValueChange = { viewModel.updateMedStrength(it.toFloat()) },
                                     label = stringResource(R.string.medication_strength),
                                     isPrimaryColor = true,
-                                    keyboardOptions = KeyboardOptions(
-                                        keyboardType = KeyboardType.Number
-                                    ),
+                                    keyboardOptions =
+                                        KeyboardOptions(keyboardType = KeyboardType.Number),
                                     modifier = Modifier.fillMaxWidth(),
                                 )
                                 // Units.
@@ -164,16 +148,11 @@ fun NewMedicationDataScreen(
                                 ) {
                                     unitOptions.forEach { unit ->
                                         Row(verticalAlignment = Alignment.CenterVertically) {
-                                            Text(
-                                                text = unit.toString()
-                                                    .lowercase()
-                                            )
+                                            Text(text = unit.toString().lowercase())
                                             GRadioButton(
                                                 selected = selectedUnit == unit,
                                                 onClick = {
-                                                    viewModel.updateMedUnit(
-                                                        selectedUnit
-                                                    )
+                                                    viewModel.updateMedUnit(selectedUnit)
                                                     selectedUnit = unit
                                                 },
                                             )
@@ -189,13 +168,13 @@ fun NewMedicationDataScreen(
                         // Выбор начала и конца периода приема.
                         Text(
                             text = stringResource(R.string.intake_period),
-                            style = MedTrackerTheme.typography.title2Emphasized
+                            style = MedTrackerTheme.typography.title2Emphasized,
                         )
                         Spacer(modifier = Modifier.padding(8.dp))
                         ModalDatePicker(viewModel)
                         var showTimePicker by remember { mutableStateOf(false) }
                         Spacer(modifier = Modifier.padding(4.dp))
-                        
+
                         GSecondaryButton(
                             shape = MedTrackerTheme.shapes.extraLarge,
                             onClick = { showTimePicker = true },
@@ -218,9 +197,7 @@ fun NewMedicationDataScreen(
                             content = {
                                 Column(
                                     modifier = Modifier.fillMaxWidth(),
-                                    verticalArrangement = Arrangement.spacedBy(
-                                        12.dp
-                                    ),
+                                    verticalArrangement = Arrangement.spacedBy(12.dp),
                                 ) {
                                     Text(
                                         text = stringResource(R.string.choose_days),
@@ -340,10 +317,7 @@ fun DateRangePickerModal(onDateRangeSelected: (Pair<Long?, Long?>) -> Unit, onDi
             state = dateRangePickerState,
             title = { Text(text = "Select date range") },
             showModeToggle = false,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(500.dp)
-                .padding(16.dp),
+            modifier = Modifier.fillMaxWidth().height(500.dp).padding(16.dp),
         )
     }
 }
@@ -357,9 +331,7 @@ fun IntakeTimePicker(onConfirm: () -> Unit, onDismiss: () -> Unit, viewModel: Ad
             color = MaterialTheme.colorScheme.surface,
         ) {
             Column(
-                modifier = Modifier
-                    .padding(24.dp)
-                    .width(IntrinsicSize.Max),
+                modifier = Modifier.padding(24.dp).width(IntrinsicSize.Max),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
@@ -401,9 +373,7 @@ fun IntakeTimePicker(onConfirm: () -> Unit, onDismiss: () -> Unit, viewModel: Ad
                 )
 
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 24.dp),
+                    modifier = Modifier.fillMaxWidth().padding(top = 24.dp),
                     horizontalArrangement = Arrangement.SpaceEvenly,
                 ) {
                     TextButton(
@@ -424,7 +394,7 @@ fun IntakeTimePicker(onConfirm: () -> Unit, onDismiss: () -> Unit, viewModel: Ad
                     ) {
                         Text(
                             stringResource(R.string.confirm),
-                            color = MedTrackerTheme.colors.sysWhite
+                            color = MedTrackerTheme.colors.sysWhite,
                         )
                     }
                 }

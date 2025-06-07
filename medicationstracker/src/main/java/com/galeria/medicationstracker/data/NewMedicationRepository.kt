@@ -1,4 +1,4 @@
-package com.galeria.medicationstracker.data.imp
+package com.galeria.medicationstracker.data
 
 import com.galeria.medicationstracker.utils.formatTimestampToWeekday
 import com.galeria.medicationstracker.utils.toTimestamp

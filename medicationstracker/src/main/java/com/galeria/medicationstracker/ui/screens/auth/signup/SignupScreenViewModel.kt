@@ -3,9 +3,9 @@ package com.galeria.medicationstracker.ui.screens.auth.signup
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.galeria.medicationstracker.data.imp.AuthRepository
-import com.galeria.medicationstracker.data.imp.NewUser
-import com.galeria.medicationstracker.data.imp.NewUserRepository
+import com.galeria.medicationstracker.data.AuthRepository
+import com.galeria.medicationstracker.data.NewUser
+import com.galeria.medicationstracker.data.NewUserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -1,11 +1,5 @@
 package com.galeria.medicationstracker.di
 
-import com.galeria.medicationstracker.data.MedicationRepository
-import com.galeria.medicationstracker.data.MedicationRepositoryImpl
-import com.galeria.medicationstracker.data.UserMedicationsRepository
-import com.galeria.medicationstracker.data.UserMedicationsRepositoryImpl
-import com.galeria.medicationstracker.data.UserRepository
-import com.galeria.medicationstracker.data.UserRepositoryImpl
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
@@ -23,7 +17,7 @@ object AppModule {
     @Provides @Singleton fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
 
     // region OLD FirebaseRepositoryModule
-
+    /*
     @Provides
     fun provideFirestoreRepository(
         firestore: FirebaseFirestore,
@@ -45,6 +39,6 @@ object AppModule {
         auth: FirebaseAuth,
     ): MedicationRepository {
         return MedicationRepositoryImpl(firestore, auth)
-    }
+    } */
     // endregion
 }

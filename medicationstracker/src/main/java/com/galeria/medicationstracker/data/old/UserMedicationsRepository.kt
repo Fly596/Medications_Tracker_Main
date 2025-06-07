@@ -1,15 +1,5 @@
-package com.galeria.medicationstracker.data
-
-import com.galeria.medicationstracker.utils.FirestoreFunctions
-import com.galeria.medicationstracker.utils.FirestoreFunctions.FirestoreService.db
-import com.google.firebase.Timestamp
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.tasks.await
-import javax.inject.Inject
+package com.galeria.medicationstracker.data.old
+/*
 
 interface UserMedicationsRepository {
 
@@ -35,7 +25,7 @@ interface UserMedicationsRepository {
         strengthUnit: String,
         uid: String,
     )
-    
+
     fun observeUserMedications(uid: String): Flow<List<UserMedication>>
 }
 
@@ -67,7 +57,7 @@ constructor(private val firestore: FirebaseFirestore, private val auth: Firebase
             return null
         }
     }
-    
+
     override fun observeUserMedications(uid: String): Flow<List<UserMedication>> =
         callbackFlow {
         val listenerRegistration =
@@ -182,3 +172,4 @@ constructor(private val firestore: FirebaseFirestore, private val auth: Firebase
             .addOnFailureListener { e -> println("Error finding documents to delete: $e") }
     }
 }
+*/

@@ -1,4 +1,4 @@
-package com.galeria.medicationstracker.data.imp
+package com.galeria.medicationstracker.data
 
 import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.ServerTimestamp
@@ -46,6 +46,7 @@ data class NewUserMood(
     @DocumentId val id: String = "",
     val userId: String = "",
     val moodValue: Int? = null,
+    val notes: String? = null,
     val timestamp: Date? = null,
 )
 
