@@ -139,29 +139,8 @@ sealed class RoutesOld {
         @Serializable
         data object PatientAppointment : PatientRoutes() // dialog.
     }
-
-    @Serializable
-    sealed class DoctorRoutes {
-
-        @Serializable object Doctor : DoctorRoutes()
-
-        // home screens. Расписание на день.
-        @Serializable object DocHome : DoctorRoutes()
-
-        @Serializable data object DocDashboard : DoctorRoutes()
-
-        @Serializable object DocPatients : DoctorRoutes()
-
-        @Serializable data object DocPatientsList : DoctorRoutes()
-
-        @Serializable data object DocPatientInfo : DoctorRoutes()
-    }
-
-    @Serializable
-    sealed class AdminRoutes {
-
-        @Serializable data object AdminDashboard : AdminRoutes()
-    }
+    
+    
 }
 
 // Граф для страниц аутификации.

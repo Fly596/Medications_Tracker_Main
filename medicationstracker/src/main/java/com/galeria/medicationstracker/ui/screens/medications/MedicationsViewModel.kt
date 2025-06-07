@@ -9,6 +9,7 @@ import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,8 +30,9 @@ class MedicationsViewModel @Inject constructor(private val repository: UserMedic
         // Fetch user medications and collect the flow
         userId?.let { uid ->
             viewModelScope.launch {
-                repository.getDrugsStream(uid).collect { medications ->
-                    _uiState.value = _uiState.value.copy(userMedications = medications)
+                repository.observeUserMedications(uid).collect { medications ->
+                    _uiState.update { it.copy(userMedications = medications) }
+                    //_uiState.value = _uiState.value.copy(userMedications = medications)
                 }
             }
         }

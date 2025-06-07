@@ -35,8 +35,8 @@ interface UserMedicationsRepository {
         strengthUnit: String,
         uid: String,
     )
-
-    fun getDrugsStream(uid: String): Flow<List<UserMedication>>
+    
+    fun observeUserMedications(uid: String): Flow<List<UserMedication>>
 }
 
 class UserMedicationsRepositoryImpl
@@ -67,8 +67,9 @@ constructor(private val firestore: FirebaseFirestore, private val auth: Firebase
             return null
         }
     }
-
-    override fun getDrugsStream(uid: String): Flow<List<UserMedication>> = callbackFlow {
+    
+    override fun observeUserMedications(uid: String): Flow<List<UserMedication>> =
+        callbackFlow {
         val listenerRegistration =
             userMedicationsCollection.whereEqualTo("uid", uid).addSnapshotListener { value, error ->
                 if (error != null) {

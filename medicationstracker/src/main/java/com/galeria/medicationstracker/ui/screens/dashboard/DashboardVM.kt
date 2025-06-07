@@ -53,7 +53,6 @@ constructor(
 
     init {
         // Получение списка активных лекарств пациента.
-
         getCurrentMedications()
     }
 

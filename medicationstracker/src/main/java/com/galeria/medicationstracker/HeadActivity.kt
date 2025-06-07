@@ -97,8 +97,6 @@ class HeadActivity : ComponentActivity() {
                                 RoutesOld.NavigationRoutes.LOGIN,
                                 RoutesOld.NavigationRoutes.REGISTRATION,
                                 RoutesOld.NavigationRoutes.PASSWORD_RECOVERY,
-                                RoutesOld.NavigationRoutes.DOC_DASHBOARD,
-                                RoutesOld.NavigationRoutes.DOC_PATIENTS_LIST,
                             )
 
                         if (currentDestination !in routesOldWithoutBottomBar) {
