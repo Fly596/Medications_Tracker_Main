@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.galeria.medicationstracker.data.UserIntake
-import com.galeria.medicationstracker.data.UserMedication
 import com.galeria.medicationstracker.data.imp.IntakeStatus
 import com.galeria.medicationstracker.data.imp.NewIntakeRepository
 import com.galeria.medicationstracker.data.imp.NewMedicationRepository
@@ -29,11 +28,9 @@ import javax.inject.Inject
 
 data class DashboardUiState(
     val formattedDate: String = "",
-    val medicationsGroupedByTime: Map<String?, List<MedicationWithStatus>> = emptyMap(),
     val isLoading: Boolean = true, // Добавим состояние загрузки
-    val errorMessage: String? = null // Для отображения ошибок
-    
-    val oldCurrentTakenMedications: List<UserMedication> = emptyList(),
+    val errorMessage: String? = null, // Для отображения ошибок
+    // val oldCurrentTakenMedications: List<UserMedication> = emptyList(),
     val currentTakenMedications: List<NewUserMedication> = emptyList(),
 )
 
@@ -46,7 +43,7 @@ constructor(
     private val firebaseAuth: FirebaseAuth,
     private val db: FirebaseFirestore,
 ) : ViewModel() {
-    
+
     // val db = FirestoreService.db
     private val _uiState = MutableStateFlow(DashboardUiState())
     val uiState: StateFlow<DashboardUiState> = _uiState.asStateFlow()
@@ -58,10 +55,6 @@ constructor(
         // Получение списка активных лекарств пациента.
 
         getCurrentMedications()
-    }
-    
-    fun loadDashboardDate() {
-        _uiState.update {}
     }
 
     private var showToastCallback: ((String) -> Unit)? = null
@@ -82,7 +75,7 @@ constructor(
         }
     }
 
-    fun oldAddNewIntake(
+    fun addNewIntake(
         intakeTime: Timestamp = Timestamp.now(),
         medication: NewUserMedication = NewUserMedication(),
         status: IntakeStatus,
@@ -98,7 +91,7 @@ constructor(
 
     // Проверка на то, был ли сегодня прием или нет.
     // -1: error; 0: noData, 1: skipped, 2: taken
-    suspend fun fetchIntakeStatus(medication: UserMedication): Int {
+    suspend fun fetchIntakeStatus(medication: NewUserMedication): Int {
         val todayStart = LocalDate.now().atStartOfDay().toTimestamp()
         val todayEnd = LocalDate.now().plusDays(1).atStartOfDay().toTimestamp()
         return try {

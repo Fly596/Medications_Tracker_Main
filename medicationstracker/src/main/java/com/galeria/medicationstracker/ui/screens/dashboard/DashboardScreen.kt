@@ -31,7 +31,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.galeria.medicationstracker.data.UserMedication
 import com.galeria.medicationstracker.data.imp.IntakeStatus
 import com.galeria.medicationstracker.data.imp.NewUserMedication
 import com.galeria.medicationstracker.ui.components.GFABButton
@@ -85,7 +84,7 @@ fun DashboardScreen(
                 MedsByIntakeTimeList(
                     viewModel = dashboardViewModel,
                     onAddNoteClick = { onAddMedClick.invoke() },
-                    medicationsForIntakeTime = uiState.value.oldCurrentTakenMedications,
+                    medicationsForIntakeTime = uiState.value.currentTakenMedications,
                 )
             }
         }
@@ -97,7 +96,7 @@ fun DashboardScreen(
 fun MedsByIntakeTimeList(
     viewModel: DashboardVM,
     onAddNoteClick: () -> Unit = {},
-    medicationsForIntakeTime: List<UserMedication> = emptyList(),
+    medicationsForIntakeTime: List<NewUserMedication> = emptyList(),
 ) {
     // Группируем лекарства по времени приема.
     val medicationsByIntakeTime = medicationsForIntakeTime.groupBy { it.intakeTime }
@@ -138,7 +137,7 @@ fun MedsByIntakeTimeList(
 @Composable
 fun MedicationItem(
     viewModel: DashboardVM,
-    medication: UserMedication,
+    medication: NewUserMedication,
     icon: ImageVector = Icons.Filled.Medication,
     onAddNoteClick: () -> Unit = {},
 ) {
@@ -197,7 +196,7 @@ fun MedicationItem(
             LogMedicationTimeDialog(
                 onDismiss = { showLogDialog.value = false },
                 onConfirmation = {
-                    viewModel.oldAddNewIntake(medication = medication, status = IntakeStatus.TAKEN)
+                    viewModel.addNewIntake(medication = medication, status = IntakeStatus.TAKEN)
                     showLogDialog.value = false
                 },
                 onAddNotes = {
@@ -205,17 +204,14 @@ fun MedicationItem(
                     showLogDialog.value = false
                 },
                 onConfirmTime = { time ->
-                    viewModel.oldAddNewIntake(
+                    viewModel.addNewIntake(
                         intakeTime = time,
-                        medicationOld = medication,
+                        medication = medication,
                         status = IntakeStatus.TAKEN,
                     )
                 },
                 onSkipIntake = {
-                    viewModel.oldAddNewIntake(
-                        medicationOld = medication,
-                        status = IntakeStatus.SKIPPED,
-                    )
+                    viewModel.addNewIntake(medication = medication, status = IntakeStatus.SKIPPED)
                     showLogDialog.value = false
                 },
             )
