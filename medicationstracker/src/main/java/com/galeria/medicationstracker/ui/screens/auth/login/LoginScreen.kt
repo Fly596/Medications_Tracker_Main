@@ -13,7 +13,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -99,14 +98,8 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         Row(verticalAlignment = Alignment.CenterVertically) {
-            val scope = rememberCoroutineScope()
-
             FlyButton(
-                onClick = {
-                    // Запрос типа пользователя.
-                    // viewModel.getUserType()
-                    viewModel.onSignInClick { onLoginSuccessNavigation() }
-                },
+                onClick = { viewModel.onSignInClick { onLoginSuccessNavigation() } },
                 enabled = true,
             ) {
                 Text(text = stringResource(R.string.sign_in))

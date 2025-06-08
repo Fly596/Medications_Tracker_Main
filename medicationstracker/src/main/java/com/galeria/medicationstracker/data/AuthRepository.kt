@@ -10,21 +10,22 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 interface AuthRepository {
-
+    
     suspend fun signIn(email: String, password: String): Result<Unit>
-
+    
     suspend fun signUp(email: String, password: String): Result<Unit>
-
+    
     suspend fun resetPassword(email: String): Result<Unit>
-
+    
     suspend fun getUserId(): Result<String?>
-
+    
     suspend fun getUserEmail(): Result<String?>
 }
 
 @Singleton
-class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : AuthRepository {
-
+class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) :
+    AuthRepository {
+    
     override suspend fun getUserId(): Result<String?> {
         return try {
             val userId = auth.currentUser?.uid
@@ -33,7 +34,7 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : A
             Result.failure(e)
         }
     }
-
+    
     override suspend fun getUserEmail(): Result<String?> {
         return try {
             val userId = auth.currentUser?.email
@@ -42,7 +43,7 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : A
             Result.failure(e)
         }
     }
-
+    
     override suspend fun signIn(email: String, password: String): Result<Unit> {
         return try {
             auth.signInWithEmailAndPassword(email, password).await()
@@ -55,7 +56,7 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : A
             Result.failure(Exception("Auth failed: ${e.message}"))
         }
     }
-
+    
     override suspend fun signUp(email: String, password: String): Result<Unit> {
         return try {
             auth.createUserWithEmailAndPassword(email, password).await()
@@ -64,7 +65,7 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : A
             Result.failure(Exception("Auth failed: ${e.message}"))
         }
     }
-
+    
     override suspend fun resetPassword(email: String): Result<Unit> {
         return suspendCoroutine { continuation ->
             auth
@@ -75,7 +76,8 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : A
                     } else {
                         continuation.resume(
                             Result.failure(
-                                task.exception ?: RuntimeException("Password reset failed")
+                                task.exception
+                                    ?: RuntimeException("Password reset failed")
                             )
                         )
                     }
