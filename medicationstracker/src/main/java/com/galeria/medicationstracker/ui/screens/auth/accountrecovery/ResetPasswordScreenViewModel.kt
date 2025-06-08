@@ -12,15 +12,18 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-data class AccountRecoveryScreenState(val email: String = "", val emailError: String? = null)
+data class ResetPasswordScreenState(
+    val email: String = "",
+    val emailError: String? = null
+)
 
 @HiltViewModel
-class AccountRecoveryScreenViewModel
+class ResetPasswordScreenViewModel
 @Inject
 constructor(private val authRepository: AuthRepository) : ViewModel() {
 
     // val auth = FirebaseAuth.getInstance()
-    private val _uiState = MutableStateFlow(AccountRecoveryScreenState())
+    private val _uiState = MutableStateFlow(ResetPasswordScreenState())
     val uiState = _uiState.asStateFlow()
 
     fun updateEmail(input: String) {

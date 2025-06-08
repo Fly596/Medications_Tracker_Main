@@ -97,7 +97,7 @@ fun UpdateMedScreen(
             ) {
                 // Name input.
                 item {
-                    Text(text = "Name", style = MedTrackerTheme.typography.title2)
+                    Text(text = "Name", style = typography.title2)
                     Spacer(modifier = Modifier.padding(4.dp))
 
                     MyTextField(
@@ -118,7 +118,7 @@ fun UpdateMedScreen(
                     FlySimpleCard {
                         Text(
                             text = stringResource(R.string.form),
-                            style = MedTrackerTheme.typography.title2,
+                            style = typography.title2,
                         )
                         Spacer(modifier = Modifier.padding(4.dp))
 
@@ -154,7 +154,7 @@ fun UpdateMedScreen(
                     FlySimpleCard {
                         Text(
                             text = stringResource(R.string.schedule),
-                            style = MedTrackerTheme.typography.title2,
+                            style = typography.title2,
                         )
                         Spacer(modifier = Modifier.padding(4.dp))
                         DayOfWeekSelector(viewModelUpd = viewModel)
@@ -180,7 +180,7 @@ fun UpdateMedScreen(
                 item {
                     Text(
                         text = stringResource(R.string.notes),
-                        style = MedTrackerTheme.typography.title2,
+                        style = typography.title2,
                     )
                     Spacer(modifier = Modifier.padding(4.dp))
 
@@ -200,7 +200,7 @@ fun UpdateMedScreen(
                 item {
                     Text(
                         text = stringResource(R.string.medication_strength),
-                        style = MedTrackerTheme.typography.title2,
+                        style = typography.title2,
                     )
                     Spacer(modifier = Modifier.padding(4.dp))
 

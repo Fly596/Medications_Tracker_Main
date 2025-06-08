@@ -9,7 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import androidx.navigation.toRoute
-import com.galeria.medicationstracker.ui.screens.auth.accountrecovery.AccountRecoveryScreen
+import com.galeria.medicationstracker.ui.screens.auth.accountrecovery.ResetPasswordScreen
 import com.galeria.medicationstracker.ui.screens.auth.login.LoginScreen
 import com.galeria.medicationstracker.ui.screens.auth.signup.SignupScreen
 import com.galeria.medicationstracker.ui.screens.dashboard.DashboardScreen
@@ -161,7 +161,7 @@ fun NavGraphBuilder.authGraph(navController: NavHostController) {
         }
 
         composable<AuthRoutes.PasswordRecovery> {
-            AccountRecoveryScreen(navigateHome = { navController.navigateUp() })
+            ResetPasswordScreen(navigateHome = { navController.navigateUp() })
         }
     }
 }

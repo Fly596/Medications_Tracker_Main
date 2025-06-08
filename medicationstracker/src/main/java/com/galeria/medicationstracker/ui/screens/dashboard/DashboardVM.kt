@@ -22,8 +22,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.ZoneId
 import javax.inject.Inject
 
 data class DashboardUiState(
@@ -42,12 +40,13 @@ constructor(
     private val medicationRepository: NewMedicationRepository,
     private val authRepository: AuthRepository,
 ) : ViewModel() {
-
+    
     private val _uiState = MutableStateFlow(DashboardUiState())
     val uiState: StateFlow<DashboardUiState> = _uiState.asStateFlow()
+    
     // private val currentUserId = firebaseAuth.currentUser?.uid
     private lateinit var currentUserId: String
-
+    
     init {
         viewModelScope.launch {
             // Получение id пользователя.
@@ -59,23 +58,24 @@ constructor(
         // Получение списка активных лекарств пациента.
         getCurrentMedications()
     }
-
+    
     private var showToastCallback: ((String) -> Unit)? = null
-
+    
     // Фильтрация лекарств, прием которых окончен для использования при выводе на главный экран.
     private fun getCurrentMedications() {
         viewModelScope.launch {
             val intakes =
-                medicationRepository.getTodaysIntakes(currentUserId).collect { intakesList ->
-                    if (intakesList.isEmpty()) {
-                        //
-                    } else {
-                        _uiState.update { it.copy(currentTakenMedications = intakesList) }
+                medicationRepository.getTodaysIntakes(currentUserId)
+                    .collect { intakesList ->
+                        if (intakesList.isEmpty()) {
+                            //
+                        } else {
+                            _uiState.update { it.copy(currentTakenMedications = intakesList) }
+                        }
                     }
-                }
         }
     }
-
+    
     fun addNewIntake(
         intakeTime: Timestamp = Timestamp.now(),
         medication: NewUserMedication = NewUserMedication(),
@@ -87,9 +87,14 @@ constructor(
                 medicationId = medication.id,
                 status = status.name,
             )
-        viewModelScope.launch { intakeRepository.addUserIntake(currentUserId.toString(), intake) }
+        viewModelScope.launch {
+            intakeRepository.addUserIntake(
+                currentUserId.toString(),
+                intake
+            )
+        }
     }
-
+    
     // Проверка на то, был ли сегодня прием или нет.
     // -1: error; 0: noData, 1: skipped, 2: taken
     suspend fun fetchIntakeStatus(medication: NewUserMedication): Int {
@@ -106,11 +111,11 @@ constructor(
                     .limit(1)
                     .get(Source.SERVER)
                     .await()
-
+            
             if (!querySnapshot.isEmpty) {
                 if (
                     querySnapshot.toObjects(NewUserIntake::class.java)[0].status.toString() ==
-                        "TAKEN"
+                    "TAKEN"
                 )
                     2
                 else 1
@@ -122,11 +127,5 @@ constructor(
             -1
         }
     }
-
-    fun localDateTimeToTimestamp(localDateTime: LocalDateTime): Timestamp {
-        val secs = localDateTime.atZone(ZoneId.systemDefault()).toEpochSecond()
-        val nanos = localDateTime.nano
-
-        return Timestamp(secs, nanos)
-    }
+    
 }

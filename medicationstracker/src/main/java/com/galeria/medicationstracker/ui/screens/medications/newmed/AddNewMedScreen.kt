@@ -185,7 +185,7 @@ fun NewMedicationDataScreen(
                         // Выбор начала и конца периода приема.
                         Text(
                             text = stringResource(R.string.intake_period),
-                            style = MedTrackerTheme.typography.title2Emphasized,
+                            style = typography.title2Emphasized,
                         )
                         
                         Spacer(modifier = Modifier.padding(8.dp))
@@ -241,7 +241,7 @@ fun NewMedicationDataScreen(
                                 ) {
                                     Text(
                                         text = stringResource(R.string.choose_days),
-                                        style = MedTrackerTheme.typography.title2Emphasized,
+                                        style = typography.title2Emphasized,
                                     )
                                     DayOfWeekSelector(viewModel = viewModelOld)
                                 }
@@ -295,7 +295,7 @@ fun ModalDatePickerOld(viewModel: AddNewMedViewModel) {
             
             else -> ""
         }
-    Column() {
+    Column {
         GTextField(
             modifier = Modifier.fillMaxWidth(),
             minLines = 2,

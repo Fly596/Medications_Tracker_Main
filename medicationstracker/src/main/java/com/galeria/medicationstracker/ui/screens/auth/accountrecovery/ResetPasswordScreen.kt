@@ -27,11 +27,11 @@ import com.galeria.medicationstracker.ui.componentsOld.MyTextField
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 
 @Composable
-fun AccountRecoveryScreen(
+fun ResetPasswordScreen(
     modifier: Modifier = Modifier,
     passedEmail: String = "",
     navigateHome: () -> Unit,
-    viewModel: AccountRecoveryScreenViewModel = hiltViewModel(),
+    viewModel: ResetPasswordScreenViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(Unit) { viewModel.updateEmail(passedEmail) }
     val state = viewModel.uiState.collectAsStateWithLifecycle()
@@ -96,5 +96,9 @@ fun AccountRecoveryScreen(
 @Preview(showBackground = true)
 @Composable
 fun AccountRecoveryScreenPreview() {
-    MedTrackerTheme { AccountRecoveryScreen(passedEmail = "test@example.com", navigateHome = {}) }
+    MedTrackerTheme {
+        ResetPasswordScreen(
+            passedEmail = "test@example.com",
+            navigateHome = {})
+    }
 }

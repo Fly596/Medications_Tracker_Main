@@ -281,7 +281,7 @@ fun GPrimaryButtonPreview() {
                     enabled = true,
                     textStyle = MedTrackerTheme.typography.bodyMedium,
                     content = {
-                        androidx.compose.material3.Text("Button Text")
+                        Text("Button Text")
                     },
                 )
                 GPrimaryButton(
@@ -290,7 +290,7 @@ fun GPrimaryButtonPreview() {
                     enabled = false,
                     textStyle = MedTrackerTheme.typography.bodyMedium,
                     content = {
-                        androidx.compose.material3.Text("Button Text")
+                        Text("Button Text")
                     },
                 )
             }
@@ -301,7 +301,7 @@ fun GPrimaryButtonPreview() {
                     enabled = true,
                     textStyle = MedTrackerTheme.typography.bodyMedium,
                     content = {
-                        androidx.compose.material3.Text("Button Text")
+                        Text("Button Text")
                     },
                 )
                 GSecondaryButton(
@@ -310,7 +310,7 @@ fun GPrimaryButtonPreview() {
                     enabled = false,
                     textStyle = MedTrackerTheme.typography.bodyMedium,
                     content = {
-                        androidx.compose.material3.Text("Button Text")
+                        Text("Button Text")
                     },
                 )
             }
@@ -321,7 +321,7 @@ fun GPrimaryButtonPreview() {
                     enabled = true,
                     textStyle = MedTrackerTheme.typography.bodyMedium,
                     content = {
-                        androidx.compose.material3.Text("Button Text")
+                        Text("Button Text")
                     },
                 )
                 GTextButton(
@@ -330,7 +330,7 @@ fun GPrimaryButtonPreview() {
                     enabled = false,
                     textStyle = MedTrackerTheme.typography.bodyMedium,
                     content = {
-                        androidx.compose.material3.Text("Button Text")
+                        Text("Button Text")
                     },
                 )
             }
@@ -341,7 +341,7 @@ fun GPrimaryButtonPreview() {
                     enabled = true,
                     textStyle = MedTrackerTheme.typography.bodyMedium,
                     content = {
-                        androidx.compose.material3.Text("Button Text")
+                        Text("Button Text")
                     }
                 )
                 GOutlinedButton(
@@ -350,7 +350,7 @@ fun GPrimaryButtonPreview() {
                     enabled = false,
                     textStyle = MedTrackerTheme.typography.bodyMedium,
                     content = {
-                        androidx.compose.material3.Text("Button Text")
+                        Text("Button Text")
                     }
                 )
             }
@@ -361,7 +361,7 @@ fun GPrimaryButtonPreview() {
                     enabled = true,
                     textStyle = MedTrackerTheme.typography.bodyMedium,
                     content = {
-                        androidx.compose.material3.Text("Button Text")
+                        Text("Button Text")
                     }
                 )
                 GTonalButton(
@@ -370,7 +370,7 @@ fun GPrimaryButtonPreview() {
                     enabled = false,
                     textStyle = MedTrackerTheme.typography.bodyMedium,
                     content = {
-                        androidx.compose.material3.Text("Button Text")
+                        Text("Button Text")
                     }
                 )
             }

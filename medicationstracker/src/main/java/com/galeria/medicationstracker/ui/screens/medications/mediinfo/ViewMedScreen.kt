@@ -93,11 +93,11 @@ fun MedStatCard(
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text(
                 stringResource(R.string.start_date),
-                style = MedTrackerTheme.typography.bodyMedium
+                style = typography.bodyMedium
             )
             Text(
                 medication?.startDate.toString(),
-                style = MedTrackerTheme.typography.title3Emphasized
+                style = typography.title3Emphasized
             )
         }
         HorizontalDivider(
@@ -120,21 +120,21 @@ fun MedStatCardBody(totalTaken: Int = 0, totalSkipped: Int = 0) {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(
                 stringResource(R.string.total_taken),
-                style = MedTrackerTheme.typography.bodyMedium
+                style = typography.bodyMedium
             )
             Text(
                 "$totalTaken times",
-                style = MedTrackerTheme.typography.title2Emphasized
+                style = typography.title2Emphasized
             )
         }
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(
                 stringResource(R.string.total_skipped),
-                style = MedTrackerTheme.typography.bodyMedium
+                style = typography.bodyMedium
             )
             Text(
                 "$totalSkipped times",
-                style = MedTrackerTheme.typography.title2Emphasized
+                style = typography.title2Emphasized
             )
         }
     }
@@ -148,7 +148,7 @@ fun MedInfoHeader(
     Column(modifier.padding(vertical = 16.dp)) {
         Text(
             text = medName,
-            style = MedTrackerTheme.typography.title1Emphasized
+            style = typography.title1Emphasized
         )
     }
 }

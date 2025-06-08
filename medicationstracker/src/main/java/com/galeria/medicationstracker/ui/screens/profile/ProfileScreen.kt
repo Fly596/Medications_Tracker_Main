@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -63,7 +62,7 @@ fun AccountScreenHead(
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     MedTrackerTheme {
         Scaffold(
-            containerColor = MedTrackerTheme.colors.secondaryBackground,
+            containerColor = colors.secondaryBackground,
         ) { innerPadding ->
             Column(
                 modifier =
@@ -191,7 +190,7 @@ fun TabsRow(
 
 @Composable
 fun UserMedications(mediations: List<UserMedication> = emptyList()) {
-    LazyColumn() { items(mediations) { medication -> MedicationCard(medication = medication) } }
+    LazyColumn { items(mediations) { medication -> MedicationCard(medication = medication) } }
 }
 
 @Composable
@@ -265,7 +264,7 @@ fun MedicationCard(modifier: Modifier = Modifier, medication: UserMedication? = 
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     contentDescription = "More Info",
-                    tint = MedTrackerTheme.colors.primaryLabel,
+                    tint = colors.primaryLabel,
                     modifier = Modifier.size(36.dp),
                 )
             }
@@ -283,7 +282,7 @@ fun LabeledStat(count: String, label: String) {
         Text(
             text = count,
             style = MedTrackerTheme.typography.bodyLargeEmphasized,
-            color = MedTrackerTheme.colors.primaryLabel,
+            color = colors.primaryLabel,
         )
         Text(
             text = label,

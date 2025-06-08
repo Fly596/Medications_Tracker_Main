@@ -86,7 +86,7 @@ fun NotesScreen(
                 ) {
                     Text(
                         text = stringResource(R.string.notes),
-                        style = MedTrackerTheme.typography.display3Emphasized
+                        style = typography.display3Emphasized
                     )
                     IconButton(
                         modifier = Modifier,
@@ -100,7 +100,7 @@ fun NotesScreen(
                     }
                 }
                 
-                LazyColumn() {
+                LazyColumn {
                     items(uiState.value.notes.size) { note ->
                         UserNoteCard(
                             title = uiState.value.notes[note].title.toString(),
@@ -135,8 +135,8 @@ fun UserNoteCard(
         .fillMaxWidth()
         .padding(vertical = 8.dp)) {
         Column(verticalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier) {
-            Text(text = date, style = MedTrackerTheme.typography.title3)
-            Text(text = title, style = MedTrackerTheme.typography.title1Emphasized)
+            Text(text = date, style = typography.title3)
+            Text(text = title, style = typography.title1Emphasized)
 
             Spacer(modifier = Modifier.height(4.dp))
             GTextField(

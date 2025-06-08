@@ -325,7 +325,7 @@ fun FlyIconButton(
             .padding(vertical = 8.dp)
             .clip(RoundedCornerShape(8.dp))
             .clickable(onClick = { onClick.invoke() })
-            .background(MedTrackerTheme.colors.primaryBackgroundGrouped)
+            .background(colors.primaryBackgroundGrouped)
             .padding(8.dp)
             .size(size),
         contentAlignment = Alignment.Center
@@ -333,7 +333,7 @@ fun FlyIconButton(
         Icon(
             painterResource(icon),
             contentDescription = null,
-            tint = MedTrackerTheme.colors.primary400,
+            tint = colors.primary400,
             modifier = Modifier
         )
     }
