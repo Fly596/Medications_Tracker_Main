@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.galeria.medicationstracker.data.AuthRepository
 import com.galeria.medicationstracker.data.NewMoodRepository
 import com.galeria.medicationstracker.data.NewUserMood
+import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -52,7 +53,7 @@ constructor(
                     userId = currentUserId,
                     moodValue = mood,
                     notes = notes,
-                    timestamp = currentDate,
+                    timestamp = Timestamp(currentDate),
                 )
             moodRepository.addMood(userId = currentUserId, moodData = moodEntry)
         }

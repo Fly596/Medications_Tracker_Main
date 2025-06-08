@@ -35,7 +35,6 @@ import com.galeria.medicationstracker.ui.components.GTextField
 import com.galeria.medicationstracker.ui.componentsOld.FlySimpleCard
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme.typography
-import com.galeria.medicationstracker.utils.formatTimestampToMinutemmmmddyyyyhm
 
 @Composable
 fun NotesScreen(
@@ -105,9 +104,9 @@ fun NotesScreen(
                         UserNoteCard(
                             title = uiState.value.notes[note].title.toString(),
                             content = uiState.value.notes[note].content.toString(),
-                            date = formatTimestampToMinutemmmmddyyyyhm(uiState.value.notes[note].date),
+                            // date = formatTimestampToMinutemmmmddyyyyhm(uiState.value.notes[note].date),
                             tags = uiState.value.notes[note].tags,
-                            medication = uiState.value.notes[note].medication,
+                            // medication = uiState.value.notes[note].medication,
                         )
                     }
                 }

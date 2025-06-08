@@ -1,16 +1,13 @@
 package com.galeria.medicationstracker.ui.screens.profile.profiledetails
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.galeria.medicationstracker.data.BloodType
-import com.galeria.medicationstracker.data.UserProfile
-import com.galeria.medicationstracker.data.UserRepository
+import com.galeria.medicationstracker.data.NewUser
+import com.galeria.medicationstracker.data.NewUserRepository
 import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class ProfileDetailsUiState(
@@ -19,7 +16,6 @@ data class ProfileDetailsUiState(
     val email: String? = null,
     val dateOfBirth: Timestamp? = null,
     val sex: String? = null,
-    val bloodType: BloodType? = null,
     val weight: Float? = null,
     val height: Float? = null,
     val isLoading: Boolean = false,
@@ -28,9 +24,8 @@ data class ProfileDetailsUiState(
 )
 
 @HiltViewModel
-class ProfileDetailsViewModel @Inject constructor(
-    private val repository: UserRepository
-) : ViewModel() {
+class ProfileDetailsViewModel @Inject constructor(private val repository: NewUserRepository) :
+    ViewModel() {
 
     private val _state = MutableStateFlow(ProfileDetailsUiState())
     val state: StateFlow<ProfileDetailsUiState> = _state.asStateFlow()
@@ -40,7 +35,8 @@ class ProfileDetailsViewModel @Inject constructor(
     }
 
     fun updateUser() {
-        viewModelScope.launch {
+        // TODO: в репо.
+        /*         viewModelScope.launch {
             val user = state.value
             val newUser = UserProfile(
                 firstName = user.firstName ?: "",
@@ -54,25 +50,25 @@ class ProfileDetailsViewModel @Inject constructor(
                 uid = repository.getUserData().uid ?: ""
             )
             repository.updateUserData(newUser)
-        }
+        } */
     }
 
     private fun getUserData() {
-        var user = UserProfile()
-
-        viewModelScope.launch {
-            user = repository.getUserData()
-            _state.value = _state.value.copy(
-                firstName = user.firstName,
-                lastName = user.lastName,
-                email = user.email,
-                dateOfBirth = user.dateOfBirth,
-                sex = user.sex,
-                bloodType = user.bloodType,
-                weight = user.weight,
-                height = user.height
-            )
-        }
+        var user = NewUser()
+        // viewModelScope.launch {
+        //     user = repository.getUserData()
+        //     _state.value =
+        //         _state.value.copy(
+        //             firstName = user.firstName,
+        //             lastName = user.lastName,
+        //             email = user.email,
+        //             dateOfBirth = user.dateOfBirth,
+        //             sex = user.sex,
+        //             bloodType = user.bloodType,
+        //             weight = user.weight,
+        //             height = user.height,
+        //         )
+        // }
     }
 
     fun updateFirstName(firstName: String) {
@@ -89,16 +85,12 @@ class ProfileDetailsViewModel @Inject constructor(
 
     fun updateDateOfBirth(dateOfBirth: Timestamp?) {
         _state.value = _state.value.copy(dateOfBirth = dateOfBirth)
-
     }
 
     fun updateSex(sex: String) {
         _state.value = _state.value.copy(sex = sex)
     }
 
-    fun updateBloodType(bloodType: BloodType) {
-        _state.value = _state.value.copy(bloodType = bloodType)
-    }
 
     fun updateWeight(weight: Float) {
         _state.value = _state.value.copy(weight = weight)
@@ -115,5 +107,4 @@ class ProfileDetailsViewModel @Inject constructor(
     private fun updateError(isError: Boolean) {
         _state.value = _state.value.copy(isError = isError)
     }
-
 }

@@ -1,12 +1,11 @@
 package com.galeria.medicationstracker.ui.screens.medications.update
 
 import android.content.Context
-import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.galeria.medicationstracker.data.MedicationForm
 import com.galeria.medicationstracker.data.NewMedicationRepository
-import com.galeria.medicationstracker.data.UserMedication
+import com.galeria.medicationstracker.data.NewUserMedication
 import com.galeria.medicationstracker.data.old.MedicationUnit
 import com.galeria.medicationstracker.utils.FirestoreFunctions.FirestoreService
 import com.google.firebase.Timestamp
@@ -29,7 +28,7 @@ data class UpdateMedUiState(
     val strengthUnit: MedicationUnit = MedicationUnit.MG, // Add strength unit
     val selectedDays: List<String> = emptyList(),
     val newSelectedDays: List<String> = emptyList(),
-    val medication: UserMedication? = null,
+    val medication: NewUserMedication? = null,
 )
 
 @HiltViewModel
@@ -40,40 +39,47 @@ class UpdateMedVM @Inject constructor(private val repository: NewMedicationRepos
     val uiState = _uiState.asStateFlow()
     private val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
     val db = FirestoreService.db
-
-    private var _selectedMedication = MutableStateFlow<UserMedication?>(null)
+    private var _selectedMedication = MutableStateFlow<NewUserMedication?>(null)
     private var _selectedDocumentId = MutableStateFlow<String?>(null)
-
-    fun deleteMedicationFromFirestore(medName: String) {
-        viewModelScope.launch { repository.deleteDrug(medName) }
-    }
-
-    fun fetchSelectedMedication(medName: String) {
+    
+    fun deleteMedicationFromFirestore(medId: String) {
         viewModelScope.launch {
-            val drug = repository.getDrug(medName)
-            _uiState.value = _uiState.value.copy(medication = drug)
+            repository.deleteMedication(
+                currentUserId.toString(),
+                medId
+            )
+        }
+    }
+    
+    fun fetchSelectedMedication(medId: String) {
+        viewModelScope.launch {
+            val drug = repository.getMedication(currentUserId.toString(), medId)
+            if (drug.isSuccess) {
+                _uiState.value =
+                    _uiState.value.copy(medication = drug.getOrNull())
+            }
         }
     }
 
     // Обновление данных о лекарстве в Firestore.
     fun updateMedicationFromFirestore(context: Context) {
-        val newValues: Map<String, Any?> =
-            mapOf(
-                "endDate" to _uiState.value.endDate,
-                "form" to _uiState.value.medForm.toString(),
-                "daysOfWeek" to _uiState.value.newSelectedDays,
-                "intakeTime" to _uiState.value.intakeTime,
-                "name" to _uiState.value.medName,
-                "notes" to _uiState.value.notes,
-                "strength" to _uiState.value.strength,
-                "unit" to _uiState.value.unit.toString(),
-                "startDate" to _uiState.value.startDate,
-                "uid" to currentUserId,
-            )
-        val medicationRef =
-            db.collection(
-                "UserMedication"
-            ) /* .document("${userEmail}_${uiState.value.medication?.name}_${uiState.value.medication?.strength}") */
+        /*        val newValues: Map<String, Any?> =
+                   mapOf(
+                       "endDate" to _uiState.value.endDate,
+                       "form" to _uiState.value.medForm.toString(),
+                       "daysOfWeek" to _uiState.value.newSelectedDays,
+                       "intakeTime" to _uiState.value.intakeTime,
+                       "name" to _uiState.value.medName,
+                       "notes" to _uiState.value.notes,
+                       "strength" to _uiState.value.strength,
+                       "unit" to _uiState.value.unit.toString(),
+                       "startDate" to _uiState.value.startDate,
+                       "uid" to currentUserId,
+                   )
+               val medicationRef =
+                   db.collection(
+                       "UserMedication"
+                   )  *//* .document("${userEmail}_${uiState.value.medication?.name}_${uiState.value.medication?.strength}") *//*
         medicationRef
             .whereEqualTo("uid", currentUserId)
             .whereEqualTo("name", _uiState.value.medication?.name)
@@ -85,7 +91,7 @@ class UpdateMedVM @Inject constructor(private val repository: NewMedicationRepos
             }
             .addOnFailureListener { exception ->
                 Toast.makeText(context, "Error updating medication", Toast.LENGTH_SHORT).show()
-            }
+            } */
     }
 
     fun updateSelectedDays(input: List<String>) {

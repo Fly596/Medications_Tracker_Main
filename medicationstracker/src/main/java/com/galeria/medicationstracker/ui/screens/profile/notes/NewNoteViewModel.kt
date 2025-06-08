@@ -1,15 +1,12 @@
 package com.galeria.medicationstracker.ui.screens.profile.notes
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.galeria.medicationstracker.data.Note
-import com.galeria.medicationstracker.data.UserMedication
-import com.galeria.medicationstracker.data.UserRepository
+import com.galeria.medicationstracker.data.NewUserMedication
+import com.galeria.medicationstracker.data.NewUserRepository
 import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class NewNoteScreenUiState(
@@ -17,13 +14,13 @@ data class NewNoteScreenUiState(
     val content: String = "",
     val date: Timestamp = Timestamp.now(),
     val tags: List<String> = emptyList(),
-    val medications: List<UserMedication> = emptyList(), // Available medications
+    val medications: List<NewUserMedication> = emptyList(), // Available medications
     val selectedMedications: List<String> = emptyList() // Selected medications
 )
 
 @HiltViewModel
 class NewNoteViewModel @Inject constructor(
-    private val repository: UserRepository
+    private val repository: NewUserRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(NewNoteScreenUiState())
@@ -31,25 +28,25 @@ class NewNoteViewModel @Inject constructor(
 
     init {
         // Load medications from repository (mocked for simplicity)
-        viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(
-                medications = repository.getUserDrugs() // Assume this returns a List<String>
-            )
-
-        }
+        /*         viewModelScope.launch {
+                    _uiState.value = _uiState.value.copy(
+                        /medications = repository.getUserDrugs() // Assume this returns a List<String>
+                    )
+        
+                } */
     }
 
     fun saveNote() {
-        val note = Note(
-            title = _uiState.value.title,
-            content = _uiState.value.content,
-            date = _uiState.value.date,
-            tags = _uiState.value.tags,
-            medication = _uiState.value.selectedMedications
-        )
-        viewModelScope.launch {
-            repository.saveNote(note)
-        }
+        /*         val note = NewUserNote(
+                    title = _uiState.value.title,
+                    content = _uiState.value.content,
+                    date = _uiState.value.date,
+                    tags = _uiState.value.tags,
+                    medication = _uiState.value.selectedMedications
+                )
+                viewModelScope.launch {
+                    repository.saveNote(note)
+                } */
     }
 
     fun updateTitle(newTitle: String) {

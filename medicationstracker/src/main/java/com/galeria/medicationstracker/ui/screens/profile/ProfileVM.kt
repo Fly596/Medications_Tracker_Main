@@ -2,23 +2,21 @@ package com.galeria.medicationstracker.ui.screens.profile
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.galeria.medicationstracker.data.UserIntake
-import com.galeria.medicationstracker.data.UserMedication
-import com.galeria.medicationstracker.data.UserProfile
-import com.galeria.medicationstracker.data.UserRepository
+import com.galeria.medicationstracker.data.NewUser
+import com.galeria.medicationstracker.data.NewUserIntake
+import com.galeria.medicationstracker.data.NewUserMedication
+import com.galeria.medicationstracker.data.NewUserRepository
 import com.galeria.medicationstracker.utils.FirestoreFunctions.FirestoreService
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.SetOptions.merge
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class ProfileScreenUiState(
     // val testData: String = "",
-    val user: UserProfile? = null,
+    val user: NewUser? = null,
     // val doctors: List<User> = listOf(),
     // val selectedDoctor: User? = null,
     // val selectedTime: String = "",
@@ -27,13 +25,13 @@ data class ProfileScreenUiState(
     val weight: Float = 0.0f,
     val height: Float = 0.0f,
     val name: String = "",
-    val intakes: List<UserIntake> = emptyList(),
-    val medications: List<UserMedication> = emptyList(),
+    val intakes: List<NewUserIntake> = emptyList(),
+    val medications: List<NewUserMedication> = emptyList(),
 )
 
 @HiltViewModel
 class ProfileVM @Inject constructor(
-    private val repository: UserRepository
+    private val repository: NewUserRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProfileScreenUiState())
@@ -44,17 +42,17 @@ class ProfileVM @Inject constructor(
     private val currentUserId = firebaseAuth.currentUser?.uid
 
     init {
-        viewModelScope.launch {
-            val repoUser = repository.getUserData()
-            val repoIntakes = repository.getUserIntakes(currentUserId.toString())
-            _uiState.value = _uiState.value.copy(user = repoUser, intakes = repoIntakes)
-        }
-
-        viewModelScope.launch {
-            // val user = repository.getUserData()
-            // val medications = repository.getUserDrugs()
-            /*             _uiState.value =
-                            _uiState.value.copy(user = user, medications = medications) */
+        /*         viewModelScope.launch {
+                    val repoUser = repository.getUserData()
+                    val repoIntakes = repository.getUserIntakes(currentUserId.toString())
+                    _uiState.value = _uiState.value.copy(user = repoUser, intakes = repoIntakes)
+                }
+        
+                viewModelScope.launch {
+                    // val user = repository.getUserData()
+                    // val medications = repository.getUserDrugs()
+                     *//*             _uiState.value =
+                            _uiState.value.copy(user = user, medications = medications) *//*
 
             repository.getUserIntakesFlow((currentUserId.toString()))
                 .collect { intakes ->
@@ -62,7 +60,7 @@ class ProfileVM @Inject constructor(
                         intakes = intakes,
                     )
                 }
-        }
+        } */
     }
 
     /*     private fun fetchUserData() {

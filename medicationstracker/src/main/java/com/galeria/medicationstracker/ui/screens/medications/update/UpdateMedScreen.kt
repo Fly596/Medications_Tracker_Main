@@ -53,12 +53,12 @@ import java.util.Calendar
 
 @Composable
 fun UpdateMedScreen(
-    passedMedName: String,
+    passedMedId: String,
     modifier: Modifier = Modifier,
     viewModel: UpdateMedVM = hiltViewModel(),
     onBack: () -> Unit = {},
 ) {
-    LaunchedEffect(passedMedName) { viewModel.fetchSelectedMedication(passedMedName) }
+    LaunchedEffect(passedMedId) { viewModel.fetchSelectedMedication(passedMedId) }
     val state = viewModel.uiState.collectAsStateWithLifecycle()
     val currentMed = state.value.medication
 
@@ -190,7 +190,7 @@ fun UpdateMedScreen(
                             viewModel.updateNotes(it)
                         }, // Update the notes state property
                         label = stringResource(R.string.medication_notes),
-                        placeholder = currentMed?.notes,
+                        placeholder = currentMed?.name,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                         modifier = Modifier.fillMaxWidth(),
                         // maxLines = 4, // Adjust max lines as needed
@@ -218,7 +218,7 @@ fun UpdateMedScreen(
                             }
                         }, // Update the strength state property
                         label = stringResource(R.string.medication_strength),
-                        placeholder = currentMed?.strength.toString(),
+                        placeholder = currentMed?.dosage.toString(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier.fillMaxWidth(),
                     )
@@ -243,7 +243,11 @@ fun UpdateMedScreen(
                         }
 
                         FlyErrorButton(
-                            onClick = { viewModel.deleteMedicationFromFirestore(currentMed!!.name) }
+                            onClick = {
+                                viewModel.deleteMedicationFromFirestore(
+                                    currentMed!!.id
+                                )
+                            }
                         ) {
                             Text(stringResource(R.string.delete_medication))
                         }

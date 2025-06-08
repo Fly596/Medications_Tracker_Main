@@ -14,6 +14,7 @@ import com.galeria.medicationstracker.ui.screens.auth.login.LoginScreen
 import com.galeria.medicationstracker.ui.screens.auth.signup.SignupScreen
 import com.galeria.medicationstracker.ui.screens.dashboard.CheckIntakeScreen
 import com.galeria.medicationstracker.ui.screens.dashboard.DailyMedsScreenNew
+import com.galeria.medicationstracker.ui.screens.medications.MedicationsScreen
 import kotlinx.serialization.Serializable
 
 @Composable
@@ -29,7 +30,7 @@ fun ApplicationNavHost(
     ) {
         authGraph(navController)
         dashboardGraph(navController)
-        // medicationsGraph(navController)
+        medicationsGraph(navController)
         // profileGraph(navController)
         // userMedsGraph(navController)
     }
@@ -91,6 +92,38 @@ fun NavGraphBuilder.dashboardGraph(navController: NavHostController) {
 
         composable<HomeScreen.MoodCheck> {
             // TODO: MoodTrackerScreen
+        }
+    }
+}
+
+fun NavGraphBuilder.medicationsGraph(navController: NavHostController) {
+    navigation<Routes.Medications>(startDestination = MedicationScreen.MedicationsList) {
+        composable<MedicationScreen.MedicationsList> {
+            MedicationsScreen(
+                onAddClick = { navController.navigate(MedicationScreen.AddMedication) },
+                onViewClick = { id ->
+                    navController.navigate(
+                        MedicationScreen.ViewMedication(
+                            id
+                        )
+                    )
+                },
+                onEditClick = { id ->
+                    navController.navigate(MedicationScreen.UpdateMedication(id))
+                },
+            )
+            // TODO: MedicationsListScreen
+        }
+        composable<MedicationScreen.AddMedication> {
+            // TODO: AddMedicationScreen
+        }
+        composable<MedicationScreen.ViewMedication> { navBackStackEntry ->
+            val viewMedication: MedicationScreen.ViewMedication =
+                navBackStackEntry.toRoute()
+            // TODO: ViewMedicationScreen(medicationId = viewMedication.medicationId)
+        }
+        composable<MedicationScreen.UpdateMedication> {
+            // TODO: UpdateMedicationScreen
         }
     }
 }

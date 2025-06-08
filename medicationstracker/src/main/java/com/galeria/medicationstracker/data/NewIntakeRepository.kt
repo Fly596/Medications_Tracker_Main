@@ -9,8 +9,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 interface NewIntakeRepository {
-
-    fun observeUserIntakes(userId: String): Flow<List<NewUserIntake>>
+    
+    fun observeUserIntakes(userId: String): Flow<List<NewUserIntake>>?
 
     suspend fun getUserIntake(userId: String, intakeId: String): Result<NewUserIntake>
 

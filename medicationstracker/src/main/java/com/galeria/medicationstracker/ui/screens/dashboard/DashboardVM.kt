@@ -59,11 +59,12 @@ constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             val userIdResult = authRepository.getUserId()
+            
             if (userIdResult.isSuccess) {
                 val id = userIdResult.getOrNull()
                 if (id != null) {
                     _currentUserId.value = id.toString()
-                    getCurrentMedications(id.toString())
+                    // getCurrentMedications(id.toString())
                 } else {
                     _uiState.update {
                         it.copy(

@@ -11,6 +11,8 @@ sealed class MedicationScreen(val route: String) {
 
     @Serializable
     data class ViewMedication(val medicationId: String) : MedicationScreen("view_medication")
-
-    @Serializable object UpdateMedication : MedicationScreen("update_medication")
+    
+    @Serializable
+    data class UpdateMedication(val medicationId: String) :
+        MedicationScreen("update_medication")
 }

@@ -1,5 +1,6 @@
 package com.galeria.medicationstracker.ui.componentsOld
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
@@ -15,11 +16,12 @@ import androidx.navigation.NavHostController
 import com.galeria.medicationstracker.R
 import com.galeria.medicationstracker.ui.HeadViewModel
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
-import com.galeria.medicationstracker.utils.navigation.RoutesOld
+import com.galeria.medicationstracker.utils.navigation.Routes
+import com.galeria.medicationstracker.utils.navigation.Routes.Auth.route
 
 data class BottomNavItem(
     val title: String,
-    val route: RoutesOld.PatientRoutes,
+    val route: Routes,
     val selectedIcon: Int,
     val unselectedIcon: Int,
     val hasNews: Boolean = false,
@@ -30,21 +32,20 @@ fun bottomNavItems(): List<BottomNavItem> {
     return listOf(
         BottomNavItem(
             title = "Dashboard",
-            route = RoutesOld.PatientRoutes.PatientHome,
+            route = Routes.Home,
             selectedIcon = R.drawable.home_fill,
             unselectedIcon = R.drawable.home,
         ),
         BottomNavItem(
             title = "Medications",
-            route = RoutesOld.PatientRoutes.PatientMedications,
+            route = Routes.Medications,
             selectedIcon = R.drawable.lab_profile_fill,
             unselectedIcon = R.drawable.lab_profile,
             hasNews = false,
-            // badgeCount = 16,
         ),
         BottomNavItem(
             title = "Profile",
-            route = RoutesOld.PatientRoutes.PatientProfile,
+            route = Routes.PatientDashboard,
             selectedIcon = R.drawable.profile_fill,
             unselectedIcon = R.drawable.profile,
             hasNews = false,
@@ -76,7 +77,24 @@ fun BottomNavBar(
                         ),
                     onClick = {
                         viewModel.updateSelectedItemIndex(navItemIndex)
-                        navController.navigate(navItem.route)
+                        try {
+                            navController.navigate(navItem.route)
+                        } catch (illegalArgumentException: IllegalArgumentException) {
+                            Log.e(
+                                "NavigationError",
+                                "Invalid route: $route, navigating to Home.",
+                                illegalArgumentException
+                            )
+                            navController.navigate(Routes.Home.route) {
+                                popUpTo(navController.graph.startDestinationId) { // Or your specific home route ID
+                                    saveState = true
+                                }
+                                launchSingleTop =
+                                    true // Avoid multiple copies of the home screen
+                                restoreState =
+                                    true    // Restore state if previously visited
+                            }
+                        }
                     },
                     label = {
                         Text(text = navItem.title, style = MedTrackerTheme.typography.bodyMedium)
@@ -96,7 +114,6 @@ fun BottomNavBar(
         }
     }
     // TODO: Change colors
-
 }
 
 @Composable

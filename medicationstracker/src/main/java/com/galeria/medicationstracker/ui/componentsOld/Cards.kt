@@ -33,7 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import com.galeria.medicationstracker.data.UserMedication
+import com.galeria.medicationstracker.data.NewUserMedication
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 
 @Composable
@@ -73,7 +73,7 @@ fun FlyElevatedCardDashboard(
     title: String = "Medicine Name",
     time: String = "9:00 AM",
     info: String = "Mon, Tue, Fri...",
-    medication: UserMedication? = null,
+    medication: NewUserMedication? = null,
     shape: Shape = RoundedCornerShape(8.dp),
     elevation: CardElevation = CardDefaults.elevatedCardElevation(),
     // content: @Composable (ColumnScope.() -> Unit)

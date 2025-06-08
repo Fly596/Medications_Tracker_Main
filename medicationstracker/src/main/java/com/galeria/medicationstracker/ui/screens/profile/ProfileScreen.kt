@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -41,16 +42,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medicationstracker.R
-import com.galeria.medicationstracker.data.UserIntake
-import com.galeria.medicationstracker.data.UserMedication
+import com.galeria.medicationstracker.data.NewUserIntake
+import com.galeria.medicationstracker.data.NewUserMedication
 import com.galeria.medicationstracker.ui.components.GPrimaryButton
 import com.galeria.medicationstracker.ui.components.GSecondaryButton
 import com.galeria.medicationstracker.ui.componentsOld.FlySimpleCard
-import com.galeria.medicationstracker.ui.screens.dashboard.record.LogsCard
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme.colors
-import com.galeria.medicationstracker.utils.formatTimestampTillTheDayMMMMddyyyy
-import com.galeria.medicationstracker.utils.formatTimestampTillTheHour
 
 @Composable
 fun AccountScreenHead(
@@ -93,7 +91,7 @@ fun AccountScreenHead(
                         )
                         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             Text(
-                                text = uiState.value.user?.firstName.toString(),
+                                text = uiState.value.user?.name.toString(),
                                 style = MedTrackerTheme.typography.display3Emphasized,
                                 color = colors.primaryLabel,
                             )
@@ -153,8 +151,8 @@ fun AccountScreenHead(
 fun TabsRow(
     modifier: Modifier = Modifier,
     tabs: List<String>,
-    medications: List<UserMedication> = emptyList(),
-    intakes: List<UserIntake> = emptyList(),
+    medications: List<NewUserMedication> = emptyList(),
+    intakes: List<NewUserIntake> = emptyList(),
 ) {
     var selectedTabIndex by remember { mutableStateOf(0) }
 
@@ -189,38 +187,41 @@ fun TabsRow(
 }
 
 @Composable
-fun UserMedications(mediations: List<UserMedication> = emptyList()) {
+fun UserMedications(mediations: List<NewUserMedication> = emptyList()) {
     LazyColumn { items(mediations) { medication -> MedicationCard(medication = medication) } }
 }
 
 @Composable
-fun UserHistory(intakes: List<UserIntake> = emptyList()) {
-    LazyColumn {
-        items(intakes) { intake ->
-            val formattedDate =
-                if (intake.dateTime != null) {
-                    formatTimestampTillTheDayMMMMddyyyy(intake.dateTime)
-                } else {
-                    ""
-                }
-            val formatedTime =
-                if (intake.dateTime != null) {
-                    formatTimestampTillTheHour(intake.dateTime)
-                } else {
-                    ""
-                }
-            LogsCard(
-                name = intake.medicationName.toString(),
-                status = intake.status.toString(),
-                date = formattedDate,
-                time = formatedTime,
-            )
-        }
-    }
+fun UserHistory(intakes: List<NewUserIntake> = emptyList()) {
+    /*     LazyColumn {
+            items(intakes) { intake ->
+                val formattedDate =
+                    if (intake.dateTime != null) {
+                        formatTimestampTillTheDayMMMMddyyyy(intake.dateTime)
+                    } else {
+                        ""
+                    }
+                val formatedTime =
+                    if (intake.dateTime != null) {
+                        formatTimestampTillTheHour(intake.dateTime)
+                    } else {
+                        ""
+                    }
+                LogsCard(
+                    name = intake.medicationName.toString(),
+                    status = intake.status.toString(),
+                    date = formattedDate,
+                    time = formatedTime,
+                )
+            }
+        } */
 }
 
 @Composable
-fun MedicationCard(modifier: Modifier = Modifier, medication: UserMedication? = null) {
+fun MedicationCard(
+    modifier: Modifier = Modifier,
+    medication: NewUserMedication? = null
+) {
     FlySimpleCard(
         modifier = modifier
             .fillMaxWidth()
@@ -242,7 +243,7 @@ fun MedicationCard(modifier: Modifier = Modifier, medication: UserMedication? = 
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
-                        text = medication?.strength.toString() + "mg",
+                        text = medication?.dosage.toString() + "mg",
                         style = MedTrackerTheme.typography.bodyLarge,
                     )
                 }

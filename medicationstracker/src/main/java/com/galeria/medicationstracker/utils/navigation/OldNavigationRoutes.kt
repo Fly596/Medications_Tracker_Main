@@ -2,28 +2,9 @@ package com.galeria.medicationstracker.utils.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navigation
-import androidx.navigation.toRoute
-import com.galeria.medicationstracker.ui.screens.auth.accountrecovery.ResetPasswordScreen
-import com.galeria.medicationstracker.ui.screens.auth.login.LoginScreen
-import com.galeria.medicationstracker.ui.screens.auth.signup.SignupScreen
-import com.galeria.medicationstracker.ui.screens.dashboard.DailyMedsScreen
-import com.galeria.medicationstracker.ui.screens.dashboard.moodtracker.MoodTrackerScreen
-import com.galeria.medicationstracker.ui.screens.medications.MedicationsScreen
-import com.galeria.medicationstracker.ui.screens.medications.mediinfo.ViewMedicationInfoScreen
-import com.galeria.medicationstracker.ui.screens.medications.newmed.NewMedicationDataScreen
-import com.galeria.medicationstracker.ui.screens.medications.update.UpdateMedScreen
-import com.galeria.medicationstracker.ui.screens.profile.AccountScreenHead
-import com.galeria.medicationstracker.ui.screens.profile.notes.NewNoteScreen
-import com.galeria.medicationstracker.ui.screens.profile.notes.NotesScreen
-import com.galeria.medicationstracker.ui.screens.profile.profiledetails.ProfileDetailsScreen
-import com.galeria.medicationstracker.utils.navigation.RoutesOld.AuthRoutes
-import com.galeria.medicationstracker.utils.navigation.RoutesOld.PatientRoutes
 import kotlinx.serialization.Serializable
 
 @Composable
@@ -38,8 +19,8 @@ fun ApplicationNavHost(
         startDestination = startDestination, /* HH */
         modifier = modifier,
     ) {
-        authGraphOld(navController)
-        patientGraph(navController)
+        // authGraphOld(navController)
+        // patientGraph(navController)
         // userMedsGraph(navController)
     }
 }
@@ -48,29 +29,31 @@ fun ApplicationNavHost(
 sealed class RoutesOld {
 
     object NavigationRoutes {
-
-        const val AUTH = "com.galeria.medicationstracker.utils.navigation.Routes.AuthRoutes.Auth"
-        const val LOGIN = "com.galeria.medicationstracker.utils.navigation.Routes.AuthRoutes.Login"
+        
+        const val AUTH =
+            "com.galeria.medicationstracker.utils.navigation.RoutesOld.AuthRoutes.Auth"
+        const val LOGIN =
+            "com.galeria.medicationstracker.utils.navigation.RoutesOld.AuthRoutes.Login"
         const val REGISTRATION =
-            "com.galeria.medicationstracker.utils.navigation.Routes.AuthRoutes.Registration"
+            "com.galeria.medicationstracker.utils.navigation.RoutesOld.AuthRoutes.Registration"
         const val PASSWORD_RECOVERY =
-            "com.galeria.medicationstracker.utils.navigation.Routes.AuthRoutes.PasswordRecovery"
+            "com.galeria.medicationstracker.utils.navigation.RoutesOld.AuthRoutes.PasswordRecovery"
         const val PATIENT_DASHBOARD =
-            "com.galeria.medicationstracker.utils.navigation.Routes.PatientRoutes.Patient"
+            "com.galeria.medicationstracker.utils.navigation.RoutesOld.PatientRoutes.Patient"
         const val PATIENT_MEDICATIONS =
-            "com.galeria.medicationstracker.utils.navigation.Routes.PatientRoutes.PatientListMedications"
+            "com.galeria.medicationstracker.utils.navigation.RoutesOld.PatientRoutes.PatientListMedications"
         const val PATIENT_NEW_MEDICATION =
-            "com.galeria.medicationstracker.utils.navigation.Routes.PatientRoutes.PatientAddMedication"
+            "com.galeria.medicationstracker.utils.navigation.RoutesOld.PatientRoutes.PatientAddMedication"
         const val PATIENT_PROFILE =
-            "com.galeria.medicationstracker.utils.navigation.Routes.PatientRoutes.PatientProfile"
+            "com.galeria.medicationstracker.utils.navigation.RoutesOld.PatientRoutes.PatientProfile"
         const val PATIENT_SETTINGS =
-            "com.galeria.medicationstracker.utils.navigation.Routes.PatientRoutes.PatientProfile"
+            "com.galeria.medicationstracker.utils.navigation.RoutesOld.PatientRoutes.PatientProfile"
         const val DOC_DASHBOARD =
-            "com.galeria.medicationstracker.utils.navigation.Routes.DoctorRoutes.Doctor"
+            "com.galeria.medicationstracker.utils.navigation.RoutesOld.DoctorRoutes.Doctor"
         const val DOC_PATIENTS_LIST =
-            "com.galeria.medicationstracker.utils.navigation.Routes.DoctorRoutes.DocPatientsList"
+            "com.galeria.medicationstracker.utils.navigation.RoutesOld.DoctorRoutes.DocPatientsList"
         const val ADMIN_DASHBOARD =
-            "com.galeria.medicationstracker.utils.navigation.Routes.DoctorRoutes.AdminDashboard"
+            "com.galeria.medicationstracker.utils.navigation.RoutesOld.DoctorRoutes.AdminDashboard"
         // ... other routes
     }
 
@@ -112,7 +95,8 @@ sealed class RoutesOld {
         @Serializable data class PatientViewMedication(val medicationId: String) : PatientRoutes()
 
         @Serializable
-        data class PatientUpdateMedication(val medicationName: String?) : PatientRoutes()
+        data class PatientUpdateMedication(val medicationId: String?) :
+            PatientRoutes()
 
         // profile screen.
         @Serializable object PatientInfo : PatientRoutes()
@@ -126,20 +110,9 @@ sealed class RoutesOld {
         @Serializable data object PatientNotes : PatientRoutes()
 
         @Serializable data object PatientNewNote : PatientRoutes()
-
-        @Serializable
-        data object PatientWeightDialog : PatientRoutes() // dialog.
-
-        @Serializable
-        data object PatientHeightDialog : PatientRoutes() // dialog.
-
-        @Serializable
-        data object PatientSettings : PatientRoutes() // dialog.
-
-        @Serializable
-        data object PatientAppointment : PatientRoutes() // dialog.
     }
 }
+/*
 
 // Граф для страниц аутификации.
 fun NavGraphBuilder.authGraphOld(navController: NavHostController) {
@@ -238,7 +211,7 @@ fun NavGraphBuilder.patientMedsGraph(navController: NavHostController) {
         composable<PatientRoutes.PatientUpdateMedication> { backStackEntry ->
             val args = backStackEntry.toRoute<PatientRoutes.PatientUpdateMedication>()
             UpdateMedScreen(
-                passedMedName = args.medicationName ?: "",
+                passedMedId = args.medicationId ?: "",
                 onBack = { navController.navigateUp() },
             )
         }
@@ -270,3 +243,4 @@ fun NavGraphBuilder.patientProfileGraph(navController: NavHostController) {
         }
     }
 }
+*/
