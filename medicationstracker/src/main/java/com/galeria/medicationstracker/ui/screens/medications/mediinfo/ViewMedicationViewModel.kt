@@ -17,50 +17,45 @@ import javax.inject.Inject
 
 data class MedicationDetailsUiState(
     val medication: NewUserMedication? = null,
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
 )
 
 @HiltViewModel
-class ViewMedicationViewModel @Inject constructor(
+class ViewMedicationViewModel
+@Inject
+constructor(
     private val medicationRepository: NewMedicationRepository,
     private val authRepository: AuthRepository,
-    savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-    // private var _messageState = MutableStateFlow(savedStateHandle.toRoute<PatientRoutes.PatientViewMedication>().medicationId)
-    // val messageState: StateFlow<String> = _messageState
-    private val medDetails: PatientRoutes.PatientViewMedication =
-        savedStateHandle.toRoute()
+
+    private val medDetails: PatientRoutes.PatientViewMedication = savedStateHandle.toRoute()
     private val _uiState = MutableStateFlow(MedicationDetailsUiState())
     val uiState = _uiState.asStateFlow()
     private lateinit var currentUserId: String
     private lateinit var currentUserEmail: String
-    
+
     init {
         viewModelScope.launch {
             // Получение id и почты пользователя.
             val emailResult = authRepository.getUserEmail()
             val uidResult = authRepository.getUserId()
-            
+
             if (emailResult.isSuccess && uidResult.isSuccess) {
                 currentUserEmail = emailResult.getOrNull().toString()
                 currentUserId = uidResult.getOrNull().toString()
-                
+
                 getMedDetails()
             }
         }
     }
-    
+
     private fun getMedDetails() {
         viewModelScope.launch {
-            val temp = medicationRepository.getMedication(
-                currentUserId,
-                medDetails.medicationId
-            )
-            
+            val temp = medicationRepository.getMedication(currentUserId, medDetails.medicationId)
+
             if (temp.isSuccess) {
-                _uiState.update {
-                    it.copy(medication = temp.getOrNull())
-                }
+                _uiState.update { it.copy(medication = temp.getOrNull()) }
             }
         }
     }

@@ -37,18 +37,14 @@ fun ApplicationNavHost(
 
 @Serializable
 sealed class Routes(val route: String) {
-    
-    @Serializable
-    data object Auth : Routes("auth")
-    
-    @Serializable
-    data object Home : Routes("home")
-    
-    @Serializable
-    data object Medications : Routes("medications")
-    
-    @Serializable
-    data object PatientDashboard : Routes("patient_dashboard")
+
+    @Serializable data object Auth : Routes("auth")
+
+    @Serializable data object Home : Routes("home")
+
+    @Serializable data object Medications : Routes("medications")
+
+    @Serializable data object PatientDashboard : Routes("patient_dashboard")
 }
 
 // Граф для страниц аутификации.
@@ -79,22 +75,22 @@ fun NavGraphBuilder.authGraph(navController: NavHostController) {
 fun NavGraphBuilder.dashboardGraph(navController: NavHostController) {
     navigation<Routes.Home>(startDestination = HomeScreen.TodayMedications) {
         composable<HomeScreen.TodayMedications> {
-            // TODO
             DashboardScreenNew(
                 onAddMood = { navController.navigate(HomeScreen.MoodCheck) },
-                onAddIntake = { navController.navigate(HomeScreen.IntakeCheck(it)) },
+                onAddIntake = { id -> navController.navigate(HomeScreen.IntakeCheck(id)) },
             )
         }
-        
+
         composable<HomeScreen.IntakeCheck> { navBackStackEntry ->
-            val intakeDialog: HomeScreen.IntakeCheck =
-                navBackStackEntry.toRoute()
+            val intakeDialog: HomeScreen.IntakeCheck = navBackStackEntry.toRoute()
             CheckIntakeScreen(
-                intakeCheck = intakeDialog,
+                medicationId = intakeDialog.medicationId,
                 onNavigateBack = { navController.navigateUp() },
             )
         }
-        
-        composable<HomeScreen.MoodCheck> {}
+
+        composable<HomeScreen.MoodCheck> {
+            // TODO: MoodTrackerScreen
+        }
     }
 }
