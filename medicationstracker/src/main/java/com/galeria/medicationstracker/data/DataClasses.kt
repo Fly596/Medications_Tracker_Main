@@ -1,8 +1,8 @@
 package com.galeria.medicationstracker.data
 
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.ServerTimestamp
-import java.util.Date
 
 data class NewUser(
     @DocumentId val id: String = "",
@@ -10,7 +10,7 @@ data class NewUser(
     val email: String = "",
     val weight: Float? = null,
     val height: Float? = null,
-    val dateOfBirth: Date? = null,
+    val dateOfBirth: Timestamp? = null,
 )
 
 data class NewUserMedication(
@@ -19,8 +19,8 @@ data class NewUserMedication(
     val name: String = "",
     val dosage: String = "",
     val form: String = MedicationForm.UNKNOWN.name,
-    val startDate: Date? = null,
-    val endDate: Date? = null,
+    val startDate: Timestamp? = null,
+    val endDate: Timestamp? = null,
     val daysOfWeek: List<String> = emptyList(),
     val intakeTime: String? = null,
 )
@@ -30,7 +30,7 @@ data class NewUserIntake(
     val userId: String = "",
     val medicationId: String = "",
     val status: String = IntakeStatus.PENDING.name,
-    val timestamp: Date? = null,
+    val timestamp: Timestamp? = null,
 )
 
 data class NewUserNote(
@@ -39,7 +39,7 @@ data class NewUserNote(
     val title: String = "",
     val content: String = "",
     val tags: List<String> = emptyList(),
-    @ServerTimestamp val timestamp: Date? = null,
+    @ServerTimestamp val timestamp: Timestamp? = null,
 )
 
 data class NewUserMood(
@@ -47,7 +47,7 @@ data class NewUserMood(
     val userId: String = "",
     val moodValue: Int? = null,
     val notes: String? = null,
-    val timestamp: Date? = null,
+    val timestamp: Timestamp? = null,
 )
 
 enum class IntakeStatus {

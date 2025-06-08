@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.galeria.medicationstracker.data.AuthRepository
 import com.galeria.medicationstracker.data.NewUser
 import com.galeria.medicationstracker.data.NewUserRepository
+import com.galeria.medicationstracker.utils.toTimestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import javax.inject.Inject
 
 data class SignupScreenState(
@@ -25,6 +27,8 @@ data class SignupScreenState(
     val showPassword: Boolean = false,
     val isLoading: Boolean = false,
     val generalError: String? = null,
+    val selectedBirthDate: LocalDate = LocalDate.now(),
+    val showDatePicker: Boolean = false,
 )
 
 @HiltViewModel
@@ -47,9 +51,15 @@ constructor(private val repository: AuthRepository, private val userRepo: NewUse
 
             result.fold(
                 onSuccess = {
+                    val birthDateTimestamp = _uiState.value.selectedBirthDate.toTimestamp()
+
                     _uiState.update { it.copy(isLoading = false) }
                     val user: NewUser =
-                        NewUser(name = _uiState.value.name, email = _uiState.value.email)
+                        NewUser(
+                            name = _uiState.value.name,
+                            email = _uiState.value.email,
+                            dateOfBirth = birthDateTimestamp,
+                        )
                     userRepo.addUser(user)
                 },
                 onFailure = { exception ->
@@ -63,24 +73,6 @@ constructor(private val repository: AuthRepository, private val userRepo: NewUse
             )
         }
     }
-
-    /*     fun onRegisterClick() {
-        viewModelScope.launch {
-            val isEmailValid = validateEmail()
-            val isPasswordValid = validatePassword()
-
-            if (isEmailValid && isPasswordValid) {
-                repository.signUp(_uiState.value.email, _uiState.value.password)
-            } else {
-                viewModelScope.launch {
-                    SnackbarController.sendEvent(
-                        event = SnackbarEvent(message = "Invalid email or password.")
-                    )
-                }
-            }
-        }
-
-    } */
 
     fun addUserData() {
         viewModelScope.launch {
@@ -121,6 +113,18 @@ constructor(private val repository: AuthRepository, private val userRepo: NewUse
 
     fun isShowPasswordChecked(input: Boolean) {
         _uiState.value = _uiState.value.copy(showPassword = !input)
+    }
+
+    fun onDateSelected(date: LocalDate) {
+        _uiState.update { it.copy(selectedBirthDate = date) }
+    }
+
+    fun showDatePicker() {
+        _uiState.update { it.copy(showDatePicker = true) }
+    }
+
+    fun dismissDatePicker() {
+        _uiState.update { it.copy(showDatePicker = false) }
     }
 
     private fun validateEmail(): Boolean {

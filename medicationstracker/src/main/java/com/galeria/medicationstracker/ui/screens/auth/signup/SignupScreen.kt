@@ -1,5 +1,6 @@
 package com.galeria.medicationstracker.ui.screens.auth.signup
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,12 +10,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -28,7 +33,11 @@ import com.galeria.medicationstracker.ui.componentsOld.FlyTextButton
 import com.galeria.medicationstracker.ui.componentsOld.MyTextField
 import com.galeria.medicationstracker.ui.screens.auth.login.RememberMeSwitch
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignupScreen(
     modifier: Modifier = Modifier,
@@ -38,6 +47,39 @@ fun SignupScreen(
 ) {
     LaunchedEffect(Unit) { viewModel.updateEmail(passedEmail) }
     val state = viewModel.uiState.collectAsStateWithLifecycle()
+    val datePickerState =
+        rememberDatePickerState(
+            initialSelectedDateMillis =
+                state.value.selectedBirthDate
+                    .atStartOfDay(ZoneId.systemDefault())
+                    .toInstant()
+                    .toEpochMilli()
+        )
+
+    if (state.value.showDatePicker) {
+        DatePickerDialog(
+            onDismissRequest = { viewModel.dismissDatePicker() },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        val selectedMillis =
+                            datePickerState.selectedDateMillis ?: System.currentTimeMillis()
+                        val selectedDate =
+                            Instant.ofEpochMilli(selectedMillis)
+                                .atZone(ZoneId.systemDefault())
+                                .toLocalDate()
+                    }
+                ) {
+                    Text("OK")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { viewModel.dismissDatePicker() }) { Text("Cancel") }
+            },
+        ) {
+            DatePicker(state = datePickerState)
+        }
+    }
 
     Column(
         modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
@@ -88,15 +130,22 @@ fun SignupScreen(
                 else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         )
+
+        MyTextField(
+            value =
+                state.value.selectedBirthDate.format(DateTimeFormatter.ofPattern("MMMM dd yyyy")),
+            onValueChange = {},
+            label = "Birth Date",
+            modifier = Modifier.clickable { viewModel.showDatePicker() },
+        )
+        FlyButton(onClick = { viewModel.showDatePicker() }) { Text("Show datePicker") }
         // Show password switch.
         RememberMeSwitch(
             checked = state.value.showPassword,
             onCheckedChange = { viewModel.isShowPasswordChecked(state.value.showPassword) },
         )
-        // Список типов пользователя.
 
         Spacer(modifier = Modifier.height(16.dp))
-        val context = LocalContext.current
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             FlyTextButton(onClick = navigateHome) { Text(stringResource(R.string.cancel)) }
