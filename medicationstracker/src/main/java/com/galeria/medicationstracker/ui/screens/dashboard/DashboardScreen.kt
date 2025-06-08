@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Medication
 import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -74,7 +75,10 @@ fun DashboardScreen(
         ) { innerPadding ->
             Column(
                 modifier =
-                    modifier.fillMaxWidth().padding(innerPadding).padding(horizontal = 16.dp),
+                    modifier
+                        .fillMaxWidth()
+                        .padding(innerPadding)
+                        .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
 
@@ -197,6 +201,7 @@ fun MedicationItem(
             LogMedicationTimeDialog(
                 onDismiss = { showLogDialog.value = false },
                 onConfirmation = {
+                    // TODO: Remove
                     viewModel.addNewIntake(medication = medication, status = IntakeStatus.TAKEN)
                     showLogDialog.value = false
                 },
@@ -220,13 +225,18 @@ fun MedicationItem(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreenNew(
     modifier: Modifier = Modifier,
-    onAddMood: () -> Unit,
+    onAddMood: () -> Unit = {},
+    onAddIntake: (String) -> Unit = {},
     dashboardViewModel: DashboardVM = hiltViewModel(),
 ) {
     val state = dashboardViewModel.uiState.collectAsStateWithLifecycle()
+    val inputState =
+        dashboardViewModel.intakeInputState.collectAsStateWithLifecycle()
+    
 
     MedTrackerTheme {
         Scaffold(
@@ -240,14 +250,17 @@ fun DashboardScreenNew(
                     )
                 }
             },
-            floatingActionButton = { 
+            floatingActionButton = {
                 // Add mood value.
-                GFABButton(onClick = { onAddMood.invoke() }) 
+                GFABButton(onClick = { onAddMood.invoke() })
             },
         ) { innerPadding ->
             Column(
                 modifier =
-                    modifier.fillMaxWidth().padding(innerPadding).padding(horizontal = 16.dp),
+                    modifier
+                        .fillMaxWidth()
+                        .padding(innerPadding)
+                        .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 // Календарь на неделю.
@@ -260,11 +273,35 @@ fun DashboardScreenNew(
 }
 
 @Composable
-fun MedsByIntakeTimeListNew(
-    medicationsByIntakeTime: List<NewUserMedication>,
-
-){
-  // TODO:  
+fun TodayIntakesList(todayMedicationsList: List<NewUserMedication>) {
+    // группировка по времени приема.
+    val medicationsGroupedByTime =
+        todayMedicationsList.groupBy { it.intakeTime }
+    
+    LazyColumn(modifier = Modifier.fillMaxWidth()) {
+        medicationsGroupedByTime.forEach { (intakeTime, medications) ->
+            item {
+                FLySimpleCardContainer {
+                    Column {
+                        // Время приема.
+                        Text(
+                            text = intakeTime.toString(),
+                            style = typography.title1Emphasized,
+                            modifier = Modifier.padding(0.dp),
+                        )
+                        medications.forEach {
+                            MedicationItemNew(
+                                it,
+                                // TODO
+                                onLogTaken = { },
+                                onLogSkipped = {}
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 @Composable
@@ -272,7 +309,9 @@ fun MedicationItemNew(
     medication: NewUserMedication,
     onLogTaken: () -> Unit,
     onLogSkipped: () -> Unit,
-) {}
+) {
+
+}
 
 @Preview(name = "StartScreen")
 @Composable

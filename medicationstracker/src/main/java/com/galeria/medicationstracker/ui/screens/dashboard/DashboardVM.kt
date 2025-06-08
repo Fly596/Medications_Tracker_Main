@@ -22,14 +22,20 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDate
+import java.time.LocalTime
 import javax.inject.Inject
 
 data class DashboardUiState(
-    val formattedDate: String = "",
     val isLoading: Boolean = true, // Добавим состояние загрузки
     val errorMessage: String? = null, // Для отображения ошибок
-    // val oldCurrentTakenMedications: List<UserMedication> = emptyList(),
     val currentTakenMedications: List<NewUserMedication> = emptyList(),
+)
+
+data class AddIntakeUiState(
+    val selectedMedication: NewUserMedication? = null,
+    val selectedMedicationId: String = "",
+    val status: IntakeStatus = IntakeStatus.PENDING,
+    val selectedIntakeTime: LocalTime = LocalTime.now(),
 )
 
 @HiltViewModel
@@ -40,32 +46,50 @@ constructor(
     private val medicationRepository: NewMedicationRepository,
     private val authRepository: AuthRepository,
 ) : ViewModel() {
-    
+
     private val _uiState = MutableStateFlow(DashboardUiState())
     val uiState: StateFlow<DashboardUiState> = _uiState.asStateFlow()
-    
-    // private val currentUserId = firebaseAuth.currentUser?.uid
-    private lateinit var currentUserId: String
-    
+    private val _intakeInputState = MutableStateFlow(AddIntakeUiState())
+    val intakeInputState: StateFlow<AddIntakeUiState> =
+        _intakeInputState.asStateFlow()
+    private val _currentUserId = MutableStateFlow<String?>(null)
+    // private lateinit var currentUserId: String
+
     init {
         viewModelScope.launch {
-            // Получение id пользователя.
-            val temp = authRepository.getUserId()
-            if (temp.isSuccess) {
-                currentUserId = temp.getOrNull().toString()
+            _uiState.update { it.copy(isLoading = true) }
+            val userIdResult = authRepository.getUserId()
+            if (userIdResult.isSuccess) {
+                val id = userIdResult.getOrNull()
+                if (id != null) {
+                    _currentUserId.value = id.toString()
+                    getCurrentMedications(id.toString())
+                } else {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = "Failed to get user ID: ID is null.",
+                        )
+                    }
+                }
+            } else {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage =
+                            "Failed to get user ID: ${userIdResult.exceptionOrNull()?.message ?: "Unknown error"}",
+                    )
+                }
             }
         }
-        // Получение списка активных лекарств пациента.
-        getCurrentMedications()
     }
-    
-    private var showToastCallback: ((String) -> Unit)? = null
-    
+
     // Фильтрация лекарств, прием которых окончен для использования при выводе на главный экран.
-    private fun getCurrentMedications() {
+    private fun getCurrentMedications(userId: String) {
         viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
             val intakes =
-                medicationRepository.getTodaysIntakes(currentUserId)
+                medicationRepository.getTodaysIntakes(userId)
                     .collect { intakesList ->
                         if (intakesList.isEmpty()) {
                             //
@@ -75,7 +99,7 @@ constructor(
                     }
         }
     }
-    
+
     fun addNewIntake(
         intakeTime: Timestamp = Timestamp.now(),
         medication: NewUserMedication = NewUserMedication(),
@@ -83,13 +107,13 @@ constructor(
     ) {
         val intake: NewUserIntake =
             NewUserIntake(
-                userId = currentUserId.toString(),
+                userId = _currentUserId.toString(),
                 medicationId = medication.id,
                 status = status.name,
             )
         viewModelScope.launch {
             intakeRepository.addUserIntake(
-                currentUserId.toString(),
+                _currentUserId.toString(),
                 intake
             )
         }
@@ -128,4 +152,11 @@ constructor(
         }
     }
     
+    fun setSelectedMedication(value: NewUserMedication) {
+        _intakeInputState.update { it.copy(selectedMedication = value) }
+    }
+    
+    fun onTimeSelected(time: LocalTime) {
+        _intakeInputState.update { it.copy(selectedIntakeTime = time) }
+    }
 }
