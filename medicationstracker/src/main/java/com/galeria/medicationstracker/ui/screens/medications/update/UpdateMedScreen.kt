@@ -41,7 +41,7 @@ import com.galeria.medicationstracker.ui.componentsOld.FlyErrorButton
 import com.galeria.medicationstracker.ui.componentsOld.FlySimpleCard
 import com.galeria.medicationstracker.ui.componentsOld.FlyTonalButton
 import com.galeria.medicationstracker.ui.componentsOld.MyTextField
-import com.galeria.medicationstracker.ui.screens.medications.newmed.DateRangePickerModal
+import com.galeria.medicationstracker.ui.screens.medications.newmed.DateRangePickerModalOld
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme.typography
 import com.galeria.medicationstracker.utils.convertMillisToDate
@@ -89,7 +89,10 @@ fun UpdateMedScreen(
             ) { */
             LazyColumn(
                 modifier =
-                    modifier.fillMaxWidth().padding(innerPadding).padding(horizontal = 16.dp),
+                    modifier
+                        .fillMaxWidth()
+                        .padding(innerPadding)
+                        .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 // Name input.
@@ -262,7 +265,7 @@ fun DatePicker(
 
     Column(horizontalAlignment = Alignment.Start, verticalArrangement = Arrangement.Center) {
         if (showPicker) {
-            DateRangePickerModal(
+            DateRangePickerModalOld(
                 onDateRangeSelected = {
                     formatDateStringToTimestampMMMMddyyyy(convertMillisToDate(it.first))?.let { it1
                         ->

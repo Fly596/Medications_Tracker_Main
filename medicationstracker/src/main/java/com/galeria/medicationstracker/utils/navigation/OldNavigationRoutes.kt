@@ -230,16 +230,13 @@ fun NavGraphBuilder.patientMedsGraph(navController: NavHostController) {
         composable<PatientRoutes.PatientAddMedication> {
             NewMedicationDataScreen(onConfirmClick = { navController.popBackStack() })
         }
-
-        composable<PatientRoutes.PatientViewMedication> { backStackEntry ->
-            val args = backStackEntry.toRoute<PatientRoutes.PatientViewMedication>()
-
-            ViewMedicationInfoScreen(onReturn = { navController.navigateUp() })
+        
+        composable<PatientRoutes.PatientViewMedication> {
+            ViewMedicationInfoScreen(onNavigateToMedsList = { navController.navigateUp() })
         }
 
         composable<PatientRoutes.PatientUpdateMedication> { backStackEntry ->
             val args = backStackEntry.toRoute<PatientRoutes.PatientUpdateMedication>()
-
             UpdateMedScreen(
                 passedMedName = args.medicationName ?: "",
                 onBack = { navController.navigateUp() },

@@ -18,23 +18,23 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medicationstracker.R
+import com.galeria.medicationstracker.data.NewUserMedication
 import com.galeria.medicationstracker.ui.componentsOld.FlySimpleCard
 import com.galeria.medicationstracker.ui.componentsOld.FlyTonalButton
-import com.galeria.medicationstracker.ui.screens.medications.MedsPagesViewModel
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme.typography
-import com.galeria.medicationstracker.utils.formatTimestampTillTheDayMMMMddyyyy
 import com.galeria.medicationstracker.utils.getTodaysDate
-import com.google.firebase.Timestamp
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun ViewMedicationInfoScreen(
     modifier: Modifier = Modifier,
-    onReturn: () -> Unit = {},
-    medsViewModel: MedsPagesViewModel = hiltViewModel(),
+    // medicationId: String,
+    onNavigateToMedsList: () -> Unit = {},
+    viewModel: ViewMedicationViewModel = hiltViewModel(),
 ) {
-    val uiState by medsViewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    
     MedTrackerTheme {
         Scaffold(
             containerColor = MedTrackerTheme.colors.secondaryBackground,
@@ -46,7 +46,7 @@ fun ViewMedicationInfoScreen(
                     )
                 ) {
                     IconButton(
-                        onClick = onReturn,
+                        onClick = onNavigateToMedsList,
                         modifier = Modifier.padding(end = 16.dp),
                     ) {
                     }
@@ -71,30 +71,23 @@ fun ViewMedicationInfoScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 // имя и дни приема.
-                MedInfoHeader(medName = uiState.selectedMed?.name ?: "")
+                MedInfoHeader(medName = uiState.medication?.name ?: "")
                 // начальная дата, total taken/skipped.
                 MedStatCard(
-                    startDate = uiState.selectedMed?.startDate,
-                    totalTaken = uiState.intakesCount,
-                    totalSkipped = uiState.skipCount,
+                    medication = uiState.medication,
                 )
-                FlyTonalButton(onClick = onReturn) { Text(text = "Return") }
+                FlyTonalButton(onClick = onNavigateToMedsList) { Text(text = "Return") }
             }
         }
     }
-
+    
 }
 
 @Composable
 fun MedStatCard(
     modifier: Modifier = Modifier,
-    startDate: Timestamp? = null,
-    totalTaken: Int,
-    totalSkipped: Int,
+    medication: NewUserMedication? = null,
 ) {
-    if (startDate == null) return
-    val startDateFormatted = formatTimestampTillTheDayMMMMddyyyy(startDate)
-
     FlySimpleCard(modifier = modifier) {
         // начальная дата.
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -102,16 +95,22 @@ fun MedStatCard(
                 stringResource(R.string.start_date),
                 style = MedTrackerTheme.typography.bodyMedium
             )
-            Text(startDateFormatted, style = MedTrackerTheme.typography.title3Emphasized)
+            Text(
+                medication?.startDate.toString(),
+                style = MedTrackerTheme.typography.title3Emphasized
+            )
         }
-        HorizontalDivider(color = MedTrackerTheme.colors.opaqueSeparator, thickness = 0.5.dp)
-
-        MedStatCardBody(totalTaken, totalSkipped)
+        HorizontalDivider(
+            color = MedTrackerTheme.colors.opaqueSeparator,
+            thickness = 0.5.dp
+        )
+        
+        MedStatCardBody()
     }
 }
 
 @Composable
-fun MedStatCardBody(totalTaken: Int, totalSkipped: Int) {
+fun MedStatCardBody(totalTaken: Int = 0, totalSkipped: Int = 0) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -133,7 +132,10 @@ fun MedStatCardBody(totalTaken: Int, totalSkipped: Int) {
                 stringResource(R.string.total_skipped),
                 style = MedTrackerTheme.typography.bodyMedium
             )
-            Text("$totalSkipped times", style = MedTrackerTheme.typography.title2Emphasized)
+            Text(
+                "$totalSkipped times",
+                style = MedTrackerTheme.typography.title2Emphasized
+            )
         }
     }
 }
@@ -144,12 +146,15 @@ fun MedInfoHeader(
     medName: String = "Doxycycline"
 ) {
     Column(modifier.padding(vertical = 16.dp)) {
-        Text(text = medName, style = MedTrackerTheme.typography.title1Emphasized)
+        Text(
+            text = medName,
+            style = MedTrackerTheme.typography.title1Emphasized
+        )
     }
 }
 
 @Preview(backgroundColor = 0xFFF2F2F7, showBackground = true)
 @Composable
 fun ViewMedicationInfoScreenPreview() {
-    MedTrackerTheme { ViewMedicationInfoScreen() }
+    // MedTrackerTheme { ViewMedicationInfoScreen() }
 }

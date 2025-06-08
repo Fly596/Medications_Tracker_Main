@@ -5,8 +5,8 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.galeria.medicationstracker.data.MedicationForm
+import com.galeria.medicationstracker.data.NewMedicationRepository
 import com.galeria.medicationstracker.data.UserMedication
-import com.galeria.medicationstracker.data.UserMedicationsRepository
 import com.galeria.medicationstracker.data.old.MedicationUnit
 import com.galeria.medicationstracker.utils.FirestoreFunctions.FirestoreService
 import com.google.firebase.Timestamp
@@ -33,7 +33,7 @@ data class UpdateMedUiState(
 )
 
 @HiltViewModel
-class UpdateMedVM @Inject constructor(private val repository: UserMedicationsRepository) :
+class UpdateMedVM @Inject constructor(private val repository: NewMedicationRepository) :
     ViewModel() {
 
     private val _uiState = MutableStateFlow(UpdateMedUiState())

@@ -40,7 +40,6 @@ fun MedicationsScreen(
     onViewClick: (String) -> Unit = {},
     onEditClick: (String) -> Unit = {},
     medicationsViewModel: MedicationsViewModel = hiltViewModel(),
-    medsPagesVM: MedsPagesViewModel = hiltViewModel(),
 ) {
     val uiState by medicationsViewModel.uiState.collectAsStateWithLifecycle()
 
@@ -60,11 +59,14 @@ fun MedicationsScreen(
         ) { innerPadding ->
             Column(
                 modifier =
-                    modifier.fillMaxWidth().padding(innerPadding).padding(horizontal = 16.dp),
+                    modifier
+                        .fillMaxWidth()
+                        .padding(innerPadding)
+                        .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                    items(uiState.userMedications) { med ->
+                    items(uiState.userMedications, key = { it.id }) { med ->
                         FlyElevatedCardMedsList(
                             title = med.name.toString(),
                             dosage = (med.dosage),
@@ -76,8 +78,7 @@ fun MedicationsScreen(
                                 )
                             },
                             onViewMed = {
-                                medsPagesVM.getSelectedMed(med.name.toString())
-                                onViewClick()
+                                onViewClick(med.id)
                             },
                         )
                     }
@@ -102,7 +103,9 @@ fun FlyElevatedCardMedsList(
     elevation: CardElevation = CardDefaults.elevatedCardElevation(),
 ) {
     ElevatedCard(
-        modifier = modifier.fillMaxWidth().clickable { onViewMed.invoke() },
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onViewMed.invoke() },
         shape = shape,
         elevation =
             CardDefaults.elevatedCardElevation(
@@ -118,7 +121,9 @@ fun FlyElevatedCardMedsList(
                 disabledContentColor = MedTrackerTheme.colors.secondary600,
             ),
     ) {
-        Row(modifier = Modifier.fillMaxSize().padding(16.dp), verticalAlignment = Alignment.Top) {
+        Row(modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp), verticalAlignment = Alignment.Top) {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier) {
                 Text(medication?.name.toString(), style = typography.headline)
 
@@ -149,7 +154,9 @@ fun FlyElevatedCardMedsList(
 @Composable
 fun FlyElevatedCardMedsListPreview() {
     MedTrackerTheme {
-        Column(modifier = Modifier.padding(16.dp).fillMaxSize()) {
+        Column(modifier = Modifier
+            .padding(16.dp)
+            .fillMaxSize()) {
             FlyElevatedCardMedsList(
                 onEditClick = { /*TODO*/ },
                 onRemoveMedClick = { /*TODO*/ },

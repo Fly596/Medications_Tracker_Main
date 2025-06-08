@@ -68,8 +68,10 @@ fun NewMedicationDataScreen(
     modifier: Modifier = Modifier,
     onConfirmClick: () -> Unit,
     viewModel: AddNewMedViewModel = hiltViewModel(),
+    viewModelOld: AddNewMedViewModel = hiltViewModel(),
 ) {
     val state = viewModel.uiState.collectAsStateWithLifecycle()
+    // val stateOld = viewModelOld.uiState.collectAsStateWithLifecycle()
     MedTrackerTheme {
         Scaffold(
             containerColor = MedTrackerTheme.colors.secondaryBackground,
@@ -92,11 +94,16 @@ fun NewMedicationDataScreen(
         ) { innerPadding ->
             Column(
                 modifier =
-                    modifier.fillMaxWidth().padding(innerPadding).padding(horizontal = 16.dp),
+                    modifier
+                        .fillMaxWidth()
+                        .padding(innerPadding)
+                        .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 LazyColumn(
-                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
                     horizontalAlignment = Alignment.Start,
                 ) {
                     // Name input.
@@ -116,7 +123,8 @@ fun NewMedicationDataScreen(
                             )
                             val optionsArray: Array<MedicationForm> =
                                 MedicationForm.entries.toTypedArray()
-                            val opList: List<String> = optionsArray.map { it.toString() }
+                            val opList: List<String> =
+                                optionsArray.map { it.toString() }
                             GDropdownList(items = opList) { selected ->
                                 viewModel.updateMedForm(selected)
                             }
@@ -126,7 +134,7 @@ fun NewMedicationDataScreen(
                     item {
                         var selectedUnit by remember { mutableStateOf(state.value.medUnit) }
                         val unitOptions = MedicationUnit.entries.toTypedArray()
-
+                        
                         FlySimpleCard(
                             isPrimaryBackground = true,
                             modifier = Modifier.fillMaxWidth(),
@@ -134,7 +142,11 @@ fun NewMedicationDataScreen(
                                 // Spacer(modifier = Modifier.padding(8.dp))
                                 GTextField(
                                     value = state.value.medStrength.toString(),
-                                    onValueChange = { viewModel.updateMedStrength(it.toFloat()) },
+                                    onValueChange = {
+                                        viewModel.updateMedStrength(
+                                            it.toFloat()
+                                        )
+                                    },
                                     label = stringResource(R.string.medication_strength),
                                     isPrimaryColor = true,
                                     keyboardOptions =
@@ -148,11 +160,16 @@ fun NewMedicationDataScreen(
                                 ) {
                                     unitOptions.forEach { unit ->
                                         Row(verticalAlignment = Alignment.CenterVertically) {
-                                            Text(text = unit.toString().lowercase())
+                                            Text(
+                                                text = unit.toString()
+                                                    .lowercase()
+                                            )
                                             GRadioButton(
                                                 selected = selectedUnit == unit,
                                                 onClick = {
-                                                    viewModel.updateMedUnit(selectedUnit)
+                                                    viewModel.updateMedUnit(
+                                                        selectedUnit
+                                                    )
                                                     selectedUnit = unit
                                                 },
                                             )
@@ -170,11 +187,32 @@ fun NewMedicationDataScreen(
                             text = stringResource(R.string.intake_period),
                             style = MedTrackerTheme.typography.title2Emphasized,
                         )
+                        
                         Spacer(modifier = Modifier.padding(8.dp))
-                        ModalDatePicker(viewModel)
+                        var showDatePicker by remember { mutableStateOf(false) }
+                        
+                        if (showDatePicker) {
+                            DateRangePickerModalOld(
+                                onDateRangeSelected = {
+                                    viewModel.updateStartDate(
+                                        formatDateStringToTimestampMMMMddyyyy(
+                                            convertMillisToDate(it.second)
+                                        )
+                                    )
+                                    viewModel.updateEndDate(
+                                        formatDateStringToTimestampMMMMddyyyy(
+                                            convertMillisToDate(it.second)
+                                        )
+                                    )
+                                },
+                                onDismiss = {
+                                    showDatePicker = !showDatePicker
+                                }
+                            )
+                        }
                         var showTimePicker by remember { mutableStateOf(false) }
                         Spacer(modifier = Modifier.padding(4.dp))
-
+                        
                         GSecondaryButton(
                             shape = MedTrackerTheme.shapes.extraLarge,
                             onClick = { showTimePicker = true },
@@ -186,7 +224,7 @@ fun NewMedicationDataScreen(
                             IntakeTimePicker(
                                 onConfirm = { showTimePicker = false },
                                 onDismiss = { showTimePicker = false },
-                                viewModel,
+                                onSelectTime = { viewModel.updateIntakeTime(it) }
                             )
                         }
                     }
@@ -197,13 +235,15 @@ fun NewMedicationDataScreen(
                             content = {
                                 Column(
                                     modifier = Modifier.fillMaxWidth(),
-                                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                                    verticalArrangement = Arrangement.spacedBy(
+                                        12.dp
+                                    ),
                                 ) {
                                     Text(
                                         text = stringResource(R.string.choose_days),
                                         style = MedTrackerTheme.typography.title2Emphasized,
                                     )
-                                    DayOfWeekSelector(viewModel = viewModel)
+                                    DayOfWeekSelector(viewModel = viewModelOld)
                                 }
                             },
                         )
@@ -227,32 +267,32 @@ fun NewMedicationDataScreen(
 }
 
 @Composable
-fun ModalDatePicker(viewModel: AddNewMedViewModel) {
+fun ModalDatePickerOld(viewModel: AddNewMedViewModel) {
     val state = viewModel.uiState.collectAsStateWithLifecycle()
     var showPicker by remember { mutableStateOf(false) }
     val label =
         when {
             state.value.medStartDate != null && state.value.medEndDate != null ->
                 "Start: ${
-            formatTimestampTillTheDayMMMMddyyyy(
-                state.value.medStartDate!!
-            )
-        }\nEnd: ${formatTimestampTillTheDayMMMMddyyyy(state.value.medEndDate!!)}"
-
+                    formatTimestampTillTheDayMMMMddyyyy(
+                        state.value.medStartDate!!
+                    )
+                }\nEnd: ${formatTimestampTillTheDayMMMMddyyyy(state.value.medEndDate!!)}"
+            
             state.value.medStartDate != null ->
                 "Start: ${
-            formatTimestampTillTheDayMMMMddyyyy(
-                state.value.medStartDate!!
-            )
-        }"
-
+                    formatTimestampTillTheDayMMMMddyyyy(
+                        state.value.medStartDate!!
+                    )
+                }"
+            
             state.value.medEndDate != null ->
                 "End: ${
-            formatTimestampTillTheDayMMMMddyyyy(
-                state.value.medEndDate!!
-            )
-        }"
-
+                    formatTimestampTillTheDayMMMMddyyyy(
+                        state.value.medEndDate!!
+                    )
+                }"
+            
             else -> ""
         }
     Column() {
@@ -272,15 +312,19 @@ fun ModalDatePicker(viewModel: AddNewMedViewModel) {
         ) {
             Text(text = stringResource(R.string.select_start_and_end_dates))
         }
-
+        
         if (showPicker) {
-            DateRangePickerModal(
+            DateRangePickerModalOld(
                 onDateRangeSelected = {
                     viewModel.updateStartDate(
-                        formatDateStringToTimestampMMMMddyyyy(convertMillisToDate(it.first))
+                        formatDateStringToTimestampMMMMddyyyy(
+                            convertMillisToDate(it.first)
+                        )
                     )
                     viewModel.updateEndDate(
-                        formatDateStringToTimestampMMMMddyyyy(convertMillisToDate(it.second))
+                        formatDateStringToTimestampMMMMddyyyy(
+                            convertMillisToDate(it.second)
+                        )
                     )
                     showPicker = !showPicker
                 },
@@ -292,9 +336,12 @@ fun ModalDatePicker(viewModel: AddNewMedViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DateRangePickerModal(onDateRangeSelected: (Pair<Long?, Long?>) -> Unit, onDismiss: () -> Unit) {
+fun DateRangePickerModalOld(
+    onDateRangeSelected: (Pair<Long?, Long?>) -> Unit,
+    onDismiss: () -> Unit
+) {
     val dateRangePickerState = rememberDateRangePickerState()
-
+    
     DatePickerDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
@@ -317,21 +364,31 @@ fun DateRangePickerModal(onDateRangeSelected: (Pair<Long?, Long?>) -> Unit, onDi
             state = dateRangePickerState,
             title = { Text(text = "Select date range") },
             showModeToggle = false,
-            modifier = Modifier.fillMaxWidth().height(500.dp).padding(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(500.dp)
+                .padding(16.dp),
         )
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun IntakeTimePicker(onConfirm: () -> Unit, onDismiss: () -> Unit, viewModel: AddNewMedViewModel) {
+fun IntakeTimePicker(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+    onSelectTime: (String) -> Unit
+    // viewModel: AddNewMedViewModel
+) {
     Dialog(onDismissRequest = onDismiss) {
         androidx.compose.material3.Surface(
             shape = RoundedCornerShape(16.dp),
             color = MaterialTheme.colorScheme.surface,
         ) {
             Column(
-                modifier = Modifier.padding(24.dp).width(IntrinsicSize.Max),
+                modifier = Modifier
+                    .padding(24.dp)
+                    .width(IntrinsicSize.Max),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
@@ -346,9 +403,10 @@ fun IntakeTimePicker(onConfirm: () -> Unit, onDismiss: () -> Unit, viewModel: Ad
                         initialMinute = currentTime.get(Calendar.MINUTE),
                         is24Hour = false,
                     )
-                val time = LocalTime.of(timePickerState.hour, timePickerState.minute)
+                val time =
+                    LocalTime.of(timePickerState.hour, timePickerState.minute)
                 val dtf = DateTimeFormatter.ofPattern("HH:mm")
-
+                
                 TimePicker(
                     state = timePickerState,
                     colors =
@@ -371,9 +429,11 @@ fun IntakeTimePicker(onConfirm: () -> Unit, onDismiss: () -> Unit, viewModel: Ad
                                 MaterialTheme.colorScheme.surfaceVariant,
                         ),
                 )
-
+                
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(top = 24.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 24.dp),
                     horizontalArrangement = Arrangement.SpaceEvenly,
                 ) {
                     TextButton(
@@ -385,10 +445,10 @@ fun IntakeTimePicker(onConfirm: () -> Unit, onDismiss: () -> Unit, viewModel: Ad
                     ) {
                         Text("Cancel")
                     }
-
+                    
                     GPrimaryButton(
                         onClick = {
-                            viewModel.updateIntakeTime(time.format(dtf))
+                            onSelectTime(time.format(dtf))
                             onConfirm()
                         }
                     ) {
@@ -402,3 +462,4 @@ fun IntakeTimePicker(onConfirm: () -> Unit, onDismiss: () -> Unit, viewModel: Ad
         }
     }
 }
+
