@@ -11,9 +11,38 @@ import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 
+// LocalDate -> timestamp.
+fun LocalDate.toTimestamp(): Timestamp {
+    // тк LocalDate не имеет времени.
+    val localDateTime = this.atStartOfDay()
+    // часовой пояс системы, чтоб получить zoneddatetime.
+    val zonedDateTime = localDateTime.atZone(ZoneId.systemDefault())
+    // конвертим в date, затем в timestamp.
+    return Timestamp(Date.from(zonedDateTime.toInstant()))
+}
+
+// LocalDateTime -> timestamp.
+fun LocalDateTime.toTimestamp(): Timestamp {
+    // часовой пояс системы, чтоб получить zoneddatetime.
+    val zonedDateTime = this.atZone(ZoneId.systemDefault())
+    // конвертим в date, затем в timestamp.
+    return Timestamp(Date.from(zonedDateTime.toInstant()))
+}
+
+// Timestamp -> LocalDate.
+fun Timestamp.toLocalDate(): LocalDate {
+    return this.toDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+}
+
+// Timestamp -> LocalDateTime.
+fun Timestamp.toLocalDateTime(): LocalDateTime {
+    return this.toDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()
+}
+
+// region bad
 fun formatDateStringToTimestampMMMMddyyyy(
     dateText: String,
-    locale: Locale = Locale.getDefault()
+    locale: Locale = Locale.getDefault(),
 ): Timestamp? {
     if (dateText.isBlank()) {
         println("Error: Input date string is empty.")
@@ -39,8 +68,9 @@ fun convertMillisToDate(timeInMillis: Long?): String {
     // 2. Use a constant for the date format string
     val dateFormat = "MMMM dd yyyy"
     // 3. Create the DateTimeFormatter once and reuse it
-    val formatter = DateTimeFormatter.ofPattern(dateFormat, Locale.getDefault())
-        .withZone(ZoneId.systemDefault())
+    val formatter =
+        DateTimeFormatter.ofPattern(dateFormat, Locale.getDefault())
+            .withZone(ZoneId.systemDefault())
     // 4. Use 'run' to make the code more readable and avoid repeating formatter.
     return run {
         val instant = Instant.ofEpochMilli(timeInMillis)
@@ -51,13 +81,12 @@ fun convertMillisToDate(timeInMillis: Long?): String {
 fun Long?.toDateString(
     format: String = "MMMM dd yyyy",
     locale: Locale = Locale.getDefault(),
-    zoneId: ZoneId = ZoneId.systemDefault()
+    zoneId: ZoneId = ZoneId.systemDefault(),
 ): String {
     if (this == null || this < 0) {
         return "N/A"
     }
-    val formatter = DateTimeFormatter.ofPattern(format, locale)
-        .withZone(zoneId)
+    val formatter = DateTimeFormatter.ofPattern(format, locale).withZone(zoneId)
 
     return formatter.format(Instant.ofEpochMilli(this))
 }
@@ -65,24 +94,6 @@ fun Long?.toDateString(
 fun getTodaysDate(): LocalDate {
     // Gets the current date using the system's default time zone.
     return LocalDate.now(ZoneId.systemDefault())
-}
-
-fun getStringFormattedDate(inputDate: LocalDate): String {
-    val dateFormatter = DateTimeFormatter.ofPattern("MMM dd")
-    val formattedCurrentDate = inputDate.format(dateFormatter)
-
-    return formattedCurrentDate.toString()
-}
-
-fun parseDateString(dateString: String): LocalDate {
-    return try {
-        val formatter = DateTimeFormatter.ofPattern("MMM dd")
-
-        LocalDate.parse(dateString, formatter)
-    } catch (e: Exception) {
-        // Handle parsing errors, e.g., log the error or return null
-        LocalDate.now()
-    }
 }
 
 fun formatTimestampTillTheDayMMMMddyyyy(timestamp: Timestamp): String {
@@ -101,33 +112,19 @@ fun formatTimestampToMinutemmmmddyyyyhm(timestamp: Timestamp): String {
 }
 
 fun formatTimestampToWeekday(timestamp: Timestamp): String {
-    val dayOfWeekFormatter =
-        DateTimeFormatter.ofPattern("EEEE") // Add day of week formatter
+    val dayOfWeekFormatter = DateTimeFormatter.ofPattern("EEEE") // Add day of week formatter
 
     return timestamp.toLocalDateTime().format(dayOfWeekFormatter)
-
 }
 
-fun LocalDateTime.toTimestamp() = Timestamp(atZone(ZoneId.systemDefault()).toEpochSecond(), nano)
+// fun LocalDateTime.toTimestamp() = Timestamp(atZone(ZoneId.systemDefault()).toEpochSecond(), nano)
+
 fun Timestamp.toLocalDateTime(zone: ZoneId = ZoneId.systemDefault()) =
     LocalDateTime.ofInstant(Instant.ofEpochMilli(seconds * 1000 + nanoseconds / 1000000), zone)
-
-fun getTodaysDateInMMMMddyyyyFormat(): LocalDate {
-    val today = LocalDate.now()
-    val formatter = DateTimeFormatter.ofPattern("MMMM dd yyyy", Locale.getDefault())
-    return formatter.parse(formatter.format(today), LocalDate::from)
-}
-
-fun addOneDayToDate(date: LocalDate, daysToAdd: Long = 1): LocalDate {
-    val res = date.plusDays(daysToAdd)
-    return res
-}
 
 fun timeToFirestoreTimestamp(hour: Int, minute: Int): Timestamp {
     val now = LocalDate.now() // Get current date
     val localDateTime = LocalDateTime.of(now, LocalTime.of(hour, minute))
-    return Timestamp(
-        localDateTime.atZone(ZoneId.systemDefault())
-            .toEpochSecond(), 0
-    )
+    return Timestamp(localDateTime.atZone(ZoneId.systemDefault()).toEpochSecond(), 0)
 }
+// endregion
