@@ -109,7 +109,7 @@ sealed class RoutesOld {
 
         @Serializable data object AdminAddMedication : PatientRoutes()
 
-        @Serializable data object PatientViewMedication : PatientRoutes()
+        @Serializable data class PatientViewMedication(val medicationId: String) : PatientRoutes()
 
         @Serializable
         data class PatientUpdateMedication(val medicationName: String?) : PatientRoutes()
@@ -139,8 +139,6 @@ sealed class RoutesOld {
         @Serializable
         data object PatientAppointment : PatientRoutes() // dialog.
     }
-    
-    
 }
 
 // Граф для страниц аутификации.
@@ -212,21 +210,20 @@ fun NavGraphBuilder.patientMedsGraph(navController: NavHostController) {
     ) {
         composable<PatientRoutes.PatientListMedications> {
             MedicationsScreen(
-                onAddMedClick = {
+                onAddClick = {
                     // Добавление лекарства.
                     navController.navigate(PatientRoutes.PatientAddMedication)
                 },
-                onViewMed = {
+                onViewClick = { medicatioID ->
                     // Просмотр лекарства.
-                    navController.navigate(PatientRoutes.PatientViewMedication) {
+                    navController.navigate(PatientRoutes.PatientViewMedication(medicatioID)) {
                         popUpTo(PatientRoutes.PatientListMedications) { inclusive = true }
                     }
                 },
-                onEditMedClick = { name ->
+                onEditClick = { medicatioID ->
                     // Редактирование лекарства.
-                    navController.navigate(PatientRoutes.PatientUpdateMedication(name))
+                    navController.navigate(PatientRoutes.PatientUpdateMedication(medicatioID))
                 },
-                onAddAdminMedClick = {},
             )
         }
 
@@ -234,7 +231,9 @@ fun NavGraphBuilder.patientMedsGraph(navController: NavHostController) {
             NewMedicationDataScreen(onConfirmClick = { navController.popBackStack() })
         }
 
-        composable<PatientRoutes.PatientViewMedication> {
+        composable<PatientRoutes.PatientViewMedication> { backStackEntry ->
+            val args = backStackEntry.toRoute<PatientRoutes.PatientViewMedication>()
+
             ViewMedicationInfoScreen(onReturn = { navController.navigateUp() })
         }
 

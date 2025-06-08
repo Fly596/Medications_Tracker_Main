@@ -8,16 +8,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AcUnit
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CardElevation
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medicationstracker.R
-import com.galeria.medicationstracker.data.UserMedication
+import com.galeria.medicationstracker.data.NewUserMedication
 import com.galeria.medicationstracker.ui.components.GFABButton
 import com.galeria.medicationstracker.ui.components.GTextButton
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
@@ -41,67 +36,40 @@ import com.galeria.medicationstracker.ui.theme.MedTrackerTheme.typography
 @Composable
 fun MedicationsScreen(
     modifier: Modifier = Modifier,
-    onAddMedClick: () -> Unit = {},
-    onViewMed: () -> Unit,
-    onEditMedClick: (String) -> Unit = {},
+    onAddClick: () -> Unit = {},
+    onViewClick: (String) -> Unit = {},
+    onEditClick: (String) -> Unit = {},
     medicationsViewModel: MedicationsViewModel = hiltViewModel(),
     medsPagesVM: MedsPagesViewModel = hiltViewModel(),
-    onAddAdminMedClick: () -> Unit = {},
 ) {
     val uiState by medicationsViewModel.uiState.collectAsStateWithLifecycle()
+
     MedTrackerTheme {
         Scaffold(
             containerColor = MedTrackerTheme.colors.secondaryBackground,
             topBar = {
-                Row(
-                    modifier = Modifier.padding(
-                        vertical = 24.dp,
-                        horizontal = 16.dp
-                    )
-                ) {
-                    IconButton(
-                        onClick = { onAddAdminMedClick.invoke() }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.AcUnit,
-                            contentDescription = "Back",
-                            tint = MedTrackerTheme.colors.primaryLabel,
-                            modifier = Modifier.size(28.dp),
-                        )
-                    }
+                Row(modifier = Modifier.padding(vertical = 24.dp, horizontal = 16.dp)) {
                     // today's date.
                     Text(
                         text = stringResource(R.string.medications),
-                        style = typography.display3Emphasized
+                        style = typography.display3Emphasized,
                     )
                 }
             },
-            floatingActionButton = {
-                GFABButton(
-                    onClick = {
-                        onAddMedClick.invoke()
-                    }
-                )
-            },
+            floatingActionButton = { GFABButton(onClick = { onAddClick.invoke() }) },
         ) { innerPadding ->
             Column(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .padding(innerPadding)
-                    .padding(horizontal = 16.dp),
+                modifier =
+                    modifier.fillMaxWidth().padding(innerPadding).padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                     items(uiState.userMedications) { med ->
                         FlyElevatedCardMedsList(
                             title = med.name.toString(),
-                            dosage =
-                                ("${med.strength} ${
-                                    med.unit.toString()
-                                        .lowercase()
-                                }"),
+                            dosage = (med.dosage),
                             info = med.form.toString().lowercase(),
-                            onEditClick = { onEditMedClick(med.name) },
+                            onEditClick = { onEditClick(med.name) },
                             onRemoveMedClick = {
                                 medicationsViewModel.deleteMedicationFromFirestore(
                                     med.name.toString()
@@ -109,7 +77,7 @@ fun MedicationsScreen(
                             },
                             onViewMed = {
                                 medsPagesVM.getSelectedMed(med.name.toString())
-                                onViewMed()
+                                onViewClick()
                             },
                         )
                     }
@@ -117,7 +85,6 @@ fun MedicationsScreen(
             }
         }
     }
-
 }
 
 @Composable
@@ -130,14 +97,12 @@ fun FlyElevatedCardMedsList(
     onEditClick: () -> Unit,
     onRemoveMedClick: () -> Unit,
     onViewMed: () -> Unit,
-    medication: UserMedication? = null,
+    medication: NewUserMedication? = null,
     shape: Shape = MedTrackerTheme.shapes.medium,
     elevation: CardElevation = CardDefaults.elevatedCardElevation(),
 ) {
     ElevatedCard(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable { onViewMed.invoke() },
+        modifier = modifier.fillMaxWidth().clickable { onViewMed.invoke() },
         shape = shape,
         elevation =
             CardDefaults.elevatedCardElevation(
@@ -153,18 +118,14 @@ fun FlyElevatedCardMedsList(
                 disabledContentColor = MedTrackerTheme.colors.secondary600,
             ),
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp), verticalAlignment = Alignment.Top
-        ) {
+        Row(modifier = Modifier.fillMaxSize().padding(16.dp), verticalAlignment = Alignment.Top) {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier) {
-                Text(title, style = MedTrackerTheme.typography.headline)
+                Text(medication?.name.toString(), style = typography.headline)
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                Text(dosage, style = MedTrackerTheme.typography.bodyMedium)
-                Text(info, style = MedTrackerTheme.typography.bodyMedium)
+                Text(medication?.dosage.toString(), style = typography.bodyMedium)
+                Text(medication?.intakeTime.toString(), style = typography.bodyMedium)
             }
 
             Spacer(modifier = Modifier.weight(1f))
@@ -175,7 +136,7 @@ fun FlyElevatedCardMedsList(
                 GTextButton(
                     errorButton = true,
                     onClick = { onRemoveMedClick.invoke() },
-                    textStyle = MedTrackerTheme.typography.labelLargeEmphasized,
+                    textStyle = typography.labelLargeEmphasized,
                 ) {
                     Text("Delete")
                 }
@@ -188,11 +149,7 @@ fun FlyElevatedCardMedsList(
 @Composable
 fun FlyElevatedCardMedsListPreview() {
     MedTrackerTheme {
-        Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxSize()
-        ) {
+        Column(modifier = Modifier.padding(16.dp).fillMaxSize()) {
             FlyElevatedCardMedsList(
                 onEditClick = { /*TODO*/ },
                 onRemoveMedClick = { /*TODO*/ },
