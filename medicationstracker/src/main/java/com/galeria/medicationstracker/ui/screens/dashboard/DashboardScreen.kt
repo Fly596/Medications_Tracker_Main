@@ -50,6 +50,7 @@ fun DashboardScreen(
     dashboardViewModel: DashboardVM = hiltViewModel(),
 ) {
     val uiState = dashboardViewModel.uiState.collectAsStateWithLifecycle()
+
     MedTrackerTheme {
         Scaffold(
             containerColor = MedTrackerTheme.colors.secondaryBackground,
@@ -239,7 +240,10 @@ fun DashboardScreenNew(
                     )
                 }
             },
-            floatingActionButton = { GFABButton(onClick = { onAddMood.invoke() }) },
+            floatingActionButton = { 
+                // Add mood value.
+                GFABButton(onClick = { onAddMood.invoke() }) 
+            },
         ) { innerPadding ->
             Column(
                 modifier =
@@ -249,9 +253,18 @@ fun DashboardScreenNew(
                 // Календарь на неделю.
                 WeeklyCalendarView()
                 // Medication Cards List.
+
             }
         }
     }
+}
+
+@Composable
+fun MedsByIntakeTimeListNew(
+    medicationsByIntakeTime: List<NewUserMedication>,
+
+){
+  // TODO:  
 }
 
 @Composable

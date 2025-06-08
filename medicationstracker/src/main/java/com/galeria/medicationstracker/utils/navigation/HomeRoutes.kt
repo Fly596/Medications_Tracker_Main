@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 sealed class HomeScreen(val route: String) {
 
-    @Serializable object Home : HomeScreen("home")
+    //@Serializable object Home : HomeScreen("home")
 
     @Serializable object TodayMedications : HomeScreen("today_medications")
 

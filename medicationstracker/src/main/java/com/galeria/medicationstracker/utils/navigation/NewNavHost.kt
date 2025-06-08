@@ -29,23 +29,27 @@ fun ApplicationNavHost(
 @Serializable
 sealed class Routes(val route: String) {
 
-    @Serializable data object Auth : Routes("auth")
+    @Serializable
+    data object Auth : Routes("auth")
 
-    @Serializable data object Home : Routes("home")
+    @Serializable
+    data object Home : Routes("home")
 
-    @Serializable data object Medications : Routes("medications")
+    @Serializable
+    data object Medications : Routes("medications")
 
-    @Serializable data object PatientDashboard : Routes("patient_dashboard")
+    @Serializable
+    data object PatientDashboard : Routes("patient_dashboard")
 }
 
 // Граф для страниц аутификации.
-fun NavGraphBuilder.authGraph(navController: NavHostController){
-    navigation<Routes.Auth>(startDestination = AuthScreen.Login){
-        composable<AuthScreen.Login>{
+fun NavGraphBuilder.authGraph(navController: NavHostController) {
+    navigation<Routes.Auth>(startDestination = AuthScreen.Login) {
+        composable<AuthScreen.Login> {
             LoginScreen(
                 onLoginSuccessNavigation = {
-                    navController.navigate(HomeScreen.TodayMedications){
-                        popUpTo(AuthScreen.Login){inclusive = true}
+                    navController.navigate(HomeScreen.TodayMedications) {
+                        popUpTo(AuthScreen.Login) { inclusive = true }
                     }
                 },
                 onRegistration = {
@@ -57,7 +61,7 @@ fun NavGraphBuilder.authGraph(navController: NavHostController){
             )
         }
 
-        composable<AuthScreen.Registration>{
+        composable<AuthScreen.Registration> {
             SignupScreen(
                 navigateHome = {
                     navController.navigateUp()
@@ -65,7 +69,7 @@ fun NavGraphBuilder.authGraph(navController: NavHostController){
             )
         }
 
-composable<AuthScreen.PasswordRecovery>{
+        composable<AuthScreen.PasswordRecovery> {
             ResetPasswordScreen(
                 navigateHome = {
                     navController.navigateUp()
@@ -73,5 +77,19 @@ composable<AuthScreen.PasswordRecovery>{
             )
         }
 
+    }
+}
+
+
+fun NavGraphBuilder.dashboardGraph(navController: NavHostController){
+    navigation<Routes.Home>(startDestination = HomeScreen.TodayMedications){
+        composable<HomeScreen.TodayMedications>{
+            DashboardScreen(
+                onAddMood ={
+                    navController.navigate(HomeScreen.MoodCheck)
+                },
+
+            )
+        }
     }
 }
