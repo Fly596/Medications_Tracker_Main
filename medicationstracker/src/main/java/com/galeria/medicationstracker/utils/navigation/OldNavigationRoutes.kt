@@ -38,7 +38,7 @@ fun ApplicationNavHost(
         startDestination = startDestination, /* HH */
         modifier = modifier,
     ) {
-        authGraph(navController)
+        authGraphOld(navController)
         patientGraph(navController)
         // userMedsGraph(navController)
     }
@@ -142,7 +142,7 @@ sealed class RoutesOld {
 }
 
 // Граф для страниц аутификации.
-fun NavGraphBuilder.authGraph(navController: NavHostController) {
+fun NavGraphBuilder.authGraphOld(navController: NavHostController) {
     navigation<AuthRoutes.Auth>(startDestination = AuthRoutes.Login) {
         composable<AuthRoutes.Login> {
             LoginScreen(
