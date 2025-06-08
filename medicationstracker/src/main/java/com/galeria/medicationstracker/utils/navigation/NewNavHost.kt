@@ -13,7 +13,7 @@ import com.galeria.medicationstracker.ui.screens.auth.accountrecovery.ResetPassw
 import com.galeria.medicationstracker.ui.screens.auth.login.LoginScreen
 import com.galeria.medicationstracker.ui.screens.auth.signup.SignupScreen
 import com.galeria.medicationstracker.ui.screens.dashboard.CheckIntakeScreen
-import com.galeria.medicationstracker.ui.screens.dashboard.DashboardScreenNew
+import com.galeria.medicationstracker.ui.screens.dashboard.DailyMedsScreenNew
 import kotlinx.serialization.Serializable
 
 @Composable
@@ -75,7 +75,7 @@ fun NavGraphBuilder.authGraph(navController: NavHostController) {
 fun NavGraphBuilder.dashboardGraph(navController: NavHostController) {
     navigation<Routes.Home>(startDestination = HomeScreen.TodayMedications) {
         composable<HomeScreen.TodayMedications> {
-            DashboardScreenNew(
+            DailyMedsScreenNew(
                 onAddMood = { navController.navigate(HomeScreen.MoodCheck) },
                 onAddIntake = { id -> navController.navigate(HomeScreen.IntakeCheck(id)) },
             )

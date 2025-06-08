@@ -12,7 +12,7 @@ import androidx.navigation.toRoute
 import com.galeria.medicationstracker.ui.screens.auth.accountrecovery.ResetPasswordScreen
 import com.galeria.medicationstracker.ui.screens.auth.login.LoginScreen
 import com.galeria.medicationstracker.ui.screens.auth.signup.SignupScreen
-import com.galeria.medicationstracker.ui.screens.dashboard.DashboardScreen
+import com.galeria.medicationstracker.ui.screens.dashboard.DailyMedsScreen
 import com.galeria.medicationstracker.ui.screens.dashboard.moodtracker.MoodTrackerScreen
 import com.galeria.medicationstracker.ui.screens.medications.MedicationsScreen
 import com.galeria.medicationstracker.ui.screens.medications.mediinfo.ViewMedicationInfoScreen
@@ -182,7 +182,7 @@ fun NavGraphBuilder.patientDashboardGraph(navController: NavHostController) {
         startDestination = PatientRoutes.PatientTodayMedications
     ) {
         composable<PatientRoutes.PatientTodayMedications> {
-            DashboardScreen(
+            DailyMedsScreen(
                 onAddMood = {
                     // open logs history screen.
                     navController.navigate(PatientRoutes.MoodCheck) {
@@ -230,7 +230,7 @@ fun NavGraphBuilder.patientMedsGraph(navController: NavHostController) {
         composable<PatientRoutes.PatientAddMedication> {
             NewMedicationDataScreen(onConfirmClick = { navController.popBackStack() })
         }
-        
+
         composable<PatientRoutes.PatientViewMedication> {
             ViewMedicationInfoScreen(onNavigateToMedsList = { navController.navigateUp() })
         }

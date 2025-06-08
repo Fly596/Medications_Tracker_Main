@@ -44,7 +44,7 @@ import com.galeria.medicationstracker.utils.getTodaysDate
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun DashboardScreen(
+fun DailyMedsScreen(
     modifier: Modifier = Modifier,
     onAddMood: () -> Unit = {},
     onAddMedClick: () -> Unit,
@@ -75,10 +75,7 @@ fun DashboardScreen(
         ) { innerPadding ->
             Column(
                 modifier =
-                    modifier
-                        .fillMaxWidth()
-                        .padding(innerPadding)
-                        .padding(horizontal = 16.dp),
+                    modifier.fillMaxWidth().padding(innerPadding).padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
 
@@ -227,16 +224,14 @@ fun MedicationItem(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DashboardScreenNew(
+fun DailyMedsScreenNew(
     modifier: Modifier = Modifier,
     onAddMood: () -> Unit = {},
     onAddIntake: (String) -> Unit = {},
     dashboardViewModel: DashboardVM = hiltViewModel(),
 ) {
     val state = dashboardViewModel.uiState.collectAsStateWithLifecycle()
-    val inputState =
-        dashboardViewModel.intakeInputState.collectAsStateWithLifecycle()
-    
+    val inputState = dashboardViewModel.intakeInputState.collectAsStateWithLifecycle()
 
     MedTrackerTheme {
         Scaffold(
@@ -257,10 +252,7 @@ fun DashboardScreenNew(
         ) { innerPadding ->
             Column(
                 modifier =
-                    modifier
-                        .fillMaxWidth()
-                        .padding(innerPadding)
-                        .padding(horizontal = 16.dp),
+                    modifier.fillMaxWidth().padding(innerPadding).padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 // Календарь на неделю.
@@ -275,9 +267,8 @@ fun DashboardScreenNew(
 @Composable
 fun TodayIntakesList(todayMedicationsList: List<NewUserMedication>) {
     // группировка по времени приема.
-    val medicationsGroupedByTime =
-        todayMedicationsList.groupBy { it.intakeTime }
-    
+    val medicationsGroupedByTime = todayMedicationsList.groupBy { it.intakeTime }
+
     LazyColumn(modifier = Modifier.fillMaxWidth()) {
         medicationsGroupedByTime.forEach { (intakeTime, medications) ->
             item {
@@ -293,8 +284,8 @@ fun TodayIntakesList(todayMedicationsList: List<NewUserMedication>) {
                             MedicationItemNew(
                                 it,
                                 // TODO
-                                onLogTaken = { },
-                                onLogSkipped = {}
+                                onLogTaken = {},
+                                onLogSkipped = {},
                             )
                         }
                     }
@@ -309,9 +300,7 @@ fun MedicationItemNew(
     medication: NewUserMedication,
     onLogTaken: () -> Unit,
     onLogSkipped: () -> Unit,
-) {
-
-}
+) {}
 
 @Preview(name = "StartScreen")
 @Composable
