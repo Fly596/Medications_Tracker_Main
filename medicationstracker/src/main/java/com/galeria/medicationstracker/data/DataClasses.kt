@@ -30,7 +30,7 @@ data class NewUserIntake(
     val userId: String = "",
     val medicationId: String = "",
     val status: String = IntakeStatus.PENDING.name,
-    val timestamp: Timestamp? = null,
+    val timestamp: Timestamp? = Timestamp.now(),
 )
 
 data class NewUserNote(

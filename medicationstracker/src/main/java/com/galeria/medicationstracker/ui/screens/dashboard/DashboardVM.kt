@@ -53,6 +53,7 @@ constructor(
     val intakeInputState: StateFlow<AddIntakeUiState> =
         _intakeInputState.asStateFlow()
     private val _currentUserId = MutableStateFlow<String?>(null)
+    val currentUserId = _currentUserId.asStateFlow()
     // private lateinit var currentUserId: String
 
     init {
@@ -64,7 +65,7 @@ constructor(
                 val id = userIdResult.getOrNull()
                 if (id != null) {
                     _currentUserId.value = id.toString()
-                    // getCurrentMedications(id.toString())
+                    getCurrentMedications(id.toString())
                 } else {
                     _uiState.update {
                         it.copy(
@@ -108,13 +109,13 @@ constructor(
     ) {
         val intake: NewUserIntake =
             NewUserIntake(
-                userId = _currentUserId.toString(),
+                userId = currentUserId.value.toString(),
                 medicationId = medication.id,
                 status = status.name,
             )
         viewModelScope.launch {
             intakeRepository.addUserIntake(
-                _currentUserId.toString(),
+                currentUserId.value.toString(),
                 intake
             )
         }

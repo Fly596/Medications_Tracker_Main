@@ -1,15 +1,18 @@
 package com.galeria.medicationstracker.data
 
+import android.util.Log
+import com.galeria.medicationstracker.utils.toTimestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
+import java.time.LocalDate
 import javax.inject.Inject
 import javax.inject.Singleton
 
 interface NewIntakeRepository {
-    
+
     fun observeUserIntakes(userId: String): Flow<List<NewUserIntake>>?
 
     suspend fun getUserIntake(userId: String, intakeId: String): Result<NewUserIntake>
@@ -19,6 +22,11 @@ interface NewIntakeRepository {
     suspend fun updateUserIntake(userId: String, intake: NewUserIntake): Result<Unit>
 
     suspend fun deleteUserIntake(userId: String, intakeId: String): Result<Unit>
+    
+    suspend fun fetchIntakeStatus(
+        intake: NewUserMedication,
+        uid: String
+    ): Result<Int>
 }
 
 @Singleton
@@ -128,5 +136,42 @@ class NewIntakeRepositoryImpl @Inject constructor(private val firestore: Firebas
         } catch (e: Exception) {
             Result.failure(e)
         }
+    }
+    
+    override suspend fun fetchIntakeStatus(
+        medication: NewUserMedication,
+        uid: String,
+    ): Result<Int> {
+        val todayStart = LocalDate.now().atStartOfDay().toTimestamp()
+        val todayEnd = LocalDate.now().plusDays(1).atStartOfDay().toTimestamp()
+        
+        return try {
+            val querySnapshot =
+                firestore
+                    .collection(USERS_COLLECTION)
+                    .document(uid)
+                    .collection(INTAKES_SUBCOLLECTION)
+                    .whereEqualTo("medicationId", medication.id)
+                    .whereGreaterThanOrEqualTo("timestamp", todayStart)
+                    .whereLessThan("timestamp", todayEnd)
+                    .limit(1)
+                    .get()
+                    .await()
+            
+            if (!querySnapshot.isEmpty) {
+                if (
+                    querySnapshot.toObjects(NewUserIntake::class.java)[0].status.toString() ==
+                    "TAKEN"
+                )
+                    Result.success(2)
+                else Result.success(1)
+            } else {
+                Result.success(0)
+            }
+        } catch (e: Exception) {
+            Log.e("checkIntake", "Error fetching intake data", e)
+            Result.success(-1)
+        }
+        TODO("Not yet implemented")
     }
 }

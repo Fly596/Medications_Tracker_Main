@@ -47,7 +47,7 @@ import java.time.format.DateTimeFormatter
 fun DailyMedsScreen(
     modifier: Modifier = Modifier,
     onAddMood: () -> Unit = {},
-    onAddMedClick: () -> Unit,
+    onAddIntake: () -> Unit,
     dashboardViewModel: DashboardVM = hiltViewModel(),
 ) {
     val uiState = dashboardViewModel.uiState.collectAsStateWithLifecycle()
@@ -75,7 +75,10 @@ fun DailyMedsScreen(
         ) { innerPadding ->
             Column(
                 modifier =
-                    modifier.fillMaxWidth().padding(innerPadding).padding(horizontal = 16.dp),
+                    modifier
+                        .fillMaxWidth()
+                        .padding(innerPadding)
+                        .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
 
@@ -85,7 +88,7 @@ fun DailyMedsScreen(
                 // Medication Cards List.
                 MedsByIntakeTimeList(
                     viewModel = dashboardViewModel,
-                    onAddNoteClick = { onAddMedClick.invoke() },
+                    onAddNoteClick = { onAddIntake.invoke() },
                     medicationsForIntakeTime = uiState.value.currentTakenMedications,
                 )
             }
@@ -252,7 +255,10 @@ fun DailyMedsScreenNew(
         ) { innerPadding ->
             Column(
                 modifier =
-                    modifier.fillMaxWidth().padding(innerPadding).padding(horizontal = 16.dp),
+                    modifier
+                        .fillMaxWidth()
+                        .padding(innerPadding)
+                        .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 // Календарь на неделю.

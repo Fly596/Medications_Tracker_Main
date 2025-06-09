@@ -20,8 +20,8 @@ data class NewMedUiState(
     val medStrength: Float = 0.0f,
     val chosenStrengths: List<Float> = emptyList(),
     val medUnit: MedicationUnit = MedicationUnit.MG, // f
-    val medStartDate: Timestamp? = null, // f
-    val medEndDate: Timestamp? = null, // f
+    val medStartDate: Timestamp? = Timestamp.now(), // f
+    val medEndDate: Timestamp? = Timestamp.now(), // f
     val medIntakeTime: String = "", // f
     val medNotes: String = "",
     val showDatePicker: Boolean = false,

@@ -13,7 +13,7 @@ import com.galeria.medicationstracker.ui.screens.auth.accountrecovery.ResetPassw
 import com.galeria.medicationstracker.ui.screens.auth.login.LoginScreen
 import com.galeria.medicationstracker.ui.screens.auth.signup.SignupScreen
 import com.galeria.medicationstracker.ui.screens.dashboard.CheckIntakeScreen
-import com.galeria.medicationstracker.ui.screens.dashboard.DailyMedsScreenNew
+import com.galeria.medicationstracker.ui.screens.dashboard.DailyMedsScreen
 import com.galeria.medicationstracker.ui.screens.medications.MedicationsScreen
 import com.galeria.medicationstracker.ui.screens.medications.newmed.NewMedicationDataScreen
 import com.galeria.medicationstracker.ui.screens.profile.UserProfileScreen
@@ -84,10 +84,14 @@ fun NavGraphBuilder.authGraph(navController: NavHostController) {
 fun NavGraphBuilder.homeScreenGraph(navController: NavHostController) {
     navigation<GraphRoutes.Home>(startDestination = HomeScreen.TodayMedications) {
         composable<HomeScreen.TodayMedications> {
-            DailyMedsScreenNew(
+            DailyMedsScreen(
+                onAddMood = { navController.navigate(HomeScreen.MoodCheck) },
+                onAddIntake = { },
+            )
+            /* DailyMedsScreenNew(
                 onAddMood = { navController.navigate(HomeScreen.MoodCheck) },
                 onAddIntake = { id -> navController.navigate(HomeScreen.IntakeCheck(id)) },
-            )
+            ) */
         }
 
         composable<HomeScreen.IntakeCheck> { navBackStackEntry ->

@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -68,18 +67,13 @@ fun MedicationsScreen(
                     items(uiState.userMedications, key = { it.id }) { med ->
                         FlyElevatedCardMedsList(
                             medication = med,
-                            title = med.name.toString(),
-                            dosage = (med.dosage),
-                            info = med.form.toString().lowercase(),
                             onEditClick = { onEditClick(med.name) },
                             onRemoveMedClick = {
                                 medicationsViewModel.deleteMedicationFromFirestore(
                                     med.name.toString()
                                 )
                             },
-                            onViewMed = {
-                                onViewClick(med.id)
-                            },
+                            onViewMed = { onViewClick(med.id) },
                         )
                     }
                 }
@@ -91,15 +85,11 @@ fun MedicationsScreen(
 @Composable
 fun FlyElevatedCardMedsList(
     modifier: Modifier = Modifier,
-    title: String = "Medicine Name",
-    dosage: String = "50 mg",
-    info: String = "Mon, Tue, Fri...",
     onEditClick: () -> Unit,
     onRemoveMedClick: () -> Unit,
     onViewMed: () -> Unit,
     medication: NewUserMedication? = null,
     shape: Shape = MedTrackerTheme.shapes.medium,
-    elevation: CardElevation = CardDefaults.elevatedCardElevation(),
 ) {
     ElevatedCard(
         modifier = modifier
@@ -120,15 +110,19 @@ fun FlyElevatedCardMedsList(
                 disabledContentColor = MedTrackerTheme.colors.secondary600,
             ),
     ) {
-        Row(modifier = Modifier
-            //.fillMaxSize()
-            .padding(16.dp), verticalAlignment = Alignment.Top) {
+        Row(
+            modifier =
+                Modifier
+                    // .fillMaxSize()
+                    .padding(16.dp),
+            verticalAlignment = Alignment.Top,
+        ) {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier) {
                 Text(
                     medication?.name ?: "Med Name",
                     style = typography.headline
                 )
-                
+
                 Spacer(modifier = Modifier)
                 
                 Text(
@@ -162,11 +156,9 @@ fun FlyElevatedCardMedsList(
 @Composable
 fun FlyElevatedCardMedsListPreview() {
     MedTrackerTheme {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-        ) {
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)) {
             FlyElevatedCardMedsList(
                 onEditClick = { /*TODO*/ },
                 onRemoveMedClick = { /*TODO*/ },
