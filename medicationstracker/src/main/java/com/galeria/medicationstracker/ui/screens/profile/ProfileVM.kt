@@ -14,13 +14,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
+// ? TODO: decide what to show on screens.
 data class ProfileScreenUiState(
-    // val testData: String = "",
     val user: NewUser? = null,
-    // val doctors: List<User> = listOf(),
-    // val selectedDoctor: User? = null,
-    // val selectedTime: String = "",
-    // val selectedDate: Timestamp = Timestamp.now(),
     val age: Int = 0,
     val weight: Float = 0.0f,
     val height: Float = 0.0f,

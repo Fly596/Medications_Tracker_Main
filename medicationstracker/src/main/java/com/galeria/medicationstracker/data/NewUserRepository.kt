@@ -27,8 +27,9 @@ class NewUserRepositoryImpl @Inject constructor(private val firestore: FirebaseF
         val dataToSave = user.copy(id = "")
 
         return try {
-            val documentRef = firestore.collection(USERS_COLLECTION).add(dataToSave).await()
-            Result.success(documentRef.id)
+            firestore.collection(USERS_COLLECTION).document(user.id)
+                .set(dataToSave).await()
+            Result.success(dataToSave.id)
         } catch (e: Exception) {
             Result.failure(e)
         }

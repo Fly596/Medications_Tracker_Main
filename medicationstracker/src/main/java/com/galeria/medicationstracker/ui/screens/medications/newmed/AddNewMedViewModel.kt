@@ -1,8 +1,12 @@
 package com.galeria.medicationstracker.ui.screens.medications.newmed
 
+import android.content.ContentValues.TAG
 import android.content.Context
+import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import com.galeria.medicationstracker.data.MedicationForm
+import com.galeria.medicationstracker.data.NewUserMedication
 import com.galeria.medicationstracker.data.old.MedicationUnit
 import com.galeria.medicationstracker.utils.FirestoreFunctions.FirestoreService
 import com.google.firebase.Timestamp
@@ -41,7 +45,7 @@ class AddNewMedViewModel : ViewModel() {
     fun addMedication(context: Context) {
         // Проверка на пустые значения текстовых полей и нулевое значение medStrength
         //? в репо
-        /*         if (
+        if (
                     uiState.value.medName.isBlank() ||
                         uiState.value.medForm.toString().isBlank() ||
                         uiState.value.medUnit.toString().isBlank() ||
@@ -60,34 +64,33 @@ class AddNewMedViewModel : ViewModel() {
                     Log.w(TAG, "Validation failed: Missing or incorrect input fields.")
                     return
                 }
-                val medicationRef = db.collection("UserMedication")
-                val documentId = "${userLogin}_${uiState.value.medName}_${uiState.value.medStrength}"
+        val medsCollectionRef =
+            db.collection("User").document(userId.toString())
+                .collection("medications")
+        // val documentId = "${userLogin}_${uiState.value.medName}_${uiState.value.medStrength}"
                 // Проверка на дубликаты
-                medicationRef.document(documentId).get().addOnSuccessListener { documentSnapshot ->
-                    if (documentSnapshot.exists()) {
-                        // Документ уже существует
-                        Toast.makeText(context, "Medication already exists!", Toast.LENGTH_SHORT).show()
-        
-                        Log.d(TAG, "Medication already exists with ID: $documentId")
-                    } else {
+        // medsCollectionRef.document(documentId).get().addOnSuccessListener { documentSnapshot ->
+        /*  if (documentSnapshot.exists()) {
+             // Документ уже существует
+             Toast.makeText(context, "Medication already exists!", Toast.LENGTH_SHORT).show()
+
+             Log.d(TAG, "Medication already exists with ID: $documentId")
+         } else { */
                         // Документ не существует, добавляем новый
                         val newUserMedication =
                             NewUserMedication(
-                                userId,
-                                uiState.value.medName,
-                                uiState.value.medForm.toString(),
-                                uiState.value.medStrength,
-                                uiState.value.medUnit.toString(),
-                                uiState.value.medStartDate,
-                                uiState.value.medEndDate,
-                                uiState.value.intakeDays,
-                                uiState.value.medIntakeTime,
-                                uiState.value.medNotes,
+                                userId = userId.toString(),
+                                name = uiState.value.medName,
+                                dosage = uiState.value.medStrength.toString() + uiState.value.medUnit,
+                                form = uiState.value.medForm,
+                                startDate = uiState.value.medStartDate,
+                                endDate = uiState.value.medEndDate,
+                                daysOfWeek = uiState.value.intakeDays,
+                                intakeTime = uiState.value.medIntakeTime
                             )
         
-                        medicationRef
-                            .document(documentId)
-                            .set(newUserMedication)
+        medsCollectionRef
+            .add(newUserMedication)
                             .addOnSuccessListener {
                                 Toast.makeText(
                                         context,
@@ -95,16 +98,16 @@ class AddNewMedViewModel : ViewModel() {
                                         Toast.LENGTH_SHORT,
                                     )
                                     .show()
-        
-                                Log.d(TAG, "DocumentSnapshot added with ID: $documentId")
+                                
+                                Log.d(TAG, "DocumentSnapshot added")
                             }
                             .addOnFailureListener { e ->
                                 Toast.makeText(context, "Error adding medication", Toast.LENGTH_SHORT)
                                     .show()
                                 Log.w(TAG, "Error adding document", e)
                             }
-                    }
-                } */
+        //}
+        //}
     }
 
     fun updateStartDate(input: Timestamp?) {

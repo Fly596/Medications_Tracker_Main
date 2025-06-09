@@ -66,7 +66,7 @@ import java.util.Calendar
 @Composable
 fun NewMedicationDataScreen(
     modifier: Modifier = Modifier,
-    onConfirmClick: () -> Unit,
+    navigateBack: () -> Unit,
     viewModel: AddNewMedViewModel = hiltViewModel(),
     viewModelOld: AddNewMedViewModel = hiltViewModel(),
 ) {
@@ -77,7 +77,7 @@ fun NewMedicationDataScreen(
             containerColor = MedTrackerTheme.colors.secondaryBackground,
             topBar = {
                 Row(modifier = Modifier.padding(vertical = 24.dp)) {
-                    IconButton(onClick = onConfirmClick) {
+                    IconButton(onClick = navigateBack) {
                         Icon(
                             imageVector = Icons.Default.ArrowBackIosNew,
                             contentDescription = "Back",
@@ -255,7 +255,7 @@ fun NewMedicationDataScreen(
                             modifier = Modifier.fillMaxWidth(),
                             onClick = {
                                 viewModel.addMedication(context)
-                                onConfirmClick.invoke()
+                                navigateBack.invoke()
                             },
                             content = { Text(text = stringResource(R.string.add_medication)) },
                         )

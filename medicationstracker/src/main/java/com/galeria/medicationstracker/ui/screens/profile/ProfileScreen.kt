@@ -51,7 +51,7 @@ import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme.colors
 
 @Composable
-fun AccountScreenHead(
+fun UserProfileScreen(
     modifier: Modifier = Modifier,
     onProfileClick: () -> Unit = {},
     onNotesClick: () -> Unit = {},

@@ -4,8 +4,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 sealed class ProfileScreen(val route: String) {
-
-    @Serializable object Profile : ProfileScreen("profile")
+    
+    @Serializable
+    object ProfileMain : ProfileScreen("profile")
 
     @Serializable object ProfileOverview : ProfileScreen("profile_overview")
 

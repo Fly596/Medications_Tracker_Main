@@ -51,11 +51,15 @@ constructor(private val repository: AuthRepository, private val userRepo: NewUse
 
             result.fold(
                 onSuccess = {
+                    val newUserId = repository.getUserId()
+                    
                     val birthDateTimestamp = _uiState.value.selectedBirthDate.toTimestamp()
-
+                    
+                    
                     _uiState.update { it.copy(isLoading = false) }
                     val user: NewUser =
                         NewUser(
+                            id = newUserId.getOrNull().toString(),
                             name = _uiState.value.name,
                             email = _uiState.value.email,
                             dateOfBirth = birthDateTimestamp,

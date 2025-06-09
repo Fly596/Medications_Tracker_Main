@@ -16,12 +16,12 @@ import androidx.navigation.NavHostController
 import com.galeria.medicationstracker.R
 import com.galeria.medicationstracker.ui.HeadViewModel
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
-import com.galeria.medicationstracker.utils.navigation.Routes
-import com.galeria.medicationstracker.utils.navigation.Routes.Auth.route
+import com.galeria.medicationstracker.utils.navigation.GraphRoutes
+import com.galeria.medicationstracker.utils.navigation.GraphRoutes.Auth.route
 
 data class BottomNavItem(
     val title: String,
-    val route: Routes,
+    val route: GraphRoutes,
     val selectedIcon: Int,
     val unselectedIcon: Int,
     val hasNews: Boolean = false,
@@ -32,20 +32,20 @@ fun bottomNavItems(): List<BottomNavItem> {
     return listOf(
         BottomNavItem(
             title = "Dashboard",
-            route = Routes.Home,
+            route = GraphRoutes.Home,
             selectedIcon = R.drawable.home_fill,
             unselectedIcon = R.drawable.home,
         ),
         BottomNavItem(
             title = "Medications",
-            route = Routes.Medications,
+            route = GraphRoutes.Medications,
             selectedIcon = R.drawable.lab_profile_fill,
             unselectedIcon = R.drawable.lab_profile,
             hasNews = false,
         ),
         BottomNavItem(
             title = "Profile",
-            route = Routes.PatientDashboard,
+            route = GraphRoutes.PatientDashboard,
             selectedIcon = R.drawable.profile_fill,
             unselectedIcon = R.drawable.profile,
             hasNews = false,
@@ -85,7 +85,7 @@ fun BottomNavBar(
                                 "Invalid route: $route, navigating to Home.",
                                 illegalArgumentException
                             )
-                            navController.navigate(Routes.Home.route) {
+                            navController.navigate(GraphRoutes.Home.route) {
                                 popUpTo(navController.graph.startDestinationId) { // Or your specific home route ID
                                     saveState = true
                                 }

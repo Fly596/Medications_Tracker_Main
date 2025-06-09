@@ -29,7 +29,7 @@ import com.galeria.medicationstracker.ui.componentsOld.bottomNavItems
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.utils.navigation.ApplicationNavHost
 import com.galeria.medicationstracker.utils.navigation.AuthScreen
-import com.galeria.medicationstracker.utils.navigation.Routes
+import com.galeria.medicationstracker.utils.navigation.GraphRoutes
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -39,8 +39,8 @@ class HeadActivity : ComponentActivity() {
 
     private lateinit var auth: FirebaseAuth
     private val startDestinations =
-        listOf(Routes.Auth, Routes.Home)
-    private var currentDestination: Routes = startDestinations[0]
+        listOf(GraphRoutes.Auth, GraphRoutes.Home)
+    private var currentDestination: GraphRoutes = startDestinations[0]
     private val headViewModel: HeadViewModel by viewModels()
 
 

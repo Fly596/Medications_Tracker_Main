@@ -15,12 +15,16 @@ import com.galeria.medicationstracker.ui.screens.auth.signup.SignupScreen
 import com.galeria.medicationstracker.ui.screens.dashboard.CheckIntakeScreen
 import com.galeria.medicationstracker.ui.screens.dashboard.DailyMedsScreenNew
 import com.galeria.medicationstracker.ui.screens.medications.MedicationsScreen
+import com.galeria.medicationstracker.ui.screens.medications.newmed.NewMedicationDataScreen
+import com.galeria.medicationstracker.ui.screens.profile.UserProfileScreen
+import com.galeria.medicationstracker.ui.screens.profile.notes.NotesScreen
+import com.galeria.medicationstracker.ui.screens.profile.profiledetails.ProfileDetailsScreen
 import kotlinx.serialization.Serializable
 
 @Composable
 fun ApplicationNavHost(
-    startDestination: Any = Routes.Auth,
     modifier: Modifier = Modifier,
+    startDestination: Any = GraphRoutes.Auth,
     navController: NavHostController = rememberNavController(),
 ) {
     NavHost(
@@ -29,28 +33,32 @@ fun ApplicationNavHost(
         modifier = modifier,
     ) {
         authGraph(navController)
-        dashboardGraph(navController)
+        homeScreenGraph(navController)
         medicationsGraph(navController)
-        // profileGraph(navController)
+        profileGraph(navController)
         // userMedsGraph(navController)
     }
 }
 
 @Serializable
-sealed class Routes(val route: String) {
-
-    @Serializable data object Auth : Routes("auth")
-
-    @Serializable data object Home : Routes("home")
-
-    @Serializable data object Medications : Routes("medications")
-
-    @Serializable data object PatientDashboard : Routes("patient_dashboard")
+sealed class GraphRoutes(val route: String) {
+    
+    @Serializable
+    data object Auth : GraphRoutes("auth")
+    
+    @Serializable
+    data object Home : GraphRoutes("home")
+    
+    @Serializable
+    data object Medications : GraphRoutes("medications")
+    
+    @Serializable
+    data object PatientDashboard : GraphRoutes("patient_dashboard")
 }
 
 // Граф для страниц аутификации.
 fun NavGraphBuilder.authGraph(navController: NavHostController) {
-    navigation<Routes.Auth>(startDestination = AuthScreen.Login) {
+    navigation<GraphRoutes.Auth>(startDestination = AuthScreen.Login) {
         composable<AuthScreen.Login> {
             LoginScreen(
                 onLoginSuccessNavigation = {
@@ -73,8 +81,8 @@ fun NavGraphBuilder.authGraph(navController: NavHostController) {
     }
 }
 
-fun NavGraphBuilder.dashboardGraph(navController: NavHostController) {
-    navigation<Routes.Home>(startDestination = HomeScreen.TodayMedications) {
+fun NavGraphBuilder.homeScreenGraph(navController: NavHostController) {
+    navigation<GraphRoutes.Home>(startDestination = HomeScreen.TodayMedications) {
         composable<HomeScreen.TodayMedications> {
             DailyMedsScreenNew(
                 onAddMood = { navController.navigate(HomeScreen.MoodCheck) },
@@ -97,7 +105,7 @@ fun NavGraphBuilder.dashboardGraph(navController: NavHostController) {
 }
 
 fun NavGraphBuilder.medicationsGraph(navController: NavHostController) {
-    navigation<Routes.Medications>(startDestination = MedicationScreen.MedicationsList) {
+    navigation<GraphRoutes.Medications>(startDestination = MedicationScreen.MedicationsList) {
         composable<MedicationScreen.MedicationsList> {
             MedicationsScreen(
                 onAddClick = { navController.navigate(MedicationScreen.AddMedication) },
@@ -115,6 +123,11 @@ fun NavGraphBuilder.medicationsGraph(navController: NavHostController) {
             // TODO: MedicationsListScreen
         }
         composable<MedicationScreen.AddMedication> {
+            NewMedicationDataScreen(
+                navigateBack = {
+                    navController.navigateUp()
+                }
+            )
             // TODO: AddMedicationScreen
         }
         composable<MedicationScreen.ViewMedication> { navBackStackEntry ->
@@ -125,5 +138,20 @@ fun NavGraphBuilder.medicationsGraph(navController: NavHostController) {
         composable<MedicationScreen.UpdateMedication> {
             // TODO: UpdateMedicationScreen
         }
+    }
+}
+
+fun NavGraphBuilder.profileGraph(navController: NavHostController) {
+    navigation<GraphRoutes.PatientDashboard>(startDestination = ProfileScreen.ProfileMain) {
+        composable<ProfileScreen.ProfileMain> {
+            UserProfileScreen(
+                onProfileClick = { navController.navigate(ProfileScreen.ProfileOverview) },
+                onNotesClick = { navController.navigate(ProfileScreen.Notes) },
+            )
+        }
+        
+        composable<ProfileScreen.ProfileOverview> { ProfileDetailsScreen() }
+        
+        composable<ProfileScreen.Notes> { NotesScreen() }
     }
 }
