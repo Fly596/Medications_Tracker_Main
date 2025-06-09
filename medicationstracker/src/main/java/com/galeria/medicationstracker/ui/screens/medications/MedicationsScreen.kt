@@ -20,7 +20,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -68,6 +67,7 @@ fun MedicationsScreen(
                 LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                     items(uiState.userMedications, key = { it.id }) { med ->
                         FlyElevatedCardMedsList(
+                            medication = med,
                             title = med.name.toString(),
                             dosage = (med.dosage),
                             info = med.form.toString().lowercase(),
@@ -91,7 +91,6 @@ fun MedicationsScreen(
 @Composable
 fun FlyElevatedCardMedsList(
     modifier: Modifier = Modifier,
-    icon: ImageVector? = null,
     title: String = "Medicine Name",
     dosage: String = "50 mg",
     info: String = "Mon, Tue, Fri...",
@@ -122,15 +121,24 @@ fun FlyElevatedCardMedsList(
             ),
     ) {
         Row(modifier = Modifier
-            .fillMaxSize()
+            //.fillMaxSize()
             .padding(16.dp), verticalAlignment = Alignment.Top) {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier) {
-                Text(medication?.name.toString(), style = typography.headline)
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                Text(medication?.dosage.toString(), style = typography.bodyMedium)
-                Text(medication?.intakeTime.toString(), style = typography.bodyMedium)
+                Text(
+                    medication?.name ?: "Med Name",
+                    style = typography.headline
+                )
+                
+                Spacer(modifier = Modifier)
+                
+                Text(
+                    medication?.dosage ?: "Med Dosage",
+                    style = typography.bodyMedium
+                )
+                Text(
+                    medication?.intakeTime ?: "Intake Time",
+                    style = typography.bodyMedium
+                )
             }
 
             Spacer(modifier = Modifier.weight(1f))
@@ -154,9 +162,11 @@ fun FlyElevatedCardMedsList(
 @Composable
 fun FlyElevatedCardMedsListPreview() {
     MedTrackerTheme {
-        Column(modifier = Modifier
-            .padding(16.dp)
-            .fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
             FlyElevatedCardMedsList(
                 onEditClick = { /*TODO*/ },
                 onRemoveMedClick = { /*TODO*/ },
