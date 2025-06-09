@@ -108,3 +108,4 @@ gradle.properties
 .idea/deploymentTargetSelector.xml
 .idea/codeStyles/Project.xml
 .idea/appInsightsSettings.xml
+!/.idea/
