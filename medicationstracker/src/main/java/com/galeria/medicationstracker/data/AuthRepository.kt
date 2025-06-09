@@ -10,13 +10,13 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 interface AuthRepository {
-    
+
     suspend fun signIn(email: String, password: String): Result<Unit>
-    
+
     suspend fun signUp(email: String, password: String): Result<Unit>
-    
+
     suspend fun resetPassword(email: String): Result<Unit>
-    
+
     suspend fun getUserId(): Result<String?>
     
     suspend fun getUserEmail(): Result<String?>
@@ -25,23 +25,13 @@ interface AuthRepository {
 @Singleton
 class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) :
     AuthRepository {
-    
+
     override suspend fun getUserId(): Result<String?> {
-        return try {
-            val userId = auth.currentUser?.uid
-            Result.success(userId)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+        return runCatching { auth.currentUser?.uid }
     }
     
     override suspend fun getUserEmail(): Result<String?> {
-        return try {
-            val userId = auth.currentUser?.email
-            Result.success(userId)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+        return runCatching { auth.currentUser?.email }
     }
     
     override suspend fun signIn(email: String, password: String): Result<Unit> {

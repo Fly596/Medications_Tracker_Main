@@ -1,5 +1,6 @@
 package com.galeria.medicationstracker.ui.screens.medications
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.galeria.medicationstracker.data.AuthRepository
@@ -27,26 +28,24 @@ constructor(
 
     private val _uiState = MutableStateFlow(MedicationsUiState())
     val uiState = _uiState.asStateFlow()
-    private lateinit var currentUserId: String
-    private lateinit var currentUserEmail: String
+    // private lateinit var currentUserId: String
+    // private lateinit var currentUserEmail: String
 
     init {
         viewModelScope.launch {
-            // Получение id и почты пользователя.
-            val emailResult = authRepository.getUserEmail()
-            val uidResult = authRepository.getUserId()
-
-            if (emailResult.isSuccess && uidResult.isSuccess) {
-                currentUserEmail = emailResult.getOrNull().toString()
-                currentUserId = uidResult.getOrNull().toString()
+            try {
+                val uid = authRepository.getUserId().getOrThrow()
+                fetchMedications(uid.toString())
+            } catch (e: Exception) {
+                Log.e("checkIntake", "Error fetching intake data", e)
             }
         }
-        fetchMedications(currentUserId)
     }
 
     private fun fetchMedications(uid: String) {
         viewModelScope.launch {
-            medicationRepository.observeUserMedications(uid).collect { medications ->
+            medicationRepository.observeUserMedications(uid)
+                .collect { medications ->
                 _uiState.update { it.copy(userMedications = medications) }
             }
         }
@@ -55,6 +54,13 @@ constructor(
     // Удаление лекарства из Firestore.
     // TODO:
     fun deleteMedicationFromFirestore(medId: String) {
-        viewModelScope.launch { medicationRepository.deleteMedication(currentUserId, medId) }
+        viewModelScope.launch {
+            try {
+                val uid = authRepository.getUserId().getOrThrow()
+                medicationRepository.deleteMedication(uid.toString(), medId)
+            } catch (e: Exception) {
+                Log.e("ERROR REMOVE", "Error deleting medication", e)
+            }
+        }
     }
 }

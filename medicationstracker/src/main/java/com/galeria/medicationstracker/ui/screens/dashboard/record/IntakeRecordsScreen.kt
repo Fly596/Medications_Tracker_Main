@@ -25,13 +25,16 @@ import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 @Composable
 fun IntakeRecordsScreen(
     modifier: Modifier = Modifier,
-    viewModel: RecordsVM = viewModel(),
+    viewModel: IntakeRecordsVM = viewModel(),
     onBackClick: () -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val intakes = uiState.intakes
-
-    Column(modifier = modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
         // Displays the screen title.
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -79,8 +82,15 @@ fun IntakeRecordsScreen(
 
 @Composable
 fun LogsCard(name: String, status: String, date: String, time: String) {
-    FlySimpleCard(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)) {
-        Row(modifier = Modifier.fillMaxWidth().padding(4.dp), verticalAlignment = Alignment.Top) {
+    FlySimpleCard(modifier = Modifier
+        .fillMaxWidth()
+        .padding(vertical = 6.dp)) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(4.dp),
+            verticalAlignment = Alignment.Top,
+        ) {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
                     text = name,

@@ -20,7 +20,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,12 +52,12 @@ import java.util.Calendar
 
 @Composable
 fun UpdateMedScreen(
-    passedMedId: String,
+    // passedMedId: String,
     modifier: Modifier = Modifier,
     viewModel: UpdateMedVM = hiltViewModel(),
     onBack: () -> Unit = {},
 ) {
-    LaunchedEffect(passedMedId) { viewModel.fetchSelectedMedication(passedMedId) }
+    // LaunchedEffect(passedMedId) { viewModel.fetchSelectedMedication(passedMedId) }
     val state = viewModel.uiState.collectAsStateWithLifecycle()
     val currentMed = state.value.medication
 
@@ -206,7 +205,7 @@ fun UpdateMedScreen(
 
                     MyTextField(
                         value =
-                            state.value.strength
+                            state.value.dosage
                                 .toString(), // Assuming you have a medStrength state property
                         onValueChange = {
                             if (it.isEmpty()) {

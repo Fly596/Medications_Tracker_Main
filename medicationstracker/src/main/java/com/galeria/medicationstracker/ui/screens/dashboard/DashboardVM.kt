@@ -52,41 +52,36 @@ constructor(
     private val _intakeInputState = MutableStateFlow(AddIntakeUiState())
     val intakeInputState: StateFlow<AddIntakeUiState> =
         _intakeInputState.asStateFlow()
-    private val _currentUserId = MutableStateFlow<String?>(null)
-    val currentUserId = _currentUserId.asStateFlow()
+    // private val _currentUserId = MutableStateFlow<String?>(null)
+    // val currentUserId = _currentUserId.asStateFlow()
     // private lateinit var currentUserId: String
 
     init {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            val userIdResult = authRepository.getUserId()
             
-            if (userIdResult.isSuccess) {
-                val id = userIdResult.getOrNull()
-                if (id != null) {
-                    _currentUserId.value = id.toString()
-                    getCurrentMedications(id.toString())
-                } else {
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            errorMessage = "Failed to get user ID: ID is null.",
-                        )
-                    }
-                }
-            } else {
+            try {
+                // get user id
+                val uid = authRepository.getUserId().getOrThrow()
+                
+                getCurrentMedications(uid.toString())
+                
+                _uiState.update { it.copy(isLoading = false) }
+            } catch (e: Exception) {
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        errorMessage =
-                            "Failed to get user ID: ${userIdResult.exceptionOrNull()?.message ?: "Unknown error"}",
+                        errorMessage = "ERROR: ${e.message}",
                     )
                 }
             }
+            _uiState.update { it.copy(isLoading = false) }
+            
         }
     }
-
-    // Фильтрация лекарств, прием которых окончен для использования при выводе на главный экран.
+    
+    // Фильтрация лекарств, прием которых окончен для использования при выводе
+    // на главный экран.
     private fun getCurrentMedications(userId: String) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
@@ -96,7 +91,9 @@ constructor(
                         if (intakesList.isEmpty()) {
                             //
                         } else {
-                            _uiState.update { it.copy(currentTakenMedications = intakesList) }
+                            _uiState.update {
+                                it.copy(currentTakenMedications = intakesList)
+                            }
                         }
                     }
         }
@@ -107,29 +104,30 @@ constructor(
         medication: NewUserMedication = NewUserMedication(),
         status: IntakeStatus,
     ) {
-        val intake: NewUserIntake =
-            NewUserIntake(
-                userId = currentUserId.value.toString(),
-                medicationId = medication.id,
-                status = status.name,
-            )
         viewModelScope.launch {
-            intakeRepository.addUserIntake(
-                currentUserId.value.toString(),
-                intake
-            )
+            val uid = authRepository.getUserId().getOrThrow()
+            val intake: NewUserIntake =
+                NewUserIntake(
+                    userId = uid.toString(),
+                    medicationId = medication.id,
+                    status = status.name,
+                )
+            intakeRepository.addUserIntake(uid.toString(), intake)
         }
     }
-    
+
     // Проверка на то, был ли сегодня прием или нет.
     // -1: error; 0: noData, 1: skipped, 2: taken
+    // ! перегести в репо.
     suspend fun fetchIntakeStatus(medication: NewUserMedication): Int {
         val todayStart = LocalDate.now().atStartOfDay().toTimestamp()
         val todayEnd = LocalDate.now().plusDays(1).atStartOfDay().toTimestamp()
         return try {
             val querySnapshot =
                 db.collection("User")
-                    .document("${FirebaseAuth.getInstance().currentUser?.email}")
+                    .document(
+                        "${FirebaseAuth.getInstance().currentUser?.email}"
+                    )
                     .collection("intakes")
                     .whereEqualTo("medicationName", medication.name)
                     .whereGreaterThanOrEqualTo("dateTime", todayStart)
@@ -140,8 +138,10 @@ constructor(
             
             if (!querySnapshot.isEmpty) {
                 if (
-                    querySnapshot.toObjects(NewUserIntake::class.java)[0].status.toString() ==
-                    "TAKEN"
+                    querySnapshot
+                        .toObjects(NewUserIntake::class.java)[0]
+                        .status
+                        .toString() == "TAKEN"
                 )
                     2
                 else 1

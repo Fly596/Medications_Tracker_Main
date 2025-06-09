@@ -70,7 +70,7 @@ fun MedicationsScreen(
                             onEditClick = { onEditClick(med.name) },
                             onRemoveMedClick = {
                                 medicationsViewModel.deleteMedicationFromFirestore(
-                                    med.name.toString()
+                                    med.id.toString()
                                 )
                             },
                             onViewMed = { onViewClick(med.id) },

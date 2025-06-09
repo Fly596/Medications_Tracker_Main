@@ -14,6 +14,7 @@ import com.galeria.medicationstracker.ui.screens.auth.login.LoginScreen
 import com.galeria.medicationstracker.ui.screens.auth.signup.SignupScreen
 import com.galeria.medicationstracker.ui.screens.dashboard.CheckIntakeScreen
 import com.galeria.medicationstracker.ui.screens.dashboard.DailyMedsScreen
+import com.galeria.medicationstracker.ui.screens.dashboard.moodtracker.MoodTrackerScreen
 import com.galeria.medicationstracker.ui.screens.medications.MedicationsScreen
 import com.galeria.medicationstracker.ui.screens.medications.newmed.NewMedicationDataScreen
 import com.galeria.medicationstracker.ui.screens.profile.UserProfileScreen
@@ -86,7 +87,7 @@ fun NavGraphBuilder.homeScreenGraph(navController: NavHostController) {
         composable<HomeScreen.TodayMedications> {
             DailyMedsScreen(
                 onAddMood = { navController.navigate(HomeScreen.MoodCheck) },
-                onAddIntake = { },
+                onAddIntake = {},
             )
             /* DailyMedsScreenNew(
                 onAddMood = { navController.navigate(HomeScreen.MoodCheck) },
@@ -103,6 +104,7 @@ fun NavGraphBuilder.homeScreenGraph(navController: NavHostController) {
         }
 
         composable<HomeScreen.MoodCheck> {
+            MoodTrackerScreen(onBackClick = { navController.navigateUp() })
             // TODO: MoodTrackerScreen
         }
     }
@@ -127,11 +129,7 @@ fun NavGraphBuilder.medicationsGraph(navController: NavHostController) {
             // TODO: MedicationsListScreen
         }
         composable<MedicationScreen.AddMedication> {
-            NewMedicationDataScreen(
-                navigateBack = {
-                    navController.navigateUp()
-                }
-            )
+            NewMedicationDataScreen(navigateBack = { navController.navigateUp() })
             // TODO: AddMedicationScreen
         }
         composable<MedicationScreen.ViewMedication> { navBackStackEntry ->

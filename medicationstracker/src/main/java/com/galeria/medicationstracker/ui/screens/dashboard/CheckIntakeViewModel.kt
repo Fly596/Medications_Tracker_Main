@@ -9,6 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalTime
 import javax.inject.Inject
 
+// ? why.
 data class IntakeUiState(
     val status: IntakeStatus = IntakeStatus.PENDING,
     val intakeTime: LocalTime = LocalTime.now(),
