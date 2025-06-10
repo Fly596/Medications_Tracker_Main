@@ -12,7 +12,6 @@ import com.galeria.medicationstracker.data.NewUserMedication
 import com.galeria.medicationstracker.utils.FirestoreFunctions.FirestoreService.db
 import com.galeria.medicationstracker.utils.toTimestamp
 import com.google.firebase.Timestamp
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.Source
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -111,6 +110,8 @@ constructor(
                     userId = uid.toString(),
                     medicationId = medication.id,
                     status = status.name,
+                    presetTime = medication.intakeTime,
+                    timestamp = intakeTime
                 )
             intakeRepository.addUserIntake(uid.toString(), intake)
         }
@@ -120,18 +121,18 @@ constructor(
     // -1: error; 0: noData, 1: skipped, 2: taken
     // ! перегести в репо.
     suspend fun fetchIntakeStatus(medication: NewUserMedication): Int {
+        val uid = authRepository.getUserId().getOrThrow()
+        
         val todayStart = LocalDate.now().atStartOfDay().toTimestamp()
         val todayEnd = LocalDate.now().plusDays(1).atStartOfDay().toTimestamp()
         return try {
             val querySnapshot =
                 db.collection("User")
-                    .document(
-                        "${FirebaseAuth.getInstance().currentUser?.email}"
-                    )
+                    .document(uid.toString())
                     .collection("intakes")
-                    .whereEqualTo("medicationName", medication.name)
-                    .whereGreaterThanOrEqualTo("dateTime", todayStart)
-                    .whereLessThan("dateTime", todayEnd)
+                    .whereEqualTo("medicationId", medication.id)
+                    .whereGreaterThanOrEqualTo("timestamp", todayStart)
+                    .whereLessThan("timestamp", todayEnd)
                     .limit(1)
                     .get(Source.SERVER)
                     .await()
@@ -140,8 +141,7 @@ constructor(
                 if (
                     querySnapshot
                         .toObjects(NewUserIntake::class.java)[0]
-                        .status
-                        .toString() == "TAKEN"
+                        .status == "TAKEN"
                 )
                     2
                 else 1

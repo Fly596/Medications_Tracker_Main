@@ -160,7 +160,9 @@ fun MedicationItem(
         Spacer(modifier = Modifier.weight(1f))
         // State to control the check icon.
         var status by remember { mutableIntStateOf(0) }
-        LaunchedEffect(medication) { status = viewModel.fetchIntakeStatus(medication) }
+        LaunchedEffect(medication) {
+            status = viewModel.fetchIntakeStatus(medication)
+        }
 
         Text(
             text =
