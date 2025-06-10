@@ -1,6 +1,5 @@
 package com.galeria.medicationstracker.ui.screens.medications.newmed
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -16,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DateRangePicker
@@ -62,6 +62,8 @@ import com.galeria.medicationstracker.ui.theme.MedTrackerTheme.typography
 import com.galeria.medicationstracker.utils.convertMillisToDate
 import com.galeria.medicationstracker.utils.formatDateStringToTimestampMMMMddyyyy
 import com.galeria.medicationstracker.utils.formatTimestampTillTheDayMMMMddyyyy
+import com.galeria.medicationstracker.utils.toLocalDate
+import com.galeria.medicationstracker.utils.toTimestamp
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
@@ -74,7 +76,7 @@ fun NewMedicationDataScreen(
     viewModelOld: AddNewMedViewModel = hiltViewModel(),
 ) {
     val state = viewModel.uiState.collectAsStateWithLifecycle()
-    
+
     MedTrackerTheme {
         Scaffold(
             containerColor = MedTrackerTheme.colors.secondaryBackground,
@@ -137,7 +139,7 @@ fun NewMedicationDataScreen(
                     item {
                         var selectedUnit by remember { mutableStateOf(state.value.medUnit) }
                         val unitOptions = MedicationUnit.entries.toTypedArray()
-                        
+
                         FlySimpleCard(
                             isPrimaryBackground = true,
                             modifier = Modifier.fillMaxWidth(),
@@ -190,7 +192,7 @@ fun NewMedicationDataScreen(
                             text = stringResource(R.string.intake_period),
                             style = typography.title2Emphasized,
                         )
-                        
+
                         Spacer(modifier = Modifier.padding(8.dp))
                         // состояние ввода даты.
                         var showDatePicker by rememberSaveable {
@@ -199,22 +201,23 @@ fun NewMedicationDataScreen(
                             )
                         }
                         
+                        Button(onClick = {
+                            showDatePicker = !showDatePicker
+                        }) { Text("set dates") }
                         TextField(
-                            value = "Start: ${state.value.medStartDate.toString()}.\nEnd: ${state.value.medEndDate.toString()}.",
+                            value =
+                                "Start: ${state.value.medStartDate.toString()}.\nEnd: ${state.value.medEndDate.toString()}.",
                             onValueChange = {},
                             readOnly = true,
                             maxLines = 2,
-                            modifier = Modifier.clickable {
-                                showDatePicker = !showDatePicker
-                            }
                         )
-                        
+
                         if (showDatePicker) {
                             DateRangePickerModalOld(
                                 onDateRangeSelected = {
                                     viewModel.updateStartDate(
                                         formatDateStringToTimestampMMMMddyyyy(
-                                            convertMillisToDate(it.second)
+                                            convertMillisToDate(it.first)
                                         )
                                     )
                                     viewModel.updateEndDate(
@@ -225,7 +228,7 @@ fun NewMedicationDataScreen(
                                 },
                                 onDismiss = {
                                     showDatePicker = !showDatePicker
-                                }
+                                },
                             )
                         }
                         // состояние ввода времени.
@@ -235,7 +238,7 @@ fun NewMedicationDataScreen(
                             )
                         }
                         Spacer(modifier = Modifier.padding(4.dp))
-                        
+
                         GSecondaryButton(
                             shape = MedTrackerTheme.shapes.extraLarge,
                             onClick = { showTimePicker = !showTimePicker },
@@ -247,7 +250,7 @@ fun NewMedicationDataScreen(
                             IntakeTimePicker(
                                 onConfirm = { showTimePicker = false },
                                 onDismiss = { showTimePicker = false },
-                                onSelectTime = { viewModel.updateIntakeTime(it) }
+                                onSelectTime = { viewModel.updateIntakeTime(it) },
                             )
                         }
                     }
@@ -301,21 +304,21 @@ fun ModalDatePickerOld(viewModel: AddNewMedViewModel) {
                         state.value.medStartDate!!
                     )
                 }\nEnd: ${formatTimestampTillTheDayMMMMddyyyy(state.value.medEndDate!!)}"
-            
+
             state.value.medStartDate != null ->
                 "Start: ${
                     formatTimestampTillTheDayMMMMddyyyy(
                         state.value.medStartDate!!
                     )
                 }"
-            
+
             state.value.medEndDate != null ->
                 "End: ${
                     formatTimestampTillTheDayMMMMddyyyy(
                         state.value.medEndDate!!
                     )
                 }"
-            
+
             else -> ""
         }
     Column {
@@ -340,15 +343,13 @@ fun ModalDatePickerOld(viewModel: AddNewMedViewModel) {
             DateRangePickerModalOld(
                 onDateRangeSelected = {
                     viewModel.updateStartDate(
-                        formatDateStringToTimestampMMMMddyyyy(
-                            convertMillisToDate(it.first)
-                        )
+                        it.first?.toLocalDate()?.toTimestamp()
+                        // formatDateStringToTimestampMMMMddyyyy(convertMillisToDate(it.first))
                     )
                     viewModel.updateEndDate(
-                        formatDateStringToTimestampMMMMddyyyy(
-                            convertMillisToDate(it.second)
-                        )
+                        it.second?.toLocalDate()?.toTimestamp()
                     )
+
                     showPicker = !showPicker
                 },
                 onDismiss = { showPicker = !showPicker },
@@ -376,6 +377,7 @@ fun DateRangePickerModalOld(
                             dateRangePickerState.selectedEndDateMillis,
                         )
                     )
+                    onDismiss.invoke()
                 }
             ) {
                 Text("OK")
@@ -400,7 +402,7 @@ fun DateRangePickerModalOld(
 fun IntakeTimePicker(
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
-    onSelectTime: (String) -> Unit
+    onSelectTime: (String) -> Unit,
     // viewModel: AddNewMedViewModel
 ) {
     Dialog(onDismissRequest = onDismiss) {
@@ -485,4 +487,3 @@ fun IntakeTimePicker(
         }
     }
 }
-

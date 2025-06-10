@@ -109,7 +109,8 @@ class AddNewMedViewModel : ViewModel() {
         //}
         //}
     }
-
+    
+    
     fun updateStartDate(input: Timestamp?) {
         uiState.value = uiState.value.copy(medStartDate = input ?: Timestamp.now())
     }
