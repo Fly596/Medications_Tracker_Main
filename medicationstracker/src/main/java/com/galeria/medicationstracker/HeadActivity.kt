@@ -43,7 +43,6 @@ class HeadActivity : ComponentActivity() {
     private var currentDestination: GraphRoutes = startDestinations[0]
     private val headViewModel: HeadViewModel by viewModels()
 
-
     override fun onStart() {
         super.onStart()
 
