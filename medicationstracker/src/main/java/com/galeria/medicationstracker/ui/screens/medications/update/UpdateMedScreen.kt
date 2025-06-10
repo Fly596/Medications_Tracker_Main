@@ -14,7 +14,6 @@ import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TimePicker
@@ -128,10 +127,10 @@ fun UpdateMedScreen(
                             options.forEach { form ->
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Text(text = form.toString().lowercase())
-                                    RadioButton(
-                                        selected = selectedForm == form,
-                                        onClick = { viewModel.updateMedForm(form) },
-                                    )
+                                    /*          RadioButton(
+                                                 selected = selectedForm == form,
+                                                 onClick = { viewModel.updateMedForm(form) },
+                                             ) */
                                 }
                             }
                         }
@@ -182,18 +181,17 @@ fun UpdateMedScreen(
                         style = typography.title2,
                     )
                     Spacer(modifier = Modifier.padding(4.dp))
-
-                    MyTextField(
-                        value = state.value.notes, // Assuming you have a medNotes state property
-                        onValueChange = {
-                            viewModel.updateNotes(it)
-                        }, // Update the notes state property
-                        label = stringResource(R.string.medication_notes),
-                        placeholder = currentMed?.name,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                        modifier = Modifier.fillMaxWidth(),
-                        // maxLines = 4, // Adjust max lines as needed
-                    )
+                    // MyTextField(
+                    //     value = state.value.notes, // Assuming you have a medNotes state property
+                    //     onValueChange = {
+                    //         viewModel.updateNotes(it)
+                    //     }, // Update the notes state property
+                    //     label = stringResource(R.string.medication_notes),
+                    //     placeholder = currentMed?.name,
+                    //     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                    //     modifier = Modifier.fillMaxWidth(),
+                    //     // maxLines = 4, // Adjust max lines as needed
+                    // )
                 }
                 // Strength input
                 item {
