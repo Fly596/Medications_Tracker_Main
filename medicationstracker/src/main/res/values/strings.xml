@@ -58,5 +58,6 @@
     <string name="history">History</string>
     <string name="unit">Unit</string>
     <string name="how_are_you_feeling_today">How are you feeling today?</string>
+    <string name="title_activity_test">TestActivity</string>
 
 </resources>

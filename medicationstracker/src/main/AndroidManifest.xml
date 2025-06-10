@@ -12,6 +12,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SpeechRecognitionApp">
         <activity
+            android:name=".TestActivity"
+            android:exported="true"
+            android:label="@string/title_activity_test"
+            android:theme="@style/Theme.SpeechRecognitionApp">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".HeadActivity"
             android:exported="true"
             android:theme="@style/Theme.SpeechRecognitionApp">
