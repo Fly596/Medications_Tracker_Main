@@ -1,6 +1,5 @@
 package com.galeria.medicationstracker.ui.screens.auth.signup
 
-import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.galeria.medicationstracker.data.AuthRepository
@@ -10,8 +9,6 @@ import com.galeria.medicationstracker.utils.toTimestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -41,9 +38,7 @@ constructor(private val repository: AuthRepository, private val userRepo: NewUse
     private val _uiState = MutableStateFlow(SignupScreenState())
     val uiState = _uiState.asStateFlow()
     private val _signupSuccessEvent = MutableSharedFlow<Unit>()
-    val signupSuccessEvent: SharedFlow<Unit> = _signupSuccessEvent.asSharedFlow()
 
-    // private val db = FirestoreFunctions.FirestoreService.db
     fun onRegisterClick() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, generalError = null) }
@@ -52,9 +47,7 @@ constructor(private val repository: AuthRepository, private val userRepo: NewUse
             result.fold(
                 onSuccess = {
                     val newUserId = repository.getUserId()
-                    
                     val birthDateTimestamp = _uiState.value.selectedBirthDate.toTimestamp()
-                    
                     
                     _uiState.update { it.copy(isLoading = false) }
                     val user: NewUser =
@@ -78,31 +71,6 @@ constructor(private val repository: AuthRepository, private val userRepo: NewUse
         }
     }
 
-    fun addUserData() {
-        viewModelScope.launch {
-            val newUser = NewUser(name = _uiState.value.name, email = _uiState.value.email)
-            userRepo.addUser(newUser)
-        }
-        /*         db.collection("User")
-        .document(newUser.email.toString())
-        .set(newUser)
-        .addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                viewModelScope.launch {
-                    SnackbarController.sendEvent(
-                        event = SnackbarEvent(message = "Account Created!")
-                    )
-                }
-            } else {
-                viewModelScope.launch {
-                    SnackbarController.sendEvent(
-                        event = SnackbarEvent(message = "Something went wrong :(")
-                    )
-                }
-            }
-        } */
-    }
-
     fun updateUserName(input: String) {
         _uiState.value = _uiState.value.copy(name = input)
     }
@@ -119,49 +87,11 @@ constructor(private val repository: AuthRepository, private val userRepo: NewUse
         _uiState.value = _uiState.value.copy(showPassword = !input)
     }
 
-    fun onDateSelected(date: LocalDate) {
-        _uiState.update { it.copy(selectedBirthDate = date) }
-    }
-
     fun showDatePicker() {
         _uiState.update { it.copy(showDatePicker = true) }
     }
 
     fun dismissDatePicker() {
         _uiState.update { it.copy(showDatePicker = false) }
-    }
-
-    private fun validateEmail(): Boolean {
-        val emailInput = _uiState.value.email.trim()
-        var isValid = true
-        var errorMessage = ""
-
-        if (emailInput.isBlank() || emailInput.isEmpty()) {
-            errorMessage = "Email cannot be empty"
-            isValid = false
-        } else if (!Patterns.EMAIL_ADDRESS.matcher(emailInput).matches()) {
-            errorMessage = "Wrong email format"
-            isValid = false
-        }
-
-        _uiState.value = _uiState.value.copy(emailErrorMessage = errorMessage)
-        return isValid
-    }
-
-    private fun validatePassword(): Boolean {
-        val passwordInput = _uiState.value.password
-        var isValid = true
-        var errorMessage = ""
-
-        if (passwordInput.isBlank() || passwordInput.isEmpty()) {
-            errorMessage = "Password cannot be empty"
-            isValid = false
-        } else if (passwordInput.length < 6) {
-            errorMessage = "Password must be at least 6 characters"
-            isValid = false
-        }
-
-        _uiState.value = _uiState.value.copy(passwordErrorMessage = errorMessage)
-        return isValid
     }
 }
