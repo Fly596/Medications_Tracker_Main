@@ -53,11 +53,12 @@ import com.galeria.medicationstracker.ui.theme.MedTrackerTheme.colors
 @Composable
 fun UserProfileScreen(
     modifier: Modifier = Modifier,
-    onProfileClick: () -> Unit = {},
+    onEditProfileClick: () -> Unit = {},
     onNotesClick: () -> Unit = {},
     viewModel: ProfileVM = hiltViewModel(),
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    
     MedTrackerTheme {
         Scaffold(
             containerColor = colors.secondaryBackground,
@@ -116,7 +117,7 @@ fun UserProfileScreen(
                     GPrimaryButton(
                         modifier = Modifier.fillMaxWidth(),
                         onClick = {
-                            onProfileClick.invoke()
+                            onEditProfileClick.invoke()
                             // Todo: open edit profile screen
                         },
                     ) {

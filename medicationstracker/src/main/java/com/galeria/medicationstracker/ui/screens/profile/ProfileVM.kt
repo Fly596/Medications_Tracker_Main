@@ -1,17 +1,17 @@
 package com.galeria.medicationstracker.ui.screens.profile
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.galeria.medicationstracker.data.AuthRepository
 import com.galeria.medicationstracker.data.NewUser
 import com.galeria.medicationstracker.data.NewUserIntake
 import com.galeria.medicationstracker.data.NewUserMedication
 import com.galeria.medicationstracker.data.NewUserRepository
-import com.galeria.medicationstracker.utils.FirestoreFunctions.FirestoreService
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.SetOptions.merge
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 // ? TODO: decide what to show on screens.
@@ -23,125 +23,32 @@ data class ProfileScreenUiState(
     val name: String = "",
     val intakes: List<NewUserIntake> = emptyList(),
     val medications: List<NewUserMedication> = emptyList(),
+    val errorMessage: String? = null,
 )
 
 @HiltViewModel
-class ProfileVM @Inject constructor(
-    private val repository: NewUserRepository
+class ProfileVM
+@Inject
+constructor(
+    private val userRepository: NewUserRepository,
+    private val authRepository: AuthRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProfileScreenUiState())
     val uiState = _uiState.asStateFlow()
-    val db = FirestoreService.db
-    private val firebaseAuth = FirebaseAuth.getInstance()
-    val currentUser = firebaseAuth.currentUser
-    private val currentUserId = firebaseAuth.currentUser?.uid
 
     init {
-        /*         viewModelScope.launch {
-                    val repoUser = repository.getUserData()
-                    val repoIntakes = repository.getUserIntakes(currentUserId.toString())
-                    _uiState.value = _uiState.value.copy(user = repoUser, intakes = repoIntakes)
-                }
-        
-                viewModelScope.launch {
-                    // val user = repository.getUserData()
-                    // val medications = repository.getUserDrugs()
-                     *//*             _uiState.value =
-                            _uiState.value.copy(user = user, medications = medications) *//*
-
-            repository.getUserIntakesFlow((currentUserId.toString()))
-                .collect { intakes ->
-                    _uiState.value = _uiState.value.copy(
-                        intakes = intakes,
-                    )
-                }
-        } */
-    }
-
-    /*     private fun fetchUserData() {
-            viewModelScope.launch {
-                val userRef = db.collection("User")
-                    .document(currentUser?.email.toString())
-                val source = Source.DEFAULT
+        viewModelScope.launch {
+            try {
+                val uid = authRepository.getUserId().getOrNull()
+                val resultUserData =
+                    userRepository.getUserData(uid.toString()).getOrThrow()
                 
-                try {
-                    userRef.get(source)
-                        .addOnSuccessListener { result ->
-                            val user = result.toObject(User::class.java)
-                            _uiState.value = _uiState.value.copy(user = user)
-                        }
-                        .addOnFailureListener { exp ->
-                            println("Error fetching user data: ${exp.message}")
-                        }
-                } catch (e: Exception) {
-                    println("Error fetching user data: ${e.message}")
-                }
+                _uiState.update { it.copy(user = resultUserData) }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(errorMessage = "ERROR: ${e.message}") }
             }
-            
-        } */
-
-    fun updateAgeFirestore() {
-        val userRef = db.collection("User")
-            .document(currentUser?.email.toString())
-
-        userRef.set(
-            mapOf("age" to _uiState.value.age),
-            merge()
-        )
-            .addOnSuccessListener {
-                Log.d("ProfileVM", "DocumentSnapshot added successfully!")
-            }
-            .addOnFailureListener { e ->
-                Log.w("ProfileVM", "Error adding document", e)
-            }
-    }
-
-    fun updateWeightFirestore() {
-        val userRef = db.collection("User")
-            .document(currentUser?.email.toString())
-
-        userRef.set(
-            mapOf("weight" to _uiState.value.weight),
-            merge()
-        )
-            .addOnSuccessListener {
-                Log.d("ProfileVM", "DocumentSnapshot added successfully!")
-            }
-            .addOnFailureListener { e ->
-                Log.w("ProfileVM", "Error adding document", e)
-            }
-    }
-
-    fun updateHeightFirestore() {
-        val userRef = db.collection("User")
-            .document(currentUser?.email.toString())
-
-        userRef.set(
-            mapOf("height" to _uiState.value.height),
-            merge()
-        )
-            .addOnSuccessListener {
-                Log.d("ProfileVM", "DocumentSnapshot added successfully!")
-            }
-            .addOnFailureListener { e ->
-                Log.w("ProfileVM", "Error adding document", e)
-            }
-    }
-
-    fun updateNameFirestore() {
-        val userRef = db.collection("User")
-            .document(currentUser?.email.toString())
-        userRef.set(
-            mapOf("name" to _uiState.value.name),
-            merge()
-        )
-            .addOnSuccessListener {
-                Log.d("ProfileVM", "DocumentSnapshot added successfully!")
-            }
-            .addOnFailureListener { e ->
-                Log.w("ProfileVM", "Error adding document", e)
-            }
+        }
     }
 
     fun updateName(name: String) {

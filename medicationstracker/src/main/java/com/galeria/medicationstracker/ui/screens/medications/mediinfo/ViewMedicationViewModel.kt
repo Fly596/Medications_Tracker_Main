@@ -1,13 +1,15 @@
 package com.galeria.medicationstracker.ui.screens.medications.mediinfo
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.galeria.medicationstracker.data.AuthRepository
 import com.galeria.medicationstracker.data.NewMedicationRepository
+import com.galeria.medicationstracker.data.NewUserIntake
 import com.galeria.medicationstracker.data.NewUserMedication
-import com.galeria.medicationstracker.utils.navigation.RoutesOld.PatientRoutes
+import com.galeria.medicationstracker.utils.navigation.MedicationScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,6 +19,7 @@ import javax.inject.Inject
 
 data class MedicationDetailsUiState(
     val medication: NewUserMedication? = null,
+    val medicationIntakes: List<NewUserIntake> = emptyList(),
     val isLoading: Boolean = false,
 )
 
@@ -29,33 +32,35 @@ constructor(
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private val medDetails: PatientRoutes.PatientViewMedication = savedStateHandle.toRoute()
     private val _uiState = MutableStateFlow(MedicationDetailsUiState())
     val uiState = _uiState.asStateFlow()
-    private lateinit var currentUserId: String
-    private lateinit var currentUserEmail: String
 
     init {
         viewModelScope.launch {
-            // Получение id и почты пользователя.
-            val emailResult = authRepository.getUserEmail()
-            val uidResult = authRepository.getUserId()
-
-            if (emailResult.isSuccess && uidResult.isSuccess) {
-                currentUserEmail = emailResult.getOrNull().toString()
-                currentUserId = uidResult.getOrNull().toString()
-
-                getMedDetails()
+            try {
+                val uid = authRepository.getUserId().getOrThrow()
+                val args =
+                    savedStateHandle.toRoute<MedicationScreen.ViewMedication>()
+                val medId = args.medicationId
+                
+                getMedDetails(medId, uid.toString())
+            } catch (e: Exception) {
+                Log.e("checkIntake", "Error fetching intake data", e)
             }
         }
     }
-
-    private fun getMedDetails() {
+    
+    private fun getMedDetails(medId: String? = null, uid: String? = null) {
         viewModelScope.launch {
-            val temp = medicationRepository.getMedication(currentUserId, medDetails.medicationId)
-
-            if (temp.isSuccess) {
-                _uiState.update { it.copy(medication = temp.getOrNull()) }
+            try {
+                val result = medicationRepository.getMedication(
+                    uid.toString(),
+                    medId.toString()
+                ).getOrThrow()
+                
+                _uiState.update { it.copy(medication = result) }
+            } catch (e: Exception) {
+                Log.e("checkIntake", "Error fetching intake data", e)
             }
         }
     }

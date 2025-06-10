@@ -117,9 +117,7 @@ fun NavGraphBuilder.medicationsGraph(navController: NavHostController) {
                 onAddClick = { navController.navigate(MedicationScreen.AddMedication) },
                 onViewClick = { id ->
                     navController.navigate(
-                        MedicationScreen.ViewMedication(
-                            id
-                        )
+                        MedicationScreen.ViewMedication(id)
                     )
                 },
                 onEditClick = { id ->
@@ -147,7 +145,7 @@ fun NavGraphBuilder.profileGraph(navController: NavHostController) {
     navigation<GraphRoutes.PatientDashboard>(startDestination = ProfileScreen.ProfileMain) {
         composable<ProfileScreen.ProfileMain> {
             UserProfileScreen(
-                onProfileClick = { navController.navigate(ProfileScreen.ProfileOverview) },
+                onEditProfileClick = { navController.navigate(ProfileScreen.ProfileOverview) },
                 onNotesClick = { navController.navigate(ProfileScreen.Notes) },
             )
         }

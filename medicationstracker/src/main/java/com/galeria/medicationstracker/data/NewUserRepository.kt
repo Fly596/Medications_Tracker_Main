@@ -8,8 +8,8 @@ import javax.inject.Singleton
 interface NewUserRepository {
 
     suspend fun addUser(user: NewUser): Result<String>
-
-    suspend fun getUser(userId: String): Result<NewUser>
+    
+    suspend fun getUserData(userId: String): Result<NewUser>
 
     suspend fun updateUser(user: NewUser): Result<Unit>
 }
@@ -34,8 +34,8 @@ class NewUserRepositoryImpl @Inject constructor(private val firestore: FirebaseF
             Result.failure(e)
         }
     }
-
-    override suspend fun getUser(userId: String): Result<NewUser> {
+    
+    override suspend fun getUserData(userId: String): Result<NewUser> {
         return try {
             val documentSnapshot =
                 firestore.collection(USERS_COLLECTION).document(userId).get().await()
