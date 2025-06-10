@@ -1,5 +1,6 @@
 package com.galeria.medicationstracker.ui.screens.medications.newmed
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -25,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TimePickerDefaults
 import androidx.compose.material3.rememberDateRangePickerState
@@ -33,6 +35,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -71,7 +74,7 @@ fun NewMedicationDataScreen(
     viewModelOld: AddNewMedViewModel = hiltViewModel(),
 ) {
     val state = viewModel.uiState.collectAsStateWithLifecycle()
-    // val stateOld = viewModelOld.uiState.collectAsStateWithLifecycle()
+    
     MedTrackerTheme {
         Scaffold(
             containerColor = MedTrackerTheme.colors.secondaryBackground,
@@ -189,7 +192,22 @@ fun NewMedicationDataScreen(
                         )
                         
                         Spacer(modifier = Modifier.padding(8.dp))
-                        var showDatePicker by remember { mutableStateOf(false) }
+                        // состояние ввода даты.
+                        var showDatePicker by rememberSaveable {
+                            mutableStateOf(
+                                false
+                            )
+                        }
+                        
+                        TextField(
+                            value = "Start: ${state.value.medStartDate.toString()}.\nEnd: ${state.value.medEndDate.toString()}.",
+                            onValueChange = {},
+                            readOnly = true,
+                            maxLines = 2,
+                            modifier = Modifier.clickable {
+                                showDatePicker = !showDatePicker
+                            }
+                        )
                         
                         if (showDatePicker) {
                             DateRangePickerModalOld(
@@ -210,12 +228,17 @@ fun NewMedicationDataScreen(
                                 }
                             )
                         }
-                        var showTimePicker by remember { mutableStateOf(false) }
+                        // состояние ввода времени.
+                        var showTimePicker by rememberSaveable {
+                            mutableStateOf(
+                                false
+                            )
+                        }
                         Spacer(modifier = Modifier.padding(4.dp))
                         
                         GSecondaryButton(
                             shape = MedTrackerTheme.shapes.extraLarge,
-                            onClick = { showTimePicker = true },
+                            onClick = { showTimePicker = !showTimePicker },
                         ) {
                             Text(stringResource(R.string.set_time))
                         }
@@ -338,7 +361,7 @@ fun ModalDatePickerOld(viewModel: AddNewMedViewModel) {
 @Composable
 fun DateRangePickerModalOld(
     onDateRangeSelected: (Pair<Long?, Long?>) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
 ) {
     val dateRangePickerState = rememberDateRangePickerState()
     
