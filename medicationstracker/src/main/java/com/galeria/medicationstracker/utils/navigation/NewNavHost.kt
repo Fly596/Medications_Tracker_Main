@@ -16,6 +16,7 @@ import com.galeria.medicationstracker.ui.screens.dashboard.CheckIntakeScreen
 import com.galeria.medicationstracker.ui.screens.dashboard.DailyMedsScreen
 import com.galeria.medicationstracker.ui.screens.dashboard.moodtracker.MoodTrackerScreen
 import com.galeria.medicationstracker.ui.screens.medications.MedicationsScreen
+import com.galeria.medicationstracker.ui.screens.medications.mediinfo.ViewMedicationInfoScreen
 import com.galeria.medicationstracker.ui.screens.medications.newmed.NewMedicationDataScreen
 import com.galeria.medicationstracker.ui.screens.profile.UserProfileScreen
 import com.galeria.medicationstracker.ui.screens.profile.notes.NotesScreen
@@ -52,7 +53,7 @@ sealed class GraphRoutes(val route: String) {
     
     @Serializable
     data object Medications : GraphRoutes("medications")
-
+    
     @Serializable
     data object PatientDashboard : GraphRoutes("patient_dashboard")
 }
@@ -75,11 +76,11 @@ fun NavGraphBuilder.authGraph(navController: NavHostController) {
                 },
             )
         }
-
+        
         composable<AuthScreen.Registration> {
             SignupScreen(navigateHome = { navController.navigateUp() })
         }
-
+        
         composable<AuthScreen.PasswordRecovery> {
             ResetPasswordScreen(navigateHome = { navController.navigateUp() })
         }
@@ -96,7 +97,7 @@ fun NavGraphBuilder.homeScreenGraph(navController: NavHostController) {
                 onAddIntake = {},
             )
         }
-
+        
         composable<HomeScreen.IntakeCheck> { navBackStackEntry ->
             val intakeDialog: HomeScreen.IntakeCheck =
                 navBackStackEntry.toRoute()
@@ -105,7 +106,7 @@ fun NavGraphBuilder.homeScreenGraph(navController: NavHostController) {
                 onNavigateBack = { navController.navigateUp() },
             )
         }
-
+        
         composable<HomeScreen.MoodCheck> {
             MoodTrackerScreen(onBackClick = { navController.navigateUp() })
             // TODO: MoodTrackerScreen
@@ -142,6 +143,9 @@ fun NavGraphBuilder.medicationsGraph(navController: NavHostController) {
         composable<MedicationScreen.ViewMedication> { navBackStackEntry ->
             val viewMedication: MedicationScreen.ViewMedication =
                 navBackStackEntry.toRoute()
+            ViewMedicationInfoScreen(
+                onNavigateToMedsList = { navController.navigateUp() }
+            )
             // TODO: ViewMedicationScreen(medicationId =
             // viewMedication.medicationId)
         }

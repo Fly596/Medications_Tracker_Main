@@ -40,12 +40,17 @@ fun MedicationsScreen(
     medicationsViewModel: MedicationsViewModel = hiltViewModel(),
 ) {
     val uiState by medicationsViewModel.uiState.collectAsStateWithLifecycle()
-
+    
     MedTrackerTheme {
         Scaffold(
             containerColor = MedTrackerTheme.colors.secondaryBackground,
             topBar = {
-                Row(modifier = Modifier.padding(vertical = 24.dp, horizontal = 16.dp)) {
+                Row(
+                    modifier = Modifier.padding(
+                        vertical = 24.dp,
+                        horizontal = 16.dp
+                    )
+                ) {
                     // today's date.
                     Text(
                         text = stringResource(R.string.medications),
@@ -117,12 +122,15 @@ fun FlyElevatedCardMedsList(
                     .padding(16.dp),
             verticalAlignment = Alignment.Top,
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier
+            ) {
                 Text(
                     medication?.name ?: "Med Name",
                     style = typography.headline
                 )
-
+                
                 Spacer(modifier = Modifier)
                 
                 Text(
@@ -133,13 +141,17 @@ fun FlyElevatedCardMedsList(
                     medication?.intakeTime ?: "Intake Time",
                     style = typography.bodyMedium
                 )
+                Text(
+                    medication?.daysOfWeek.toString() ?: "Days of Week",
+                    style = typography.bodyMedium
+                )
             }
-
+            
             Spacer(modifier = Modifier.weight(1f))
-
+            
             Column(Modifier, horizontalAlignment = Alignment.End) {
                 GTextButton(onEditClick) { Text("Edit") }
-
+                
                 GTextButton(
                     errorButton = true,
                     onClick = { onRemoveMedClick.invoke() },
@@ -156,9 +168,11 @@ fun FlyElevatedCardMedsList(
 @Composable
 fun FlyElevatedCardMedsListPreview() {
     MedTrackerTheme {
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
             FlyElevatedCardMedsList(
                 onEditClick = { /*TODO*/ },
                 onRemoveMedClick = { /*TODO*/ },
