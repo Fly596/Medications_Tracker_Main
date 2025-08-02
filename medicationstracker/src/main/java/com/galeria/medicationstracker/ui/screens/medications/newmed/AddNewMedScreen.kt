@@ -47,7 +47,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medicationstracker.R
-import com.galeria.medicationstracker.data.MedicationForm
+import com.galeria.medicationstracker.data.network.MedicationForm
 import com.galeria.medicationstracker.data.old.MedicationUnit
 import com.galeria.medicationstracker.ui.components.GDropdownList
 import com.galeria.medicationstracker.ui.components.GOutlinedButton
@@ -76,7 +76,7 @@ fun NewMedicationDataScreen(
     viewModelOld: AddNewMedViewModel = hiltViewModel(),
 ) {
     val state = viewModel.uiState.collectAsStateWithLifecycle()
-
+    
     MedTrackerTheme {
         Scaffold(
             containerColor = MedTrackerTheme.colors.secondaryBackground,
@@ -139,7 +139,7 @@ fun NewMedicationDataScreen(
                     item {
                         var selectedUnit by remember { mutableStateOf(state.value.medUnit) }
                         val unitOptions = MedicationUnit.entries.toTypedArray()
-
+                        
                         FlySimpleCard(
                             isPrimaryBackground = true,
                             modifier = Modifier.fillMaxWidth(),
@@ -192,7 +192,7 @@ fun NewMedicationDataScreen(
                             text = stringResource(R.string.intake_period),
                             style = typography.title2Emphasized,
                         )
-
+                        
                         Spacer(modifier = Modifier.padding(8.dp))
                         // состояние ввода даты.
                         var showDatePicker by rememberSaveable {
@@ -211,7 +211,7 @@ fun NewMedicationDataScreen(
                             readOnly = true,
                             maxLines = 2,
                         )
-
+                        
                         if (showDatePicker) {
                             DateRangePickerModalOld(
                                 onDateRangeSelected = {
@@ -238,7 +238,7 @@ fun NewMedicationDataScreen(
                             )
                         }
                         Spacer(modifier = Modifier.padding(4.dp))
-
+                        
                         GSecondaryButton(
                             shape = MedTrackerTheme.shapes.extraLarge,
                             onClick = { showTimePicker = !showTimePicker },
@@ -304,21 +304,21 @@ fun ModalDatePickerOld(viewModel: AddNewMedViewModel) {
                         state.value.medStartDate!!
                     )
                 }\nEnd: ${formatTimestampTillTheDayMMMMddyyyy(state.value.medEndDate!!)}"
-
+            
             state.value.medStartDate != null ->
                 "Start: ${
                     formatTimestampTillTheDayMMMMddyyyy(
                         state.value.medStartDate!!
                     )
                 }"
-
+            
             state.value.medEndDate != null ->
                 "End: ${
                     formatTimestampTillTheDayMMMMddyyyy(
                         state.value.medEndDate!!
                     )
                 }"
-
+            
             else -> ""
         }
     Column {
@@ -349,7 +349,7 @@ fun ModalDatePickerOld(viewModel: AddNewMedViewModel) {
                     viewModel.updateEndDate(
                         it.second?.toLocalDate()?.toTimestamp()
                     )
-
+                    
                     showPicker = !showPicker
                 },
                 onDismiss = { showPicker = !showPicker },

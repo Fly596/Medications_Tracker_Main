@@ -1,5 +1,6 @@
 package com.galeria.medicationstracker.data
 
+import com.galeria.medicationstracker.data.network.NetworkUserNote
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -9,48 +10,56 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 interface NewNoteRepository {
-
-    fun observeUserNotes(userId: String): Flow<List<NewUserNote>>
-
-    suspend fun getNote(userId: String, noteId: String): Result<NewUserNote>
-
-    suspend fun addNote(userId: String, noteData: NewUserNote): Result<String>
-
-    suspend fun updateNote(userId: String, note: NewUserNote): Result<Unit>
-
+    
+    fun observeUserNotes(userId: String): Flow<List<NetworkUserNote>>
+    
+    suspend fun getNote(userId: String, noteId: String): Result<NetworkUserNote>
+    
+    suspend fun addNote(
+        userId: String,
+        noteData: NetworkUserNote
+    ): Result<String>
+    
+    suspend fun updateNote(userId: String, note: NetworkUserNote): Result<Unit>
+    
     suspend fun deleteNote(userId: String, noteId: String): Result<Unit>
 }
 
 @Singleton
 class NewNoteRepositoryImpl @Inject constructor(private val firestore: FirebaseFirestore) :
     NewNoteRepository {
-
+    
     companion object {
-
+        
         private const val USERS_COLLECTION = "User"
         private const val NOTES_SUBCOLLECTION = "notes"
     }
-
-    override fun observeUserNotes(userId: String): Flow<List<NewUserNote>> = callbackFlow {
-        val listenerRegistration =
-            firestore
-                .collection(USERS_COLLECTION)
-                .document(userId)
-                .collection(NOTES_SUBCOLLECTION)
-                .addSnapshotListener { snapshot, error ->
-                    if (error != null) {
-                        close(error)
-                        return@addSnapshotListener
+    
+    override fun observeUserNotes(userId: String): Flow<List<NetworkUserNote>> =
+        callbackFlow {
+            val listenerRegistration =
+                firestore
+                    .collection(USERS_COLLECTION)
+                    .document(userId)
+                    .collection(NOTES_SUBCOLLECTION)
+                    .addSnapshotListener { snapshot, error ->
+                        if (error != null) {
+                            close(error)
+                            return@addSnapshotListener
+                        }
+                        if (snapshot != null) {
+                            val notes =
+                                snapshot.toObjects(NetworkUserNote::class.java)
+                            trySend(notes).isSuccess
+                        }
                     }
-                    if (snapshot != null) {
-                        val notes = snapshot.toObjects(NewUserNote::class.java)
-                        trySend(notes).isSuccess
-                    }
-                }
-        awaitClose { listenerRegistration.remove() }
-    }
-
-    override suspend fun getNote(userId: String, noteId: String): Result<NewUserNote> {
+            awaitClose { listenerRegistration.remove() }
+        }
+    
+    override suspend fun getNote(
+        userId: String,
+        noteId: String
+    ): Result<NetworkUserNote> {
         return try {
             val documentSnapshot =
                 firestore
@@ -61,7 +70,8 @@ class NewNoteRepositoryImpl @Inject constructor(private val firestore: FirebaseF
                     .get()
                     .await()
             if (documentSnapshot.exists()) {
-                val note = documentSnapshot.toObject(NewUserNote::class.java)
+                val note =
+                    documentSnapshot.toObject(NetworkUserNote::class.java)
                 if (note != null) {
                     Result.success(note)
                 } else {
@@ -74,10 +84,13 @@ class NewNoteRepositoryImpl @Inject constructor(private val firestore: FirebaseF
             Result.failure(e)
         }
     }
-
-    override suspend fun addNote(userId: String, noteData: NewUserNote): Result<String> {
+    
+    override suspend fun addNote(
+        userId: String,
+        noteData: NetworkUserNote
+    ): Result<String> {
         val dataToSave = noteData.copy(userId = userId, id = "")
-
+        
         return try {
             val documentRef =
                 firestore
@@ -91,13 +104,16 @@ class NewNoteRepositoryImpl @Inject constructor(private val firestore: FirebaseF
             Result.failure(e)
         }
     }
-
-    override suspend fun updateNote(userId: String, note: NewUserNote): Result<Unit> {
+    
+    override suspend fun updateNote(
+        userId: String,
+        note: NetworkUserNote
+    ): Result<Unit> {
         if (note.id.isBlank()) {
             return Result.failure(IllegalArgumentException("Note ID cannot be blank for update."))
         }
         val dataToSave = note.copy(userId = userId)
-
+        
         return try {
             firestore
                 .collection(USERS_COLLECTION)
@@ -111,8 +127,11 @@ class NewNoteRepositoryImpl @Inject constructor(private val firestore: FirebaseF
             Result.failure(e)
         }
     }
-
-    override suspend fun deleteNote(userId: String, noteId: String): Result<Unit> {
+    
+    override suspend fun deleteNote(
+        userId: String,
+        noteId: String
+    ): Result<Unit> {
         if (noteId.isBlank()) {
             return Result.failure(IllegalArgumentException("Note ID cannot be blank for delete."))
         }

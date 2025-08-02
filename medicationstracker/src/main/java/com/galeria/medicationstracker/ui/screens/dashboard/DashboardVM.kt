@@ -4,11 +4,11 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.galeria.medicationstracker.data.AuthRepository
-import com.galeria.medicationstracker.data.IntakeStatus
 import com.galeria.medicationstracker.data.NewIntakeRepository
 import com.galeria.medicationstracker.data.NewMedicationRepository
-import com.galeria.medicationstracker.data.NewUserIntake
-import com.galeria.medicationstracker.data.NewUserMedication
+import com.galeria.medicationstracker.data.network.IntakeStatus
+import com.galeria.medicationstracker.data.network.NetworkIntake
+import com.galeria.medicationstracker.data.network.NetworkMedication
 import com.galeria.medicationstracker.utils.FirestoreFunctions.FirestoreService.db
 import com.galeria.medicationstracker.utils.toTimestamp
 import com.google.firebase.Timestamp
@@ -27,11 +27,11 @@ import javax.inject.Inject
 data class DashboardUiState(
     val isLoading: Boolean = true, // Добавим состояние загрузки
     val errorMessage: String? = null, // Для отображения ошибок
-    val currentTakenMedications: List<NewUserMedication> = emptyList(),
+    val currentTakenMedications: List<NetworkMedication> = emptyList(),
 )
 
 data class AddIntakeUiState(
-    val selectedMedication: NewUserMedication? = null,
+    val selectedMedication: NetworkMedication? = null,
     val selectedMedicationId: String = "",
     val status: IntakeStatus = IntakeStatus.PENDING,
     val selectedIntakeTime: LocalTime = LocalTime.now(),
@@ -45,16 +45,16 @@ constructor(
     private val medicationRepository: NewMedicationRepository,
     private val authRepository: AuthRepository,
 ) : ViewModel() {
-
+    
     private val _uiState = MutableStateFlow(DashboardUiState())
     val uiState: StateFlow<DashboardUiState> = _uiState.asStateFlow()
     private val _intakeInputState = MutableStateFlow(AddIntakeUiState())
     val intakeInputState: StateFlow<AddIntakeUiState> =
         _intakeInputState.asStateFlow()
+    
     // private val _currentUserId = MutableStateFlow<String?>(null)
     // val currentUserId = _currentUserId.asStateFlow()
     // private lateinit var currentUserId: String
-
     init {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
@@ -75,7 +75,6 @@ constructor(
                 }
             }
             _uiState.update { it.copy(isLoading = false) }
-            
         }
     }
     
@@ -97,32 +96,31 @@ constructor(
                     }
         }
     }
-
+    
     fun addNewIntake(
         intakeTime: Timestamp = Timestamp.now(),
-        medication: NewUserMedication = NewUserMedication(),
+        medication: NetworkMedication = NetworkMedication(),
         status: IntakeStatus,
     ) {
         viewModelScope.launch {
             val uid = authRepository.getUserId().getOrThrow()
-            val intake: NewUserIntake =
-                NewUserIntake(
+            val intake: NetworkIntake =
+                NetworkIntake(
                     userId = uid.toString(),
                     medicationId = medication.id,
                     status = status.name,
                     presetTime = medication.intakeTime,
-                    timestamp = intakeTime
+                    factTimestamp = intakeTime
                 )
             intakeRepository.addUserIntake(uid.toString(), intake)
         }
     }
-
+    
     // Проверка на то, был ли сегодня прием или нет.
     // -1: error; 0: noData, 1: skipped, 2: taken
     // ! перегести в репо.
-    suspend fun fetchIntakeStatus(medication: NewUserMedication): Int {
+    suspend fun fetchIntakeStatus(medication: NetworkMedication): Int {
         val uid = authRepository.getUserId().getOrThrow()
-        
         val todayStart = LocalDate.now().atStartOfDay().toTimestamp()
         val todayEnd = LocalDate.now().plusDays(1).atStartOfDay().toTimestamp()
         return try {
@@ -140,7 +138,7 @@ constructor(
             if (!querySnapshot.isEmpty) {
                 if (
                     querySnapshot
-                        .toObjects(NewUserIntake::class.java)[0]
+                        .toObjects(NetworkIntake::class.java)[0]
                         .status == "TAKEN"
                 )
                     2
@@ -154,7 +152,7 @@ constructor(
         }
     }
     
-    fun setSelectedMedication(value: NewUserMedication) {
+    fun setSelectedMedication(value: NetworkMedication) {
         _intakeInputState.update { it.copy(selectedMedication = value) }
     }
     

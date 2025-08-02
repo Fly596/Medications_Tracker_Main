@@ -5,8 +5,8 @@ import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
-import com.galeria.medicationstracker.data.MedicationForm
-import com.galeria.medicationstracker.data.NewUserMedication
+import com.galeria.medicationstracker.data.network.MedicationForm
+import com.galeria.medicationstracker.data.network.NetworkMedication
 import com.galeria.medicationstracker.data.old.MedicationUnit
 import com.galeria.medicationstracker.utils.FirestoreFunctions.FirestoreService
 import com.google.firebase.Timestamp
@@ -28,47 +28,48 @@ data class NewMedUiState(
     val showTimePicker: Boolean = false,
     val intakeDays: List<String> = emptyList(),
     val medicationForm: List<String> =
-        MedicationForm.entries.map { it.name.lowercase().replaceFirstChar { it.uppercase() } },
+        MedicationForm.entries.map {
+            it.name.lowercase().replaceFirstChar { it.uppercase() }
+        },
 )
 
 class AddNewMedViewModel : ViewModel() {
-
+    
     var uiState = MutableStateFlow(NewMedUiState())
         private set
-
     val db = FirestoreService.db
     val auth = FirebaseAuth.getInstance()
     val userId = auth.currentUser?.uid
     val userLogin = auth.currentUser?.email
-
+    
     // Добавление нового лекарства в Firestore.
     fun addMedication(context: Context) {
         // Проверка на пустые значения текстовых полей и нулевое значение medStrength
         //? в репо
         if (
-                    uiState.value.medName.isBlank() ||
-                        uiState.value.medForm.toString().isBlank() ||
-                        uiState.value.medUnit.toString().isBlank() ||
-                        uiState.value.medStrength <= 0 ||
-                        uiState.value.medStartDate.toString().isBlank() ||
-                        uiState.value.medEndDate.toString().isBlank() ||
-                        uiState.value.medIntakeTime.isBlank() ||
-                        uiState.value.intakeDays.isEmpty()
-                ) {
-                    Toast.makeText(
-                            context,
-                            "Please fill in all required fields correctly!",
-                            Toast.LENGTH_SHORT,
-                        )
-                        .show()
-                    Log.w(TAG, "Validation failed: Missing or incorrect input fields.")
-                    return
-                }
+            uiState.value.medName.isBlank() ||
+            uiState.value.medForm.toString().isBlank() ||
+            uiState.value.medUnit.toString().isBlank() ||
+            uiState.value.medStrength <= 0 ||
+            uiState.value.medStartDate.toString().isBlank() ||
+            uiState.value.medEndDate.toString().isBlank() ||
+            uiState.value.medIntakeTime.isBlank() ||
+            uiState.value.intakeDays.isEmpty()
+        ) {
+            Toast.makeText(
+                context,
+                "Please fill in all required fields correctly!",
+                Toast.LENGTH_SHORT,
+            )
+                .show()
+            Log.w(TAG, "Validation failed: Missing or incorrect input fields.")
+            return
+        }
         val medsCollectionRef =
             db.collection("User").document(userId.toString())
                 .collection("medications")
         // val documentId = "${userLogin}_${uiState.value.medName}_${uiState.value.medStrength}"
-                // Проверка на дубликаты
+        // Проверка на дубликаты
         // medsCollectionRef.document(documentId).get().addOnSuccessListener { documentSnapshot ->
         /*  if (documentSnapshot.exists()) {
              // Документ уже существует
@@ -76,87 +77,95 @@ class AddNewMedViewModel : ViewModel() {
 
              Log.d(TAG, "Medication already exists with ID: $documentId")
          } else { */
-                        // Документ не существует, добавляем новый
-                        val newUserMedication =
-                            NewUserMedication(
-                                userId = userId.toString(),
-                                name = uiState.value.medName,
-                                dosage = uiState.value.medStrength.toString() + uiState.value.medUnit,
-                                form = uiState.value.medForm,
-                                startDate = uiState.value.medStartDate,
-                                endDate = uiState.value.medEndDate,
-                                daysOfWeek = uiState.value.intakeDays,
-                                intakeTime = uiState.value.medIntakeTime
-                            )
+        // Документ не существует, добавляем новый
+        val networkMedication =
+            NetworkMedication(
+                userId = userId.toString(),
+                name = uiState.value.medName,
+                dosage = uiState.value.medStrength.toString() + uiState.value.medUnit,
+                form = uiState.value.medForm,
+                startDate = uiState.value.medStartDate,
+                endDate = uiState.value.medEndDate,
+                daysOfWeek = uiState.value.intakeDays,
+                intakeTime = uiState.value.medIntakeTime
+            )
         
         medsCollectionRef
-            .add(newUserMedication)
-                            .addOnSuccessListener {
-                                Toast.makeText(
-                                        context,
-                                        "DocumentSnapshot added successfully!",
-                                        Toast.LENGTH_SHORT,
-                                    )
-                                    .show()
-                                
-                                Log.d(TAG, "DocumentSnapshot added")
-                            }
-                            .addOnFailureListener { e ->
-                                Toast.makeText(context, "Error adding medication", Toast.LENGTH_SHORT)
-                                    .show()
-                                Log.w(TAG, "Error adding document", e)
-                            }
+            .add(networkMedication)
+            .addOnSuccessListener {
+                Toast.makeText(
+                    context,
+                    "DocumentSnapshot added successfully!",
+                    Toast.LENGTH_SHORT,
+                )
+                    .show()
+                
+                Log.d(TAG, "DocumentSnapshot added")
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(
+                    context,
+                    "Error adding medication",
+                    Toast.LENGTH_SHORT
+                )
+                    .show()
+                Log.w(TAG, "Error adding document", e)
+            }
         //}
         //}
     }
     
     
     fun updateStartDate(input: Timestamp?) {
-        uiState.value = uiState.value.copy(medStartDate = input ?: Timestamp.now())
+        uiState.value =
+            uiState.value.copy(medStartDate = input ?: Timestamp.now())
     }
-
+    
     fun updateEndDate(input: Timestamp?) {
-        uiState.value = uiState.value.copy(medEndDate = input ?: Timestamp.now())
+        uiState.value =
+            uiState.value.copy(medEndDate = input ?: Timestamp.now())
     }
-
+    
     fun updateMedName(newName: String) {
         uiState.value = uiState.value.copy(medName = newName)
     }
-
+    
     fun updateMedForm(newForm: String) {
         uiState.value = uiState.value.copy(medForm = newForm)
     }
-
+    
     fun updateMedStrength(newStrength: Float) {
-        uiState.value = uiState.value.copy(medStrength = newStrength /* .toFloat() */)
+        uiState.value =
+            uiState.value.copy(medStrength = newStrength /* .toFloat() */)
     }
-
+    
     fun addStrength(newStrength: Float) {
         uiState.value =
             uiState.value.copy(chosenStrengths = uiState.value.chosenStrengths + newStrength)
     }
-
+    
     fun updateMedUnit(newUnit: MedicationUnit) {
         uiState.value = uiState.value.copy(medUnit = newUnit)
     }
-
+    
     fun updateIntakeTime(newTime: String) {
         uiState.value = uiState.value.copy(medIntakeTime = newTime)
     }
-
+    
     fun updateMedNotes(newNotes: String) {
         uiState.value = uiState.value.copy(medNotes = newNotes)
     }
-
+    
     fun isShowDateChecked(input: Boolean) {
         uiState.value = uiState.value.copy(showDatePicker = !input)
     }
-
+    
     fun isShowTimeChecked(input: Boolean) {
         uiState.value = uiState.value.copy(showTimePicker = !input)
     }
-
+    
     fun updateSelectedDays(input: List<String>) {
-        uiState.value = uiState.value.copy(intakeDays = uiState.value.intakeDays + input)
+        uiState.value =
+            uiState.value.copy(intakeDays = uiState.value.intakeDays + input)
     }
 }

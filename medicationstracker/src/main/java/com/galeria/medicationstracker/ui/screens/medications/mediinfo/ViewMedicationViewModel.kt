@@ -7,8 +7,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.galeria.medicationstracker.data.AuthRepository
 import com.galeria.medicationstracker.data.NewMedicationRepository
-import com.galeria.medicationstracker.data.NewUserIntake
-import com.galeria.medicationstracker.data.NewUserMedication
+import com.galeria.medicationstracker.data.network.NetworkIntake
+import com.galeria.medicationstracker.data.network.NetworkMedication
 import com.galeria.medicationstracker.utils.navigation.MedicationScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,8 +18,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class MedicationDetailsUiState(
-    val medication: NewUserMedication? = null,
-    val medicationIntakes: List<NewUserIntake> = emptyList(),
+    val medication: NetworkMedication? = null,
+    val medicationIntakes: List<NetworkIntake> = emptyList(),
     val isLoading: Boolean = false,
 )
 
@@ -31,10 +31,10 @@ constructor(
     private val authRepository: AuthRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-
+    
     private val _uiState = MutableStateFlow(MedicationDetailsUiState())
     val uiState = _uiState.asStateFlow()
-
+    
     init {
         viewModelScope.launch {
             try {

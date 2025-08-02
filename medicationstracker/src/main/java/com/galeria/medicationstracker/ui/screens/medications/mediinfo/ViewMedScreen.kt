@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medicationstracker.R
-import com.galeria.medicationstracker.data.NewUserMedication
+import com.galeria.medicationstracker.data.network.NetworkMedication
 import com.galeria.medicationstracker.ui.componentsOld.FlySimpleCard
 import com.galeria.medicationstracker.ui.componentsOld.FlyTonalButton
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
@@ -86,7 +86,7 @@ fun ViewMedicationInfoScreen(
 @Composable
 fun MedStatCard(
     modifier: Modifier = Modifier,
-    medication: NewUserMedication? = null,
+    medication: NetworkMedication? = null,
 ) {
     FlySimpleCard(modifier = modifier) {
         // начальная дата.

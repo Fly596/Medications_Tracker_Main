@@ -1,8 +1,8 @@
 package com.galeria.medicationstracker.ui.screens.profile.profiledetails
 
 import androidx.lifecycle.ViewModel
-import com.galeria.medicationstracker.data.NewUser
 import com.galeria.medicationstracker.data.NewUserRepository
+import com.galeria.medicationstracker.data.network.NetworkUser
 import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,14 +26,14 @@ data class ProfileDetailsUiState(
 @HiltViewModel
 class ProfileDetailsViewModel @Inject constructor(private val repository: NewUserRepository) :
     ViewModel() {
-
+    
     private val _state = MutableStateFlow(ProfileDetailsUiState())
     val state: StateFlow<ProfileDetailsUiState> = _state.asStateFlow()
-
+    
     init {
         getUserData()
     }
-
+    
     fun updateUser() {
         // TODO: в репо.
         /*         viewModelScope.launch {
@@ -52,9 +52,9 @@ class ProfileDetailsViewModel @Inject constructor(private val repository: NewUse
             repository.updateUserData(newUser)
         } */
     }
-
+    
     private fun getUserData() {
-        var user = NewUser()
+        var networkUser = NetworkUser()
         // viewModelScope.launch {
         //     user = repository.getUserData()
         //     _state.value =
@@ -70,40 +70,40 @@ class ProfileDetailsViewModel @Inject constructor(private val repository: NewUse
         //         )
         // }
     }
-
+    
     fun updateFirstName(firstName: String) {
         _state.value = _state.value.copy(firstName = firstName)
     }
-
+    
     fun updateLastName(lastName: String) {
         _state.value = _state.value.copy(lastName = lastName)
     }
-
+    
     fun updateEmail(email: String) {
         _state.value = _state.value.copy(email = email)
     }
-
+    
     fun updateDateOfBirth(dateOfBirth: Timestamp?) {
         _state.value = _state.value.copy(dateOfBirth = dateOfBirth)
     }
-
+    
     fun updateSex(sex: String) {
         _state.value = _state.value.copy(sex = sex)
     }
-
-
+    
+    
     fun updateWeight(weight: Float) {
         _state.value = _state.value.copy(weight = weight)
     }
-
+    
     fun updateHeight(height: Float) {
         _state.value = _state.value.copy(height = height)
     }
-
+    
     private fun updateLoading(isLoading: Boolean) {
         _state.value = _state.value.copy(isLoading = isLoading)
     }
-
+    
     private fun updateError(isError: Boolean) {
         _state.value = _state.value.copy(isError = isError)
     }

@@ -32,8 +32,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.galeria.medicationstracker.data.IntakeStatus
-import com.galeria.medicationstracker.data.NewUserMedication
+import com.galeria.medicationstracker.data.network.IntakeStatus
+import com.galeria.medicationstracker.data.network.NetworkMedication
 import com.galeria.medicationstracker.ui.components.GFABButton
 import com.galeria.medicationstracker.ui.componentsOld.FLySimpleCardContainer
 import com.galeria.medicationstracker.ui.componentsOld.LogMedicationTimeDialog
@@ -51,15 +51,24 @@ fun DailyMedsScreen(
     dashboardViewModel: DashboardVM = hiltViewModel(),
 ) {
     val uiState = dashboardViewModel.uiState.collectAsStateWithLifecycle()
-
+    
     MedTrackerTheme {
         Scaffold(
             containerColor = MedTrackerTheme.colors.secondaryBackground,
             topBar = {
-                Column(modifier = Modifier.padding(vertical = 24.dp, horizontal = 16.dp)) {
+                Column(
+                    modifier = Modifier.padding(
+                        vertical = 24.dp,
+                        horizontal = 16.dp
+                    )
+                ) {
                     // today's date.
                     Text(
-                        text = getTodaysDate().format(DateTimeFormatter.ofPattern("MMM d")),
+                        text = getTodaysDate().format(
+                            DateTimeFormatter.ofPattern(
+                                "MMM d"
+                            )
+                        ),
                         style = typography.display3Emphasized,
                     )
                 }
@@ -81,10 +90,8 @@ fun DailyMedsScreen(
                         .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-
                 // Календарь на неделю.
                 WeeklyCalendarView()
-
                 // Medication Cards List.
                 MedsByIntakeTimeList(
                     viewModel = dashboardViewModel,
@@ -101,11 +108,12 @@ fun DailyMedsScreen(
 fun MedsByIntakeTimeList(
     viewModel: DashboardVM,
     onAddNoteClick: () -> Unit = {},
-    medicationsForIntakeTime: List<NewUserMedication> = emptyList(),
+    medicationsForIntakeTime: List<NetworkMedication> = emptyList(),
 ) {
     // Группируем лекарства по времени приема.
-    val medicationsByIntakeTime = medicationsForIntakeTime.groupBy { it.intakeTime }
-
+    val medicationsByIntakeTime =
+        medicationsForIntakeTime.groupBy { it.intakeTime }
+    
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(24.dp),
@@ -142,28 +150,32 @@ fun MedsByIntakeTimeList(
 @Composable
 fun MedicationItem(
     viewModel: DashboardVM,
-    medication: NewUserMedication,
+    medication: NetworkMedication,
     icon: ImageVector = Icons.Filled.Medication,
     onAddNoteClick: () -> Unit = {},
 ) {
     val showLogDialog = rememberSaveable { mutableStateOf(false) }
-
+    
     Row(
         modifier = Modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Icon(imageVector = icon, contentDescription = null, modifier = Modifier.size(32.dp))
-
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.size(32.dp)
+        )
+        
         Text(text = medication.name.toString(), style = typography.bodyLarge)
-
+        
         Spacer(modifier = Modifier.weight(1f))
         // State to control the check icon.
         var status by remember { mutableIntStateOf(0) }
         LaunchedEffect(medication) {
             status = viewModel.fetchIntakeStatus(medication)
         }
-
+        
         Text(
             text =
                 when (status) {
@@ -174,7 +186,7 @@ fun MedicationItem(
             style = typography.bodySmall,
             color = MedTrackerTheme.colors.secondaryLabel,
         )
-
+        
         IconButton(
             onClick = {
                 // Add logic to log medication here.
@@ -204,7 +216,10 @@ fun MedicationItem(
                 onDismiss = { showLogDialog.value = false },
                 onConfirmation = {
                     // TODO: Remove
-                    viewModel.addNewIntake(medication = medication, status = IntakeStatus.TAKEN)
+                    viewModel.addNewIntake(
+                        medication = medication,
+                        status = IntakeStatus.TAKEN
+                    )
                     showLogDialog.value = false
                 },
                 onAddNotes = {
@@ -219,7 +234,10 @@ fun MedicationItem(
                     )
                 },
                 onSkipIntake = {
-                    viewModel.addNewIntake(medication = medication, status = IntakeStatus.SKIPPED)
+                    viewModel.addNewIntake(
+                        medication = medication,
+                        status = IntakeStatus.SKIPPED
+                    )
                     showLogDialog.value = false
                 },
             )
@@ -236,16 +254,26 @@ fun DailyMedsScreenNew(
     dashboardViewModel: DashboardVM = hiltViewModel(),
 ) {
     val state = dashboardViewModel.uiState.collectAsStateWithLifecycle()
-    val inputState = dashboardViewModel.intakeInputState.collectAsStateWithLifecycle()
-
+    val inputState =
+        dashboardViewModel.intakeInputState.collectAsStateWithLifecycle()
+    
     MedTrackerTheme {
         Scaffold(
             containerColor = MedTrackerTheme.colors.secondaryBackground,
             topBar = {
-                Column(modifier = Modifier.padding(vertical = 24.dp, horizontal = 16.dp)) {
+                Column(
+                    modifier = Modifier.padding(
+                        vertical = 24.dp,
+                        horizontal = 16.dp
+                    )
+                ) {
                     // today's date.
                     Text(
-                        text = getTodaysDate().format(DateTimeFormatter.ofPattern("MMM d")),
+                        text = getTodaysDate().format(
+                            DateTimeFormatter.ofPattern(
+                                "MMM d"
+                            )
+                        ),
                         style = typography.display3Emphasized,
                     )
                 }
@@ -266,17 +294,17 @@ fun DailyMedsScreenNew(
                 // Календарь на неделю.
                 WeeklyCalendarView()
                 // Medication Cards List.
-
             }
         }
     }
 }
 
 @Composable
-fun TodayIntakesList(todayMedicationsList: List<NewUserMedication>) {
+fun TodayIntakesList(todayMedicationsList: List<NetworkMedication>) {
     // группировка по времени приема.
-    val medicationsGroupedByTime = todayMedicationsList.groupBy { it.intakeTime }
-
+    val medicationsGroupedByTime =
+        todayMedicationsList.groupBy { it.intakeTime }
+    
     LazyColumn(modifier = Modifier.fillMaxWidth()) {
         medicationsGroupedByTime.forEach { (intakeTime, medications) ->
             item {
@@ -305,10 +333,11 @@ fun TodayIntakesList(todayMedicationsList: List<NewUserMedication>) {
 
 @Composable
 fun MedicationItemNew(
-    medication: NewUserMedication,
+    medication: NetworkMedication,
     onLogTaken: () -> Unit,
     onLogSkipped: () -> Unit,
-) {}
+) {
+}
 
 @Preview(name = "StartScreen")
 @Composable

@@ -6,9 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.galeria.medicationstracker.data.AuthRepository
-import com.galeria.medicationstracker.data.MedicationForm
 import com.galeria.medicationstracker.data.NewMedicationRepository
-import com.galeria.medicationstracker.data.NewUserMedication
+import com.galeria.medicationstracker.data.network.MedicationForm
+import com.galeria.medicationstracker.data.network.NetworkMedication
 import com.galeria.medicationstracker.utils.FirestoreFunctions.FirestoreService
 import com.galeria.medicationstracker.utils.navigation.MedicationScreen
 import com.google.firebase.Timestamp
@@ -29,7 +29,7 @@ data class UpdateMedUiState(
     val intakeTime: String = "",
     val dosage: Float = 0.0f,
     val selectedDays: List<String> = emptyList(),
-    val medication: NewUserMedication? = null,
+    val medication: NetworkMedication? = null,
 )
 
 @HiltViewModel
@@ -46,7 +46,7 @@ constructor(
     val uiState = _uiState.asStateFlow()
     private val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
     val db = FirestoreService.db
-    private var _selectedMedication = MutableStateFlow<NewUserMedication?>(null)
+    private var _selectedMedication = MutableStateFlow<NetworkMedication?>(null)
     private var _selectedDocumentId = MutableStateFlow<String?>(null)
     
     init {
@@ -59,7 +59,7 @@ constructor(
             fetchSelectedMedication(medId)
         }
     }
-
+    
     fun deleteMedicationFromFirestore(medId: String) {
         viewModelScope.launch {
             repository.deleteMedication(currentUserId.toString(), medId)
@@ -75,7 +75,7 @@ constructor(
             }
         }
     }
-
+    
     // Обновление данных о лекарстве в Firestore.
     fun updateMedicationFromFirestore(context: Context) {
         /*        val newValues: Map<String, Any?> =
@@ -110,31 +110,31 @@ constructor(
                 Toast.makeText(context, "Error updating medication", Toast.LENGTH_SHORT).show()
             } */
     }
-
+    
     fun updateSelectedDays(input: List<String>) {
         _uiState.value =
             _uiState.value.copy(
                 selectedDays = _uiState.value.selectedDays + input
             )
     }
-
+    
     fun updateMedName(input: String) {
         _uiState.value = _uiState.value.copy(medName = input)
     }
-
+    
     fun updateEndDate(date: Timestamp?) {
         _uiState.value = _uiState.value.copy(endDate = date ?: Timestamp.now())
     }
-
+    
     fun updateStartDate(date: Timestamp?) {
         _uiState.value =
             _uiState.value.copy(startDate = date ?: Timestamp.now())
     }
-
+    
     fun updateIntakeTime(time: String) {
         _uiState.value = _uiState.value.copy(intakeTime = time)
     }
-
+    
     fun updateStrength(input: Float) {
         _uiState.value = _uiState.value.copy(dosage = input)
     }

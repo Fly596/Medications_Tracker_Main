@@ -1,33 +1,34 @@
 package com.galeria.medicationstracker.data
 
+import com.galeria.medicationstracker.data.network.NetworkUser
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
 
 interface NewUserRepository {
-
-    suspend fun addUser(user: NewUser): Result<String>
     
-    suspend fun getUserData(userId: String): Result<NewUser>
-
-    suspend fun updateUser(user: NewUser): Result<Unit>
+    suspend fun addUser(networkUser: NetworkUser): Result<String>
+    
+    suspend fun getUserData(userId: String): Result<NetworkUser>
+    
+    suspend fun updateUser(networkUser: NetworkUser): Result<Unit>
 }
 
 @Singleton
 class NewUserRepositoryImpl @Inject constructor(private val firestore: FirebaseFirestore) :
     NewUserRepository {
-
+    
     companion object {
-
+        
         private const val USERS_COLLECTION = "User"
     }
-
-    override suspend fun addUser(user: NewUser): Result<String> {
-        val dataToSave = user.copy(id = "")
-
+    
+    override suspend fun addUser(networkUser: NetworkUser): Result<String> {
+        val dataToSave = networkUser.copy(id = "")
+        
         return try {
-            firestore.collection(USERS_COLLECTION).document(user.id)
+            firestore.collection(USERS_COLLECTION).document(networkUser.id)
                 .set(dataToSave).await()
             Result.success(dataToSave.id)
         } catch (e: Exception) {
@@ -35,14 +36,16 @@ class NewUserRepositoryImpl @Inject constructor(private val firestore: FirebaseF
         }
     }
     
-    override suspend fun getUserData(userId: String): Result<NewUser> {
+    override suspend fun getUserData(userId: String): Result<NetworkUser> {
         return try {
             val documentSnapshot =
-                firestore.collection(USERS_COLLECTION).document(userId).get().await()
+                firestore.collection(USERS_COLLECTION).document(userId).get()
+                    .await()
             if (documentSnapshot.exists()) {
-                val user = documentSnapshot.toObject(NewUser::class.java)
-                if (user != null) {
-                    Result.success(user)
+                val networkUser =
+                    documentSnapshot.toObject(NetworkUser::class.java)
+                if (networkUser != null) {
+                    Result.success(networkUser)
                 } else {
                     Result.failure(Exception("Failed to parse user data for ID: $userId"))
                 }
@@ -53,8 +56,8 @@ class NewUserRepositoryImpl @Inject constructor(private val firestore: FirebaseF
             Result.failure(e)
         }
     }
-
-    override suspend fun updateUser(user: NewUser): Result<Unit> {
+    
+    override suspend fun updateUser(networkUser: NetworkUser): Result<Unit> {
         TODO("Not yet implemented")
     }
 }

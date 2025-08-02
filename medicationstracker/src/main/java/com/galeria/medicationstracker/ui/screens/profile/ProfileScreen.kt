@@ -42,8 +42,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medicationstracker.R
-import com.galeria.medicationstracker.data.NewUserIntake
-import com.galeria.medicationstracker.data.NewUserMedication
+import com.galeria.medicationstracker.data.network.NetworkIntake
+import com.galeria.medicationstracker.data.network.NetworkMedication
 import com.galeria.medicationstracker.ui.components.GPrimaryButton
 import com.galeria.medicationstracker.ui.components.GSecondaryButton
 import com.galeria.medicationstracker.ui.componentsOld.FlySimpleCard
@@ -92,7 +92,7 @@ fun UserProfileScreen(
                         )
                         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             Text(
-                                text = uiState.value.user?.name.toString(),
+                                text = uiState.value.networkUser?.name.toString(),
                                 style = MedTrackerTheme.typography.display3Emphasized,
                                 color = colors.primaryLabel,
                             )
@@ -103,11 +103,11 @@ fun UserProfileScreen(
                             ) {
                                 // LabeledStat(uiState.value.user?.dateOfBirth.toString(), "Age")
                                 LabeledStat(
-                                    uiState.value.user?.height.toString(),
+                                    uiState.value.networkUser?.heightCm.toString(),
                                     stringResource(R.string.height)
                                 )
                                 LabeledStat(
-                                    uiState.value.user?.weight.toString(),
+                                    uiState.value.networkUser?.weightKg.toString(),
                                     stringResource(R.string.weight)
                                 )
                             }
@@ -145,18 +145,18 @@ fun UserProfileScreen(
             }
         }
     }
-
+    
 }
 
 @Composable
 fun TabsRow(
     modifier: Modifier = Modifier,
     tabs: List<String>,
-    medications: List<NewUserMedication> = emptyList(),
-    intakes: List<NewUserIntake> = emptyList(),
+    medications: List<NetworkMedication> = emptyList(),
+    intakes: List<NetworkIntake> = emptyList(),
 ) {
     var selectedTabIndex by remember { mutableStateOf(0) }
-
+    
     Column(modifier = modifier) {
         TabRow(
             selectedTabIndex = selectedTabIndex,
@@ -179,7 +179,7 @@ fun TabsRow(
                 )
             }
         }
-
+        
         when (selectedTabIndex) {
             0 -> UserMedications(medications)
             1 -> UserHistory(intakes)
@@ -188,12 +188,12 @@ fun TabsRow(
 }
 
 @Composable
-fun UserMedications(mediations: List<NewUserMedication> = emptyList()) {
+fun UserMedications(mediations: List<NetworkMedication> = emptyList()) {
     LazyColumn { items(mediations) { medication -> MedicationCard(medication = medication) } }
 }
 
 @Composable
-fun UserHistory(intakes: List<NewUserIntake> = emptyList()) {
+fun UserHistory(intakes: List<NetworkIntake> = emptyList()) {
     /*     LazyColumn {
             items(intakes) { intake ->
                 val formattedDate =
@@ -221,14 +221,17 @@ fun UserHistory(intakes: List<NewUserIntake> = emptyList()) {
 @Composable
 fun MedicationCard(
     modifier: Modifier = Modifier,
-    medication: NewUserMedication? = null
+    medication: NetworkMedication? = null
 ) {
     FlySimpleCard(
         modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 6.dp)
     ) {
-        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Icon(
                 imageVector = Icons.Default.LocalPharmacy,
                 contentDescription = "Pill Icon",
@@ -253,7 +256,7 @@ fun MedicationCard(
                     text = medication?.intakeTime.toString(),
                     style = MedTrackerTheme.typography.bodyLarge,
                 )
-
+                
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     modifier = Modifier.width(250.dp),

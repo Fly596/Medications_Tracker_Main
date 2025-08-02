@@ -1,5 +1,6 @@
 package com.galeria.medicationstracker.data
 
+import com.galeria.medicationstracker.data.network.NetworkMedication
 import com.galeria.medicationstracker.utils.formatTimestampToWeekday
 import com.galeria.medicationstracker.utils.toTimestamp
 import com.google.firebase.Timestamp
@@ -13,31 +14,43 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 interface NewMedicationRepository {
-
-    fun observeUserMedications(userId: String): Flow<List<NewUserMedication>>
-
-    suspend fun getMedication(userId: String, medicationId: String): Result<NewUserMedication>
-
-    suspend fun addMedication(userId: String, medicationData: NewUserMedication): Result<String>
-
-    suspend fun updateMedication(userId: String, medication: NewUserMedication): Result<Unit>
-
-    suspend fun deleteMedication(userId: String, medicationId: String): Result<Unit>
-
-    fun getTodaysIntakes(userId: String): Flow<List<NewUserMedication>>
+    
+    fun observeUserMedications(userId: String): Flow<List<NetworkMedication>>
+    
+    suspend fun getMedication(
+        userId: String,
+        medicationId: String
+    ): Result<NetworkMedication>
+    
+    suspend fun addMedication(
+        userId: String,
+        medicationData: NetworkMedication
+    ): Result<String>
+    
+    suspend fun updateMedication(
+        userId: String,
+        medication: NetworkMedication
+    ): Result<Unit>
+    
+    suspend fun deleteMedication(
+        userId: String,
+        medicationId: String
+    ): Result<Unit>
+    
+    fun getTodaysIntakes(userId: String): Flow<List<NetworkMedication>>
 }
 
 @Singleton
 class NewMedicationRepositoryImpl @Inject constructor(private val firestore: FirebaseFirestore) :
     NewMedicationRepository {
-
+    
     companion object {
-
+        
         private const val USERS_COLLECTION = "User"
         private const val MEDICATIONS_SUBCOLLECTION = "medications"
     }
-
-    override fun observeUserMedications(userId: String): Flow<List<NewUserMedication>> =
+    
+    override fun observeUserMedications(userId: String): Flow<List<NetworkMedication>> =
         callbackFlow {
             val listenerRegistration =
                 firestore
@@ -50,17 +63,19 @@ class NewMedicationRepositoryImpl @Inject constructor(private val firestore: Fir
                             return@addSnapshotListener
                         }
                         if (snapshot != null) {
-                            val medications = snapshot.toObjects(NewUserMedication::class.java)
+                            val medications = snapshot.toObjects(
+                                NetworkMedication::class.java
+                            )
                             trySend(medications).isSuccess
                         }
                     }
             awaitClose { listenerRegistration.remove() }
         }
-
+    
     override suspend fun getMedication(
         userId: String,
         medicationId: String,
-    ): Result<NewUserMedication> {
+    ): Result<NetworkMedication> {
         return try {
             val documentSnapshot =
                 firestore
@@ -71,7 +86,8 @@ class NewMedicationRepositoryImpl @Inject constructor(private val firestore: Fir
                     .get()
                     .await()
             if (documentSnapshot.exists()) {
-                val medication = documentSnapshot.toObject(NewUserMedication::class.java)
+                val medication =
+                    documentSnapshot.toObject(NetworkMedication::class.java)
                 if (medication != null) {
                     Result.success(medication)
                 } else {
@@ -88,13 +104,13 @@ class NewMedicationRepositoryImpl @Inject constructor(private val firestore: Fir
             Result.failure(e)
         }
     }
-
+    
     override suspend fun addMedication(
         userId: String,
-        medicationData: NewUserMedication,
+        medicationData: NetworkMedication,
     ): Result<String> {
         val dataToSave = medicationData.copy(userId = userId, id = "")
-
+        
         return try {
             val documentRef =
                 firestore
@@ -108,10 +124,10 @@ class NewMedicationRepositoryImpl @Inject constructor(private val firestore: Fir
             Result.failure(e)
         }
     }
-
+    
     override suspend fun updateMedication(
         userId: String,
-        medication: NewUserMedication,
+        medication: NetworkMedication,
     ): Result<Unit> {
         if (medication.id.isBlank()) {
             return Result.failure(
@@ -119,7 +135,7 @@ class NewMedicationRepositoryImpl @Inject constructor(private val firestore: Fir
             )
         }
         val dataToSave = medication.copy(userId = userId)
-
+        
         return try {
             firestore
                 .collection(USERS_COLLECTION)
@@ -133,8 +149,11 @@ class NewMedicationRepositoryImpl @Inject constructor(private val firestore: Fir
             Result.failure(e)
         }
     }
-
-    override suspend fun deleteMedication(userId: String, medicationId: String): Result<Unit> {
+    
+    override suspend fun deleteMedication(
+        userId: String,
+        medicationId: String
+    ): Result<Unit> {
         if (medicationId.isBlank()) {
             return Result.failure(
                 IllegalArgumentException("Medication ID cannot be blank for delete.")
@@ -153,27 +172,31 @@ class NewMedicationRepositoryImpl @Inject constructor(private val firestore: Fir
             Result.failure(e)
         }
     }
-
-    override fun getTodaysIntakes(userId: String): Flow<List<NewUserMedication>> = callbackFlow {
-        val todayEnd = LocalDate.now().plusDays(1).atStartOfDay().toTimestamp()
-        val todayWeekDay = formatTimestampToWeekday(Timestamp.now()).uppercase()
-        val listenerRegistration =
-            firestore
-                .collection(USERS_COLLECTION)
-                .document(userId)
-                .collection(MEDICATIONS_SUBCOLLECTION)
-                .whereGreaterThanOrEqualTo("endDate", todayEnd)
-                .whereArrayContains("daysOfWeek", todayWeekDay)
-                .addSnapshotListener { snapshot, error ->
-                    if (error != null) {
-                        close(error)
-                        return@addSnapshotListener
+    
+    override fun getTodaysIntakes(userId: String): Flow<List<NetworkMedication>> =
+        callbackFlow {
+            val todayEnd =
+                LocalDate.now().plusDays(1).atStartOfDay().toTimestamp()
+            val todayWeekDay =
+                formatTimestampToWeekday(Timestamp.now()).uppercase()
+            val listenerRegistration =
+                firestore
+                    .collection(USERS_COLLECTION)
+                    .document(userId)
+                    .collection(MEDICATIONS_SUBCOLLECTION)
+                    .whereGreaterThanOrEqualTo("endDate", todayEnd)
+                    .whereArrayContains("daysOfWeek", todayWeekDay)
+                    .addSnapshotListener { snapshot, error ->
+                        if (error != null) {
+                            close(error)
+                            return@addSnapshotListener
+                        }
+                        if (snapshot != null) {
+                            val medications =
+                                snapshot.toObjects(NetworkMedication::class.java)
+                            trySend(medications).isSuccess
+                        }
                     }
-                    if (snapshot != null) {
-                        val medications = snapshot.toObjects(NewUserMedication::class.java)
-                        trySend(medications).isSuccess
-                    }
-                }
-        awaitClose { listenerRegistration.remove() }
-    }
+            awaitClose { listenerRegistration.remove() }
+        }
 }

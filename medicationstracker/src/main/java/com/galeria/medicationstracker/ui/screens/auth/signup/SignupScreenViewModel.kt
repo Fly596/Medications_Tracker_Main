@@ -3,8 +3,8 @@ package com.galeria.medicationstracker.ui.screens.auth.signup
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.galeria.medicationstracker.data.AuthRepository
-import com.galeria.medicationstracker.data.NewUser
 import com.galeria.medicationstracker.data.NewUserRepository
+import com.galeria.medicationstracker.data.network.NetworkUser
 import com.galeria.medicationstracker.utils.toTimestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -31,66 +31,72 @@ data class SignupScreenState(
 @HiltViewModel
 class SignupScreenViewModel
 @Inject
-constructor(private val repository: AuthRepository, private val userRepo: NewUserRepository) :
+constructor(
+    private val repository: AuthRepository,
+    private val userRepo: NewUserRepository
+) :
     ViewModel() {
-
+    
     // val auth = FirebaseAuth.getInstance()
     private val _uiState = MutableStateFlow(SignupScreenState())
     val uiState = _uiState.asStateFlow()
     private val _signupSuccessEvent = MutableSharedFlow<Unit>()
-
+    
     fun onRegisterClick() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, generalError = null) }
-            val result = repository.signUp(_uiState.value.email, _uiState.value.password)
-
+            val result =
+                repository.signUp(_uiState.value.email, _uiState.value.password)
+            
             result.fold(
                 onSuccess = {
                     val newUserId = repository.getUserId()
-                    val birthDateTimestamp = _uiState.value.selectedBirthDate.toTimestamp()
+                    val birthDateTimestamp =
+                        _uiState.value.selectedBirthDate.toTimestamp()
                     
                     _uiState.update { it.copy(isLoading = false) }
-                    val user: NewUser =
-                        NewUser(
+                    val networkUser: NetworkUser =
+                        NetworkUser(
                             id = newUserId.getOrNull().toString(),
                             name = _uiState.value.name,
                             email = _uiState.value.email,
                             dateOfBirth = birthDateTimestamp,
                         )
-                    userRepo.addUser(user)
+                    userRepo.addUser(networkUser)
                 },
                 onFailure = { exception ->
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            generalError = exception.message ?: "Signup failed.",
+                            generalError = exception.message
+                                ?: "Signup failed.",
                         )
                     }
                 },
             )
         }
     }
-
+    
     fun updateUserName(input: String) {
         _uiState.value = _uiState.value.copy(name = input)
     }
-
+    
     fun updateEmail(input: String) {
         _uiState.value = _uiState.value.copy(email = input)
     }
-
+    
     fun updatePassword(input: String) {
         _uiState.value = _uiState.value.copy(password = input)
     }
-
+    
     fun isShowPasswordChecked(input: Boolean) {
         _uiState.value = _uiState.value.copy(showPassword = !input)
     }
-
+    
     fun showDatePicker() {
         _uiState.update { it.copy(showDatePicker = true) }
     }
-
+    
     fun dismissDatePicker() {
         _uiState.update { it.copy(showDatePicker = false) }
     }

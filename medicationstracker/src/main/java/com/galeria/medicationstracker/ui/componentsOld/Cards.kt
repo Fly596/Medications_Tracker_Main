@@ -33,7 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import com.galeria.medicationstracker.data.NewUserMedication
+import com.galeria.medicationstracker.data.network.NetworkMedication
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 
 @Composable
@@ -73,7 +73,7 @@ fun FlyElevatedCardDashboard(
     title: String = "Medicine Name",
     time: String = "9:00 AM",
     info: String = "Mon, Tue, Fri...",
-    medication: NewUserMedication? = null,
+    medication: NetworkMedication? = null,
     shape: Shape = RoundedCornerShape(8.dp),
     elevation: CardElevation = CardDefaults.elevatedCardElevation(),
     // content: @Composable (ColumnScope.() -> Unit)
@@ -110,7 +110,7 @@ fun FlyElevatedCardDashboard(
                     modifier = Modifier.size(32.dp)
                 )
             }
-
+            
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.fillMaxHeight(),
@@ -119,11 +119,10 @@ fun FlyElevatedCardDashboard(
                 Text(time, style = MedTrackerTheme.typography.bodyMedium)
                 Text(info, style = MedTrackerTheme.typography.bodyMedium)
             }
-
+            
             Spacer(modifier = Modifier.weight(1f))
-
             var isChecked by remember { mutableStateOf(false) } // State to track icon
-
+            
             Column {
                 IconButton(onClick = { isChecked = !isChecked }) {
                     Icon(
@@ -142,9 +141,7 @@ fun FlyElevatedCardDashboard(
                     )
                 }
                 Spacer(modifier = Modifier.weight(1f))
-
             }
-
         }
     }
 }

@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.galeria.medicationstracker.data.AuthRepository
 import com.galeria.medicationstracker.data.NewMoodRepository
-import com.galeria.medicationstracker.data.NewUserMood
+import com.galeria.medicationstracker.data.network.NetworkUserMood
 import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,10 +29,10 @@ constructor(
     private val moodRepository: NewMoodRepository,
     private val authRepository: AuthRepository,
 ) : ViewModel() {
-
+    
     private val _uiState = MutableStateFlow(MoodTrackerUiState())
     val uiState: StateFlow<MoodTrackerUiState> = _uiState.asStateFlow()
-
+    
     fun addMood() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
@@ -41,8 +41,8 @@ constructor(
                 val mood = _uiState.value.moodValue
                 val notes = _uiState.value.notes
                 val currentDate: Date = Date()
-                val moodEntry: NewUserMood =
-                    NewUserMood(
+                val moodEntry: NetworkUserMood =
+                    NetworkUserMood(
                         userId = uid.toString(),
                         moodValue = mood,
                         notes = notes,
@@ -62,11 +62,11 @@ constructor(
             }
         }
     }
-
+    
     fun updateMood(mood: Int) {
         _uiState.value = _uiState.value.copy(moodValue = mood)
     }
-
+    
     fun updateNotes(notes: String) {
         _uiState.value = _uiState.value.copy(notes = notes)
     }

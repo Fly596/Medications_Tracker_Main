@@ -1,6 +1,8 @@
 package com.galeria.medicationstracker.data
 
 import android.util.Log
+import com.galeria.medicationstracker.data.network.NetworkIntake
+import com.galeria.medicationstracker.data.network.NetworkMedication
 import com.galeria.medicationstracker.utils.toTimestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.awaitClose
@@ -13,18 +15,27 @@ import javax.inject.Singleton
 
 interface NewIntakeRepository {
     
-    fun observeUserIntakes(userId: String): Flow<List<NewUserIntake>>
-
-    suspend fun getUserIntake(userId: String, intakeId: String): Result<NewUserIntake>
-
-    suspend fun addUserIntake(userId: String, intakeData: NewUserIntake): Result<String>
-
-    suspend fun updateUserIntake(userId: String, intake: NewUserIntake): Result<Unit>
-
+    fun observeUserIntakes(userId: String): Flow<List<NetworkIntake>>
+    
+    suspend fun getUserIntake(
+        userId: String,
+        intakeId: String
+    ): Result<NetworkIntake>
+    
+    suspend fun addUserIntake(
+        userId: String,
+        intakeData: NetworkIntake
+    ): Result<String>
+    
+    suspend fun updateUserIntake(
+        userId: String,
+        intake: NetworkIntake
+    ): Result<Unit>
+    
     suspend fun deleteUserIntake(userId: String, intakeId: String): Result<Unit>
     
     suspend fun fetchIntakeStatus(
-        intake: NewUserMedication,
+        intake: NetworkMedication,
         uid: String
     ): Result<Int>
 }
@@ -32,33 +43,38 @@ interface NewIntakeRepository {
 @Singleton
 class NewIntakeRepositoryImpl @Inject constructor(private val firestore: FirebaseFirestore) :
     NewIntakeRepository {
-
+    
     companion object {
-
+        
         private const val USERS_COLLECTION = "User"
         private const val INTAKES_SUBCOLLECTION = "intakes"
     }
-
-    override fun observeUserIntakes(userId: String): Flow<List<NewUserIntake>> = callbackFlow {
-        val listenerRegistration =
-            firestore
-                .collection(USERS_COLLECTION)
-                .document(userId)
-                .collection(INTAKES_SUBCOLLECTION)
-                .addSnapshotListener { snapshot, error ->
-                    if (error != null) {
-                        close(error)
-                        return@addSnapshotListener
+    
+    override fun observeUserIntakes(userId: String): Flow<List<NetworkIntake>> =
+        callbackFlow {
+            val listenerRegistration =
+                firestore
+                    .collection(USERS_COLLECTION)
+                    .document(userId)
+                    .collection(INTAKES_SUBCOLLECTION)
+                    .addSnapshotListener { snapshot, error ->
+                        if (error != null) {
+                            close(error)
+                            return@addSnapshotListener
+                        }
+                        if (snapshot != null) {
+                            val intakes =
+                                snapshot.toObjects(NetworkIntake::class.java)
+                            trySend(intakes).isSuccess
+                        }
                     }
-                    if (snapshot != null) {
-                        val intakes = snapshot.toObjects(NewUserIntake::class.java)
-                        trySend(intakes).isSuccess
-                    }
-                }
-        awaitClose { listenerRegistration.remove() }
-    }
-
-    override suspend fun getUserIntake(userId: String, intakeId: String): Result<NewUserIntake> {
+            awaitClose { listenerRegistration.remove() }
+        }
+    
+    override suspend fun getUserIntake(
+        userId: String,
+        intakeId: String
+    ): Result<NetworkIntake> {
         return try {
             val documentSnapshot =
                 firestore
@@ -69,7 +85,8 @@ class NewIntakeRepositoryImpl @Inject constructor(private val firestore: Firebas
                     .get()
                     .await()
             if (documentSnapshot.exists()) {
-                val intake = documentSnapshot.toObject(NewUserIntake::class.java)
+                val intake =
+                    documentSnapshot.toObject(NetworkIntake::class.java)
                 if (intake != null) {
                     Result.success(intake)
                 } else {
@@ -82,10 +99,13 @@ class NewIntakeRepositoryImpl @Inject constructor(private val firestore: Firebas
             Result.failure(e)
         }
     }
-
-    override suspend fun addUserIntake(userId: String, intakeData: NewUserIntake): Result<String> {
+    
+    override suspend fun addUserIntake(
+        userId: String,
+        intakeData: NetworkIntake
+    ): Result<String> {
         val dataToSave = intakeData.copy(userId = userId, id = "")
-
+        
         return try {
             val documentRef =
                 firestore
@@ -99,13 +119,16 @@ class NewIntakeRepositoryImpl @Inject constructor(private val firestore: Firebas
             Result.failure(e)
         }
     }
-
-    override suspend fun updateUserIntake(userId: String, intake: NewUserIntake): Result<Unit> {
+    
+    override suspend fun updateUserIntake(
+        userId: String,
+        intake: NetworkIntake
+    ): Result<Unit> {
         if (intake.id.isBlank()) {
             return Result.failure(IllegalArgumentException("Intake ID cannot be blank for update."))
         }
         val dataToSave = intake.copy(userId = userId)
-
+        
         return try {
             firestore
                 .collection(USERS_COLLECTION)
@@ -119,8 +142,11 @@ class NewIntakeRepositoryImpl @Inject constructor(private val firestore: Firebas
             Result.failure(e)
         }
     }
-
-    override suspend fun deleteUserIntake(userId: String, intakeId: String): Result<Unit> {
+    
+    override suspend fun deleteUserIntake(
+        userId: String,
+        intakeId: String
+    ): Result<Unit> {
         if (intakeId.isBlank()) {
             return Result.failure(IllegalArgumentException("Intake ID cannot be blank for delete."))
         }
@@ -139,7 +165,7 @@ class NewIntakeRepositoryImpl @Inject constructor(private val firestore: Firebas
     }
     
     override suspend fun fetchIntakeStatus(
-        medication: NewUserMedication,
+        medication: NetworkMedication,
         uid: String,
     ): Result<Int> {
         val todayStart = LocalDate.now().atStartOfDay().toTimestamp()
@@ -160,7 +186,7 @@ class NewIntakeRepositoryImpl @Inject constructor(private val firestore: Firebas
             
             if (!querySnapshot.isEmpty) {
                 if (
-                    querySnapshot.toObjects(NewUserIntake::class.java)[0].status.toString() ==
+                    querySnapshot.toObjects(NetworkIntake::class.java)[0].status.toString() ==
                     "TAKEN"
                 )
                     Result.success(2)
