@@ -3,9 +3,9 @@ package com.galeria.medicationstracker.ui.screens.dashboard
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.galeria.medicationstracker.data.AuthRepository
 import com.galeria.medicationstracker.data.NewIntakeRepository
 import com.galeria.medicationstracker.data.NewMedicationRepository
+import com.galeria.medicationstracker.data.network.AuthRepository
 import com.galeria.medicationstracker.data.network.IntakeStatus
 import com.galeria.medicationstracker.data.network.NetworkIntake
 import com.galeria.medicationstracker.data.network.NetworkMedication

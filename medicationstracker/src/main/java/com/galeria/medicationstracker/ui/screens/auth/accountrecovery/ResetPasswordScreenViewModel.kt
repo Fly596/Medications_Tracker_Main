@@ -5,7 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.galeria.medicationstracker.SnackbarController
 import com.galeria.medicationstracker.SnackbarEvent
-import com.galeria.medicationstracker.data.AuthRepository
+import com.galeria.medicationstracker.data.network.AuthRepository
+import com.galeria.medicationstracker.utils.AuthResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,20 +22,20 @@ data class ResetPasswordScreenState(
 class ResetPasswordScreenViewModel
 @Inject
 constructor(private val authRepository: AuthRepository) : ViewModel() {
-
+    
     // val auth = FirebaseAuth.getInstance()
     private val _uiState = MutableStateFlow(ResetPasswordScreenState())
     val uiState = _uiState.asStateFlow()
-
+    
     fun updateEmail(input: String) {
         _uiState.value = _uiState.value.copy(email = input)
     }
-
+    
     private fun validateEmail(): Boolean {
         val emailInput = _uiState.value.email.trim()
         var isValid = true
         var errorMessage = ""
-
+        
         if (emailInput.isBlank() || emailInput.isEmpty()) {
             errorMessage = "Email cannot be empty"
             isValid = false
@@ -42,19 +43,65 @@ constructor(private val authRepository: AuthRepository) : ViewModel() {
             errorMessage = "Wrong email format"
             isValid = false
         }
-
+        
         _uiState.value = _uiState.value.copy(emailError = errorMessage)
         return isValid
     }
-
+    
     fun resetPassword(email: String) {
         val isEmailValid = validateEmail()
-
+        
         viewModelScope.launch {
             if (isEmailValid) {
-                authRepository
-                    .resetPassword(email)
-                    .onSuccess {
+                viewModelScope.launch {
+                    val result = authRepository
+                        .resetPassword(email)
+                    when (result) {
+                        is AuthResult.Success -> {
+                            SnackbarController.sendEvent(
+                                event = SnackbarEvent("Password reset email sent!")
+                            )
+                            
+                        }
+                        
+                        is AuthResult.AuthError -> {
+                            SnackbarController.sendEvent(
+                                event =
+                                    SnackbarEvent(
+                                        "Error sending password reset email: ${result.message}"
+                                    )
+                            )
+                        }
+                        
+                        is AuthResult.NetworkError -> {
+                            SnackbarController.sendEvent(
+                                event =
+                                    SnackbarEvent(
+                                        "Check your internet connection and try again."
+                                    )
+                            )
+                        }
+                        
+                        is AuthResult.UnknownError -> {
+                            SnackbarController.sendEvent(
+                                event =
+                                    SnackbarEvent(
+                                        "Something went wrong. Please try again later."
+                                    )
+                            )
+                        }
+                        
+                        is AuthResult.ValidationError -> {
+                            SnackbarController.sendEvent(
+                                event =
+                                    SnackbarEvent(
+                                        "Fill all the fields correctly."
+                                    )
+                            )
+                        }
+                    }
+                }
+                /*     .onSuccess {
                         // Password reset email sent successfully
                         viewModelScope.launch {
                             SnackbarController.sendEvent(
@@ -72,7 +119,7 @@ constructor(private val authRepository: AuthRepository) : ViewModel() {
                                     )
                             )
                         }
-                    }
+                    } */
             }
         }
     }

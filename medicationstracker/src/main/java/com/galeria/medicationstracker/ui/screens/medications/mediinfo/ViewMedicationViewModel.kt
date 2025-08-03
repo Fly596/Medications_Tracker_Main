@@ -5,8 +5,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.galeria.medicationstracker.data.AuthRepository
 import com.galeria.medicationstracker.data.NewMedicationRepository
+import com.galeria.medicationstracker.data.network.AuthRepository
 import com.galeria.medicationstracker.data.network.NetworkIntake
 import com.galeria.medicationstracker.data.network.NetworkMedication
 import com.galeria.medicationstracker.utils.navigation.MedicationScreen

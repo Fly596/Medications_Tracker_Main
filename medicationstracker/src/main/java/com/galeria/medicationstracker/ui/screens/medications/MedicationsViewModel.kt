@@ -3,8 +3,8 @@ package com.galeria.medicationstracker.ui.screens.medications
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.galeria.medicationstracker.data.AuthRepository
 import com.galeria.medicationstracker.data.NewMedicationRepository
+import com.galeria.medicationstracker.data.network.AuthRepository
 import com.galeria.medicationstracker.data.network.NetworkMedication
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

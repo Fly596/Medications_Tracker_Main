@@ -2,8 +2,8 @@ package com.galeria.medicationstracker.ui.screens.dashboard.moodtracker
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.galeria.medicationstracker.data.AuthRepository
 import com.galeria.medicationstracker.data.NewMoodRepository
+import com.galeria.medicationstracker.data.network.AuthRepository
 import com.galeria.medicationstracker.data.network.NetworkUserMood
 import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel

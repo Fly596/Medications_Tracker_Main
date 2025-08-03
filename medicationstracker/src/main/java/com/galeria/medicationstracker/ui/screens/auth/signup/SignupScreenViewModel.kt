@@ -2,8 +2,8 @@ package com.galeria.medicationstracker.ui.screens.auth.signup
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.galeria.medicationstracker.data.AuthRepository
 import com.galeria.medicationstracker.data.NewUserRepository
+import com.galeria.medicationstracker.data.network.AuthRepository
 import com.galeria.medicationstracker.data.network.NetworkUser
 import com.galeria.medicationstracker.utils.toTimestamp
 import dagger.hilt.android.lifecycle.HiltViewModel

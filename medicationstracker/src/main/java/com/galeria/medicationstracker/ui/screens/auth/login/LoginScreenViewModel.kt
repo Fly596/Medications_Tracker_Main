@@ -2,7 +2,8 @@ package com.galeria.medicationstracker.ui.screens.auth.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.galeria.medicationstracker.data.AuthRepository
+import com.galeria.medicationstracker.data.network.AuthRepository
+import com.galeria.medicationstracker.utils.AuthResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,16 +28,17 @@ data class LoginScreenState(
 @HiltViewModel
 class LoginScreenViewModel @Inject constructor(private val repository: AuthRepository) :
     ViewModel() {
-
+    
     private val _loginScreenState = MutableStateFlow(LoginScreenState())
-    val loginScreenState: StateFlow<LoginScreenState> = _loginScreenState.asStateFlow()
+    val loginScreenState: StateFlow<LoginScreenState> =
+        _loginScreenState.asStateFlow()
     private val _loginSuccessEvent = MutableSharedFlow<Unit>()
     val loginSuccessEvent: SharedFlow<Unit> = _loginSuccessEvent.asSharedFlow()
-
+    
     fun onSignInClick(onLoginClick: () -> Unit) {
         val email = _loginScreenState.value.email
         val password = _loginScreenState.value.password
-
+        
         if (email.isBlank()) {
             _loginScreenState.update { it.copy(emailError = "Email cannot be empty") }
             return
@@ -45,11 +47,32 @@ class LoginScreenViewModel @Inject constructor(private val repository: AuthRepos
             _loginScreenState.update { it.copy(passwordError = "Password cannot be empty") }
             return
         }
-
+        
         viewModelScope.launch {
-            _loginScreenState.update { it.copy(isLoading = true, generalError = null) }
+            _loginScreenState.update {
+                it.copy(
+                    isLoading = true,
+                    generalError = null
+                )
+            }
             val result = repository.signIn(email, password)
-
+            if (result is AuthResult.Success) {
+            }
+            
+            when (result) {
+                is Result.Success -> {
+                    // Успех!
+                    _loginScreenState.update { it.copy(isLoading = false) }
+                    _loginSuccessEvent.emit(Unit)
+                }
+                
+                is AuthResult.AuthError -> TODO()
+                AuthResult.NetworkError -> TODO()
+                AuthResult.Success -> TODO()
+                is AuthResult.UnknownError -> TODO()
+                is AuthResult.ValidationError -> TODO()
+            }
+            
             result.fold(
                 onSuccess = {
                     // Успех!
@@ -60,25 +83,32 @@ class LoginScreenViewModel @Inject constructor(private val repository: AuthRepos
                     _loginScreenState.update {
                         it.copy(
                             isLoading = false,
-                            generalError = exception.message ?: "Login failed. Please try again.",
+                            generalError = exception.message
+                                ?: "Login failed. Please try again.",
                         )
                     }
                 },
             )
         }
     }
-
+    
     fun updateEmail(input: String) {
-        _loginScreenState.update { it.copy(email = input, emailError = null, generalError = null) }
+        _loginScreenState.update {
+            it.copy(
+                email = input,
+                emailError = null,
+                generalError = null
+            )
+        }
         _loginScreenState.value = _loginScreenState.value.copy(email = input)
     }
-
+    
     fun updatePassword(input: String) {
         _loginScreenState.update {
             it.copy(password = input, passwordError = null, generalError = null)
         }
     }
-
+    
     fun isShowPasswordChecked(input: Boolean) {
         _loginScreenState.update { it.copy(showPassword = !input) }
     }
