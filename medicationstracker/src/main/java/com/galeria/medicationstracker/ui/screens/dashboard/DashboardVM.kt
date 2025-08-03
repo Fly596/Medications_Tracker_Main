@@ -25,7 +25,7 @@ import java.time.LocalTime
 import javax.inject.Inject
 
 data class DashboardUiState(
-    val isLoading: Boolean = true, // Добавим состояние загрузки
+    val isLoading: Boolean = false, // Добавим состояние загрузки
     val errorMessage: String? = null, // Для отображения ошибок
     val currentTakenMedications: List<NetworkMedication> = emptyList(),
 )
@@ -56,8 +56,8 @@ constructor(
     // val currentUserId = _currentUserId.asStateFlow()
     // private lateinit var currentUserId: String
     init {
+        _uiState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
             
             try {
                 // get user id
@@ -65,7 +65,6 @@ constructor(
                 
                 getCurrentMedications(uid.toString())
                 
-                _uiState.update { it.copy(isLoading = false) }
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(
@@ -81,8 +80,9 @@ constructor(
     // Фильтрация лекарств, прием которых окончен для использования при выводе
     // на главный экран.
     private fun getCurrentMedications(userId: String) {
+        _uiState.update { it.copy(isLoading = true) }
+        
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
             val intakes =
                 medicationRepository.getTodaysIntakes(userId)
                     .collect { intakesList ->
@@ -110,7 +110,7 @@ constructor(
                     medicationId = medication.id,
                     status = status.name,
                     presetTime = medication.intakeTime,
-                    factTimestamp = intakeTime
+                    factTimestamp = intakeTime.toInstant()
                 )
             intakeRepository.addUserIntake(uid.toString(), intake)
         }

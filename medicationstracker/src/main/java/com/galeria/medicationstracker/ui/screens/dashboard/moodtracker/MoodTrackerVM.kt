@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 data class MoodTrackerUiState(
     val moodValue: Int = 5,
-    val notes: String? = null,
+    val notes: String = "",
     val errorMessage: String? = null,
     val isLoading: Boolean = false,
 )
@@ -46,7 +46,7 @@ constructor(
                         userId = uid.toString(),
                         moodValue = mood,
                         notes = notes,
-                        timestamp = Timestamp(currentDate),
+                        timestamp = Timestamp(currentDate).toInstant(),
                     )
                 
                 moodRepository.addMood(uid.toString(), moodEntry)

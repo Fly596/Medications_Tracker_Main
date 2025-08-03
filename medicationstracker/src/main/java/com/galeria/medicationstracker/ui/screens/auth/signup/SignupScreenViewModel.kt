@@ -48,7 +48,7 @@ constructor(
             val result =
                 repository.signUp(_uiState.value.email, _uiState.value.password)
             
-            result.fold(
+           /*  result.fold(
                 onSuccess = {
                     val newUserId = repository.getUserId()
                     val birthDateTimestamp =
@@ -73,7 +73,7 @@ constructor(
                         )
                     }
                 },
-            )
+            ) */
         }
     }
     

@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Medication
 import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -82,23 +83,28 @@ fun DailyMedsScreen(
             )
         },
     ) { innerPadding ->
-        Column(
-            modifier =
-                modifier
-                    .fillMaxWidth()
-                    .padding(innerPadding)
-                    .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            // Календарь на неделю.
-            WeeklyCalendarView()
-            // Medication Cards List.
-            MedsByIntakeTimeList(
-                viewModel = dashboardViewModel,
-                onAddNoteClick = { onAddIntake.invoke() },
-                medicationsForIntakeTime = uiState.value.currentTakenMedications,
-            )
+        if(uiState.value.isLoading){
+            CircularProgressIndicator()
+        }else{
+            Column(
+                modifier =
+                    modifier
+                        .fillMaxWidth()
+                        .padding(innerPadding)
+                        .padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                // Календарь на неделю.
+                WeeklyCalendarView()
+                // Medication Cards List.
+                MedsByIntakeTimeList(
+                    viewModel = dashboardViewModel,
+                    onAddNoteClick = { onAddIntake.invoke() },
+                    medicationsForIntakeTime = uiState.value.currentTakenMedications,
+                )
+            }
         }
+    
     }
 }
 

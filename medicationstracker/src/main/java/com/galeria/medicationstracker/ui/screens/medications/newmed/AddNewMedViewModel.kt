@@ -6,6 +6,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import com.galeria.medicationstracker.data.network.MedicationForm
+import com.galeria.medicationstracker.data.network.NetworkDosage
 import com.galeria.medicationstracker.data.network.NetworkMedication
 import com.galeria.medicationstracker.data.old.MedicationUnit
 import com.galeria.medicationstracker.utils.FirestoreFunctions.FirestoreService
@@ -82,10 +83,10 @@ class AddNewMedViewModel : ViewModel() {
             NetworkMedication(
                 userId = userId.toString(),
                 name = uiState.value.medName,
-                dosage = uiState.value.medStrength.toString() + uiState.value.medUnit,
+                dosage = NetworkDosage(uiState.value.medStrength.toDouble(),uiState.value.medUnit.toString()),
                 form = uiState.value.medForm,
-                startDate = uiState.value.medStartDate,
-                endDate = uiState.value.medEndDate,
+                startDate = uiState.value.medStartDate?.toInstant(),
+                endDate = uiState.value.medEndDate?.toInstant(),
                 daysOfWeek = uiState.value.intakeDays,
                 intakeTime = uiState.value.medIntakeTime
             )

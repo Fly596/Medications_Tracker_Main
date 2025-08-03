@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.galeria.medicationstracker.ui.componentsOld.FlySimpleCard
@@ -25,7 +26,7 @@ import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 @Composable
 fun IntakeRecordsScreen(
     modifier: Modifier = Modifier,
-    viewModel: IntakeRecordsVM = viewModel(),
+    viewModel: IntakeRecordsVM = hiltViewModel(),
     onBackClick: () -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()

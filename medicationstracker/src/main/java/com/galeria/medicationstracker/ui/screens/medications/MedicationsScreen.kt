@@ -134,9 +134,10 @@ fun FlyElevatedCardMedsList(
                 Spacer(modifier = Modifier)
                 
                 Text(
-                    medication?.dosage ?: "Med Dosage",
+                    "${medication?.dosage?.value} ${medication?.dosage?.unit} Med Dosage",
                     style = typography.bodyMedium
                 )
+          
                 Text(
                     medication?.intakeTime ?: "Intake Time",
                     style = typography.bodyMedium

@@ -15,14 +15,6 @@ import okio.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
-sealed interface AuthError {
-    data object WrongPassword : AuthError
-    data object UserNotFound : AuthError
-    data object WeakPassword : AuthError
-    data object InvalidEmail : AuthError
-    data object UserCollision : AuthError
-    data class Unknown(val message: String?) : AuthError
-}
 
 interface AuthRepository {
     
