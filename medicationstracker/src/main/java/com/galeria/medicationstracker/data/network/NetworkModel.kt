@@ -24,7 +24,7 @@ data class NetworkMedication(
     val startDate: Instant? = null,
     val endDate: Instant? = null,
     val daysOfWeek: List<String> = emptyList(),
-    val intakeTime: List<String> = emptyList(),
+    val intakeTime: String = "",
     val schemaVersion: Int = 1
 )
 

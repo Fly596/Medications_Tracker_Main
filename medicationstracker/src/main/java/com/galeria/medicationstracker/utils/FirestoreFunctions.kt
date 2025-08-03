@@ -7,5 +7,4 @@ class FirestoreFunctions {
         
         val db: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
     }
-    
 }

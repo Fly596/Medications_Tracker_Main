@@ -56,11 +56,9 @@ class LoginScreenViewModel @Inject constructor(private val repository: AuthRepos
                 )
             }
             val result = repository.signIn(email, password)
-            if (result is AuthResult.Success) {
-            }
-            
+     
             when (result) {
-                is Result.Success -> {
+                is AuthResult.Success -> {
                     // Успех!
                     _loginScreenState.update { it.copy(isLoading = false) }
                     _loginSuccessEvent.emit(Unit)
@@ -73,7 +71,7 @@ class LoginScreenViewModel @Inject constructor(private val repository: AuthRepos
                 is AuthResult.ValidationError -> TODO()
             }
             
-            result.fold(
+            /* result.fold(
                 onSuccess = {
                     // Успех!
                     _loginScreenState.update { it.copy(isLoading = false) }
@@ -88,19 +86,22 @@ class LoginScreenViewModel @Inject constructor(private val repository: AuthRepos
                         )
                     }
                 },
-            )
+            ) */
         }
     }
     
     fun updateEmail(input: String) {
-        _loginScreenState.update {
-            it.copy(
-                email = input,
-                emailError = null,
-                generalError = null
-            )
+        viewModelScope.launch {
+            _loginScreenState.update {
+                it.copy(
+                    email = input,
+                    emailError = null,
+                    generalError = null
+                )
+            }
+            _loginScreenState.value = _loginScreenState.value.copy(email = input)
         }
-        _loginScreenState.value = _loginScreenState.value.copy(email = input)
+        
     }
     
     fun updatePassword(input: String) {

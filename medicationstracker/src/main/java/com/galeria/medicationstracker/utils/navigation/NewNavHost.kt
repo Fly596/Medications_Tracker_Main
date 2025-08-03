@@ -64,7 +64,7 @@ fun NavGraphBuilder.authGraph(navController: NavHostController) {
         composable<AuthScreen.Login> {
             LoginScreen(
                 onLoginSuccessNavigation = {
-                    navController.navigate(HomeScreen.TodayMedications) {
+                    navController.navigate(GraphRoutes.Home/* HomeScreen.TodayMedications */) {
                         popUpTo(AuthScreen.Login) { inclusive = true }
                     }
                 },
@@ -78,7 +78,7 @@ fun NavGraphBuilder.authGraph(navController: NavHostController) {
         }
         
         composable<AuthScreen.Registration> {
-            SignupScreen(navigateHome = { navController.navigateUp() })
+            SignupScreen(onNavigateBack = { navController.navigateUp() })
         }
         
         composable<AuthScreen.PasswordRecovery> {

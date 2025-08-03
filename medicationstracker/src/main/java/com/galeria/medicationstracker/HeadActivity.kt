@@ -91,14 +91,14 @@ class HeadActivity : ComponentActivity() {
                     bottomBar = {
                         val navBackStackEntry by navController.currentBackStackEntryAsState()
                         val currentDestination = navBackStackEntry?.destination?.route
-                        val routesOldWithoutBottomBar =
+                        val routesWithoutBottomBar =
                             listOf(
-                                AuthScreen.Login.route,
-                                AuthScreen.Registration.route,
-                                AuthScreen.PasswordRecovery.route,
+                                AuthScreen.Login.toString(),
+                                AuthScreen.Registration.toString(),
+                                AuthScreen.PasswordRecovery.toString(),
                             )
 
-                        if (currentDestination !in routesOldWithoutBottomBar) {
+                        if (currentDestination !in routesWithoutBottomBar) {
                             BottomNavBar(items, navController, headViewModel)
                         }
                     },

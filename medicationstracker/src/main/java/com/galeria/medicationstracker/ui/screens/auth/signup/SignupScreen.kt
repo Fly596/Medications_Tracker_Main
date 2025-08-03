@@ -42,7 +42,7 @@ import java.time.format.DateTimeFormatter
 fun SignupScreen(
     modifier: Modifier = Modifier,
     passedEmail: String = "",
-    navigateHome: () -> Unit,
+    onNavigateBack: () -> Unit,
     viewModel: SignupScreenViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(Unit) { viewModel.updateEmail(passedEmail) }
@@ -148,7 +148,7 @@ fun SignupScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         Row(verticalAlignment = Alignment.CenterVertically) {
-            FlyTextButton(onClick = navigateHome) { Text(stringResource(R.string.cancel)) }
+            FlyTextButton(onClick = onNavigateBack) { Text(stringResource(R.string.cancel)) }
 
             Spacer(modifier = Modifier.weight(1f))
 

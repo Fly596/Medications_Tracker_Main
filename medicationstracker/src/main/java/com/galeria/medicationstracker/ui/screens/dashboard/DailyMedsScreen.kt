@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -41,6 +42,7 @@ import com.galeria.medicationstracker.ui.componentsOld.WeeklyCalendarView
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme.typography
 import com.galeria.medicationstracker.utils.getTodaysDate
+import com.google.firebase.Timestamp
 import java.time.format.DateTimeFormatter
 
 @Composable
@@ -52,53 +54,50 @@ fun DailyMedsScreen(
 ) {
     val uiState = dashboardViewModel.uiState.collectAsStateWithLifecycle()
     
-    MedTrackerTheme {
-        Scaffold(
-            containerColor = MedTrackerTheme.colors.secondaryBackground,
-            topBar = {
-                Column(
-                    modifier = Modifier.padding(
-                        vertical = 24.dp,
-                        horizontal = 16.dp
-                    )
-                ) {
-                    // today's date.
-                    Text(
-                        text = getTodaysDate().format(
-                            DateTimeFormatter.ofPattern(
-                                "MMM d"
-                            )
-                        ),
-                        style = typography.display3Emphasized,
-                    )
-                }
-            },
-            floatingActionButton = {
-                GFABButton(
-                    onClick = {
-                        onAddMood.invoke()
-                        // mood tracker
-                    }
-                )
-            },
-        ) { innerPadding ->
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        containerColor = MedTrackerTheme.colors.secondaryBackground,
+        topBar = {
             Column(
-                modifier =
-                    modifier
-                        .fillMaxWidth()
-                        .padding(innerPadding)
-                        .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.padding(
+                    vertical = 24.dp,
+                    horizontal = 16.dp
+                )
             ) {
-                // Календарь на неделю.
-                WeeklyCalendarView()
-                // Medication Cards List.
-                MedsByIntakeTimeList(
-                    viewModel = dashboardViewModel,
-                    onAddNoteClick = { onAddIntake.invoke() },
-                    medicationsForIntakeTime = uiState.value.currentTakenMedications,
+                // today's date.
+                Text(
+                    text = getTodaysDate().format(
+                        DateTimeFormatter.ofPattern(
+                            "MMM d"
+                        )
+                    ),
+                    style = typography.display3Emphasized,
                 )
             }
+        },
+        floatingActionButton = {
+            GFABButton(
+                onClick = onAddMood
+                // mood tracker
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier =
+                modifier
+                    .fillMaxWidth()
+                    .padding(innerPadding)
+                    .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            // Календарь на неделю.
+            WeeklyCalendarView()
+            // Medication Cards List.
+            MedsByIntakeTimeList(
+                viewModel = dashboardViewModel,
+                onAddNoteClick = { onAddIntake.invoke() },
+                medicationsForIntakeTime = uiState.value.currentTakenMedications,
+            )
         }
     }
 }
@@ -153,6 +152,7 @@ fun MedicationItem(
     medication: NetworkMedication,
     icon: ImageVector = Icons.Filled.Medication,
     onAddNoteClick: () -> Unit = {},
+   // onAddIntake: (intakeTime: Timestamp,medication: NetworkMedication, status: IntakeStatus ) ->Unit
 ) {
     val showLogDialog = rememberSaveable { mutableStateOf(false) }
     

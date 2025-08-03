@@ -3,11 +3,11 @@ package com.galeria.medicationstracker.utils.navigation
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class AuthScreen(val route: String) {
+sealed interface AuthScreen {
 
-    @Serializable data object Login : AuthScreen("login")
+    @Serializable data object Login : AuthScreen
 
-    @Serializable data object Registration : AuthScreen("registration")
+    @Serializable data object Registration : AuthScreen
 
-    @Serializable data object PasswordRecovery : AuthScreen("password_recovery")
+    @Serializable data object PasswordRecovery : AuthScreen
 }

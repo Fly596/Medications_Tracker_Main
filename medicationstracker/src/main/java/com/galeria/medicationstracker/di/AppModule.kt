@@ -1,44 +1,39 @@
 package com.galeria.medicationstracker.di
 
+import android.content.Context
+import androidx.room.Room
+import com.galeria.medicationstracker.data.local.AppDatabase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-
-    @Provides @Singleton fun provideFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
-
-    @Provides @Singleton fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
-
-    // region OLD FirebaseRepositoryModule
-    /*
-    @Provides
-    fun provideFirestoreRepository(
-        firestore: FirebaseFirestore,
-        auth: FirebaseAuth,
-    ): UserMedicationsRepository {
-        return UserMedicationsRepositoryImpl(firestore, auth)
-    }
-
+    
     @Provides
     @Singleton
-    fun provideUserRepository(firestore: FirebaseFirestore, auth: FirebaseAuth): UserRepository {
-        return UserRepositoryImpl(firestore, auth)
-    }
-
+    fun provideFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
+    
     @Provides
     @Singleton
-    fun provideMedicationRepository(
-        firestore: FirebaseFirestore,
-        auth: FirebaseAuth,
-    ): MedicationRepository {
-        return MedicationRepositoryImpl(firestore, auth)
-    } */
-    // endregion
+    fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
+    
+    @Provides
+    @Singleton
+    fun provideDatabase(@ApplicationContext context: Context): AppDatabase =
+        Room.databaseBuilder(context, AppDatabase::class.java, "app_database")
+            .build()
+    
+    @Provides
+    fun provideUserDao(database: AppDatabase) = database.userDao
+    
+    @Provides
+    fun provideMedicationDao(database: AppDatabase) = database.medicationDao
+    
 }

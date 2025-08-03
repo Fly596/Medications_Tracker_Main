@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.res.painterResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.galeria.medicationstracker.R
 import com.galeria.medicationstracker.ui.HeadViewModel
@@ -58,7 +59,7 @@ fun bottomNavItems(): List<BottomNavItem> {
 fun BottomNavBar(
     navItems: List<BottomNavItem>,
     navController: NavHostController,
-    viewModel: HeadViewModel,
+    viewModel: HeadViewModel = hiltViewModel(),
 ) {
     val currentNavItemIndex = viewModel.selectedItemIndex.collectAsState().value
 
