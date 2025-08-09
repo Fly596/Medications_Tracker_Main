@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -29,13 +28,11 @@ import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 @Composable
 fun ResetPasswordScreen(
     modifier: Modifier = Modifier,
-    passedEmail: String = "",
-    navigateHome: () -> Unit,
+    onNavigateBack: () -> Unit,
     viewModel: ResetPasswordScreenViewModel = hiltViewModel(),
 ) {
-    LaunchedEffect(Unit) { viewModel.updateEmail(passedEmail) }
     val state = viewModel.uiState.collectAsStateWithLifecycle()
-
+    
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -43,14 +40,14 @@ fun ResetPasswordScreen(
         verticalArrangement = Arrangement.Top,
     ) {
         Spacer(modifier = Modifier.height(16.dp))
-
+        
         Text(
             stringResource(R.string.recover_password_screen_title),
             style = MedTrackerTheme.typography.display2Emphasized,
         )
-
+        
         Spacer(modifier = Modifier.weight(1f))
-
+        
         MyTextField(
             value = state.value.email,
             onValueChange = { viewModel.updateEmail(it) },
@@ -62,23 +59,23 @@ fun ResetPasswordScreen(
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
         )
-
+        
         Spacer(modifier = Modifier.height(16.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
-            FlyTextButton(onClick = { navigateHome.invoke() }) {
+            FlyTextButton(onClick = { onNavigateBack.invoke() }) {
                 Text(
                     text = stringResource(
                         R.string.cancel
                     )
                 )
             }
-
+            
             Spacer(modifier = Modifier.weight(1f))
-
+            
             FlyButton(
                 onClick = {
                     viewModel.resetPassword(state.value.email)
-                    navigateHome.invoke()
+                    onNavigateBack.invoke()
                 },
                 enabled = true,
             ) {
@@ -98,7 +95,6 @@ fun ResetPasswordScreen(
 fun AccountRecoveryScreenPreview() {
     MedTrackerTheme {
         ResetPasswordScreen(
-            passedEmail = "test@example.com",
-            navigateHome = {})
+            onNavigateBack = {})
     }
 }

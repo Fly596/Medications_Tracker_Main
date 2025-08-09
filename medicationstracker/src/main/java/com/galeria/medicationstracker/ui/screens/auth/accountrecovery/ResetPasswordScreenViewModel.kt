@@ -1,15 +1,19 @@
 package com.galeria.medicationstracker.ui.screens.auth.accountrecovery
 
 import android.util.Patterns
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.galeria.medicationstracker.SnackbarController
 import com.galeria.medicationstracker.SnackbarEvent
 import com.galeria.medicationstracker.data.network.AuthRepository
 import com.galeria.medicationstracker.utils.AuthResult
+import com.galeria.medicationstracker.utils.navigation.AuthScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,11 +25,26 @@ data class ResetPasswordScreenState(
 @HiltViewModel
 class ResetPasswordScreenViewModel
 @Inject
-constructor(private val authRepository: AuthRepository) : ViewModel() {
+constructor(
+    private val authRepository: AuthRepository,
+    savedStateHandle: SavedStateHandle,
+) : ViewModel() {
     
-    // val auth = FirebaseAuth.getInstance()
     private val _uiState = MutableStateFlow(ResetPasswordScreenState())
     val uiState = _uiState.asStateFlow()
+    
+    init {
+        viewModelScope.launch {
+            try {
+                val args = savedStateHandle.toRoute<AuthScreen.Registration>()
+                val inputEmail = args.email
+                _uiState.update { it.copy(email = inputEmail) }
+                
+            } catch (e: Exception) {
+            }
+        }
+    }
+    
     
     fun updateEmail(input: String) {
         _uiState.value = _uiState.value.copy(email = input)

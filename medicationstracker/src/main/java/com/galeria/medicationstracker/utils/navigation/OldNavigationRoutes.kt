@@ -1,13 +1,8 @@
 package com.galeria.medicationstracker.utils.navigation
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.rememberNavController
 import kotlinx.serialization.Serializable
 
-@Composable
+/* @Composable
 fun ApplicationNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
@@ -16,14 +11,14 @@ fun ApplicationNavHost(
 
     NavHost(
         navController = navController,
-        startDestination = startDestination, /* HH */
+        startDestination = startDestination,  *//* HH *//*
         modifier = modifier,
     ) {
         // authGraphOld(navController)
         // patientGraph(navController)
         // userMedsGraph(navController)
     }
-}
+} */
 
 @Serializable
 sealed class RoutesOld {

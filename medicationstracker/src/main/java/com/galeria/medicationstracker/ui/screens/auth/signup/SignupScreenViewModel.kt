@@ -1,11 +1,12 @@
 package com.galeria.medicationstracker.ui.screens.auth.signup
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.galeria.medicationstracker.data.NewUserRepository
 import com.galeria.medicationstracker.data.network.AuthRepository
-import com.galeria.medicationstracker.data.network.NetworkUser
-import com.galeria.medicationstracker.utils.toTimestamp
+import com.galeria.medicationstracker.utils.navigation.AuthScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,7 +34,8 @@ class SignupScreenViewModel
 @Inject
 constructor(
     private val repository: AuthRepository,
-    private val userRepo: NewUserRepository
+    private val userRepo: NewUserRepository,
+    savedStateHandle: SavedStateHandle,
 ) :
     ViewModel() {
     
@@ -42,38 +44,52 @@ constructor(
     val uiState = _uiState.asStateFlow()
     private val _signupSuccessEvent = MutableSharedFlow<Unit>()
     
+    init {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, generalError = null) }
+            
+            try {
+                val args = savedStateHandle.toRoute<AuthScreen.Registration>()
+                val inputEmail = args.email
+                _uiState.update { it.copy(email = inputEmail) }
+                
+            } catch (e: Exception) {
+            }
+            _uiState.update { it.copy(isLoading = false, generalError = null) }
+        }
+    }
+    
     fun onRegisterClick() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, generalError = null) }
             val result =
                 repository.signUp(_uiState.value.email, _uiState.value.password)
-            
-           /*  result.fold(
-                onSuccess = {
-                    val newUserId = repository.getUserId()
-                    val birthDateTimestamp =
-                        _uiState.value.selectedBirthDate.toTimestamp()
-                    
-                    _uiState.update { it.copy(isLoading = false) }
-                    val networkUser: NetworkUser =
-                        NetworkUser(
-                            id = newUserId.getOrNull().toString(),
-                            name = _uiState.value.name,
-                            email = _uiState.value.email,
-                            dateOfBirth = birthDateTimestamp,
-                        )
-                    userRepo.addUser(networkUser)
-                },
-                onFailure = { exception ->
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            generalError = exception.message
-                                ?: "Signup failed.",
-                        )
-                    }
-                },
-            ) */
+            /*  result.fold(
+                 onSuccess = {
+                     val newUserId = repository.getUserId()
+                     val birthDateTimestamp =
+                         _uiState.value.selectedBirthDate.toTimestamp()
+                     
+                     _uiState.update { it.copy(isLoading = false) }
+                     val networkUser: NetworkUser =
+                         NetworkUser(
+                             id = newUserId.getOrNull().toString(),
+                             name = _uiState.value.name,
+                             email = _uiState.value.email,
+                             dateOfBirth = birthDateTimestamp,
+                         )
+                     userRepo.addUser(networkUser)
+                 },
+                 onFailure = { exception ->
+                     _uiState.update {
+                         it.copy(
+                             isLoading = false,
+                             generalError = exception.message
+                                 ?: "Signup failed.",
+                         )
+                     }
+                 },
+             ) */
         }
     }
     

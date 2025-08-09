@@ -19,6 +19,57 @@ import com.galeria.medicationstracker.ui.HeadViewModel
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.utils.navigation.GraphRoutes
 import com.galeria.medicationstracker.utils.navigation.GraphRoutes.Auth.route
+import com.galeria.medicationstracker.utils.navigation.HomeScreen
+import com.galeria.medicationstracker.utils.navigation.MedicationScreen
+import com.galeria.medicationstracker.utils.navigation.ProfileScreen
+
+// Компоненты навигации между экранами.
+enum class BottomNavigation(
+    val title: String,
+    val selectedIcon: Int,
+    val unselectedIcon: Int,
+    val route: Any
+) {
+    
+    DASHBOARD(
+        "Dashboard",
+        selectedIcon = R.drawable.home_fill,
+        unselectedIcon = R.drawable.home,
+        route = HomeScreen.TodayMedications
+    ),
+    
+    MEDICATIONS(
+        "Medications",
+        selectedIcon = R.drawable.lab_profile_fill,
+        unselectedIcon = R.drawable.lab_profile,
+        route = MedicationScreen.MedicationsList,
+    ),
+    
+    PROFILE(
+        "Profile",
+        selectedIcon = R.drawable.profile_fill,
+        unselectedIcon = R.drawable.profile,
+        route = ProfileScreen.ProfileMain,
+    ),
+}
+
+// Компоненты навигации между экранами.
+enum class NoNavBar(
+    val route: GraphRoutes
+) {
+    
+    LOGIN(
+        route = GraphRoutes.Home
+    ),
+    
+    RECOVER(
+        route = GraphRoutes.Medications,
+    ),
+    
+    REGISTER(
+        route = GraphRoutes.PatientDashboard,
+    ),
+}
 
 data class BottomNavItem(
     val title: String,
@@ -62,7 +113,7 @@ fun BottomNavBar(
     viewModel: HeadViewModel = hiltViewModel(),
 ) {
     val currentNavItemIndex = viewModel.selectedItemIndex.collectAsState().value
-
+    
     Column {
         NavigationBar(
             // modifier = Modifier.fillMaxWidth(),
@@ -98,7 +149,10 @@ fun BottomNavBar(
                         }
                     },
                     label = {
-                        Text(text = navItem.title, style = MedTrackerTheme.typography.bodyMedium)
+                        Text(
+                            text = navItem.title,
+                            style = MedTrackerTheme.typography.bodyMedium
+                        )
                     },
                     icon = {
                         IconWithBadge(
@@ -132,6 +186,9 @@ fun IconWithBadge(
             }
         }
     ) {
-        Icon(painter = painterResource(id = icon), contentDescription = contentDescription)
+        Icon(
+            painter = painterResource(id = icon),
+            contentDescription = contentDescription
+        )
     }
 }

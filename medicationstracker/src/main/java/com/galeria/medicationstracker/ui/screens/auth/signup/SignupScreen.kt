@@ -17,7 +17,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -41,11 +40,9 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun SignupScreen(
     modifier: Modifier = Modifier,
-    passedEmail: String = "",
     onNavigateBack: () -> Unit,
     viewModel: SignupScreenViewModel = hiltViewModel(),
 ) {
-    LaunchedEffect(Unit) { viewModel.updateEmail(passedEmail) }
     val state = viewModel.uiState.collectAsStateWithLifecycle()
     val datePickerState =
         rememberDatePickerState(
@@ -55,7 +52,7 @@ fun SignupScreen(
                     .toInstant()
                     .toEpochMilli()
         )
-
+    
     if (state.value.showDatePicker) {
         DatePickerDialog(
             onDismissRequest = { viewModel.dismissDatePicker() },
@@ -63,7 +60,8 @@ fun SignupScreen(
                 TextButton(
                     onClick = {
                         val selectedMillis =
-                            datePickerState.selectedDateMillis ?: System.currentTimeMillis()
+                            datePickerState.selectedDateMillis
+                                ?: System.currentTimeMillis()
                         val selectedDate =
                             Instant.ofEpochMilli(selectedMillis)
                                 .atZone(ZoneId.systemDefault())
@@ -80,20 +78,22 @@ fun SignupScreen(
             DatePicker(state = datePickerState)
         }
     }
-
+    
     Column(
-        modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.Top,
     ) {
         Spacer(modifier = Modifier.height(16.dp))
-
+        
         Text(
             stringResource(R.string.sign_up_screen_title),
             style = MedTrackerTheme.typography.display2Emphasized,
         )
-
+        
         Spacer(modifier = Modifier.weight(1f))
-
+        
         MyTextField(
             value = state.value.name,
             onValueChange = { viewModel.updateUserName(it) },
@@ -102,7 +102,7 @@ fun SignupScreen(
             placeholder = stringResource(R.string.name),
             modifier = Modifier.fillMaxWidth(),
         )
-
+        
         MyTextField(
             value = state.value.email,
             onValueChange = { viewModel.updateEmail(it) },
@@ -114,7 +114,7 @@ fun SignupScreen(
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
         )
-
+        
         MyTextField(
             value = state.value.password,
             onValueChange = { viewModel.updatePassword(it) },
@@ -130,10 +130,14 @@ fun SignupScreen(
                 else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         )
-
+        
         MyTextField(
             value =
-                state.value.selectedBirthDate.format(DateTimeFormatter.ofPattern("MMMM dd yyyy")),
+                state.value.selectedBirthDate.format(
+                    DateTimeFormatter.ofPattern(
+                        "MMMM dd yyyy"
+                    )
+                ),
             onValueChange = {},
             label = "Birth Date",
             modifier = Modifier.clickable { viewModel.showDatePicker() },
@@ -144,19 +148,19 @@ fun SignupScreen(
             checked = state.value.showPassword,
             onCheckedChange = { viewModel.isShowPasswordChecked(state.value.showPassword) },
         )
-
+        
         Spacer(modifier = Modifier.height(16.dp))
-
+        
         Row(verticalAlignment = Alignment.CenterVertically) {
             FlyTextButton(onClick = onNavigateBack) { Text(stringResource(R.string.cancel)) }
-
+            
             Spacer(modifier = Modifier.weight(1f))
-
+            
             FlyButton(onClick = { viewModel.onRegisterClick() }) {
                 Text(text = stringResource(R.string.create_account))
             }
         }
-
+        
         Spacer(modifier = Modifier.weight(1f))
         // просто, чтобы положение полей и кнопок было таким же, как на экране входа.
         FlyTextButton(onClick = {}, enabled = false) { Text(text = "") }
