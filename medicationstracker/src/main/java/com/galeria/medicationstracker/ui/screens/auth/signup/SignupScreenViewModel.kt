@@ -4,8 +4,11 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.galeria.medicationstracker.data.NewUserRepository
 import com.galeria.medicationstracker.data.network.AuthRepository
+import com.galeria.medicationstracker.data.network.NetworkUser
 import com.galeria.medicationstracker.utils.navigation.AuthScreen
+import com.galeria.medicationstracker.utils.toTimestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,6 +36,7 @@ class SignupScreenViewModel
 @Inject
 constructor(
     private val repository: AuthRepository,
+    private val userRepo: NewUserRepository,
     savedStateHandle: SavedStateHandle,
 ) :
     ViewModel() {
@@ -58,10 +62,24 @@ constructor(
     }
     
     fun onRegisterClick() {
+        _uiState.update { it.copy(isLoading = true, generalError = null) }
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, generalError = null) }
-            val result =
-                repository.signUp(_uiState.value.email, _uiState.value.password)
+            repository.signUp(_uiState.value.email, _uiState.value.password)
+            
+            val newUserId = repository.getUserId()
+            val birthDateTimestamp =
+                _uiState.value.selectedBirthDate.toTimestamp()
+            val networkUser: NetworkUser =
+                NetworkUser(
+                    id = newUserId.getOrNull().toString(),
+                    name = _uiState.value.name,
+                    email = _uiState.value.email,
+                    dateOfBirth = birthDateTimestamp,
+                )
+            userRepo.addUser(networkUser)
+            _uiState.update { it.copy(isLoading = false, generalError = null) }
+            
+            
             // TODO: fold AUTHRESULT.
             /*  result.fold(
                  onSuccess = {

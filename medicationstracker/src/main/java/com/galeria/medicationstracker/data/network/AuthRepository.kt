@@ -74,6 +74,7 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) :
         }
         return AuthResult.Success /* Result.success("ass") */
     }
+    
     /*         return runAuthOperation {
                 auth.signInWithEmailAndPassword(email, password).await()
             } */
@@ -101,6 +102,7 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) :
         
         return runAuthOperation {
             auth.createUserWithEmailAndPassword(email, password).await()
+            AuthResult.Success
         }
         /*  return try {
              auth.createUserWithEmailAndPassword(email, password).await()
