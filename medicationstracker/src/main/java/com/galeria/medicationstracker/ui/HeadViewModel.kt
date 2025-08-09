@@ -13,18 +13,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-// TODO: What is this?
-@HiltViewModel
-class HeadViewModel @Inject constructor(private val repository: NewUserRepository) : ViewModel() {
-
-    private val _selectedItemIndex = MutableStateFlow(0)
-    val selectedItemIndex = _selectedItemIndex.asStateFlow()
-
-    fun updateSelectedItemIndex(index: Int) {
-        _selectedItemIndex.value = index
-    }
-}
-
 // Состояние главного экрана (хранит пользователя и стартовый экран).
 data class MainState(
     val user: FirebaseUser? = null,

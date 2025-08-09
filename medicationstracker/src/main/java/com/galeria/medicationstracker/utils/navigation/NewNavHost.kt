@@ -159,15 +159,7 @@ fun NavGraphBuilder.homeScreenGraph(navController: NavHostController) {
                 onAddIntake = {},
             )
         }
-        // composable<HomeScreen.IntakeCheck> { navBackStackEntry ->
-        //     val intakeDialog: HomeScreen.IntakeCheck =
-        //         navBackStackEntry.toRoute()
-        //     CheckIntakeScreen(
-        //         medicationId = intakeDialog.medicationId,
-        //         onNavigateBack = { navController.navigateUp() },
-        //     )
-        // }
-
+        
         composable<HomeScreen.MoodCheck> {
             MoodTrackerScreen(onBackClick = { navController.navigateUp() })
             // TODO: MoodTrackerScreen
