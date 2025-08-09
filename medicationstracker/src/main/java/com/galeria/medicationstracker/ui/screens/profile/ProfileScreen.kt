@@ -46,8 +46,11 @@ import com.galeria.medicationstracker.data.network.NetworkMedication
 import com.galeria.medicationstracker.ui.components.GPrimaryButton
 import com.galeria.medicationstracker.ui.components.GSecondaryButton
 import com.galeria.medicationstracker.ui.componentsOld.FlySimpleCard
+import com.galeria.medicationstracker.ui.screens.dashboard.record.LogsCard
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme.colors
+import com.galeria.medicationstracker.utils.formatTimestampTillTheDayMMMMddyyyy
+import com.galeria.medicationstracker.utils.formatTimestampTillTheHour
 
 @Composable
 fun UserProfileScreen(
@@ -56,7 +59,7 @@ fun UserProfileScreen(
     onNotesClick: () -> Unit = {},
     viewModel: ProfileVM = hiltViewModel(),
 ) {
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     
     Column(
         modifier =
@@ -86,7 +89,7 @@ fun UserProfileScreen(
                 )
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
-                        text = uiState.value.networkUser?.name.toString(),
+                        text = uiState.networkUser?.name.toString(),
                         style = MedTrackerTheme.typography.display3Emphasized,
                         color = colors.primaryLabel,
                     )
@@ -97,11 +100,11 @@ fun UserProfileScreen(
                     ) {
                         // LabeledStat(uiState.value.user?.dateOfBirth.toString(), "Age")
                         LabeledStat(
-                            uiState.value.networkUser?.heightCm.toString(),
+                            uiState.networkUser?.heightCm.toString(),
                             stringResource(R.string.height)
                         )
                         LabeledStat(
-                            uiState.value.networkUser?.weightKg.toString(),
+                            uiState.networkUser?.weightKg.toString(),
                             stringResource(R.string.weight)
                         )
                     }
@@ -133,8 +136,8 @@ fun UserProfileScreen(
                     R.string.history
                 )
             ),
-            medications = uiState.value.medications,
-            intakes = uiState.value.intakes,
+            medications = uiState.medications,
+            intakes = uiState.intakes,
         )
     }
     
@@ -186,28 +189,29 @@ fun UserMedications(mediations: List<NetworkMedication> = emptyList()) {
 
 @Composable
 fun UserHistory(intakes: List<NetworkIntake> = emptyList()) {
-    /*     LazyColumn {
+    LazyColumn {
             items(intakes) { intake ->
+                val time = intake.factTimestamp
                 val formattedDate =
-                    if (intake.dateTime != null) {
-                        formatTimestampTillTheDayMMMMddyyyy(intake.dateTime)
+                    if (time != null) {
+                        formatTimestampTillTheDayMMMMddyyyy(time)
                     } else {
                         ""
                     }
                 val formatedTime =
-                    if (intake.dateTime != null) {
-                        formatTimestampTillTheHour(intake.dateTime)
+                    if (time != null) {
+                        formatTimestampTillTheHour(time)
                     } else {
                         ""
                     }
                 LogsCard(
-                    name = intake.medicationName.toString(),
+                    name = intake.name.toString(),
                     status = intake.status.toString(),
                     date = formattedDate,
                     time = formatedTime,
                 )
             }
-        } */
+    }
 }
 
 @Composable

@@ -103,7 +103,7 @@ fun FlyElevatedCardMedsList(
         shape = shape,
         elevation =
             CardDefaults.elevatedCardElevation(
-                defaultElevation = 0.dp,
+                defaultElevation = 2.dp,
                 pressedElevation = 8.dp,
                 focusedElevation = 10.dp,
             ),
@@ -118,6 +118,7 @@ fun FlyElevatedCardMedsList(
         Row(
             modifier =
                 Modifier
+                    .fillMaxWidth()
                     // .fillMaxSize()
                     .padding(16.dp),
             verticalAlignment = Alignment.Top,
@@ -134,7 +135,7 @@ fun FlyElevatedCardMedsList(
                 Spacer(modifier = Modifier)
                 
                 Text(
-                    "${medication?.dosage?.value} ${medication?.dosage?.unit} Med Dosage",
+                    "${medication?.dosage?.value} ${medication?.dosage?.unit}",
                     style = typography.bodyMedium
                 )
           
@@ -142,15 +143,11 @@ fun FlyElevatedCardMedsList(
                     medication?.intakeTime ?: "Intake Time",
                     style = typography.bodyMedium
                 )
-                Text(
-                    medication?.daysOfWeek.toString() ?: "Days of Week",
-                    style = typography.bodyMedium
-                )
             }
             
             Spacer(modifier = Modifier.weight(1f))
             
-            Column(Modifier, horizontalAlignment = Alignment.End) {
+            Column(modifier = Modifier, horizontalAlignment = Alignment.End) {
                 GTextButton(onEditClick) { Text("Edit") }
                 
                 GTextButton(

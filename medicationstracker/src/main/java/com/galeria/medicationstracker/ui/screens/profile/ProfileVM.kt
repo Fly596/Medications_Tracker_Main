@@ -1,7 +1,9 @@
 package com.galeria.medicationstracker.ui.screens.profile
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.galeria.medicationstracker.data.NewIntakeRepository
 import com.galeria.medicationstracker.data.NewUserRepository
 import com.galeria.medicationstracker.data.network.AuthRepository
 import com.galeria.medicationstracker.data.network.NetworkIntake
@@ -24,6 +26,7 @@ data class ProfileScreenUiState(
     val intakes: List<NetworkIntake> = emptyList(),
     val medications: List<NetworkMedication> = emptyList(),
     val errorMessage: String? = null,
+    val updatedAt: Long = System.currentTimeMillis()
 )
 
 @HiltViewModel
@@ -32,22 +35,45 @@ class ProfileVM
 constructor(
     private val userRepository: NewUserRepository,
     private val authRepository: AuthRepository,
+    private val intakeRepository: NewIntakeRepository,
 ) : ViewModel() {
-    
+
     private val _uiState = MutableStateFlow(ProfileScreenUiState())
     val uiState = _uiState.asStateFlow()
-    
+
     init {
+        // fetchUserIntakes()
+
         viewModelScope.launch {
             try {
-                val uid = authRepository.getUserId().getOrNull()
-                val resultUserData =
-                    userRepository.getUserData(uid.toString()).getOrThrow()
-                
-                _uiState.update { it.copy(networkUser = resultUserData) }
+                val uid = authRepository.getUserId().getOrThrow()
+                fetchUserIntakes(uid.toString())
+                // val resultUserData = userRepository.getUserData(uid.toString()).getOrThrow()
+                /*  intakeRepository.observeUserIntakes(uid.toString()).collect() {
+                    _uiState.update { it.copy(intakes = it.intakes) }
+                } */
+                // _uiState.update { it.copy(networkUser = resultUserData) }
             } catch (e: Exception) {
                 _uiState.update { it.copy(errorMessage = "ERROR: ${e.message}") }
             }
+        }
+    }
+    
+    fun fetchUserIntakes(uid: String) {
+        viewModelScope.launch {
+            intakeRepository.observeUserIntakes(uid.toString())
+                .collect { intks ->
+                    Log.d("ProfileVM", "Got intakes: $intks")
+                    _uiState.update { it.copy(intakes = intks) }
+                }
+            /*  try {
+                val uid = authRepository.getUserId().getOrNull()
+
+
+                // _uiState.update { it.copy(intakes = resultIntakes) }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(errorMessage = "ERROR: ${e.message}") }
+            } */
         }
     }
     
