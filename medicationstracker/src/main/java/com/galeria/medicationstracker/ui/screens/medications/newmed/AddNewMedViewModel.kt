@@ -85,8 +85,8 @@ class AddNewMedViewModel : ViewModel() {
                 name = uiState.value.medName,
                 dosage = NetworkDosage(uiState.value.medStrength.toDouble(),uiState.value.medUnit.toString()),
                 form = uiState.value.medForm,
-                startDate = uiState.value.medStartDate?.toInstant(),
-                endDate = uiState.value.medEndDate?.toInstant(),
+                startDate = uiState.value.medStartDate,
+                endDate = uiState.value.medEndDate,
                 daysOfWeek = uiState.value.intakeDays,
                 intakeTime = uiState.value.medIntakeTime
             )

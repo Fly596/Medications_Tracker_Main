@@ -1,24 +1,6 @@
 package com.galeria.medicationstracker.ui.componentsOld
 
-import android.util.Log
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
-import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.res.painterResource
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import com.galeria.medicationstracker.R
-import com.galeria.medicationstracker.ui.HeadViewModel
-import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
-import com.galeria.medicationstracker.utils.navigation.GraphRoutes
-import com.galeria.medicationstracker.utils.navigation.GraphRoutes.Auth.route
 import com.galeria.medicationstracker.utils.navigation.HomeScreen
 import com.galeria.medicationstracker.utils.navigation.MedicationScreen
 import com.galeria.medicationstracker.utils.navigation.ProfileScreen
@@ -28,167 +10,25 @@ enum class BottomNavigation(
     val title: String,
     val selectedIcon: Int,
     val unselectedIcon: Int,
-    val route: Any
+    val route: Any,
 ) {
-    
+
     DASHBOARD(
         "Dashboard",
         selectedIcon = R.drawable.home_fill,
         unselectedIcon = R.drawable.home,
-        route = HomeScreen.TodayMedications
+        route = HomeScreen.TodayMedications,
     ),
-    
     MEDICATIONS(
         "Medications",
         selectedIcon = R.drawable.lab_profile_fill,
         unselectedIcon = R.drawable.lab_profile,
         route = MedicationScreen.MedicationsList,
     ),
-    
     PROFILE(
         "Profile",
         selectedIcon = R.drawable.profile_fill,
         unselectedIcon = R.drawable.profile,
         route = ProfileScreen.ProfileMain,
     ),
-}
-
-// Компоненты навигации между экранами.
-enum class NoNavBar(
-    val route: GraphRoutes
-) {
-    
-    LOGIN(
-        route = GraphRoutes.Home
-    ),
-    
-    RECOVER(
-        route = GraphRoutes.Medications,
-    ),
-    
-    REGISTER(
-        route = GraphRoutes.PatientDashboard,
-    ),
-}
-
-data class BottomNavItem(
-    val title: String,
-    val route: GraphRoutes,
-    val selectedIcon: Int,
-    val unselectedIcon: Int,
-    val hasNews: Boolean = false,
-    val badgeCount: Int? = null,
-)
-
-fun bottomNavItems(): List<BottomNavItem> {
-    return listOf(
-        BottomNavItem(
-            title = "Dashboard",
-            route = GraphRoutes.Home,
-            selectedIcon = R.drawable.home_fill,
-            unselectedIcon = R.drawable.home,
-        ),
-        BottomNavItem(
-            title = "Medications",
-            route = GraphRoutes.Medications,
-            selectedIcon = R.drawable.lab_profile_fill,
-            unselectedIcon = R.drawable.lab_profile,
-            hasNews = false,
-        ),
-        BottomNavItem(
-            title = "Profile",
-            route = GraphRoutes.PatientDashboard,
-            selectedIcon = R.drawable.profile_fill,
-            unselectedIcon = R.drawable.profile,
-            hasNews = false,
-        ),
-        // ... (other items)
-    )
-}
-
-@Composable
-fun BottomNavBar(
-    navItems: List<BottomNavItem>,
-    navController: NavHostController,
-    viewModel: HeadViewModel = hiltViewModel(),
-) {
-    val currentNavItemIndex = viewModel.selectedItemIndex.collectAsState().value
-    
-    Column {
-        NavigationBar(
-            // modifier = Modifier.fillMaxWidth(),
-            containerColor = MedTrackerTheme.colors.primaryBackground,
-            contentColor = MedTrackerTheme.colors.primaryLabel,
-        ) {
-            navItems.forEachIndexed { navItemIndex, navItem ->
-                NavigationBarItem(
-                    selected = currentNavItemIndex == navItemIndex,
-                    colors =
-                        NavigationBarItemDefaults.colors(
-                            indicatorColor = MedTrackerTheme.colors.primaryTinted
-                        ),
-                    onClick = {
-                        viewModel.updateSelectedItemIndex(navItemIndex)
-                        try {
-                            navController.navigate(navItem.route)
-                        } catch (illegalArgumentException: IllegalArgumentException) {
-                            Log.e(
-                                "NavigationError",
-                                "Invalid route: $route, navigating to Home.",
-                                illegalArgumentException
-                            )
-                            navController.navigate(GraphRoutes.Home.route) {
-                                popUpTo(navController.graph.startDestinationId) { // Or your specific home route ID
-                                    saveState = true
-                                }
-                                launchSingleTop =
-                                    true // Avoid multiple copies of the home screen
-                                restoreState =
-                                    true    // Restore state if previously visited
-                            }
-                        }
-                    },
-                    label = {
-                        Text(
-                            text = navItem.title,
-                            style = MedTrackerTheme.typography.bodyMedium
-                        )
-                    },
-                    icon = {
-                        IconWithBadge(
-                            icon =
-                                if (navItemIndex == currentNavItemIndex) navItem.selectedIcon
-                                else navItem.unselectedIcon,
-                            badgeCount = navItem.badgeCount,
-                            showUnreadBadge = navItem.hasNews,
-                            contentDescription = navItem.title,
-                        )
-                    },
-                )
-            }
-        }
-    }
-    // TODO: Change colors
-}
-
-@Composable
-fun IconWithBadge(
-    icon: Int,
-    badgeCount: Int?,
-    showUnreadBadge: Boolean,
-    contentDescription: String?,
-) {
-    BadgedBox(
-        badge = {
-            when {
-                badgeCount != null -> Badge { Text(text = badgeCount.toString()) }
-                showUnreadBadge -> Badge()
-            }
-        }
-    ) {
-        Icon(
-            painter = painterResource(id = icon),
-            contentDescription = contentDescription
-        )
-    }
 }

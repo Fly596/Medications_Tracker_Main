@@ -43,9 +43,9 @@ import com.galeria.medicationstracker.ui.componentsOld.WeeklyCalendarView
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme.typography
 import com.galeria.medicationstracker.utils.getTodaysDate
-import com.google.firebase.Timestamp
 import java.time.format.DateTimeFormatter
 
+// Главная страница после входа.
 @Composable
 fun DailyMedsScreen(
     modifier: Modifier = Modifier,

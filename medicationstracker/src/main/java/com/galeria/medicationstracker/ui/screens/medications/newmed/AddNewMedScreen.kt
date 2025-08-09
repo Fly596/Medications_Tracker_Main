@@ -269,6 +269,7 @@ fun NewMedicationDataScreen(
                                         text = stringResource(R.string.choose_days),
                                         style = typography.title2Emphasized,
                                     )
+                                    // !Remove viewmodel.
                                     DayOfWeekSelector(viewModel = viewModelOld)
                                 }
                             },

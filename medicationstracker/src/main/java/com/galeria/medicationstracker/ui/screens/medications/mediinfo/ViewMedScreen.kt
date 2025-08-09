@@ -29,7 +29,6 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun ViewMedicationInfoScreen(
     modifier: Modifier = Modifier,
-    // medicationId: String,
     onNavigateToMedsList: () -> Unit = {},
     viewModel: ViewMedicationViewModel = hiltViewModel(),
 ) {

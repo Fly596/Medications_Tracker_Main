@@ -28,7 +28,6 @@ import com.galeria.medicationstracker.ui.componentsOld.BottomNavigation
 import com.galeria.medicationstracker.ui.screens.auth.accountrecovery.ResetPasswordScreen
 import com.galeria.medicationstracker.ui.screens.auth.login.LoginScreen
 import com.galeria.medicationstracker.ui.screens.auth.signup.SignupScreen
-import com.galeria.medicationstracker.ui.screens.dashboard.CheckIntakeScreen
 import com.galeria.medicationstracker.ui.screens.dashboard.DailyMedsScreen
 import com.galeria.medicationstracker.ui.screens.dashboard.moodtracker.MoodTrackerScreen
 import com.galeria.medicationstracker.ui.screens.medications.MedicationsScreen
@@ -160,15 +159,14 @@ fun NavGraphBuilder.homeScreenGraph(navController: NavHostController) {
                 onAddIntake = {},
             )
         }
-
-        composable<HomeScreen.IntakeCheck> { navBackStackEntry ->
-            val intakeDialog: HomeScreen.IntakeCheck =
-                navBackStackEntry.toRoute()
-            CheckIntakeScreen(
-                medicationId = intakeDialog.medicationId,
-                onNavigateBack = { navController.navigateUp() },
-            )
-        }
+        // composable<HomeScreen.IntakeCheck> { navBackStackEntry ->
+        //     val intakeDialog: HomeScreen.IntakeCheck =
+        //         navBackStackEntry.toRoute()
+        //     CheckIntakeScreen(
+        //         medicationId = intakeDialog.medicationId,
+        //         onNavigateBack = { navController.navigateUp() },
+        //     )
+        // }
 
         composable<HomeScreen.MoodCheck> {
             MoodTrackerScreen(onBackClick = { navController.navigateUp() })

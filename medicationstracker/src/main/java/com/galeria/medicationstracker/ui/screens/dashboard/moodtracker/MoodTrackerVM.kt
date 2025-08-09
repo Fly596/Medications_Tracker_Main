@@ -46,7 +46,7 @@ constructor(
                         userId = uid.toString(),
                         moodValue = mood,
                         notes = notes,
-                        timestamp = Timestamp(currentDate).toInstant(),
+                        timestamp = Timestamp(currentDate),
                     )
                 
                 moodRepository.addMood(uid.toString(), moodEntry)

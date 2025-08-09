@@ -102,6 +102,7 @@ fun CalendarDayItem(dayOfWeek: String, date: String, isSelected: Boolean) {
   }
 }
 
+// TODO: remove viewmodel.
 @Composable
 fun DayOfWeekSelector(
     viewModel: AddNewMedViewModel? = null,

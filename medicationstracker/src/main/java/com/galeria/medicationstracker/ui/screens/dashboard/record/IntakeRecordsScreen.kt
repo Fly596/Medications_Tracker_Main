@@ -19,10 +19,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.galeria.medicationstracker.ui.componentsOld.FlySimpleCard
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 
+// Экран истории принятия препаратов.
 @Composable
 fun IntakeRecordsScreen(
     modifier: Modifier = Modifier,
@@ -81,6 +81,7 @@ fun IntakeRecordsScreen(
     }
 }
 
+// Карточка приема препарата.
 @Composable
 fun LogsCard(name: String, status: String, date: String, time: String) {
     FlySimpleCard(modifier = Modifier

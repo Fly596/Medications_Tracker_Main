@@ -4,7 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.galeria.medicationstracker.data.NewUserRepository
 import com.galeria.medicationstracker.data.network.AuthRepository
 import com.galeria.medicationstracker.utils.navigation.AuthScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -34,7 +33,6 @@ class SignupScreenViewModel
 @Inject
 constructor(
     private val repository: AuthRepository,
-    private val userRepo: NewUserRepository,
     savedStateHandle: SavedStateHandle,
 ) :
     ViewModel() {
