@@ -99,19 +99,19 @@ fun DailyMedsScreen(
                 // Календарь на неделю.
                 WeeklyCalendarView()
                 // Medication Cards List.
-                /* MedsByIntakeTimeList(
+                 MedsByIntakeTimeList(
                     viewModel = dashboardViewModel,
                     onAddNoteClick = { onAddIntake.invoke() },
                     medicationsForIntakeTime = uiState.value.currentTakenMedications,
-                ) */
-                NewMedsByIntakeTimeList(
+                )
+           /*      NewMedsByIntakeTimeList(
                     onAddNoteClick = { onAddIntake.invoke() },
                     intakeList = uiState.value.todayIntakes,
                     onAddIntakeAction = { time, intake, status ->
                         dashboardViewModel.newAddNewIntake(time, intake, status)
                     }
                     // newAddNewIntake()
-                )
+                ) */
             }
         }
     

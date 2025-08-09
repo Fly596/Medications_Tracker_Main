@@ -80,12 +80,12 @@ constructor(
 
         viewModelScope.launch {
             // Сегодняшние приемы.
-            medicationRepository.getTodaysIntakes(userId)
-                .collect { intakesList ->
-                    if (intakesList.isEmpty()) {
+            medicationRepository.getTodaysMedications(userId)
+                .collect { todayMedicationsList ->
+                    if (todayMedicationsList.isEmpty()) {
                         //
                     } else {
-                        for (medication in intakesList) {
+                        for (medication in todayMedicationsList) {
                             // Создание нового приема на сегодня.
                             val intake =
                                 NetworkIntake(
@@ -101,7 +101,7 @@ constructor(
                             // Обновление данных на экране.
                             _uiState.update { it.copy(todayIntakes = it.todayIntakes + intake) }
                         }
-                        _uiState.update { it.copy(currentTakenMedications = intakesList) }
+                        _uiState.update { it.copy(currentTakenMedications = todayMedicationsList) }
                     }
                 }
             _uiState.update { it.copy(isLoading = false) }
@@ -115,17 +115,16 @@ constructor(
         status: IntakeStatus,
     ) {
         viewModelScope.launch {
-            val uid = authRepository.getUserId().getOrThrow()
-            val intake: NetworkIntake =
+            val intakeToSave =
                 NetworkIntake(
-                    userId = uid.toString(),
+                    userId = intake.userId,
                     medicationId = intake.medicationId,
                     status = status.name,
                     presetTime = intake.presetTime,
                     factTimestamp = intakeTime,
                     name = intake.name
                 )
-            intakeRepository.updateUserIntake(uid.toString(), intake)
+            intakeRepository.updateUserIntake(intake.userId, intakeToSave)
         }
     }
     

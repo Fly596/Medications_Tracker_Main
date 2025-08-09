@@ -37,7 +37,7 @@ interface NewMedicationRepository {
         medicationId: String
     ): Result<Unit>
     
-    fun getTodaysIntakes(userId: String): Flow<List<NetworkMedication>>
+    fun getTodaysMedications(userId: String): Flow<List<NetworkMedication>>
 }
 
 @Singleton
@@ -173,7 +173,7 @@ class NewMedicationRepositoryImpl @Inject constructor(private val firestore: Fir
         }
     }
     
-    override fun getTodaysIntakes(userId: String): Flow<List<NetworkMedication>> =
+    override fun getTodaysMedications(userId: String): Flow<List<NetworkMedication>> =
         callbackFlow {
             val todayEnd =
                 LocalDate.now().plusDays(1).atStartOfDay().toTimestamp()
