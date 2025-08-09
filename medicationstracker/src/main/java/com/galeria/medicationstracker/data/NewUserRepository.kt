@@ -1,5 +1,6 @@
 package com.galeria.medicationstracker.data
 
+import android.util.Log.e
 import com.galeria.medicationstracker.data.network.NetworkUser
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
@@ -12,7 +13,7 @@ interface NewUserRepository {
     
     suspend fun getUserData(userId: String): Result<NetworkUser>
     
-    suspend fun updateUser(networkUser: NetworkUser): Result<Unit>
+    suspend fun updateUser(networkUser: NetworkUser, id: String): Result<Unit>
 }
 
 @Singleton
@@ -57,7 +58,30 @@ class NewUserRepositoryImpl @Inject constructor(private val firestore: FirebaseF
         }
     }
     
-    override suspend fun updateUser(networkUser: NetworkUser): Result<Unit> {
-        TODO("Not yet implemented")
+    override suspend fun updateUser(
+        networkUser: NetworkUser,
+        id: String
+    ): Result<Unit> {
+        return try {
+            firestore.collection(USERS_COLLECTION).document(id)
+                .update(
+                    mapOf(
+                        "name" to networkUser.name,
+                        "email" to networkUser.email,
+                        "weightKg" to networkUser.weightKg,
+                        "heightCm" to networkUser.heightCm,
+                        "dateOfBirth" to networkUser.dateOfBirth,
+                    )
+                )
+                .addOnSuccessListener {
+                }
+                .addOnFailureListener { e ->
+                    e(e.message, e.message.toString())
+                }
+            //.set(networkUser).await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 }

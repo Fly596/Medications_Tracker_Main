@@ -1,13 +1,16 @@
 package com.galeria.medicationstracker.ui.screens.profile.profiledetails
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.galeria.medicationstracker.data.NewUserRepository
+import com.galeria.medicationstracker.data.network.AuthRepository
 import com.galeria.medicationstracker.data.network.NetworkUser
 import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class ProfileDetailsUiState(
@@ -24,7 +27,10 @@ data class ProfileDetailsUiState(
 )
 
 @HiltViewModel
-class ProfileDetailsViewModel @Inject constructor(private val repository: NewUserRepository) :
+class ProfileDetailsViewModel @Inject constructor(
+    private val repository: NewUserRepository,
+    private val authRepository: AuthRepository,
+) :
     ViewModel() {
     
     private val _state = MutableStateFlow(ProfileDetailsUiState())
@@ -54,7 +60,29 @@ class ProfileDetailsViewModel @Inject constructor(private val repository: NewUse
     }
     
     private fun getUserData() {
-        var networkUser = NetworkUser()
+        // var networkUser = NetworkUser()
+        viewModelScope.launch {
+            val uid = authRepository.getUserId().getOrNull()
+            val user = repository.getUserData(uid ?: "")
+            user.fold(
+                onSuccess = {
+                    _state.value =
+                        _state.value.copy(
+                            firstName = it.name,
+                            email = it.email,
+                            dateOfBirth = it.dateOfBirth,
+                            weight = it.weightKg,
+                            height = it.heightCm,
+                        )
+                },
+                onFailure = {
+                    _state.value = _state.value.copy(
+                        isError = true,
+                        errorMessage = it.message
+                    )
+                }
+            )
+        }
         // viewModelScope.launch {
         //     user = repository.getUserData()
         //     _state.value =
@@ -93,11 +121,28 @@ class ProfileDetailsViewModel @Inject constructor(private val repository: NewUse
     
     
     fun updateWeight(weight: Float) {
-        _state.value = _state.value.copy(weight = weight)
+        viewModelScope.launch {
+            _state.value = _state.value.copy(weight = weight)
+            updateUserProfile()
+        }
     }
     
     fun updateHeight(height: Float) {
         _state.value = _state.value.copy(height = height)
+    }
+    
+    fun updateUserProfile() {
+        viewModelScope.launch {
+            val uid = authRepository.getUserId().getOrNull()
+            val user = NetworkUser(
+                name = state.value.firstName ?: "",
+                email = state.value.email ?: "",
+                weightKg = state.value.weight ?: 0f,
+                heightCm = state.value.height ?: 0f,
+                dateOfBirth = state.value.dateOfBirth ?: Timestamp.now(),
+            )
+            repository.updateUser(user, uid ?: "")
+        }
     }
     
     private fun updateLoading(isLoading: Boolean) {

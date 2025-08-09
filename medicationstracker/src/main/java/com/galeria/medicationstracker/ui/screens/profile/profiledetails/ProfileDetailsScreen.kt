@@ -93,10 +93,7 @@ fun ProfileDetailsScreen(
         ) {
             viewModel.updateFirstName(it)
         }
-        HealthDetailItem(
-            stringResource(R.string.last_name),
-            state.value.lastName ?: ""
-        ) { viewModel.updateLastName(it) }
+
         HealthDetailItem("Email", state.value.email ?: "") { viewModel.updateEmail(it) }
 
         HealthDetailItem(
@@ -105,10 +102,7 @@ fun ProfileDetailsScreen(
         ) {
             viewModel.updateDateOfBirth(formatDateStringToTimestampMMMMddyyyy(it))
         }
-        HealthDetailItem(
-            stringResource(R.string.sex),
-            state.value.sex?.toString() ?: ""
-        ) { viewModel.updateSex(it) }
+        
         
         HealthDetailItem(
             stringResource(R.string.weight),
@@ -127,7 +121,7 @@ fun ProfileDetailsScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp),
-            onClick = { viewModel.updateUser() },
+            onClick = { viewModel.updateUserProfile() },
         ) {
             Text(stringResource(R.string.update))
         }

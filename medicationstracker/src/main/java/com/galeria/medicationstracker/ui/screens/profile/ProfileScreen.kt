@@ -19,7 +19,6 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.LocalPharmacy
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
@@ -59,91 +58,84 @@ fun UserProfileScreen(
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     
-    MedTrackerTheme {
-        Scaffold(
-            containerColor = colors.secondaryBackground,
-        ) { innerPadding ->
-            Column(
-                modifier =
-                    modifier
-                        .fillMaxWidth()
-                        .padding(innerPadding)
-                        .padding(start = 16.dp, end = 16.dp, top = 24.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
+    Column(
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        // pfp, name, email.
+        Column(
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            // pfp, name, email.
+            Row(
+                modifier = Modifier.padding(bottom = 24.dp),
+                verticalAlignment = Alignment.Top,
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                // pfp, name, email.
-                Column(
-                    horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    // pfp, name, email.
+                Image(
+                    painter = painterResource(R.drawable.img_1543),
+                    contentDescription = "pfp",
+                    contentScale = ContentScale.Crop,
+                    modifier = modifier
+                        .clip(CircleShape)
+                        .size(108.dp),
+                )
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(
+                        text = uiState.value.networkUser?.name.toString(),
+                        style = MedTrackerTheme.typography.display3Emphasized,
+                        color = colors.primaryLabel,
+                    )
                     Row(
-                        modifier = Modifier.padding(bottom = 24.dp),
+                        modifier = Modifier,
                         verticalAlignment = Alignment.Top,
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(24.dp),
                     ) {
-                        Image(
-                            painter = painterResource(R.drawable.img_1543),
-                            contentDescription = "pfp",
-                            contentScale = ContentScale.Crop,
-                            modifier = modifier
-                                .clip(CircleShape)
-                                .size(108.dp),
+                        // LabeledStat(uiState.value.user?.dateOfBirth.toString(), "Age")
+                        LabeledStat(
+                            uiState.value.networkUser?.heightCm.toString(),
+                            stringResource(R.string.height)
                         )
-                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            Text(
-                                text = uiState.value.networkUser?.name.toString(),
-                                style = MedTrackerTheme.typography.display3Emphasized,
-                                color = colors.primaryLabel,
-                            )
-                            Row(
-                                modifier = Modifier,
-                                verticalAlignment = Alignment.Top,
-                                horizontalArrangement = Arrangement.spacedBy(24.dp),
-                            ) {
-                                // LabeledStat(uiState.value.user?.dateOfBirth.toString(), "Age")
-                                LabeledStat(
-                                    uiState.value.networkUser?.heightCm.toString(),
-                                    stringResource(R.string.height)
-                                )
-                                LabeledStat(
-                                    uiState.value.networkUser?.weightKg.toString(),
-                                    stringResource(R.string.weight)
-                                )
-                            }
-                        }
-                    }
-                    
-                    GPrimaryButton(
-                        modifier = Modifier.fillMaxWidth(),
-                        onClick = {
-                            onEditProfileClick.invoke()
-                            // Todo: open edit profile screen
-                        },
-                    ) {
-                        Text(text = stringResource(R.string.edit_profile))
-                    }
-                    GSecondaryButton(
-                        modifier = Modifier.fillMaxWidth(),
-                        onClick = { onNotesClick.invoke() },
-                    ) {
-                        Text(text = stringResource(R.string.notes))
+                        LabeledStat(
+                            uiState.value.networkUser?.weightKg.toString(),
+                            stringResource(R.string.weight)
+                        )
                     }
                 }
-                // menu items.
-                TabsRow(
-                    modifier = Modifier.padding(top = 16.dp, bottom = 12.dp),
-                    tabs = listOf(
-                        stringResource(R.string.medications),
-                        stringResource(
-                            R.string.history
-                        )
-                    ),
-                    medications = uiState.value.medications,
-                    intakes = uiState.value.intakes,
-                )
+            }
+            
+            GPrimaryButton(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = {
+                    onEditProfileClick.invoke()
+                    // Todo: open edit profile screen
+                },
+            ) {
+                Text(text = stringResource(R.string.edit_profile))
+            }
+            GSecondaryButton(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = { onNotesClick.invoke() },
+            ) {
+                Text(text = stringResource(R.string.notes))
             }
         }
+        // menu items.
+        TabsRow(
+            modifier = Modifier.padding(top = 16.dp, bottom = 12.dp),
+            tabs = listOf(
+                stringResource(R.string.medications),
+                stringResource(
+                    R.string.history
+                )
+            ),
+            medications = uiState.value.medications,
+            intakes = uiState.value.intakes,
+        )
     }
     
 }
