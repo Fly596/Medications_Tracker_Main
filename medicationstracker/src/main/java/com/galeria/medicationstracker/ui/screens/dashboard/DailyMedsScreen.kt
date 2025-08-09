@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medicationstracker.data.network.IntakeStatus
+import com.galeria.medicationstracker.data.network.NetworkIntake
 import com.galeria.medicationstracker.data.network.NetworkMedication
 import com.galeria.medicationstracker.ui.components.GFABButton
 import com.galeria.medicationstracker.ui.componentsOld.FLySimpleCardContainer
@@ -43,6 +44,7 @@ import com.galeria.medicationstracker.ui.componentsOld.WeeklyCalendarView
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme.typography
 import com.galeria.medicationstracker.utils.getTodaysDate
+import com.google.firebase.Timestamp
 import java.time.format.DateTimeFormatter
 
 // Главная страница после входа.
@@ -97,17 +99,157 @@ fun DailyMedsScreen(
                 // Календарь на неделю.
                 WeeklyCalendarView()
                 // Medication Cards List.
-                MedsByIntakeTimeList(
+                /* MedsByIntakeTimeList(
                     viewModel = dashboardViewModel,
                     onAddNoteClick = { onAddIntake.invoke() },
                     medicationsForIntakeTime = uiState.value.currentTakenMedications,
+                ) */
+                NewMedsByIntakeTimeList(
+                    onAddNoteClick = { onAddIntake.invoke() },
+                    intakeList = uiState.value.todayIntakes,
+                    onAddIntakeAction = { time, intake, status ->
+                        dashboardViewModel.newAddNewIntake(time, intake, status)
+                    }
+                    // newAddNewIntake()
                 )
             }
         }
     
     }
 }
+// ___
+// Список приемов по времени приема.
+@Composable
+fun NewMedsByIntakeTimeList(
+    onAddNoteClick: () -> Unit = {},
+    intakeList: List<NetworkIntake> = emptyList(),
+    onAddIntakeAction: (Timestamp, NetworkIntake, IntakeStatus) -> Unit
+) {
+    // Группируем лекарства по времени приема.
+    val medicationsByIntakeTime =
+        intakeList.groupBy { it.presetTime }
+    
+    LazyColumn(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(24.dp),
+    ) {
+        medicationsByIntakeTime.forEach { (presetTime, medications) ->
+            item {
+                // Контейнер для каждого времени приема.
+                FLySimpleCardContainer(modifier = Modifier.fillMaxWidth()) {
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                    ) {
+                        // Время приема.
+                        Text(
+                            text = presetTime,
+                            style = typography.title1Emphasized,
+                            modifier = Modifier.padding(0.dp),
+                        )
+                        // Лекарства на это время.
+                        medications.forEach { medicationsForIntakeTime ->
+                            NewMedicationIntakeItem(
+                                intake = medicationsForIntakeTime,
+                                onAddNoteClick = { onAddNoteClick.invoke() },
+                                onAddIntake = onAddIntakeAction
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
+@Composable
+fun NewMedicationIntakeItem(
+    intake: NetworkIntake,
+    icon: ImageVector = Icons.Filled.Medication,
+    onAddNoteClick: () -> Unit = {},
+    onAddIntake: (Timestamp, NetworkIntake, IntakeStatus) -> Unit
+    // onAddIntake: (intakeTime: Timestamp,medication: NetworkMedication, status: IntakeStatus ) ->Unit
+) {
+    val showLogDialog = rememberSaveable { mutableStateOf(false) }
+    
+    Row(
+        modifier = Modifier,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.size(32.dp)
+        )
+        
+        Text(text = intake.name, style = typography.bodyLarge)
+        
+        Spacer(modifier = Modifier.weight(1f))
+        // State to control the check icon.
+        var status by remember { mutableIntStateOf(0) }
+        
+        
+        Text(
+            text =
+                when (intake.status) {
+                    "TAKEN" -> "Taken"
+                    "SKIPPED" -> "Skipped"
+                    "PENDING" -> "Pending"
+                    else -> ""
+                },
+            style = typography.bodySmall,
+            color = MedTrackerTheme.colors.secondaryLabel,
+        )
+        
+        IconButton(
+            onClick = {
+                // Add logic to log medication here.
+                showLogDialog.value = !showLogDialog.value
+            }
+        ) {
+            Icon(
+                imageVector =
+                    when (intake.status) {
+                        "TAKEN" -> Icons.Filled.CheckCircle
+                        "SKIPPED" -> Icons.Filled.CheckCircle
+                        else -> Icons.Outlined.CheckCircle
+                    },
+                contentDescription = null,
+                modifier = Modifier.size(32.dp),
+                tint =
+                    when (intake.status) {
+                        "TAKEN" -> MedTrackerTheme.colors.sysSuccess
+                        "SKIPPED" -> MedTrackerTheme.colors.sysWarning
+                        else -> MedTrackerTheme.colors.tertiaryLabel
+                    },
+            )
+        }
+        // ФУНКЦИЯ newAddNewIntake БУДЕТ ИСПОЛЬЗОВАТЬСЯ ЗДЕСЬ.
+        if (showLogDialog.value) {
+            LogMedicationTimeDialog(
+                onDismiss = { showLogDialog.value = false },
+                onConfirmation = {
+                    onAddIntake(Timestamp.now(), intake, IntakeStatus.TAKEN)
+                    showLogDialog.value = false
+                },
+                onAddNotes = {
+                    onAddNoteClick.invoke()
+                    showLogDialog.value = false
+                },
+                onConfirmTime = { time ->
+                    onAddIntake(time, intake, IntakeStatus.TAKEN)
+                },
+                onSkipIntake = {
+                    onAddIntake(Timestamp.now(), intake, IntakeStatus.SKIPPED)
+                    showLogDialog.value = false
+                },
+            )
+        }
+    }
+}
+// ___
+// region old
 // Список лекарств по времени приема.
 @Composable
 fun MedsByIntakeTimeList(
@@ -151,6 +293,7 @@ fun MedsByIntakeTimeList(
         }
     }
 }
+
 
 @Composable
 fun MedicationItem(
@@ -250,6 +393,7 @@ fun MedicationItem(
         }
     }
 }
+// endregion
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

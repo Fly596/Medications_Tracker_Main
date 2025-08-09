@@ -40,6 +40,7 @@ data class NetworkIntake(
     val status: String = IntakeStatus.PENDING.name,
     val presetTime: String = "00:00:00",
     @ServerTimestamp var factTimestamp: Timestamp? = null,
+    val name: String = "",
     val schemaVersion: Int = 1
 )
 
@@ -63,9 +64,9 @@ data class NetworkUserMood(
 )
 
 enum class IntakeStatus {
-    TAKEN,
-    SKIPPED,
-    PENDING,
+    TAKEN, // green color.
+    SKIPPED, // yellow color.
+    PENDING, // default color.
 }
 
 enum class MedicationForm {

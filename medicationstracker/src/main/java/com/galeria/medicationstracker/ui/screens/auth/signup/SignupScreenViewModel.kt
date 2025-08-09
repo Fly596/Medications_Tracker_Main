@@ -62,6 +62,7 @@ constructor(
             _uiState.update { it.copy(isLoading = true, generalError = null) }
             val result =
                 repository.signUp(_uiState.value.email, _uiState.value.password)
+            // TODO: fold AUTHRESULT.
             /*  result.fold(
                  onSuccess = {
                      val newUserId = repository.getUserId()

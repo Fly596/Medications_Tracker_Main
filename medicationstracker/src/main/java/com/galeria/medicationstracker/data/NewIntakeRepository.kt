@@ -104,17 +104,17 @@ class NewIntakeRepositoryImpl @Inject constructor(private val firestore: Firebas
         userId: String,
         intakeData: NetworkIntake
     ): Result<String> {
-        val dataToSave = intakeData.copy(userId = userId, id = "")
+        val dataToSave = intakeData.copy(id = "")
         
         return try {
-            val documentRef =
                 firestore
                     .collection(USERS_COLLECTION)
                     .document(userId)
                     .collection(INTAKES_SUBCOLLECTION)
-                    .add(dataToSave)
+                    .document(intakeData.id)
+                    .set(dataToSave)
                     .await()
-            Result.success(documentRef.id)
+            Result.success(dataToSave.id)
         } catch (e: Exception) {
             Result.failure(e)
         }

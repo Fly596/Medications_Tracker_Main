@@ -28,6 +28,7 @@ data class DashboardUiState(
     val isLoading: Boolean = false, // Добавим состояние загрузки
     val errorMessage: String? = null, // Для отображения ошибок
     val currentTakenMedications: List<NetworkMedication> = emptyList(),
+    val todayIntakes: List<NetworkIntake> = emptyList(),
 )
 
 data class AddIntakeUiState(
@@ -45,52 +46,86 @@ constructor(
     private val medicationRepository: NewMedicationRepository,
     private val authRepository: AuthRepository,
 ) : ViewModel() {
-    
+
     private val _uiState = MutableStateFlow(DashboardUiState())
     val uiState: StateFlow<DashboardUiState> = _uiState.asStateFlow()
     private val _intakeInputState = MutableStateFlow(AddIntakeUiState())
     val intakeInputState: StateFlow<AddIntakeUiState> =
         _intakeInputState.asStateFlow()
-    
+
     init {
         _uiState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-            
             try {
                 // get user id
                 val uid = authRepository.getUserId().getOrThrow()
-                
-                getCurrentMedications(uid.toString())
-                
+                // Получение списка сегодняшних приемов.
+                getActiveMedications(uid.toString())
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        errorMessage = "ERROR: ${e.message}",
+                        errorMessage = "ERROR: ${e.message}"
                     )
                 }
             }
             _uiState.update { it.copy(isLoading = false) }
         }
     }
-    
+
     // Фильтрация лекарств, прием которых окончен для использования при выводе
     // на главный экран.
-    private fun getCurrentMedications(userId: String) {
+    private fun getActiveMedications(userId: String) {
         _uiState.update { it.copy(isLoading = true) }
-        
+
         viewModelScope.launch {
-            val intakes =
-                medicationRepository.getTodaysIntakes(userId)
-                    .collect { intakesList ->
-                        if (intakesList.isEmpty()) {
-                            //
-                        } else {
-                            _uiState.update {
-                                it.copy(currentTakenMedications = intakesList)
-                            }
+            // Сегодняшние приемы.
+            medicationRepository.getTodaysIntakes(userId)
+                .collect { intakesList ->
+                    if (intakesList.isEmpty()) {
+                        //
+                    } else {
+                        for (medication in intakesList) {
+                            // Создание нового приема на сегодня.
+                            val intake =
+                                NetworkIntake(
+                                    userId = userId,
+                                    medicationId = medication.id,
+                                    status = IntakeStatus.PENDING.name,
+                                    presetTime = medication.intakeTime,
+                                    factTimestamp = null,
+                                    name = medication.name
+                                )
+                            // Добавление нового приема на сегодня.
+                            intakeRepository.addUserIntake(userId, intake)
+                            // Обновление данных на экране.
+                            _uiState.update { it.copy(todayIntakes = it.todayIntakes + intake) }
                         }
+                        _uiState.update { it.copy(currentTakenMedications = intakesList) }
                     }
+                }
+            _uiState.update { it.copy(isLoading = false) }
+            
+        }
+    }
+    
+    fun newAddNewIntake(
+        intakeTime: Timestamp = Timestamp.now(),
+        intake: NetworkIntake,
+        status: IntakeStatus,
+    ) {
+        viewModelScope.launch {
+            val uid = authRepository.getUserId().getOrThrow()
+            val intake: NetworkIntake =
+                NetworkIntake(
+                    userId = uid.toString(),
+                    medicationId = intake.medicationId,
+                    status = status.name,
+                    presetTime = intake.presetTime,
+                    factTimestamp = intakeTime,
+                    name = intake.name
+                )
+            intakeRepository.updateUserIntake(uid.toString(), intake)
         }
     }
     
@@ -107,7 +142,8 @@ constructor(
                     medicationId = medication.id,
                     status = status.name,
                     presetTime = medication.intakeTime,
-                    factTimestamp = intakeTime
+                    factTimestamp = intakeTime,
+                    name = medication.name
                 )
             intakeRepository.addUserIntake(uid.toString(), intake)
         }
@@ -133,12 +169,7 @@ constructor(
                     .await()
             
             if (!querySnapshot.isEmpty) {
-                if (
-                    querySnapshot
-                        .toObjects(NetworkIntake::class.java)[0]
-                        .status == "TAKEN"
-                )
-                    2
+                if (querySnapshot.toObjects(NetworkIntake::class.java)[0].status == "TAKEN") 2
                 else 1
             } else {
                 0
@@ -156,4 +187,6 @@ constructor(
     fun onTimeSelected(time: LocalTime) {
         _intakeInputState.update { it.copy(selectedIntakeTime = time) }
     }
+    // ___
+    
 }
