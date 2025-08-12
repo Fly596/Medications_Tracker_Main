@@ -9,7 +9,7 @@ import com.galeria.medicationstracker.data.NewMedicationRepository
 import com.galeria.medicationstracker.data.network.AuthRepository
 import com.galeria.medicationstracker.data.network.NetworkIntake
 import com.galeria.medicationstracker.data.network.NetworkMedication
-import com.galeria.medicationstracker.utils.navigation.MedicationScreen
+import com.galeria.medicationstracker.navigation.MedicationScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

@@ -1,4 +1,4 @@
-package com.galeria.medicationstracker.utils.navigation
+package com.galeria.medicationstracker.navigation
 
 import kotlinx.serialization.Serializable
 
@@ -7,9 +7,5 @@ sealed class HomeScreen(val route: String) {
     
     @Serializable object TodayMedications : HomeScreen("today_medications")
     
-    @Serializable
-    data class IntakeCheck(val medicationId: String) :
-        HomeScreen("intake_check_dialog")
-
     @Serializable object MoodCheck : HomeScreen("mood_check")
 }

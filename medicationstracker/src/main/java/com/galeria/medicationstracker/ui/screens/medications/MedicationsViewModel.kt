@@ -44,7 +44,7 @@ constructor(
     
     private fun fetchMedications(uid: String) {
         viewModelScope.launch {
-            medicationRepository.observeUserMedications(uid)
+            medicationRepository.getUserMedications(uid)
                 .collect { medications ->
                     _uiState.update { it.copy(userMedications = medications) }
                 }
@@ -62,5 +62,12 @@ constructor(
                 Log.e("ERROR REMOVE", "Error deleting medication", e)
             }
         }
+    }
+    
+    
+    fun formatTime(minutesFromMidnight: Int): String {
+        val hours = minutesFromMidnight / 60
+        val minutes = minutesFromMidnight % 60
+        return String.format("%02d:%02d", hours, minutes) // "09:30"
     }
 }

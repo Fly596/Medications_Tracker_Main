@@ -30,7 +30,7 @@ data class NewMedUiState(
     val medUnit: MedicationUnit = MedicationUnit.MG, // f
     val medStartDate: Timestamp? = Timestamp.now(), // f
     val medEndDate: Timestamp? = Timestamp.now(), // f
-    val medIntakeTime: String = "", // f
+    val medIntakeTime: Int = 0, // f
     val medNotes: String = "",
     val showDatePicker: Boolean = false,
     val showTimePicker: Boolean = false,
@@ -70,7 +70,6 @@ constructor(
                 uiState.value.medStrength <= 0 ||
                 uiState.value.medStartDate.toString().isBlank() ||
                 uiState.value.medEndDate.toString().isBlank() ||
-                uiState.value.medIntakeTime.isBlank() ||
                 uiState.value.intakeDays.isEmpty()
             ) {
                 Toast.makeText(
@@ -98,10 +97,9 @@ constructor(
                     startDate = uiState.value.medStartDate,
                     endDate = uiState.value.medEndDate,
                     daysOfWeek = uiState.value.intakeDays,
-                    intakeTime = uiState.value.medIntakeTime,
+                    intakeTimeFromMidnight = uiState.value.medIntakeTime,
                 )
             medicationRepository.addMedication(
-                userId.toString(),
                 networkMedication
             )
         }
@@ -178,7 +176,7 @@ constructor(
         uiState.value = uiState.value.copy(medUnit = newUnit)
     }
     
-    fun updateIntakeTime(newTime: String) {
+    fun updateIntakeTime(newTime: Int) {
         uiState.value = uiState.value.copy(medIntakeTime = newTime)
     }
     

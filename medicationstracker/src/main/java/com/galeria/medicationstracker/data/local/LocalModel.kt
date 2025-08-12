@@ -15,7 +15,7 @@ data class User(
     val email: String,
     val weightKg: Double,
     val heightCm: Double,
-    val dateOfBirth: String,
+    val dateOfBirth: Long,
 )
 
 @Entity(tableName = "medication")
@@ -24,27 +24,24 @@ data class Medication(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val networkId: String,
-    val userId: Int,
     val name: String,
     val dosageValue: Double,
     val dosageUnit: String,
-    val startDate: Long,
-    val endDate: Long,
+    val startDate: Long?,
+    val endDate: Long?,
     val daysOfWeek: List<String>,
-    val intakeTime: List<String>,
+    val intakeTime: Int,
 )
 
 @Entity(tableName = "intake")
 data class Intake(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    val firestoreId: String,
     val networkId: String,
-    val userId: String,
     val medicationId: String,
     val status: String = IntakeStatus.PENDING.name,
-    val presetTime: String,
-    val factTimestamp: Long,
+    val presetMinutesFromMidnight: Int,
+    val factTimestamp: Long?,
 )
 
 @Entity(tableName = "note")

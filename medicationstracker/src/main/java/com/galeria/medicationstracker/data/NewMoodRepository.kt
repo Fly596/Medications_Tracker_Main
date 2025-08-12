@@ -10,27 +10,27 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 interface NewMoodRepository {
-    
+
     fun observeUserMoods(userId: String): Flow<List<NetworkUserMood>>
-    
+
     suspend fun getMood(userId: String, moodId: String): Result<NetworkUserMood>
     
     suspend fun addMood(
         userId: String,
         moodData: NetworkUserMood
     ): Result<String>
-    
+
     suspend fun updateMood(userId: String, mood: NetworkUserMood): Result<Unit>
-    
+
     suspend fun deleteMood(userId: String, moodId: String): Result<Unit>
 }
 
 @Singleton
 class NewMoodRepositoryImpl @Inject constructor(private val firestore: FirebaseFirestore) :
     NewMoodRepository {
-    
+
     companion object {
-        
+
         private const val USERS_COLLECTION = "User"
         private const val MOODS_SUBCOLLECTION = "moods"
     }

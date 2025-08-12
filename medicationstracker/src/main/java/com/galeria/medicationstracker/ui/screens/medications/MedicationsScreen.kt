@@ -75,10 +75,11 @@ fun MedicationsScreen(
                             onEditClick = { onEditClick(med.name) },
                             onRemoveMedClick = {
                                 medicationsViewModel.deleteMedicationFromFirestore(
-                                    med.id.toString()
+                                    med.id
                                 )
                             },
                             onViewMed = { onViewClick(med.id) },
+                            formatTime = medicationsViewModel::formatTime
                         )
                     }
                 }
@@ -95,6 +96,7 @@ fun FlyElevatedCardMedsList(
     onViewMed: () -> Unit,
     medication: NetworkMedication? = null,
     shape: Shape = MedTrackerTheme.shapes.medium,
+    formatTime: (Int) -> String = { "" }
 ) {
     ElevatedCard(
         modifier = modifier
@@ -140,7 +142,7 @@ fun FlyElevatedCardMedsList(
                 )
           
                 Text(
-                    medication?.intakeTime ?: "Intake Time",
+                    formatTime(medication?.intakeTimeFromMidnight ?: 0),
                     style = typography.bodyMedium
                 )
             }

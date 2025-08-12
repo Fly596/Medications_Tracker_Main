@@ -1,4 +1,4 @@
-package com.galeria.medicationstracker.utils.navigation
+package com.galeria.medicationstracker.navigation
 
 import kotlinx.serialization.Serializable
 

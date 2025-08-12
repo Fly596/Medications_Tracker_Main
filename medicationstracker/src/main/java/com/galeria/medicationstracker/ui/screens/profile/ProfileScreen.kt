@@ -249,7 +249,7 @@ fun MedicationCard(
                 }
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = medication?.intakeTime.toString(),
+                    text = medication?.intakeTimeFromMidnight.toString(),
                     style = MedTrackerTheme.typography.bodyLarge,
                 )
                 

@@ -1,6 +1,10 @@
 package com.galeria.medicationstracker.data
 
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import com.galeria.medicationstracker.data.local.MedicationDao
 import com.galeria.medicationstracker.data.network.NetworkMedication
 import com.galeria.medicationstracker.utils.formatTimestampToWeekday
 import com.galeria.medicationstracker.utils.toTimestamp
@@ -16,42 +20,41 @@ import javax.inject.Singleton
 
 interface NewMedicationRepository {
     
-    fun observeUserMedications(userId: String): Flow<List<NetworkMedication>>
+    fun getUserMedications(userId: String): Flow<List<NetworkMedication>>
     
     suspend fun getMedication(
         userId: String,
         medicationId: String
     ): Result<NetworkMedication>
     
-    suspend fun addMedication(
-        userId: String,
-        medicationData: NetworkMedication
-    )/* : Result<String> */
+    suspend fun addMedication(medicationData: NetworkMedication)
     
-    suspend fun updateMedication(
-        userId: String,
-        medication: NetworkMedication
-    ): Result<Unit>
+    suspend fun updateMedication(medication: NetworkMedication): Result<Unit>
     
     suspend fun deleteMedication(
         userId: String,
         medicationId: String
     ): Result<Unit>
-    
+
     fun getTodaysMedications(userId: String): Flow<List<NetworkMedication>>
 }
 
 @Singleton
-class NewMedicationRepositoryImpl @Inject constructor(private val firestore: FirebaseFirestore) :
+class NewMedicationRepositoryImpl
+@Inject
+constructor(
+    private val firestore: FirebaseFirestore,
+    private val medicationDao: MedicationDao
+) :
     NewMedicationRepository {
-    
+
     companion object {
-        
+
         private const val USERS_COLLECTION = "User"
         private const val MEDICATIONS_SUBCOLLECTION = "medications"
     }
     
-    override fun observeUserMedications(userId: String): Flow<List<NetworkMedication>> =
+    override fun getUserMedications(userId: String): Flow<List<NetworkMedication>> =
         callbackFlow {
             val listenerRegistration =
                 firestore
@@ -64,15 +67,14 @@ class NewMedicationRepositoryImpl @Inject constructor(private val firestore: Fir
                             return@addSnapshotListener
                         }
                         if (snapshot != null) {
-                            val medications = snapshot.toObjects(
-                                NetworkMedication::class.java
-                            )
+                            val medications =
+                                snapshot.toObjects(NetworkMedication::class.java)
                             trySend(medications).isSuccess
                         }
                     }
             awaitClose { listenerRegistration.remove() }
         }
-    
+
     override suspend fun getMedication(
         userId: String,
         medicationId: String,
@@ -106,56 +108,49 @@ class NewMedicationRepositoryImpl @Inject constructor(private val firestore: Fir
         }
     }
     
-    override suspend fun addMedication(
-        userId: String,
-        medicationData: NetworkMedication,
-    )/* : Result<String> */ {
-        val dataToSave = medicationData.copy(userId = userId, id = "")
-        firestore.collection(USERS_COLLECTION)
-            .document(userId)
+    override suspend fun addMedication(medicationData: NetworkMedication) {
+        var medicationNetworkId by mutableStateOf("")
+        
+        firestore
+            .collection(USERS_COLLECTION)
+            .document(medicationData.userId)
             .collection(MEDICATIONS_SUBCOLLECTION)
-            .add(dataToSave)
+            .add(medicationData)
             .addOnSuccessListener {
+                medicationNetworkId = it.id
                 Log.d(
                     "MedicationRepository",
                     "DocumentSnapshot added with ID: ${it.id}"
                 )
             }
             .addOnFailureListener { e ->
-                Log.w("MedicationRepository", "Error adding document", e)
+                Log.w(
+                    "MedicationRepository",
+                    "Error adding document",
+                    e
+                )
             }
-        /*         return try {
-                    val documentRef =
-                        firestore
-                            .collection(USERS_COLLECTION)
-                            .document(userId)
-                            .collection(MEDICATIONS_SUBCOLLECTION)
-                            .add(dataToSave)
-                            .await()
-                    Result.success(documentRef.id)
-                } catch (e: Exception) {
-                    Result.failure(e)
-                } */
+        // Данные для сохранения в локальную бд.
+        val dataToSaveToEntity =
+            medicationData.toEntity().copy(networkId = medicationNetworkId)
+        medicationDao.upsertMedication(dataToSaveToEntity)
     }
     
-    override suspend fun updateMedication(
-        userId: String,
-        medication: NetworkMedication,
-    ): Result<Unit> {
+    override suspend fun updateMedication(medication: NetworkMedication): Result<Unit> {
         if (medication.id.isBlank()) {
             return Result.failure(
                 IllegalArgumentException("Medication ID cannot be blank for update.")
             )
         }
-        val dataToSave = medication.copy(userId = userId)
-        
+        // val dataToSave = medication.copy(userId = userId)
+
         return try {
             firestore
                 .collection(USERS_COLLECTION)
-                .document(userId)
+                .document(medication.userId)
                 .collection(MEDICATIONS_SUBCOLLECTION)
                 .document(medication.id)
-                .set(dataToSave)
+                .set(medication)
                 .await()
             Result.success(Unit)
         } catch (e: Exception) {

@@ -1,4 +1,4 @@
-package com.galeria.medicationstracker.utils.navigation
+package com.galeria.medicationstracker.navigation
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -23,7 +23,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.galeria.medicationstracker.ui.MainViewModel
 import com.galeria.medicationstracker.ui.componentsOld.BottomNavigation
 import com.galeria.medicationstracker.ui.screens.auth.accountrecovery.ResetPasswordScreen
 import com.galeria.medicationstracker.ui.screens.auth.login.LoginScreen
@@ -41,7 +40,6 @@ import kotlinx.serialization.Serializable
 @Composable
 fun ApplicationNavHost(
     modifier: Modifier = Modifier,
-    startDestination: Any = GraphRoutes.Auth,
     navController: NavHostController = rememberNavController(),
     viewModel: MainViewModel = hiltViewModel(),
 ) {
@@ -57,10 +55,8 @@ fun ApplicationNavHost(
     remember(currentRoute) { derivedStateOf { currentRoute.substringAfter("?") } }
     // Определяем, нужно ли показывать нижнюю панель навигации на текущем экране.
     val shouldShowBottomBar =
-        BottomNavigation.entries.any {
-            it.route::class.qualifiedName == currentRouteTrimmed
-        }
-    
+        BottomNavigation.entries.any { it.route::class.qualifiedName == currentRouteTrimmed }
+
     Scaffold(
         bottomBar = {
             if (shouldShowBottomBar) {
@@ -74,7 +70,7 @@ fun ApplicationNavHost(
                                 currentRouteTrimmed == navigationItem.route::class.qualifiedName
                             }
                         }
-                        
+
                         NavigationBarItem(
                             selected = isSelected,
                             label = { Text(navigationItem.title) },
@@ -140,11 +136,11 @@ fun NavGraphBuilder.authGraph(navController: NavHostController) {
                 },
             )
         }
-        
+
         composable<AuthScreen.Registration> { navBackStackEntry ->
             SignupScreen(onNavigateBack = { navController.navigateUp() })
         }
-        
+
         composable<AuthScreen.PasswordRecovery> { navBackStackEntry ->
             ResetPasswordScreen(onNavigateBack = { navController.navigateUp() })
         }

@@ -24,7 +24,7 @@ data class NetworkMedication(
     val startDate: Timestamp? = null,
     val endDate: Timestamp? = null,
     val daysOfWeek: List<String> = emptyList(),
-    val intakeTime: String = "",
+    val intakeTimeFromMidnight: Int = 0,
     val schemaVersion: Int = 1
 )
 
@@ -38,7 +38,7 @@ data class NetworkIntake(
     val userId: String = "",
     val medicationId: String = "",
     val status: String = IntakeStatus.PENDING.name,
-    val presetTime: String = "00:00:00",
+    val presetTimeFromMidnight: Int = 0,
     @ServerTimestamp var factTimestamp: Timestamp? = null,
     val name: String = "",
     val schemaVersion: Int = 1

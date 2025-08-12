@@ -4,7 +4,6 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.Companion.REPLACE
 import androidx.room.Query
-import androidx.room.Upsert
 
 @Dao
 interface UserDao {
@@ -13,8 +12,8 @@ interface UserDao {
     suspend fun insertUser(user: User)
     
     @Query("SELECT * FROM user WHERE id = :id")
-    suspend fun getUserById(id: Int)
+    suspend fun getUserById(id: Int): User?
     
     @Query("SELECT * FROM user WHERE networkId = :networkId")
-    suspend fun getUserByNetworkId(networkId: String)
+    suspend fun getUserByNetworkId(networkId: String): User?
 }

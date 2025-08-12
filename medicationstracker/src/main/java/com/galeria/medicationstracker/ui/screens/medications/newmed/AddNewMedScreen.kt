@@ -416,7 +416,7 @@ fun DateRangePickerModalOld(
 fun IntakeTimePicker(
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
-    onSelectTime: (String) -> Unit,
+    onSelectTime: (Int) -> Unit,
     // viewModel: AddNewMedViewModel
 ) {
     Dialog(onDismissRequest = onDismiss) {
@@ -487,7 +487,7 @@ fun IntakeTimePicker(
                     
                     GPrimaryButton(
                         onClick = {
-                            onSelectTime(time.format(dtf))
+                            onSelectTime(time.hour * 60 + time.minute)
                             onConfirm()
                         }
                     ) {

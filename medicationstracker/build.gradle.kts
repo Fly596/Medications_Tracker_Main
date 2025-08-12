@@ -50,12 +50,9 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.com.google.gms.google.services.gradle.plugin)
     implementation(platform(libs.firebase.bom))
-    implementation(libs.google.firebase.analytics)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
-    implementation(libs.google.firebase.storage)
     implementation(libs.androidx.room.runtime)
-    implementation(libs.coil.compose)
     implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.play.services.location)
     implementation(libs.androidx.material.icons.extended.android)
@@ -76,5 +73,10 @@ dependencies {
     ksp(libs.hilt.android.compiler)
     // Hilt
     implementation(libs.androidx.hilt.navigation.compose)
+    // Database (Room)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+    
 }
 

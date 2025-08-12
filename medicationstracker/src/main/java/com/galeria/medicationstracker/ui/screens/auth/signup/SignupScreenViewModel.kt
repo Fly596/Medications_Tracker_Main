@@ -7,7 +7,7 @@ import androidx.navigation.toRoute
 import com.galeria.medicationstracker.data.NewUserRepository
 import com.galeria.medicationstracker.data.network.AuthRepository
 import com.galeria.medicationstracker.data.network.NetworkUser
-import com.galeria.medicationstracker.utils.navigation.AuthScreen
+import com.galeria.medicationstracker.navigation.AuthScreen
 import com.galeria.medicationstracker.utils.toTimestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow

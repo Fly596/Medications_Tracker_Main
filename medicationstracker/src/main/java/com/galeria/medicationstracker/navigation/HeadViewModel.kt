@@ -1,10 +1,8 @@
-package com.galeria.medicationstracker.ui
+package com.galeria.medicationstracker.navigation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.galeria.medicationstracker.data.NewUserRepository
 import com.galeria.medicationstracker.data.network.AuthRepository
-import com.galeria.medicationstracker.utils.navigation.GraphRoutes
 import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

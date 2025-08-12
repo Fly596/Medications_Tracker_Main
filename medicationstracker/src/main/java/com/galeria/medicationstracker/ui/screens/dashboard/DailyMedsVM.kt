@@ -120,11 +120,11 @@ constructor(
                     userId = intake.userId,
                     medicationId = intake.medicationId,
                     status = status.name,
-                    presetTime = intake.presetTime,
+                    presetTimeFromMidnight = intake.presetTimeFromMidnight,
                     factTimestamp = intakeTime,
                     name = intake.name
                 )
-            intakeRepository.updateUserIntake(intake.userId, intakeToSave)
+            intakeRepository.updateUserIntake(intakeToSave)
         }
     }
     
@@ -140,11 +140,11 @@ constructor(
                     userId = uid.toString(),
                     medicationId = medication.id,
                     status = status.name,
-                    presetTime = medication.intakeTime,
+                    presetTimeFromMidnight = medication.intakeTimeFromMidnight,
                     factTimestamp = intakeTime,
                     name = medication.name
                 )
-            intakeRepository.addUserIntake(uid.toString(), intake)
+            intakeRepository.addUserIntake(intake)
         }
     }
     
@@ -187,5 +187,10 @@ constructor(
         _intakeInputState.update { it.copy(selectedIntakeTime = time) }
     }
     // ___
+    fun formatTime(minutesFromMidnight: Int): String {
+        val hours = minutesFromMidnight / 60
+        val minutes = minutesFromMidnight % 60
+        return String.format("%02d:%02d", hours, minutes) // "09:30"
+    }
     
 }

@@ -9,8 +9,8 @@ import com.galeria.medicationstracker.data.NewMedicationRepository
 import com.galeria.medicationstracker.data.network.AuthRepository
 import com.galeria.medicationstracker.data.network.MedicationForm
 import com.galeria.medicationstracker.data.network.NetworkMedication
+import com.galeria.medicationstracker.navigation.MedicationScreen
 import com.galeria.medicationstracker.utils.FirestoreFunctions.FirestoreService
-import com.galeria.medicationstracker.utils.navigation.MedicationScreen
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel

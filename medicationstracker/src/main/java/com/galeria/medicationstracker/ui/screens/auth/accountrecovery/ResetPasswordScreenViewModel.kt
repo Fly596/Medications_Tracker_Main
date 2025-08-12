@@ -8,8 +8,8 @@ import androidx.navigation.toRoute
 import com.galeria.medicationstracker.SnackbarController
 import com.galeria.medicationstracker.SnackbarEvent
 import com.galeria.medicationstracker.data.network.AuthRepository
+import com.galeria.medicationstracker.navigation.AuthScreen
 import com.galeria.medicationstracker.utils.AuthResult
-import com.galeria.medicationstracker.utils.navigation.AuthScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

@@ -22,15 +22,9 @@ interface NewIntakeRepository {
         intakeId: String
     ): Result<NetworkIntake>
     
-    suspend fun addUserIntake(
-        userId: String,
-        intakeData: NetworkIntake
-    ): Result<String>
+    suspend fun addUserIntake(intake: NetworkIntake): Result<String>
     
-    suspend fun updateUserIntake(
-        userId: String,
-        intake: NetworkIntake
-    ): Result<Unit>
+    suspend fun updateUserIntake(intake: NetworkIntake): Result<Unit>
 
     suspend fun deleteUserIntake(userId: String, intakeId: String): Result<Unit>
     
@@ -41,13 +35,10 @@ interface NewIntakeRepository {
 }
 
 @Singleton
-class NewIntakeRepositoryImpl
-@Inject
-constructor(private val firestore: FirebaseFirestore) :
+class NewIntakeRepositoryImpl @Inject constructor(private val firestore: FirebaseFirestore) :
     NewIntakeRepository {
 
     companion object {
-
         private const val USERS_COLLECTION = "User"
         private const val INTAKES_SUBCOLLECTION = "intakes"
     }
@@ -102,29 +93,26 @@ constructor(private val firestore: FirebaseFirestore) :
         }
     }
     
-    override suspend fun addUserIntake(
-        userId: String,
-        intakeData: NetworkIntake
-    ): Result<String> {
-        val dataToSave = intakeData.copy(id = "")
+    override suspend fun addUserIntake(intake: NetworkIntake): Result<String> {
+        val dataToSave = intake.copy(id = "")
         // Данные для сохранения в Firestore.
-        val data =
-            mapOf(
-                "factTimestamp" to dataToSave.factTimestamp,
-                "medicationId" to dataToSave.medicationId,
-                "name" to dataToSave.name,
-                "presetTime" to dataToSave.presetTime,
-                "status" to dataToSave.status,
-                "userId" to dataToSave.userId,
-                "schemaVersion" to dataToSave.schemaVersion,
-            )
+        /*      val data =
+                 mapOf(
+                     "factTimestamp" to dataToSave.factTimestamp,
+                     "medicationId" to dataToSave.medicationId,
+                     "name" to dataToSave.name,
+                     "presetTime" to dataToSave.presetTimeFromMidnight,
+                     "status" to dataToSave.status,
+                     "userId" to dataToSave.userId,
+                     "schemaVersion" to dataToSave.schemaVersion,
+                 ) */
 
         return try {
             firestore
                 .collection(USERS_COLLECTION)
-                .document(userId)
+                .document(intake.userId)
                 .collection(INTAKES_SUBCOLLECTION)
-                .add(data)
+                .add(intake)
                 .await()
             /* .addOnSuccessListener { documentReference ->
                 // После добавления нового документа в Firestore получаем
@@ -148,22 +136,19 @@ constructor(private val firestore: FirebaseFirestore) :
         }
     }
     
-    override suspend fun updateUserIntake(
-        userId: String,
-        intake: NetworkIntake
-    ): Result<Unit> {
+    override suspend fun updateUserIntake(intake: NetworkIntake): Result<Unit> {
         if (intake.id.isBlank()) {
             return Result.failure(IllegalArgumentException("Intake ID cannot be blank for update."))
         }
-        val dataToSave = intake.copy(userId = userId)
-        
+        // val dataToSave = intake.copy(userId = userId)
+
         return try {
             firestore
                 .collection(USERS_COLLECTION)
-                .document(userId)
+                .document(intake.userId)
                 .collection(INTAKES_SUBCOLLECTION)
                 .document(intake.id)
-                .set(dataToSave)
+                .set(intake)
                 .await()
             Result.success(Unit)
         } catch (e: Exception) {
@@ -191,7 +176,7 @@ constructor(private val firestore: FirebaseFirestore) :
             Result.failure(e)
         }
     }
-    
+
     override suspend fun fetchIntakeStatus(
         medication: NetworkMedication,
         uid: String,

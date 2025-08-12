@@ -103,6 +103,7 @@ fun DailyMedsScreen(
                     viewModel = dashboardViewModel,
                     onAddNoteClick = { onAddIntake.invoke() },
                     medicationsForIntakeTime = uiState.value.currentTakenMedications,
+                     formatTime = dashboardViewModel::formatTime
                 )
            /*      NewMedsByIntakeTimeList(
                     onAddNoteClick = { onAddIntake.invoke() },
@@ -123,11 +124,12 @@ fun DailyMedsScreen(
 fun NewMedsByIntakeTimeList(
     onAddNoteClick: () -> Unit = {},
     intakeList: List<NetworkIntake> = emptyList(),
-    onAddIntakeAction: (Timestamp, NetworkIntake, IntakeStatus) -> Unit
+    onAddIntakeAction: (Timestamp, NetworkIntake, IntakeStatus) -> Unit,
+    formatTime: (Int) -> String = { "" }
 ) {
     // Группируем лекарства по времени приема.
     val medicationsByIntakeTime =
-        intakeList.groupBy { it.presetTime }
+        intakeList.groupBy { it.presetTimeFromMidnight }
     
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
@@ -143,7 +145,7 @@ fun NewMedsByIntakeTimeList(
                     ) {
                         // Время приема.
                         Text(
-                            text = presetTime,
+                            text = formatTime(presetTime).toString(), // TODO: Перевести в строку
                             style = typography.title1Emphasized,
                             modifier = Modifier.padding(0.dp),
                         )
@@ -256,10 +258,11 @@ fun MedsByIntakeTimeList(
     viewModel: DailyMedsVM,
     onAddNoteClick: () -> Unit = {},
     medicationsForIntakeTime: List<NetworkMedication> = emptyList(),
+    formatTime: (Int) -> String = { "" }
 ) {
     // Группируем лекарства по времени приема.
     val medicationsByIntakeTime =
-        medicationsForIntakeTime.groupBy { it.intakeTime }
+        medicationsForIntakeTime.groupBy { it.intakeTimeFromMidnight }
     
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
@@ -275,7 +278,7 @@ fun MedsByIntakeTimeList(
                     ) {
                         // Время приема.
                         Text(
-                            text = intakeTime.toString(),
+                            text = formatTime(intakeTime),
                             style = typography.title1Emphasized,
                             modifier = Modifier.padding(0.dp),
                         )
@@ -453,7 +456,7 @@ fun DailyMedsScreenNew(
 fun TodayIntakesList(todayMedicationsList: List<NetworkMedication>) {
     // группировка по времени приема.
     val medicationsGroupedByTime =
-        todayMedicationsList.groupBy { it.intakeTime }
+        todayMedicationsList.groupBy { it.intakeTimeFromMidnight }
     
     LazyColumn(modifier = Modifier.fillMaxWidth()) {
         medicationsGroupedByTime.forEach { (intakeTime, medications) ->

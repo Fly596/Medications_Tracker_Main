@@ -1,9 +1,9 @@
 package com.galeria.medicationstracker.ui.componentsOld
 
 import com.galeria.medicationstracker.R
-import com.galeria.medicationstracker.utils.navigation.HomeScreen
-import com.galeria.medicationstracker.utils.navigation.MedicationScreen
-import com.galeria.medicationstracker.utils.navigation.ProfileScreen
+import com.galeria.medicationstracker.navigation.HomeScreen
+import com.galeria.medicationstracker.navigation.MedicationScreen
+import com.galeria.medicationstracker.navigation.ProfileScreen
 
 // Компоненты навигации между экранами.
 enum class BottomNavigation(
