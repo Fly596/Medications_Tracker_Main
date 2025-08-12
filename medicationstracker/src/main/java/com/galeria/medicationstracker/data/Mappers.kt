@@ -4,6 +4,8 @@ import com.galeria.medicationstracker.data.local.Intake
 import com.galeria.medicationstracker.data.local.Medication
 import com.galeria.medicationstracker.data.network.NetworkIntake
 import com.galeria.medicationstracker.data.network.NetworkMedication
+import java.time.Instant
+import java.time.ZoneId
 
 // Extension functions to convert network models to local models.
 fun NetworkMedication.toEntity(): Medication {
@@ -34,3 +36,32 @@ fun NetworkIntake.toEntity(): Intake {
     )
 }
 
+fun Medication.toDomain(): DomainMedication {
+    val instantStart = Instant.ofEpochMilli(this.startDate ?: 0)
+    val instantEnd = Instant.ofEpochMilli(this.endDate ?: 0)
+    val localStartDate =
+        instantStart.atZone(ZoneId.systemDefault()).toLocalDate()
+    val localPublishDate =
+        instantEnd.atZone(ZoneId.systemDefault()).toLocalDate()
+    
+    return DomainMedication(
+        id = this.id,
+        name = this.name,
+        dosageValue = this.dosageValue,
+        dosageUnit = this.dosageUnit,
+        startDate = localStartDate,
+        endDate = localPublishDate,
+        daysOfWeek = this.daysOfWeek,
+        intakeTime = this.intakeTime,
+    )
+}
+
+// Мапперы для списка.
+fun List<Medication>.toDomain(): List<DomainMedication> {
+    return this.map { it.toDomain() }
+}
+
+
+fun List<NetworkMedication>.toEntity(): List<Medication> {
+    return this.map { it.toEntity() }
+}

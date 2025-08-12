@@ -43,6 +43,7 @@ fun MedicationsScreen(
     
     MedTrackerTheme {
         Scaffold(
+            modifier = modifier.fillMaxSize(),
             containerColor = MedTrackerTheme.colors.secondaryBackground,
             topBar = {
                 Row(

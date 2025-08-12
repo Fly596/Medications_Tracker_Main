@@ -3,9 +3,12 @@ package com.galeria.medicationstracker.ui.screens.medications
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.galeria.medicationstracker.data.DomainMedication
 import com.galeria.medicationstracker.data.NewMedicationRepository
 import com.galeria.medicationstracker.data.network.AuthRepository
 import com.galeria.medicationstracker.data.network.NetworkMedication
+import com.galeria.medicationstracker.data.toDomain
+import com.galeria.medicationstracker.data.toEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,7 +17,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class MedicationsUiState(
-    val userMedications: List<NetworkMedication> = emptyList()
+    val userMedications: List<NetworkMedication> = emptyList(),
+    val userMedicationDomain: List<DomainMedication> = emptyList()
     // val medication: Medication = Medication()
 )
 
@@ -46,7 +50,13 @@ constructor(
         viewModelScope.launch {
             medicationRepository.getUserMedications(uid)
                 .collect { medications ->
-                    _uiState.update { it.copy(userMedications = medications) }
+                    _uiState.update {
+                        it.copy(
+                            userMedications = medications,
+                            userMedicationDomain = medications.toEntity()
+                                .toDomain()
+                        )
+                    }
                 }
         }
     }

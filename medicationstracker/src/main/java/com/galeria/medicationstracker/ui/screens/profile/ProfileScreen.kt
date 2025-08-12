@@ -19,6 +19,7 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.LocalPharmacy
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
@@ -60,87 +61,85 @@ fun UserProfileScreen(
     viewModel: ProfileVM = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    
-    Column(
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        // pfp, name, email.
+    Scaffold(modifier = modifier.fillMaxSize()) { innerPadding ->
         Column(
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(innerPadding)
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             // pfp, name, email.
-            Row(
-                modifier = Modifier.padding(bottom = 24.dp),
-                verticalAlignment = Alignment.Top,
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
+            Column(
+                horizontalAlignment = Alignment.Start,
             ) {
-                Image(
-                    painter = painterResource(R.drawable.img_1543),
-                    contentDescription = "pfp",
-                    contentScale = ContentScale.Crop,
-                    modifier = modifier
-                        .clip(CircleShape)
-                        .size(108.dp),
-                )
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(
-                        text = uiState.networkUser?.name.toString(),
-                        style = MedTrackerTheme.typography.display3Emphasized,
-                        color = colors.primaryLabel,
+                // pfp, name, email.
+                Row(
+                    modifier = Modifier.padding(bottom = 24.dp),
+                    verticalAlignment = Alignment.Top,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    Image(
+                        painter = painterResource(R.drawable.img_1543),
+                        contentDescription = "pfp",
+                        contentScale = ContentScale.Crop,
+                        modifier = modifier
+                            .clip(CircleShape)
+                            .size(108.dp),
                     )
-                    Row(
-                        modifier = Modifier,
-                        verticalAlignment = Alignment.Top,
-                        horizontalArrangement = Arrangement.spacedBy(24.dp),
-                    ) {
-                        // LabeledStat(uiState.value.user?.dateOfBirth.toString(), "Age")
-                        LabeledStat(
-                            uiState.networkUser?.heightCm.toString(),
-                            stringResource(R.string.height)
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text(
+                            text = uiState.networkUser?.name.toString(),
+                            style = MedTrackerTheme.typography.display3Emphasized,
+                            color = colors.primaryLabel,
                         )
-                        LabeledStat(
-                            uiState.networkUser?.weightKg.toString(),
-                            stringResource(R.string.weight)
-                        )
+                        Row(
+                            modifier = Modifier,
+                            verticalAlignment = Alignment.Top,
+                            horizontalArrangement = Arrangement.spacedBy(24.dp),
+                        ) {
+                            // LabeledStat(uiState.value.user?.dateOfBirth.toString(), "Age")
+                            LabeledStat(
+                                uiState.networkUser?.heightCm.toString(),
+                                stringResource(R.string.height),
+                            )
+                            LabeledStat(
+                                uiState.networkUser?.weightKg.toString(),
+                                stringResource(R.string.weight),
+                            )
+                        }
                     }
                 }
+                
+                GPrimaryButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {
+                        onEditProfileClick.invoke()
+                        // Todo: open edit profile screen
+                    },
+                ) {
+                    Text(text = stringResource(R.string.edit_profile))
+                }
+                GSecondaryButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = { onNotesClick.invoke() },
+                ) {
+                    Text(text = stringResource(R.string.notes))
+                }
             }
-            
-            GPrimaryButton(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = {
-                    onEditProfileClick.invoke()
-                    // Todo: open edit profile screen
-                },
-            ) {
-                Text(text = stringResource(R.string.edit_profile))
-            }
-            GSecondaryButton(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = { onNotesClick.invoke() },
-            ) {
-                Text(text = stringResource(R.string.notes))
-            }
+            // menu items.
+            TabsRow(
+                modifier = Modifier.padding(top = 16.dp, bottom = 12.dp),
+                tabs =
+                    listOf(
+                        stringResource(R.string.medications),
+                        stringResource(R.string.history)
+                    ),
+                medications = uiState.medications,
+                intakes = uiState.intakes,
+            )
         }
-        // menu items.
-        TabsRow(
-            modifier = Modifier.padding(top = 16.dp, bottom = 12.dp),
-            tabs = listOf(
-                stringResource(R.string.medications),
-                stringResource(
-                    R.string.history
-                )
-            ),
-            medications = uiState.medications,
-            intakes = uiState.intakes,
-        )
     }
-    
 }
 
 @Composable
@@ -151,7 +150,7 @@ fun TabsRow(
     intakes: List<NetworkIntake> = emptyList(),
 ) {
     var selectedTabIndex by remember { mutableStateOf(0) }
-    
+
     Column(modifier = modifier) {
         TabRow(
             selectedTabIndex = selectedTabIndex,
@@ -174,7 +173,7 @@ fun TabsRow(
                 )
             }
         }
-        
+
         when (selectedTabIndex) {
             0 -> UserMedications(medications)
             1 -> UserHistory(intakes)
@@ -190,27 +189,27 @@ fun UserMedications(mediations: List<NetworkMedication> = emptyList()) {
 @Composable
 fun UserHistory(intakes: List<NetworkIntake> = emptyList()) {
     LazyColumn {
-            items(intakes) { intake ->
-                val time = intake.factTimestamp
-                val formattedDate =
-                    if (time != null) {
-                        formatTimestampTillTheDayMMMMddyyyy(time)
-                    } else {
-                        ""
-                    }
-                val formatedTime =
-                    if (time != null) {
-                        formatTimestampTillTheHour(time)
-                    } else {
-                        ""
-                    }
-                LogsCard(
-                    name = intake.name.toString(),
-                    status = intake.status.toString(),
-                    date = formattedDate,
-                    time = formatedTime,
-                )
-            }
+        items(intakes) { intake ->
+            val time = intake.factTimestamp
+            val formattedDate =
+                if (time != null) {
+                    formatTimestampTillTheDayMMMMddyyyy(time)
+                } else {
+                    ""
+                }
+            val formatedTime =
+                if (time != null) {
+                    formatTimestampTillTheHour(time)
+                } else {
+                    ""
+                }
+            LogsCard(
+                name = intake.name.toString(),
+                status = intake.status.toString(),
+                date = formattedDate,
+                time = formatedTime,
+            )
+        }
     }
 }
 
@@ -219,11 +218,9 @@ fun MedicationCard(
     modifier: Modifier = Modifier,
     medication: NetworkMedication? = null
 ) {
-    FlySimpleCard(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 6.dp)
-    ) {
+    FlySimpleCard(modifier = modifier
+        .fillMaxWidth()
+        .padding(vertical = 6.dp)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
