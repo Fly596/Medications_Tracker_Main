@@ -39,7 +39,7 @@ data class AddIntakeUiState(
 )
 
 @HiltViewModel
-class DashboardVM
+class DailyMedsVM
 @Inject
 constructor(
     private val intakeRepository: NewIntakeRepository,
@@ -85,7 +85,7 @@ constructor(
                     if (todayMedicationsList.isEmpty()) {
                         //
                     } else {
-                        for (medication in todayMedicationsList) {
+                        /* for (medication in todayMedicationsList) {
                             // Создание нового приема на сегодня.
                             val intake =
                                 NetworkIntake(
@@ -100,7 +100,7 @@ constructor(
                             intakeRepository.addUserIntake(userId, intake)
                             // Обновление данных на экране.
                             _uiState.update { it.copy(todayIntakes = it.todayIntakes + intake) }
-                        }
+                        } */
                         _uiState.update { it.copy(currentTakenMedications = todayMedicationsList) }
                     }
                 }

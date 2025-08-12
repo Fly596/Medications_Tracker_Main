@@ -15,7 +15,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DateRangePicker
@@ -76,18 +75,21 @@ fun NewMedicationDataScreen(
     viewModelOld: AddNewMedViewModel = hiltViewModel(),
 ) {
     val state = viewModel.uiState.collectAsStateWithLifecycle()
-    
+
     MedTrackerTheme {
         Scaffold(
             containerColor = MedTrackerTheme.colors.secondaryBackground,
             topBar = {
-                Row(modifier = Modifier.padding(vertical = 24.dp)) {
+                Row(
+                    modifier = Modifier.padding(vertical = 24.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     IconButton(onClick = navigateBack) {
                         Icon(
                             imageVector = Icons.Default.ArrowBackIosNew,
                             contentDescription = "Back",
                             tint = MedTrackerTheme.colors.primaryLabel,
-                            modifier = Modifier.size(28.dp),
+                            modifier = Modifier.size(32.dp),
                         )
                     }
                     Text(
@@ -106,9 +108,7 @@ fun NewMedicationDataScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.Start,
                 ) {
                     // Name input.
@@ -139,7 +139,7 @@ fun NewMedicationDataScreen(
                     item {
                         var selectedUnit by remember { mutableStateOf(state.value.medUnit) }
                         val unitOptions = MedicationUnit.entries.toTypedArray()
-                        
+
                         FlySimpleCard(
                             isPrimaryBackground = true,
                             modifier = Modifier.fillMaxWidth(),
@@ -183,7 +183,7 @@ fun NewMedicationDataScreen(
                                 }
                             },
                         )
-                        Spacer(modifier = Modifier.padding(16.dp))
+                        Spacer(modifier = Modifier.padding(8.dp))
                     }
                     // Start and end dates + time.
                     item {
@@ -192,26 +192,39 @@ fun NewMedicationDataScreen(
                             text = stringResource(R.string.intake_period),
                             style = typography.title2Emphasized,
                         )
-                        
-                        Spacer(modifier = Modifier.padding(8.dp))
+                        // Spacer(modifier = Modifier.padding(8.dp))
                         // состояние ввода даты.
                         var showDatePicker by rememberSaveable {
                             mutableStateOf(
                                 false
                             )
                         }
-                        
-                        Button(onClick = {
-                            showDatePicker = !showDatePicker
-                        }) { Text("set dates") }
+
                         TextField(
                             value =
-                                "Start: ${state.value.medStartDate.toString()}.\nEnd: ${state.value.medEndDate.toString()}.",
+                                "Start: ${
+                                    state.value.medStartDate?.toLocalDate()
+                                        ?.format(DateTimeFormatter.ofPattern("MMMM dd yyyy"))
+                                }" +
+                                        ".\nEnd: ${
+                                            state.value.medEndDate?.toLocalDate()
+                                                ?.format(
+                                                    DateTimeFormatter.ofPattern(
+                                                        "MMMM dd yyyy"
+                                                    )
+                                                )
+                                        }.",
                             onValueChange = {},
                             readOnly = true,
                             maxLines = 2,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp),
                         )
-                        
+                        GPrimaryButton(onClick = {
+                            showDatePicker = !showDatePicker
+                        }) { Text("set dates") }
+
                         if (showDatePicker) {
                             DateRangePickerModalOld(
                                 onDateRangeSelected = {
@@ -238,7 +251,7 @@ fun NewMedicationDataScreen(
                             )
                         }
                         Spacer(modifier = Modifier.padding(4.dp))
-                        
+
                         GSecondaryButton(
                             shape = MedTrackerTheme.shapes.extraLarge,
                             onClick = { showTimePicker = !showTimePicker },
@@ -257,6 +270,7 @@ fun NewMedicationDataScreen(
                     // Дни недели.
                     item {
                         FlySimpleCard(
+                            modifier = Modifier.fillMaxWidth(),
                             isPrimaryBackground = false,
                             content = {
                                 Column(
@@ -305,21 +319,20 @@ fun ModalDatePickerOld(viewModel: AddNewMedViewModel) {
                         state.value.medStartDate!!
                     )
                 }\nEnd: ${formatTimestampTillTheDayMMMMddyyyy(state.value.medEndDate!!)}"
-            
+
             state.value.medStartDate != null ->
                 "Start: ${
                     formatTimestampTillTheDayMMMMddyyyy(
                         state.value.medStartDate!!
                     )
                 }"
-            
+
             state.value.medEndDate != null ->
                 "End: ${
                     formatTimestampTillTheDayMMMMddyyyy(
                         state.value.medEndDate!!
                     )
                 }"
-            
             else -> ""
         }
     Column {
@@ -350,7 +363,7 @@ fun ModalDatePickerOld(viewModel: AddNewMedViewModel) {
                     viewModel.updateEndDate(
                         it.second?.toLocalDate()?.toTimestamp()
                     )
-                    
+
                     showPicker = !showPicker
                 },
                 onDismiss = { showPicker = !showPicker },

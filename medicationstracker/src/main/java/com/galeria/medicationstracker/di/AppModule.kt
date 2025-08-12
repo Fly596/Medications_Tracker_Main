@@ -36,4 +36,7 @@ object AppModule {
     @Provides
     fun provideMedicationDao(database: AppDatabase) = database.medicationDao
     
+    @Provides
+    fun provideIntakeDao(database: AppDatabase) = database.intakeDao
+    
 }

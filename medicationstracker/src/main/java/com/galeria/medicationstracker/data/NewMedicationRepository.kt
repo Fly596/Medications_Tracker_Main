@@ -1,5 +1,6 @@
 package com.galeria.medicationstracker.data
 
+import android.util.Log
 import com.galeria.medicationstracker.data.network.NetworkMedication
 import com.galeria.medicationstracker.utils.formatTimestampToWeekday
 import com.galeria.medicationstracker.utils.toTimestamp
@@ -25,7 +26,7 @@ interface NewMedicationRepository {
     suspend fun addMedication(
         userId: String,
         medicationData: NetworkMedication
-    ): Result<String>
+    )/* : Result<String> */
     
     suspend fun updateMedication(
         userId: String,
@@ -108,21 +109,33 @@ class NewMedicationRepositoryImpl @Inject constructor(private val firestore: Fir
     override suspend fun addMedication(
         userId: String,
         medicationData: NetworkMedication,
-    ): Result<String> {
+    )/* : Result<String> */ {
         val dataToSave = medicationData.copy(userId = userId, id = "")
-        
-        return try {
-            val documentRef =
-                firestore
-                    .collection(USERS_COLLECTION)
-                    .document(userId)
-                    .collection(MEDICATIONS_SUBCOLLECTION)
-                    .add(dataToSave)
-                    .await()
-            Result.success(documentRef.id)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+        firestore.collection(USERS_COLLECTION)
+            .document(userId)
+            .collection(MEDICATIONS_SUBCOLLECTION)
+            .add(dataToSave)
+            .addOnSuccessListener {
+                Log.d(
+                    "MedicationRepository",
+                    "DocumentSnapshot added with ID: ${it.id}"
+                )
+            }
+            .addOnFailureListener { e ->
+                Log.w("MedicationRepository", "Error adding document", e)
+            }
+        /*         return try {
+                    val documentRef =
+                        firestore
+                            .collection(USERS_COLLECTION)
+                            .document(userId)
+                            .collection(MEDICATIONS_SUBCOLLECTION)
+                            .add(dataToSave)
+                            .await()
+                    Result.success(documentRef.id)
+                } catch (e: Exception) {
+                    Result.failure(e)
+                } */
     }
     
     override suspend fun updateMedication(

@@ -53,7 +53,7 @@ fun DailyMedsScreen(
     modifier: Modifier = Modifier,
     onAddMood: () -> Unit = {},
     onAddIntake: () -> Unit,
-    dashboardViewModel: DashboardVM = hiltViewModel(),
+    dashboardViewModel: DailyMedsVM = hiltViewModel(),
 ) {
     val uiState = dashboardViewModel.uiState.collectAsStateWithLifecycle()
     
@@ -253,7 +253,7 @@ fun NewMedicationIntakeItem(
 // Список лекарств по времени приема.
 @Composable
 fun MedsByIntakeTimeList(
-    viewModel: DashboardVM,
+    viewModel: DailyMedsVM,
     onAddNoteClick: () -> Unit = {},
     medicationsForIntakeTime: List<NetworkMedication> = emptyList(),
 ) {
@@ -297,7 +297,7 @@ fun MedsByIntakeTimeList(
 
 @Composable
 fun MedicationItem(
-    viewModel: DashboardVM,
+    viewModel: DailyMedsVM,
     medication: NetworkMedication,
     icon: ImageVector = Icons.Filled.Medication,
     onAddNoteClick: () -> Unit = {},
@@ -401,7 +401,7 @@ fun DailyMedsScreenNew(
     modifier: Modifier = Modifier,
     onAddMood: () -> Unit = {},
     onAddIntake: (String) -> Unit = {},
-    dashboardViewModel: DashboardVM = hiltViewModel(),
+    dashboardViewModel: DailyMedsVM = hiltViewModel(),
 ) {
     val state = dashboardViewModel.uiState.collectAsStateWithLifecycle()
     val inputState =

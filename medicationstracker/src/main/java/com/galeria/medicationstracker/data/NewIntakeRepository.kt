@@ -14,7 +14,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 interface NewIntakeRepository {
-    
+
     fun observeUserIntakes(userId: String): Flow<List<NetworkIntake>>
     
     suspend fun getUserIntake(
@@ -31,7 +31,7 @@ interface NewIntakeRepository {
         userId: String,
         intake: NetworkIntake
     ): Result<Unit>
-    
+
     suspend fun deleteUserIntake(userId: String, intakeId: String): Result<Unit>
     
     suspend fun fetchIntakeStatus(
@@ -41,11 +41,13 @@ interface NewIntakeRepository {
 }
 
 @Singleton
-class NewIntakeRepositoryImpl @Inject constructor(private val firestore: FirebaseFirestore) :
+class NewIntakeRepositoryImpl
+@Inject
+constructor(private val firestore: FirebaseFirestore) :
     NewIntakeRepository {
-    
+
     companion object {
-        
+
         private const val USERS_COLLECTION = "User"
         private const val INTAKES_SUBCOLLECTION = "intakes"
     }
@@ -105,14 +107,41 @@ class NewIntakeRepositoryImpl @Inject constructor(private val firestore: Firebas
         intakeData: NetworkIntake
     ): Result<String> {
         val dataToSave = intakeData.copy(id = "")
-        
+        // Данные для сохранения в Firestore.
+        val data =
+            mapOf(
+                "factTimestamp" to dataToSave.factTimestamp,
+                "medicationId" to dataToSave.medicationId,
+                "name" to dataToSave.name,
+                "presetTime" to dataToSave.presetTime,
+                "status" to dataToSave.status,
+                "userId" to dataToSave.userId,
+                "schemaVersion" to dataToSave.schemaVersion,
+            )
+
         return try {
-                firestore
-                    .collection(USERS_COLLECTION)
-                    .document(userId)
-                    .collection(INTAKES_SUBCOLLECTION)
-                    .add(intakeData)
-                    .await()
+            firestore
+                .collection(USERS_COLLECTION)
+                .document(userId)
+                .collection(INTAKES_SUBCOLLECTION)
+                .add(data)
+                .await()
+            /* .addOnSuccessListener { documentReference ->
+                // После добавления нового документа в Firestore получаем
+                // его ID и добавляем в локальную базу.
+                val intakeEntity =
+                    Intake(
+                        firestoreId = documentReference.id,
+                        networkId = dataToSave.id,
+                        userId = userId,
+                        medicationId = dataToSave.medicationId,
+                        status = dataToSave.status,
+                        presetTime = dataToSave.presetTime,
+                        factTimestamp = dataToSave.factTimestamp?.seconds ?: 0,
+                    )
+                // Добавление данных в локальную базу.
+                CoroutineScope(Dispatchers.IO).launch { intakeDao.insertIntake(intakeEntity) }
+            } */
             Result.success(dataToSave.id)
         } catch (e: Exception) {
             Result.failure(e)

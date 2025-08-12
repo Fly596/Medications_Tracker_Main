@@ -38,6 +38,7 @@ data class Medication(
 data class Intake(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
+    val firestoreId: String,
     val networkId: String,
     val userId: String,
     val medicationId: String,

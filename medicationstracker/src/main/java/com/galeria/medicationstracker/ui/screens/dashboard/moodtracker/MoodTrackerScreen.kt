@@ -55,17 +55,33 @@ fun MoodTrackerScreen(
             },
         ) { innerPadding ->
             Column(
-                modifier = modifier.fillMaxWidth().padding(innerPadding).padding(16.dp),
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(innerPadding)
+                    .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
+                val moodText = when (uiState.value.moodValue) {
+                    1 -> "Very Unpleasant"
+                    2 -> "Unpleasant"
+                    3 -> "Slightly Unpleasant"
+                    4 -> "Neutral"
+                    5 -> "Slightly Pleasant"
+                    6 -> "Pleasant"
+                    7 -> "Very Pleasant"
+                    else -> ""
+                }
+                Text(
+                    moodText,
+                    style = typography.title1Emphasized,
+                )
+                
                 Slider(
                     value = uiState.value.moodValue.toFloat(),
                     onValueChange = { viewModel.updateMood(it.toInt()) },
-                    valueRange = 1f..10f,
-                    steps = 9,
+                    valueRange = 1f..7f,
                     modifier = Modifier.fillMaxWidth(),
                 )
-                Text(text = "${uiState.value.moodValue}")
 
                 TextField(
                     value = uiState.value.notes ?: "",
