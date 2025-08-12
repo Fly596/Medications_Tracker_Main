@@ -22,24 +22,3 @@ class HeadActivity : ComponentActivity() {
         }
     }
 }
-/*
-@Composable
-fun SnackbarHandler(snackbarHostState: SnackbarHostState) {
-    val scope = rememberCoroutineScope()
-    ObserveAsEvents(flow = SnackbarController.events, snackbarHostState) { event ->
-        scope.launch {
-            snackbarHostState.currentSnackbarData?.dismiss()
-            val result =
-                snackbarHostState.showSnackbar(
-                    message = event.message,
-                    actionLabel = event.action?.name,
-                    duration = SnackbarDuration.Short,
-                )
-
-            if (result == SnackbarResult.ActionPerformed) {
-                event.action?.action?.invoke()
-            }
-        }
-    }
-}
-*/
