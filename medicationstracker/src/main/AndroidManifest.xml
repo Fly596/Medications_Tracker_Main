@@ -11,16 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.SpeechRecognitionApp">
-        <activity
-            android:name=".TestActivity"
-            android:exported="true"
-            android:label="@string/title_activity_test"
-            android:theme="@style/Theme.SpeechRecognitionApp">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-            </intent-filter>
-        </activity>
         <activity
             android:name=".HeadActivity"
             android:exported="true"
