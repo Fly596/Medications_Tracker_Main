@@ -8,13 +8,13 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -43,7 +43,8 @@ fun ApplicationNavHost(
     navController: NavHostController = rememberNavController(),
     viewModel: MainViewModel = hiltViewModel(),
 ) {
-    val state = viewModel.uiState.collectAsStateWithLifecycle()
+    val authState by viewModel.uiState.collectAsState()
+    // val state = viewModel.uiState.collectAsStateWithLifecycle()
     // Текущий элемент стека навигации.
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     // Получаем route (уникальный идентификатор текущего экрана).
@@ -87,17 +88,40 @@ fun ApplicationNavHost(
             }
         }
     ) { innerPadding ->
-        NavHost(
-            navController = navController,
-            startDestination = state.value.startDestination,
-            modifier = modifier
-                .fillMaxSize()
-                .padding(innerPadding),
-        ) {
-            authGraph(navController)
-            homeScreenGraph(navController)
-            medicationsGraph(navController)
-            profileGraph(navController)
+        when (authState) {
+            is AuthState.Loading -> {
+                // Todo: loading screen
+            }
+            
+            is AuthState.Authenticated -> {
+                NavHost(
+                    navController = navController,
+                    startDestination = GraphRoutes.Home,
+                    modifier = modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
+                ) {
+                    authGraph(navController)
+                    homeScreenGraph(navController)
+                    medicationsGraph(navController)
+                    profileGraph(navController)
+                }
+            }
+            
+            is AuthState.Unauthenticated -> {
+                NavHost(
+                    navController = navController,
+                    startDestination = GraphRoutes.Auth,
+                    modifier = modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
+                ) {
+                    authGraph(navController)
+                    homeScreenGraph(navController)
+                    medicationsGraph(navController)
+                    profileGraph(navController)
+                }
+            }
         }
     }
 }
@@ -155,7 +179,7 @@ fun NavGraphBuilder.homeScreenGraph(navController: NavHostController) {
                 onAddIntake = {},
             )
         }
-        
+
         composable<HomeScreen.MoodCheck> {
             MoodTrackerScreen(onBackClick = { navController.navigateUp() })
             // TODO: MoodTrackerScreen
@@ -183,14 +207,12 @@ fun NavGraphBuilder.medicationsGraph(navController: NavHostController) {
         }
         composable<MedicationScreen.AddMedication> {
             NewMedicationDataScreen(navigateBack = { navController.navigateUp() })
-            // TODO: AddMedicationScreen
         }
         composable<MedicationScreen.ViewMedication> { navBackStackEntry ->
             val viewMedication: MedicationScreen.ViewMedication =
                 navBackStackEntry.toRoute()
             ViewMedicationInfoScreen(onNavigateToMedsList = { navController.navigateUp() })
             // TODO: ViewMedicationScreen(medicationId =
-            // viewMedication.medicationId)
         }
         composable<MedicationScreen.UpdateMedication> {
             // TODO: UpdateMedicationScreen

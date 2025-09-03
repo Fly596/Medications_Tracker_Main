@@ -1,25 +1,27 @@
 package com.galeria.medicationstracker.data
 
-import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import com.galeria.medicationstracker.data.local.MedicationDao
 import com.galeria.medicationstracker.data.network.NetworkMedication
 import com.galeria.medicationstracker.utils.formatTimestampToWeekday
 import com.galeria.medicationstracker.utils.toTimestamp
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDate
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.coroutines.resume
 
 interface NewMedicationRepository {
-    
+
     fun getUserMedications(userId: String): Flow<List<NetworkMedication>>
     
     suspend fun getMedication(
@@ -27,8 +29,8 @@ interface NewMedicationRepository {
         medicationId: String
     ): Result<NetworkMedication>
     
-    suspend fun addMedication(medicationData: NetworkMedication)
-    
+    suspend fun addMedication(networkMedication: NetworkMedication): String?
+
     suspend fun updateMedication(medication: NetworkMedication): Result<Unit>
     
     suspend fun deleteMedication(
@@ -108,34 +110,43 @@ constructor(
         }
     }
     
-    override suspend fun addMedication(medicationData: NetworkMedication) {
-        var medicationNetworkId by mutableStateOf("")
-        
-        firestore
-            .collection(USERS_COLLECTION)
-            .document(medicationData.userId)
-            .collection(MEDICATIONS_SUBCOLLECTION)
-            .add(medicationData)
-            .addOnSuccessListener {
-                medicationNetworkId = it.id
-                Log.d(
-                    "MedicationRepository",
-                    "DocumentSnapshot added with ID: ${it.id}"
-                )
-            }
-            .addOnFailureListener { e ->
-                Log.w(
-                    "MedicationRepository",
-                    "Error adding document",
-                    e
-                )
-            }
-        // Данные для сохранения в локальную бд.
-        val dataToSaveToEntity =
-            medicationData.toEntity().copy(networkId = medicationNetworkId)
-        medicationDao.upsertMedication(dataToSaveToEntity)
+    @OptIn(DelicateCoroutinesApi::class)
+    override suspend fun addMedication(networkMedication: NetworkMedication): String? {
+        return suspendCancellableCoroutine { continuation ->
+            firestore
+                .collection(USERS_COLLECTION)
+                .document(networkMedication.userId)
+                .collection(MEDICATIONS_SUBCOLLECTION)
+                .add(networkMedication)
+                .addOnSuccessListener { documentReference ->
+                    val firestoreId = documentReference.id
+                    println("DocumentSnapshot added with ID: $firestoreId")
+                    val medicationEntity =
+                        networkMedication.toEntity(
+                            firestoreId = firestoreId,
+                        )
+                    
+                    GlobalScope.launch(Dispatchers.IO) {
+                        medicationDao.upsertMedication(medicationEntity)
+                        println("MedicationEntity upserted with ID: $firestoreId")
+                        
+                        if (continuation.isActive) {
+                            continuation.resume(firestoreId) { cause, _, _ ->
+                                null?.let { it(cause) }
+                            }
+                        }
+                    }
+                }
+                .addOnFailureListener { e ->
+                    // --- ОШИБКА В FIRESTORE ---
+                    println("Firestore: Ошибка создания документа: $e")
+                    if (continuation.isActive) {
+                        continuation.resume(null) // Возвращаем null в случае ошибки
+                    }
+                }
+        }
     }
-    
+
     override suspend fun updateMedication(medication: NetworkMedication): Result<Unit> {
         if (medication.id.isBlank()) {
             return Result.failure(

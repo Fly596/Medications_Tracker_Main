@@ -66,26 +66,6 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) :
         return AuthResult.Success /* Result.success("ass") */
     }
     
-    /*         return runAuthOperation {
-        auth.signInWithEmailAndPassword(email, password).await()
-    } */
-    // return runAuth
-    /*         return try {
-        auth.signInWithEmailAndPassword(email, password).await()
-        AuthResult.Success
-    } catch (e: FirebaseAuthInvalidUserException) {
-        AuthResult.AuthError("User Not Found")
-        // AuthResult.failure(Exception("User not found."))
-    } catch (e: FirebaseAuthInvalidCredentialsException) {
-        AuthResult.AuthError("Invalid email or password.")
-        // Result.failure(Exception("Invalid email or password."))
-    } catch (e: IOException) {
-        AuthResult.NetworkError
-        // Result.failure(Exception("Auth failed: ${e.message}"))
-    } catch (e: Exception) {
-        AuthResult.UnknownError("${e.message}")
-        // Result.failure(Exception("Auth failed: ${e.message}"))
-    } */
     override suspend fun signUp(email: String, password: String): AuthResult {
         if (email.isBlank() || password.isBlank()) {
             return AuthResult.ValidationError("Email or password cannot be empty.")
@@ -95,16 +75,7 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) :
             auth.createUserWithEmailAndPassword(email, password).await()
             AuthResult.Success
         }
-        /*  return try {
-            auth.createUserWithEmailAndPassword(email, password).await()
-            AuthResult.Success
-        } catch (e: FirebaseAuthUserCollisionException) {
-            AuthResult.AuthError("User already exists.")
-        } catch (e: IOException) {
-            AuthResult.NetworkError
-        } catch (e: Exception) {
-            AuthResult.UnknownError("${e.message}")
-        } */
+        
     }
     
     // Сбрасывает пароль.

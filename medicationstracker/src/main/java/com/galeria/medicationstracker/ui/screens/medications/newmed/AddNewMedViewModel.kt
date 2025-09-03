@@ -8,9 +8,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.galeria.medicationstracker.data.NewIntakeRepository
 import com.galeria.medicationstracker.data.NewMedicationRepository
+import com.galeria.medicationstracker.data.local.Dosage
 import com.galeria.medicationstracker.data.network.AuthRepository
 import com.galeria.medicationstracker.data.network.MedicationForm
-import com.galeria.medicationstracker.data.network.NetworkDosage
 import com.galeria.medicationstracker.data.network.NetworkMedication
 import com.galeria.medicationstracker.data.old.MedicationUnit
 import com.galeria.medicationstracker.utils.FirestoreFunctions.FirestoreService
@@ -89,7 +89,7 @@ constructor(
                     userId = userId.toString(),
                     name = uiState.value.medName,
                     dosage =
-                        NetworkDosage(
+                        Dosage(
                             uiState.value.medStrength.toDouble(),
                             uiState.value.medUnit.toString(),
                         ),

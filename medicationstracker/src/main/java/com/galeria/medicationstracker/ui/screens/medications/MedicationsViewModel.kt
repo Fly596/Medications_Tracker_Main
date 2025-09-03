@@ -19,7 +19,6 @@ import javax.inject.Inject
 data class MedicationsUiState(
     val userMedications: List<NetworkMedication> = emptyList(),
     val userMedicationDomain: List<DomainMedication> = emptyList()
-    // val medication: Medication = Medication()
 )
 
 @HiltViewModel
@@ -33,8 +32,6 @@ constructor(
     private val _uiState = MutableStateFlow(MedicationsUiState())
     val uiState = _uiState.asStateFlow()
     
-    // private lateinit var currentUserId: String
-    // private lateinit var currentUserEmail: String
     init {
         viewModelScope.launch {
             try {

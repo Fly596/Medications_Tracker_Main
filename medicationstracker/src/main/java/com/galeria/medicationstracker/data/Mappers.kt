@@ -1,56 +1,53 @@
 package com.galeria.medicationstracker.data
 
-import com.galeria.medicationstracker.data.local.Intake
+import com.galeria.medicationstracker.data.local.Dosage
 import com.galeria.medicationstracker.data.local.Medication
-import com.galeria.medicationstracker.data.network.NetworkIntake
 import com.galeria.medicationstracker.data.network.NetworkMedication
 import java.time.Instant
 import java.time.ZoneId
 
 // Extension functions to convert network models to local models.
-fun NetworkMedication.toEntity(): Medication {
+fun NetworkMedication.toEntity(firestoreId: String): Medication {
     return Medication(
-        networkId = this.id,
+        firestoreId = firestoreId,
         name = this.name,
-        dosageValue = this.dosage.value,
-        dosageUnit = this.dosage.unit,
-        startDate = this.startDate?.seconds?.times(1000)
-            ?.plus(startDate.nanoseconds / 1_000_000),
-        endDate = this.endDate?.seconds?.times(1000)
-            ?.plus(endDate.nanoseconds / 1_000_000),
+        dosage = Dosage(value = this.dosage.value, unit = this.dosage.unit),
+        startDate = this.startDate?.toDate()?.time,
+        endDate = this.endDate?.toDate()?.time,
         daysOfWeek = this.daysOfWeek,
         intakeTime = this.intakeTimeFromMidnight,
     )
 }
 
 // Extension functions to convert network models to local models.
-fun NetworkIntake.toEntity(): Intake {
+/* fun NetworkIntake.toEntity(firestoreId: String): Intake {
     return Intake(
-        networkId = this.id,
+        firestoreId = firestoreId,
         medicationId = this.medicationId,
         status = this.status,
         presetMinutesFromMidnight = this.presetTimeFromMidnight,
-        factTimestamp = this.factTimestamp?.seconds?.times(1000)?.plus(
-            factTimestamp!!.nanoseconds / 1_000_000
-        )
+        factTimestamp = this.factTimestamp?.toDate()?.time,
     )
-}
+} */
 
 fun Medication.toDomain(): DomainMedication {
-    val instantStart = Instant.ofEpochMilli(this.startDate ?: 0)
-    val instantEnd = Instant.ofEpochMilli(this.endDate ?: 0)
     val localStartDate =
-        instantStart.atZone(ZoneId.systemDefault()).toLocalDate()
-    val localPublishDate =
-        instantEnd.atZone(ZoneId.systemDefault()).toLocalDate()
-    
+        this.startDate?.let {
+            Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault())
+                .toLocalDate()
+        }
+    val localEndDate =
+        this.endDate?.let {
+            Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault())
+                .toLocalDate()
+        }
     return DomainMedication(
         id = this.id,
+        networkId = this.firestoreId,
         name = this.name,
-        dosageValue = this.dosageValue,
-        dosageUnit = this.dosageUnit,
+        dosage = this.dosage, // Просто передаем объект дальше..
         startDate = localStartDate,
-        endDate = localPublishDate,
+        endDate = localEndDate,
         daysOfWeek = this.daysOfWeek,
         intakeTime = this.intakeTime,
     )
@@ -61,7 +58,6 @@ fun List<Medication>.toDomain(): List<DomainMedication> {
     return this.map { it.toDomain() }
 }
 
-
 fun List<NetworkMedication>.toEntity(): List<Medication> {
-    return this.map { it.toEntity() }
+    return this.map { it.toEntity(firestoreId = it.id) }
 }

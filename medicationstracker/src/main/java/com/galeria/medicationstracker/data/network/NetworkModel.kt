@@ -1,5 +1,6 @@
 package com.galeria.medicationstracker.data.network
 
+import com.galeria.medicationstracker.data.local.Dosage
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.ServerTimestamp
@@ -19,7 +20,7 @@ data class NetworkMedication(
     @DocumentId val id: String = "",
     val userId: String = "",
     val name: String = "",
-    val dosage: NetworkDosage = NetworkDosage(),
+    val dosage: Dosage = Dosage(),
     val form: String = MedicationForm.UNKNOWN.name,
     val startDate: Timestamp? = null,
     val endDate: Timestamp? = null,

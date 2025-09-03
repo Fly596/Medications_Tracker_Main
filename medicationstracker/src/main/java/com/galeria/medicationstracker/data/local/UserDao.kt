@@ -14,6 +14,6 @@ interface UserDao {
     @Query("SELECT * FROM user WHERE id = :id")
     suspend fun getUserById(id: Int): User?
     
-    @Query("SELECT * FROM user WHERE networkId = :networkId")
+    @Query("SELECT * FROM user WHERE firestoreId = :networkId")
     suspend fun getUserByNetworkId(networkId: String): User?
 }
