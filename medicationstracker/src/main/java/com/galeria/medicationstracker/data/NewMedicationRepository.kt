@@ -21,7 +21,7 @@ import javax.inject.Singleton
 import kotlin.coroutines.resume
 
 interface NewMedicationRepository {
-
+    
     fun getUserMedications(userId: String): Flow<List<NetworkMedication>>
     
     suspend fun getMedication(
@@ -30,14 +30,14 @@ interface NewMedicationRepository {
     ): Result<NetworkMedication>
     
     suspend fun addMedication(networkMedication: NetworkMedication): String?
-
+    
     suspend fun updateMedication(medication: NetworkMedication): Result<Unit>
     
     suspend fun deleteMedication(
         userId: String,
         medicationId: String
     ): Result<Unit>
-
+    
     fun getTodaysMedications(userId: String): Flow<List<NetworkMedication>>
 }
 
@@ -47,11 +47,10 @@ class NewMedicationRepositoryImpl
 constructor(
     private val firestore: FirebaseFirestore,
     private val medicationDao: MedicationDao
-) :
-    NewMedicationRepository {
-
+) : NewMedicationRepository {
+    
     companion object {
-
+        
         private const val USERS_COLLECTION = "User"
         private const val MEDICATIONS_SUBCOLLECTION = "medications"
     }
@@ -76,7 +75,7 @@ constructor(
                     }
             awaitClose { listenerRegistration.remove() }
         }
-
+    
     override suspend fun getMedication(
         userId: String,
         medicationId: String,
@@ -146,7 +145,7 @@ constructor(
                 }
         }
     }
-
+    
     override suspend fun updateMedication(medication: NetworkMedication): Result<Unit> {
         if (medication.id.isBlank()) {
             return Result.failure(
@@ -154,7 +153,6 @@ constructor(
             )
         }
         // val dataToSave = medication.copy(userId = userId)
-
         return try {
             firestore
                 .collection(USERS_COLLECTION)
