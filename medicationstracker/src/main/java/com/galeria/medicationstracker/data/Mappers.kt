@@ -18,7 +18,6 @@ fun NetworkMedication.toEntity(firestoreId: String): Medication {
         intakeTime = this.intakeTimeFromMidnight,
     )
 }
-
 // Extension functions to convert network models to local models.
 /* fun NetworkIntake.toEntity(firestoreId: String): Intake {
     return Intake(
@@ -42,10 +41,13 @@ fun Medication.toDomain(): DomainMedication {
                 .toLocalDate()
         }
     return DomainMedication(
-        id = this.id,
-        networkId = this.firestoreId,
+        localId = this.id,
+        firestoreId = this.firestoreId,
         name = this.name,
-        dosage = this.dosage, // Просто передаем объект дальше..
+        dosage = DomainDosage(
+            value = this.dosage.value,
+            unit = this.dosage.unit
+        ), // Просто передаем объект дальше..
         startDate = localStartDate,
         endDate = localEndDate,
         daysOfWeek = this.daysOfWeek,

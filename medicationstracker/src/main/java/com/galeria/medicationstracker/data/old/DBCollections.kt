@@ -1,6 +1,6 @@
 package com.galeria.medicationstracker.data.old
 
-sealed class UserIntakeStatus {
+/* sealed class UserIntakeStatus {
     object Taken : UserIntakeStatus() // Принято
 
     object Skipped : UserIntakeStatus() // Пропущено
@@ -17,7 +17,7 @@ sealed class UserIntakeStatus {
             }
         }
     }
-}
+} */
 
 enum class MedicationUnit {
     MG,

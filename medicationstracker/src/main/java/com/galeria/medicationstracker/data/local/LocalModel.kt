@@ -16,10 +16,10 @@ data class Dosage(
 
 @Entity(tableName = "user")
 data class User(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    // Уникальный ID из Firestore. Очень важен для синхронизации.
-    // Добавляем индекс, чтобы поиск по этому полю был быстрым.
-    @ColumnInfo(index = true) val firestoreId: String,
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    @ColumnInfo(index = true)
+    val firestoreId: String,
     val name: String,
     val email: String,
     val weightKg: Double,
@@ -32,9 +32,11 @@ data class User(
 )
 @TypeConverters(Converters::class)
 data class Medication(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
     // Добавляем индекс, чтобы поиск по этому полю был быстрым.
-    @ColumnInfo(index = true) val firestoreId: String,
+    @ColumnInfo(index = true)
+    val firestoreId: String,
     val name: String,
     @Embedded val dosage: Dosage,
     val startDate: Long?,
@@ -50,7 +52,7 @@ data class Medication(
         [
             ForeignKey(
                 entity = Medication::class, // С какой таблицей связываем..
-                parentColumns = ["id"], // По какому полю в родительской таблице..
+                parentColumns = ["firestoreId"], // По какому полю в родительской таблице..
                 childColumns = ["medicationId"], // По какому полю в текущей таблице..
                 onDelete =
                     ForeignKey.CASCADE, // Что делать, если родитель удален (удалить и эту запись)..
@@ -60,8 +62,10 @@ data class Medication(
 data class Intake(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     // Добавляем индекс, чтобы поиск по этому полю был быстрым.
-    @ColumnInfo(index = true) val firestoreId: String,
-    @ColumnInfo(index = true) val medicationId: Int,
+    @ColumnInfo(index = true)
+    val firestoreId: String,
+    @ColumnInfo(index = true)
+    val medicationId: String,
     val status: String = IntakeStatus.PENDING.name,
     val presetMinutesFromMidnight: Int,
     val factTimestamp: Long?,
@@ -74,7 +78,7 @@ data class Intake(
         [
             ForeignKey(
                 entity = User::class, // С какой таблицей связываем..
-                parentColumns = ["id"], // По какому полю в родительской таблице..
+                parentColumns = ["firestoreId"], // По какому полю в родительской таблице..
                 childColumns = ["userId"], // По какому полю в текущей таблице..
                 onDelete =
                     ForeignKey.CASCADE, // Что делать, если родитель удален (удалить и эту запись)..
@@ -84,7 +88,7 @@ data class Intake(
 data class UserNote(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     // Добавляем индекс, чтобы поиск по этому полю был быстрым.
-    @ColumnInfo(index = true) val firestoreId: String,
+    @ColumnInfo(index = true) val noteFirestoreId: String,
     @ColumnInfo(index = true) val userId: String,
     val title: String,
     val content: String,
@@ -99,7 +103,7 @@ data class UserNote(
         [
             ForeignKey(
                 entity = User::class, // С какой таблицей связываем..
-                parentColumns = ["id"], // По какому полю в родительской таблице..
+                parentColumns = ["firestoreId"], // По какому полю в родительской таблице..
                 childColumns = ["userId"], // По какому полю в текущей таблице..
                 onDelete =
                     ForeignKey.CASCADE, // Что делать, если родитель удален (удалить и эту запись)..
@@ -109,7 +113,7 @@ data class UserNote(
 data class Mood(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     // Добавляем индекс, чтобы поиск по этому полю был быстрым.
-    @ColumnInfo(index = true) val firestoreId: String,
+    @ColumnInfo(index = true) val moodFirestoreId: String,
     @ColumnInfo(index = true) val userId: String,
     val moodValue: Int,
     val note: String,

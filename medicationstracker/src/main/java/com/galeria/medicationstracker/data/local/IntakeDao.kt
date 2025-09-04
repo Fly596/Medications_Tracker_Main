@@ -1,7 +1,9 @@
 package com.galeria.medicationstracker.data.local
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Query
+import androidx.room.Update
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
@@ -16,4 +18,11 @@ interface IntakeDao {
     
     @Upsert
     suspend fun upsertIntake(intake: Intake)
+    
+    @Update
+    suspend fun updateIntake(intake: Intake)
+    
+    @Delete
+    suspend fun deleteIntake(intake: Intake)
+    
 }

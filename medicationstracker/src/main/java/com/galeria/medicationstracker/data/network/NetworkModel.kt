@@ -41,7 +41,6 @@ data class NetworkIntake(
     val status: String = IntakeStatus.PENDING.name,
     val presetTimeFromMidnight: Int = 0,
     @ServerTimestamp var factTimestamp: Timestamp? = null,
-    val name: String = "",
     val schemaVersion: Int = 1
 )
 
