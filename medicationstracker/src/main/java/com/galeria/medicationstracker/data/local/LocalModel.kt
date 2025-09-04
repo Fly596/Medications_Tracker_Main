@@ -19,7 +19,7 @@ data class User(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     @ColumnInfo(index = true)
-    val firestoreId: String,
+    val firestoreId: String? = null,
     val name: String,
     val email: String,
     val weightKg: Double,
@@ -36,7 +36,7 @@ data class Medication(
     val id: Int = 0,
     // Добавляем индекс, чтобы поиск по этому полю был быстрым.
     @ColumnInfo(index = true)
-    val firestoreId: String,
+    val firestoreId: String? = null,
     val name: String,
     @Embedded val dosage: Dosage,
     val startDate: Long?,
@@ -63,7 +63,7 @@ data class Intake(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     // Добавляем индекс, чтобы поиск по этому полю был быстрым.
     @ColumnInfo(index = true)
-    val firestoreId: String,
+    val firestoreId: String? = null,
     @ColumnInfo(index = true)
     val medicationId: String,
     val status: String = IntakeStatus.PENDING.name,
@@ -88,8 +88,8 @@ data class Intake(
 data class UserNote(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     // Добавляем индекс, чтобы поиск по этому полю был быстрым.
-    @ColumnInfo(index = true) val noteFirestoreId: String,
-    @ColumnInfo(index = true) val userId: String,
+    @ColumnInfo(index = true) val noteFirestoreId: String? = null,
+    @ColumnInfo(index = true) val userId: String? = null,
     val title: String,
     val content: String,
     val tags: List<String>,
@@ -113,8 +113,8 @@ data class UserNote(
 data class Mood(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     // Добавляем индекс, чтобы поиск по этому полю был быстрым.
-    @ColumnInfo(index = true) val moodFirestoreId: String,
-    @ColumnInfo(index = true) val userId: String,
+    @ColumnInfo(index = true) val moodFirestoreId: String? = null,
+    @ColumnInfo(index = true) val userId: String? = null,
     val moodValue: Int,
     val note: String,
     val timestamp: Long,
