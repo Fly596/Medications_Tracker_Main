@@ -1,7 +1,8 @@
-package com.galeria.medicationstracker.medications.data.source.local.model
+package com.galeria.medicationstracker.medications.data.source.local
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "medication")
@@ -21,17 +22,17 @@ data class MedicationTypeEntity(
     primaryKeys = ["medicationId", "medicationTypeId"],
     foreignKeys =
         [
-            androidx.room.ForeignKey(
+            ForeignKey(
                 entity = MedicationEntity::class,
                 parentColumns = ["id"],
                 childColumns = ["medicationId"],
-                onDelete = androidx.room.ForeignKey.CASCADE,
+                onDelete = ForeignKey.CASCADE,
             ),
-            androidx.room.ForeignKey(
+            ForeignKey(
                 entity = MedicationTypeEntity::class,
                 parentColumns = ["id"],
                 childColumns = ["medicationTypeId"],
-                onDelete = androidx.room.ForeignKey.CASCADE,
+                onDelete = ForeignKey.CASCADE,
             ),
         ],
 )
@@ -53,17 +54,17 @@ data class UserEntity(
     tableName = "medication_intake",
     foreignKeys =
         [
-            androidx.room.ForeignKey(
+            ForeignKey(
                 entity = MedicationEntity::class,
                 parentColumns = ["id"],
                 childColumns = ["medicationId"],
-                onDelete = androidx.room.ForeignKey.CASCADE,
+                onDelete = ForeignKey.CASCADE,
             ),
-            androidx.room.ForeignKey(
+            ForeignKey(
                 entity = UserEntity::class,
                 parentColumns = ["id"],
                 childColumns = ["userId"],
-                onDelete = androidx.room.ForeignKey.CASCADE,
+                onDelete = ForeignKey.CASCADE,
             ),
         ],
 )
@@ -79,11 +80,11 @@ data class MedicationIntakeEntity(
     tableName = "diary_record",
     foreignKeys =
         [
-            androidx.room.ForeignKey(
+            ForeignKey(
                 entity = UserEntity::class,
                 parentColumns = ["id"],
                 childColumns = ["userId"],
-                onDelete = androidx.room.ForeignKey.CASCADE,
+                onDelete = ForeignKey.CASCADE,
             )
         ],
 )
@@ -105,17 +106,17 @@ data class EmotionEntity(
     primaryKeys = ["recordId", "emotionId"],
     foreignKeys =
         [
-            androidx.room.ForeignKey(
+            ForeignKey(
                 entity = DiaryRecordEntity::class,
                 parentColumns = ["id"],
                 childColumns = ["recordId"],
-                onDelete = androidx.room.ForeignKey.CASCADE,
+                onDelete = ForeignKey.CASCADE,
             ),
-            androidx.room.ForeignKey(
+            ForeignKey(
                 entity = EmotionEntity::class,
                 parentColumns = ["id"],
                 childColumns = ["emotionId"],
-                onDelete = androidx.room.ForeignKey.CASCADE,
+                onDelete = ForeignKey.CASCADE,
             ),
         ],
 )
@@ -136,17 +137,17 @@ data class MoodReasonEntity(
     primaryKeys = ["recordId", "moodReasonId"],
     foreignKeys =
         [
-            androidx.room.ForeignKey(
+            ForeignKey(
                 entity = DiaryRecordEntity::class,
                 parentColumns = ["id"],
                 childColumns = ["recordId"],
-                onDelete = androidx.room.ForeignKey.CASCADE,
+                onDelete = ForeignKey.CASCADE,
             ),
-            androidx.room.ForeignKey(
+            ForeignKey(
                 entity = MoodReasonEntity::class,
                 parentColumns = ["id"],
                 childColumns = ["moodReasonId"],
-                onDelete = androidx.room.ForeignKey.CASCADE,
+                onDelete = ForeignKey.CASCADE,
             ),
         ],
 )
