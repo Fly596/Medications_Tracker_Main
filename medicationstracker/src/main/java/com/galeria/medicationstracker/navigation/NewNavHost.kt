@@ -23,9 +23,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.galeria.medicationstracker.auth.presentation.login.LoginScreen
 import com.galeria.medicationstracker.ui.componentsOld.BottomNavigation
 import com.galeria.medicationstracker.ui.screens.auth.accountrecovery.ResetPasswordScreen
-import com.galeria.medicationstracker.ui.screens.auth.login.LoginScreen
 import com.galeria.medicationstracker.ui.screens.auth.signup.SignupScreen
 import com.galeria.medicationstracker.ui.screens.dashboard.DailyMedsScreen
 import com.galeria.medicationstracker.ui.screens.dashboard.moodtracker.MoodTrackerScreen

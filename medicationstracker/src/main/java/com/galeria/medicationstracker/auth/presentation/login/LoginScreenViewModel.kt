@@ -1,4 +1,4 @@
-package com.galeria.medicationstracker.ui.screens.auth.login
+package com.galeria.medicationstracker.auth.presentation.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

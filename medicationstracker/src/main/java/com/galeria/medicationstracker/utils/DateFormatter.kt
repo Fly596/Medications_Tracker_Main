@@ -21,7 +21,6 @@ fun LocalDate.toTimestamp(): Timestamp {
     return Timestamp(Date.from(zonedDateTime.toInstant()))
 }
 
-// LocalDateTime -> timestamp.
 fun LocalDateTime.toTimestamp(): Timestamp {
     // часовой пояс системы, чтоб получить zoneddatetime.
     val zonedDateTime = this.atZone(ZoneId.systemDefault())

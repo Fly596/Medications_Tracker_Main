@@ -27,10 +27,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medicationstracker.R
+import com.galeria.medicationstracker.auth.presentation.login.RememberMeSwitch
 import com.galeria.medicationstracker.ui.componentsOld.FlyButton
 import com.galeria.medicationstracker.ui.componentsOld.FlyTextButton
 import com.galeria.medicationstracker.ui.componentsOld.MyTextField
-import com.galeria.medicationstracker.ui.screens.auth.login.RememberMeSwitch
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 import java.time.Instant
 import java.time.ZoneId
