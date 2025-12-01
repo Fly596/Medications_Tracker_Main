@@ -8,10 +8,10 @@ import kotlinx.datetime.LocalTime
 import java.util.UUID
 
 enum class FrequencyType {
-    DAILY,
+    EVERYDAY,
     SPECIFIC_DAYS,
     INTERVAL,
-    AS_NEEDED
+    AS_NEEDED,
 }
 
 @Entity(
@@ -21,7 +21,9 @@ enum class FrequencyType {
             ForeignKey(
                 entity = MedicationEntity::class,
                 parentColumns = ["id"],
-                childColumns = ["medicationId"])]
+                childColumns = ["medicationId"],
+            )
+        ],
 )
 data class RegimentEntity(
     @PrimaryKey val id: String = UUID.randomUUID().toString(),
@@ -38,5 +40,5 @@ data class RegimentEntity(
     // Время приемов в течение дня (JSON List<LocalTime>).
     // Например: ["08:00", "14:00", "20:00"].
     val timeSlots: List<LocalTime>,
-    val dosage: Double
+    val dosage: Double,
 )

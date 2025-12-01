@@ -13,7 +13,7 @@ import com.galeria.medicationstracker.data.repository.NewNoteRepositoryImpl
 import com.galeria.medicationstracker.data.repository.NewUserRepository
 import com.galeria.medicationstracker.data.repository.NewUserRepositoryImpl
 import com.galeria.medicationstracker.data.source.local.AppDatabase
-import com.galeria.medicationstracker.data.source.local.daos.MedicationDao
+import com.galeria.medicationstracker.data.source.local.daos.OLDMedicationDao
 import com.galeria.medicationstracker.data.source.network.OLDAuthRepository
 import com.galeria.medicationstracker.data.source.network.OLDAuthRepositoryImpl
 import com.google.firebase.auth.FirebaseAuth
@@ -28,11 +28,11 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-    
+
     @Provides
     @Singleton
     fun provideFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
-    
+
     @Provides
     @Singleton
     fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
@@ -42,15 +42,13 @@ object AppModule {
     fun provideDatabase(@ApplicationContext context: Context): AppDatabase =
         Room.databaseBuilder(context, AppDatabase::class.java, "app_database")
             .build()
-    
-    @Provides
-    fun provideUserDao(database: AppDatabase) = database.userDao()
-    
+
+    @Provides fun provideUserDao(database: AppDatabase) = database.userDao()
+
     @Provides
     fun provideMedicationDao(database: AppDatabase) = database.medicationDao()
-    
-    @Provides
-    fun provideIntakeDao(database: AppDatabase) = database.intakeDao()
+
+    @Provides fun provideIntakeDao(database: AppDatabase) = database.intakeDao()
 
     @Provides
     @Singleton
@@ -59,16 +57,17 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun bindNewIntakeRepository(firestore: FirebaseFirestore): NewIntakeRepository =
-        NewIntakeRepositoryImpl(firestore)
+    fun bindNewIntakeRepository(
+        firestore: FirebaseFirestore
+    ): NewIntakeRepository = NewIntakeRepositoryImpl(firestore)
 
     @Provides
     @Singleton
     fun bindNewMedicationRepository(
         firestore: FirebaseFirestore,
-        medicationDao: MedicationDao,
+        OLDMedicationDao: OLDMedicationDao,
     ): NewMedicationRepository =
-        NewMedicationRepositoryImpl(firestore, medicationDao)
+        NewMedicationRepositoryImpl(firestore, OLDMedicationDao)
 
     @Provides
     @Singleton
@@ -79,7 +78,7 @@ object AppModule {
     @Singleton
     fun bindNewMoodRepository(firestore: FirebaseFirestore): NewMoodRepository =
         NewMoodRepositoryImpl(firestore)
-    
+
     @Provides
     @Singleton
     fun bindNewNoteRepository(firestore: FirebaseFirestore): NewNoteRepository =

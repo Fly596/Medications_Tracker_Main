@@ -1,8 +1,8 @@
 package com.galeria.medicationstracker.data.repository
 
+import com.galeria.medicationstracker.data.source.local.daos.OLDMedicationDao
 import com.galeria.medicationstracker.data.source.local.entities.Dosage
 import com.galeria.medicationstracker.data.source.local.entities.Medication
-import com.galeria.medicationstracker.data.source.local.daos.MedicationDao
 import com.galeria.medicationstracker.data.source.network.NetworkMedication
 import com.galeria.medicationstracker.data.toEntity
 import com.galeria.medicationstracker.utils.formatTimestampToWeekday
@@ -23,22 +23,22 @@ import java.time.LocalDate
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.resume
-import kotlin.invoke
 
 interface NewMedicationRepository {
-    
+
     fun getUserMedications(userId: String): Flow<List<NetworkMedication>>
+
     fun getUserLocalMedications(): Flow<List<Medication>>
-    
+
     suspend fun syncFromFirestore()
-    
+
     suspend fun getMedication(
         userId: String,
-        medicationId: String
+        medicationId: String,
     ): Result<NetworkMedication>
-    
+
     suspend fun addMedicationOld(networkMedication: NetworkMedication): String?
-    
+
     suspend fun addMedication(
         name: String,
         dosage: Dosage,
@@ -46,16 +46,16 @@ interface NewMedicationRepository {
         end: Long,
         daysOfWeek: List<String>,
         intakeTime: Int,
-        userId: String
+        userId: String,
     )
-    
+
     suspend fun updateMedication(medication: NetworkMedication): Result<Unit>
-    
+
     suspend fun deleteMedication(
         userId: String,
-        medicationId: String
+        medicationId: String,
     ): Result<Unit>
-    
+
     fun getTodaysMedications(userId: String): Flow<List<NetworkMedication>>
 }
 
@@ -64,16 +64,16 @@ class NewMedicationRepositoryImpl
 @Inject
 constructor(
     private val firestore: FirebaseFirestore,
-    private val medicationDao: MedicationDao,
-    private val auth: FirebaseAuth
+    private val OLDMedicationDao: OLDMedicationDao,
+    private val auth: FirebaseAuth,
 ) : NewMedicationRepository {
-    
+
     companion object {
-        
+
         private const val USERS_COLLECTION = "User"
         private const val MEDICATIONS_SUBCOLLECTION = "medications"
     }
-    
+
     override suspend fun addMedication(
         name: String,
         dosage: Dosage,
@@ -81,41 +81,44 @@ constructor(
         end: Long,
         daysOfWeek: List<String>,
         intakeTime: Int,
-        userId: String
+        userId: String,
     ) {
-        val medicationEntity = Medication(
-            name = name,
-            dosage = dosage,
-            startDate = start,
-            endDate = end,
-            daysOfWeek = daysOfWeek,
-            intakeTime = intakeTime
-        )
-        val localId = medicationDao.insertMedication(medicationEntity)
-        val docRef = firestore.collection(USERS_COLLECTION).document(userId)
-            .collection(MEDICATIONS_SUBCOLLECTION).add(
-            mapOf(
-                "name" to name,
-                "dosage" to mapOf(
-                    "value" to dosage.value,
-                    "unit" to dosage.unit
-                ),
-                "startDate" to start,
-                "endDate" to end,
-                "daysOfWeek" to daysOfWeek,
-                "intakeTime" to intakeTime,
+        val medicationEntity =
+            Medication(
+                name = name,
+                dosage = dosage,
+                startDate = start,
+                endDate = end,
+                daysOfWeek = daysOfWeek,
+                intakeTime = intakeTime,
             )
-        ).await()
-        
-        medicationDao.updateMedication(
-            medicationEntity.copy(
-                id = localId.toInt(),
-                firestoreId = docRef.id
-            )
+        val localId = OLDMedicationDao.insertMedication(medicationEntity)
+        val docRef =
+            firestore
+                .collection(USERS_COLLECTION)
+                .document(userId)
+                .collection(MEDICATIONS_SUBCOLLECTION)
+                .add(
+                    mapOf(
+                        "name" to name,
+                        "dosage" to
+                            mapOf(
+                                "value" to dosage.value,
+                                "unit" to dosage.unit,
+                            ),
+                        "startDate" to start,
+                        "endDate" to end,
+                        "daysOfWeek" to daysOfWeek,
+                        "intakeTime" to intakeTime,
+                    )
+                )
+                .await()
+
+        OLDMedicationDao.updateMedication(
+            medicationEntity.copy(id = localId.toInt(), firestoreId = docRef.id)
         )
     }
-    
-    
+
     override fun getUserMedications(
         userId: String
     ): Flow<List<NetworkMedication>> = callbackFlow {
@@ -137,19 +140,23 @@ constructor(
                 }
         awaitClose { listenerRegistration.remove() }
     }
-    
+
     override fun getUserLocalMedications(): Flow<List<Medication>> {
-        return medicationDao.getAllMedications()
+        return OLDMedicationDao.getAllMedications()
     }
-    
+
     // Синхронизация: качаем из Firestore → кладём в Room
     override suspend fun syncFromFirestore() {
         // TODO: ПРОВЕРИТЬ.
         val userId = auth.currentUser?.uid
         val snapshot =
-            firestore.collection(USERS_COLLECTION).document(userId.toString())
-                .collection(MEDICATIONS_SUBCOLLECTION).get().await()
-        
+            firestore
+                .collection(USERS_COLLECTION)
+                .document(userId.toString())
+                .collection(MEDICATIONS_SUBCOLLECTION)
+                .get()
+                .await()
+
         for (doc in snapshot.documents) {
             val firestoreId = doc.id
             val name = doc.get("name") ?: continue
@@ -159,10 +166,11 @@ constructor(
             val endDate = doc.getLong("endDate") ?: continue
             val daysOfWeek = doc.get("daysOfWeek") ?: continue
             val intakeTime = doc.getLong("intakeTime") ?: continue
-            val existing = medicationDao.getMedicationByFirestoreId(firestoreId)
+            val existing =
+                OLDMedicationDao.getMedicationByFirestoreId(firestoreId)
             if (existing == null) {
                 // если такого объекта нет в локальной базе — добавляем
-                medicationDao.insertMedication(
+                OLDMedicationDao.insertMedication(
                     Medication(
                         firestoreId = firestoreId,
                         name = name.toString(),
@@ -175,20 +183,20 @@ constructor(
                 )
             } else {
                 // обновляем, если надо
-                medicationDao.updateMedication(
+                OLDMedicationDao.updateMedication(
                     existing.copy(
                         name = name.toString(),
                         dosage = Dosage(dosageValue, dosageUnit),
                         startDate = startDate,
                         endDate = endDate,
                         daysOfWeek = daysOfWeek as List<String>,
-                        intakeTime = intakeTime.toInt()
+                        intakeTime = intakeTime.toInt(),
                     )
                 )
             }
         }
     }
-    
+
     override suspend fun getMedication(
         userId: String,
         medicationId: String,
@@ -225,7 +233,7 @@ constructor(
             Result.failure(e)
         }
     }
-    
+
     @OptIn(DelicateCoroutinesApi::class)
     override suspend fun addMedicationOld(
         networkMedication: NetworkMedication
@@ -240,16 +248,14 @@ constructor(
                     val firestoreId = documentReference.id
                     println("DocumentSnapshot added with ID: $firestoreId")
                     val medicationEntity =
-                        networkMedication.toEntity(
-                            firestoreId = firestoreId,
-                        )
-                    
+                        networkMedication.toEntity(firestoreId = firestoreId)
+
                     GlobalScope.launch(Dispatchers.IO) {
-                        medicationDao.upsertMedication(medicationEntity)
+                        OLDMedicationDao.upsertMedication(medicationEntity)
                         println(
                             "MedicationEntity upserted with ID: $firestoreId"
                         )
-                        
+
                         if (continuation.isActive) {
                             continuation.resume(firestoreId) { cause, _, _ ->
                                 null?.let { it(cause) }
@@ -268,7 +274,7 @@ constructor(
                 }
         }
     }
-    
+
     override suspend fun updateMedication(
         medication: NetworkMedication
     ): Result<Unit> {
@@ -293,10 +299,10 @@ constructor(
             Result.failure(e)
         }
     }
-    
+
     override suspend fun deleteMedication(
         userId: String,
-        medicationId: String
+        medicationId: String,
     ): Result<Unit> {
         if (medicationId.isBlank()) {
             return Result.failure(
@@ -318,7 +324,7 @@ constructor(
             Result.failure(e)
         }
     }
-    
+
     override fun getTodaysMedications(
         userId: String
     ): Flow<List<NetworkMedication>> = callbackFlow {
