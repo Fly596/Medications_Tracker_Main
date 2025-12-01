@@ -6,17 +6,17 @@ import androidx.room.TypeConverters
 import com.galeria.medicationstracker.data.source.local.daos.IntakeDao
 import com.galeria.medicationstracker.data.source.local.daos.MoodDao
 import com.galeria.medicationstracker.data.source.local.daos.OLDMedicationDao
-import com.galeria.medicationstracker.data.source.local.daos.UserDao
 import com.galeria.medicationstracker.data.source.local.entities.Intake
 import com.galeria.medicationstracker.data.source.local.entities.Medication
 import com.galeria.medicationstracker.data.source.local.entities.Mood
 import com.galeria.medicationstracker.data.source.local.entities.UserNote
-import com.galeria.medicationstracker.feature_auth.data.source.local.User
+import com.galeria.medicationstracker.feature_auth.data.source.local.UserDao
+import com.galeria.medicationstracker.feature_auth.data.source.local.UserEntity
 
 @Database(
     entities =
         [
-            User::class,
+            UserEntity::class,
             Medication::class,
             Intake::class,
             UserNote::class,

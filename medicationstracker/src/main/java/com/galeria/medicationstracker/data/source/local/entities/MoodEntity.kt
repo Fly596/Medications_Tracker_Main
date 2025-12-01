@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import com.galeria.medicationstracker.feature_auth.data.source.local.User
+import com.galeria.medicationstracker.feature_auth.data.source.local.UserEntity
 
 @Entity(
     tableName = "mood",
@@ -12,7 +12,7 @@ import com.galeria.medicationstracker.feature_auth.data.source.local.User
     foreignKeys =
         [
             ForeignKey(
-                entity = User::class, // С какой таблицей связываем..
+                entity = UserEntity::class, // С какой таблицей связываем..
                 parentColumns =
                     ["firestoreId"], // По какому полю в родительской таблице..
                 childColumns = ["userId"], // По какому полю в текущей таблице..
@@ -20,7 +20,8 @@ import com.galeria.medicationstracker.feature_auth.data.source.local.User
                     ForeignKey
                         .CASCADE, // Что делать, если родитель удален (удалить и
                 // эту запись)..
-            )],
+            )
+        ],
 )
 data class Mood(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,

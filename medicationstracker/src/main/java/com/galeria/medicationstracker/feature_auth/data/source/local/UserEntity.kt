@@ -5,10 +5,9 @@ import androidx.room.PrimaryKey
 import java.util.UUID
 import kotlin.time.Instant
 
-@Entity(
-    tableName = "user"/* ,
+@Entity(tableName = "user" /* ,
     indices = [Index(value = ["firestoreId"], unique = true)] */)
-data class User(
+data class UserEntity(
     @PrimaryKey val id: String = UUID.randomUUID().toString(),
     val name: String,
     val email: String,
