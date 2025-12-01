@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.galeria.medicationstracker.data.repository.NewIntakeRepository
 import com.galeria.medicationstracker.data.repository.NewUserRepository
-import com.galeria.medicationstracker.data.source.network.AuthRepository
+import com.galeria.medicationstracker.data.source.network.OLDAuthRepository
 import com.galeria.medicationstracker.data.source.network.NetworkIntake
 import com.galeria.medicationstracker.data.source.network.NetworkMedication
 import com.galeria.medicationstracker.data.source.network.NetworkUser
@@ -34,7 +34,7 @@ class ProfileVM
 @Inject
 constructor(
     private val userRepository: NewUserRepository,
-    private val authRepository: AuthRepository,
+    private val OLDAuthRepository: OLDAuthRepository,
     private val intakeRepository: NewIntakeRepository,
 ) : ViewModel() {
 
@@ -46,7 +46,7 @@ constructor(
 
         viewModelScope.launch {
             try {
-                val uid = authRepository.getUserId().getOrThrow()
+                val uid = OLDAuthRepository.getUserId().getOrThrow()
                 fetchUserIntakes(uid.toString())
                 // val resultUserData = userRepository.getUserData(uid.toString()).getOrThrow()
                 /*  intakeRepository.observeUserIntakes(uid.toString()).collect() {

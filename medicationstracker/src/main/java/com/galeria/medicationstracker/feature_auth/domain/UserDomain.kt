@@ -1,9 +1,9 @@
-package com.galeria.medicationstracker.feature_auth.domain.models
+package com.galeria.medicationstracker.feature_auth.domain
 
 import kotlin.time.Instant
 
 data class UserDomain(
-    val id: Int,
+    val id: String,
     val name: String,
     val email: String,
     val weightKg: Double,

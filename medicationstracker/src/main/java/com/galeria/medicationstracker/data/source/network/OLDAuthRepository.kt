@@ -15,7 +15,7 @@ import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
-interface AuthRepository {
+interface OLDAuthRepository {
 
     fun getAuthState(): Flow<FirebaseUser?>
     
@@ -33,8 +33,8 @@ interface AuthRepository {
 }
 
 @Singleton
-class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) :
-    AuthRepository {
+class OLDAuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) :
+    OLDAuthRepository {
 
     override fun getAuthState(): Flow<FirebaseUser?> = callbackFlow {
         val authStateListener =

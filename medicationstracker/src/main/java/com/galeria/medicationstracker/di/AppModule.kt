@@ -14,8 +14,8 @@ import com.galeria.medicationstracker.data.repository.NewUserRepository
 import com.galeria.medicationstracker.data.repository.NewUserRepositoryImpl
 import com.galeria.medicationstracker.data.source.local.AppDatabase
 import com.galeria.medicationstracker.data.source.local.daos.MedicationDao
-import com.galeria.medicationstracker.data.source.network.AuthRepository
-import com.galeria.medicationstracker.data.source.network.AuthRepositoryImpl
+import com.galeria.medicationstracker.data.source.network.OLDAuthRepository
+import com.galeria.medicationstracker.data.source.network.OLDAuthRepositoryImpl
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
@@ -54,8 +54,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun bindNewAuthRepository(auth: FirebaseAuth): AuthRepository =
-        AuthRepositoryImpl(auth)
+    fun bindNewAuthRepository(auth: FirebaseAuth): OLDAuthRepository =
+        OLDAuthRepositoryImpl(auth)
 
     @Provides
     @Singleton

@@ -3,7 +3,7 @@ package com.galeria.medicationstracker.ui.screens.profile.profiledetails
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.galeria.medicationstracker.data.repository.NewUserRepository
-import com.galeria.medicationstracker.data.source.network.AuthRepository
+import com.galeria.medicationstracker.data.source.network.OLDAuthRepository
 import com.galeria.medicationstracker.data.source.network.NetworkUser
 import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,7 +29,7 @@ data class ProfileDetailsUiState(
 @HiltViewModel
 class ProfileDetailsViewModel @Inject constructor(
     private val repository: NewUserRepository,
-    private val authRepository: AuthRepository,
+    private val OLDAuthRepository: OLDAuthRepository,
 ) :
     ViewModel() {
     
@@ -62,7 +62,7 @@ class ProfileDetailsViewModel @Inject constructor(
     private fun getUserData() {
         // var networkUser = NetworkUser()
         viewModelScope.launch {
-            val uid = authRepository.getUserId().getOrNull()
+            val uid = OLDAuthRepository.getUserId().getOrNull()
             val user = repository.getUserData(uid ?: "")
             user.fold(
                 onSuccess = {
@@ -133,7 +133,7 @@ class ProfileDetailsViewModel @Inject constructor(
     
     fun updateUserProfile() {
         viewModelScope.launch {
-            val uid = authRepository.getUserId().getOrNull()
+            val uid = OLDAuthRepository.getUserId().getOrNull()
             val user = NetworkUser(
                 name = state.value.firstName ?: "",
                 email = state.value.email ?: "",

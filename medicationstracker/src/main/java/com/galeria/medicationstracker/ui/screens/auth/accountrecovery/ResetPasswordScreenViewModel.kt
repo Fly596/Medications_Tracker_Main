@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.galeria.medicationstracker.SnackbarController
 import com.galeria.medicationstracker.SnackbarEvent
-import com.galeria.medicationstracker.data.source.network.AuthRepository
+import com.galeria.medicationstracker.data.source.network.OLDAuthRepository
 import com.galeria.medicationstracker.navigation.AuthScreen
 import com.galeria.medicationstracker.utils.AuthResult
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,7 +26,7 @@ data class ResetPasswordScreenState(
 class ResetPasswordScreenViewModel
 @Inject
 constructor(
-    private val authRepository: AuthRepository,
+    private val OLDAuthRepository: OLDAuthRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     
@@ -73,7 +73,7 @@ constructor(
         viewModelScope.launch {
             if (isEmailValid) {
                 viewModelScope.launch {
-                    val result = authRepository
+                    val result = OLDAuthRepository
                         .resetPassword(email)
                     when (result) {
                         is AuthResult.Success -> {

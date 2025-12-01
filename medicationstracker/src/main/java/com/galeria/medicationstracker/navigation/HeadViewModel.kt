@@ -2,7 +2,7 @@ package com.galeria.medicationstracker.navigation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.galeria.medicationstracker.data.source.network.AuthRepository
+import com.galeria.medicationstracker.data.source.network.OLDAuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,7 +18,7 @@ sealed class AuthState {
 }
 
 @HiltViewModel
-class MainViewModel @Inject constructor(private val authRepository: AuthRepository) :
+class MainViewModel @Inject constructor(private val OLDAuthRepository: OLDAuthRepository) :
     ViewModel() {
     
     private val _uiState = MutableStateFlow<AuthState>(AuthState.Loading)
@@ -31,7 +31,7 @@ class MainViewModel @Inject constructor(private val authRepository: AuthReposito
     
     private fun checkUserLoggedIn() {
         viewModelScope.launch {
-            authRepository.getAuthState().collect { user ->
+            OLDAuthRepository.getAuthState().collect { user ->
                 if (user == null) {
                     _uiState.value = AuthState.Unauthenticated
                 } else {

@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.galeria.medicationstracker.data.repository.NewMedicationRepository
-import com.galeria.medicationstracker.data.source.network.AuthRepository
+import com.galeria.medicationstracker.data.source.network.OLDAuthRepository
 import com.galeria.medicationstracker.data.source.network.MedicationForm
 import com.galeria.medicationstracker.data.source.network.NetworkMedication
 import com.galeria.medicationstracker.navigation.MedicationScreen
@@ -37,7 +37,7 @@ class UpdateMedVM
 @Inject
 constructor(
     private val repository: NewMedicationRepository,
-    private val authRepository: AuthRepository,
+    private val OLDAuthRepository: OLDAuthRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     

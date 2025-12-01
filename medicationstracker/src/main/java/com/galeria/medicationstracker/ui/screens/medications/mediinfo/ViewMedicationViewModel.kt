@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.galeria.medicationstracker.data.repository.NewMedicationRepository
-import com.galeria.medicationstracker.data.source.network.AuthRepository
+import com.galeria.medicationstracker.data.source.network.OLDAuthRepository
 import com.galeria.medicationstracker.data.source.network.NetworkIntake
 import com.galeria.medicationstracker.data.source.network.NetworkMedication
 import com.galeria.medicationstracker.navigation.MedicationScreen
@@ -28,7 +28,7 @@ class ViewMedicationViewModel
 @Inject
 constructor(
     private val medicationRepository: NewMedicationRepository,
-    private val authRepository: AuthRepository,
+    private val OLDAuthRepository: OLDAuthRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     
@@ -38,7 +38,7 @@ constructor(
     init {
         viewModelScope.launch {
             try {
-                val uid = authRepository.getUserId().getOrThrow()
+                val uid = OLDAuthRepository.getUserId().getOrThrow()
                 val args =
                     savedStateHandle.toRoute<MedicationScreen.ViewMedication>()
                 val medId = args.medicationId

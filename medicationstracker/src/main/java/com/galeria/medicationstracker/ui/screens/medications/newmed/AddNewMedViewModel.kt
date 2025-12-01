@@ -9,7 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.galeria.medicationstracker.data.repository.NewIntakeRepository
 import com.galeria.medicationstracker.data.repository.NewMedicationRepository
 import com.galeria.medicationstracker.data.source.local.entities.Dosage
-import com.galeria.medicationstracker.data.source.network.AuthRepository
+import com.galeria.medicationstracker.data.source.network.OLDAuthRepository
 import com.galeria.medicationstracker.data.source.network.MedicationForm
 import com.galeria.medicationstracker.data.source.network.NetworkMedication
 import com.galeria.medicationstracker.data.old.MedicationUnit
@@ -47,7 +47,7 @@ class AddNewMedViewModel
 constructor(
     private val intakeRepository: NewIntakeRepository,
     private val medicationRepository: NewMedicationRepository,
-    private val authRepository: AuthRepository,
+    private val OLDAuthRepository: OLDAuthRepository,
 ) : ViewModel() {
 
     var uiState = MutableStateFlow(NewMedUiState())

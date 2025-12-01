@@ -2,7 +2,7 @@ package com.galeria.medicationstracker.ui.screens.auth.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.galeria.medicationstracker.data.source.network.AuthRepository
+import com.galeria.medicationstracker.data.source.network.OLDAuthRepository
 import com.galeria.medicationstracker.utils.AuthResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -26,7 +26,7 @@ data class LoginScreenState(
 )
 
 @HiltViewModel
-class LoginScreenViewModel @Inject constructor(private val repository: AuthRepository) :
+class LoginScreenViewModel @Inject constructor(private val repository: OLDAuthRepository) :
     ViewModel() {
     
     private val _loginScreenState = MutableStateFlow(LoginScreenState())

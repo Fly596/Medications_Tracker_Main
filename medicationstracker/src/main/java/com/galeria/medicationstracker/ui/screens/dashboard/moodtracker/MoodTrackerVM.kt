@@ -3,7 +3,7 @@ package com.galeria.medicationstracker.ui.screens.dashboard.moodtracker
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.galeria.medicationstracker.data.repository.NewMoodRepository
-import com.galeria.medicationstracker.data.source.network.AuthRepository
+import com.galeria.medicationstracker.data.source.network.OLDAuthRepository
 import com.galeria.medicationstracker.data.source.network.NetworkUserMood
 import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,7 +27,7 @@ class MoodTrackerVM
 @Inject
 constructor(
     private val moodRepository: NewMoodRepository,
-    private val authRepository: AuthRepository,
+    private val OLDAuthRepository: OLDAuthRepository,
 ) : ViewModel() {
     
     private val _uiState = MutableStateFlow(MoodTrackerUiState())
@@ -37,7 +37,7 @@ constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             try {
-                val uid = authRepository.getUserId().getOrThrow()
+                val uid = OLDAuthRepository.getUserId().getOrThrow()
                 val mood = _uiState.value.moodValue
                 val notes = _uiState.value.notes
                 val currentDate: Date = Date()

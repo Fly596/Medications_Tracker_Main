@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.galeria.medicationstracker.data.repository.NewIntakeRepository
 import com.galeria.medicationstracker.data.repository.NewMedicationRepository
-import com.galeria.medicationstracker.data.source.network.AuthRepository
+import com.galeria.medicationstracker.data.source.network.OLDAuthRepository
 import com.galeria.medicationstracker.data.source.network.IntakeStatus
 import com.galeria.medicationstracker.data.source.network.NetworkIntake
 import com.galeria.medicationstracker.data.source.network.NetworkMedication
@@ -44,7 +44,7 @@ class DailyMedsVM
 constructor(
     private val intakeRepository: NewIntakeRepository,
     private val medicationRepository: NewMedicationRepository,
-    private val authRepository: AuthRepository,
+    private val OLDAuthRepository: OLDAuthRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DashboardUiState())
@@ -58,7 +58,7 @@ constructor(
         viewModelScope.launch {
             try {
                 // get user id
-                val uid = authRepository.getUserId().getOrThrow()
+                val uid = OLDAuthRepository.getUserId().getOrThrow()
                 // Получение списка сегодняшних приемов.
                 getActiveMedications(uid.toString())
             } catch (e: Exception) {
@@ -134,7 +134,7 @@ constructor(
         status: IntakeStatus,
     ) {
         viewModelScope.launch {
-            val uid = authRepository.getUserId().getOrThrow()
+            val uid = OLDAuthRepository.getUserId().getOrThrow()
             val intake: NetworkIntake =
                 NetworkIntake(
                     userId = uid.toString(),
@@ -152,7 +152,7 @@ constructor(
     // -1: error; 0: noData, 1: skipped, 2: taken
     // ! перегести в репо.
     suspend fun fetchIntakeStatus(medication: NetworkMedication): Int {
-        val uid = authRepository.getUserId().getOrThrow()
+        val uid = OLDAuthRepository.getUserId().getOrThrow()
         val todayStart = LocalDate.now().atStartOfDay().toTimestamp()
         val todayEnd = LocalDate.now().plusDays(1).atStartOfDay().toTimestamp()
         return try {

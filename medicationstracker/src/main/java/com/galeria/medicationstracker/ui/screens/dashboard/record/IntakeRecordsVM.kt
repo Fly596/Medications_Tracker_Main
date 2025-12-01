@@ -3,7 +3,7 @@ package com.galeria.medicationstracker.ui.screens.dashboard.record
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.galeria.medicationstracker.data.repository.NewIntakeRepository
-import com.galeria.medicationstracker.data.source.network.AuthRepository
+import com.galeria.medicationstracker.data.source.network.OLDAuthRepository
 import com.galeria.medicationstracker.data.source.network.NetworkIntake
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +19,7 @@ class IntakeRecordsVM
 @Inject
 constructor(
     private val intakesRepository: NewIntakeRepository,
-    private val authRepository: AuthRepository,
+    private val OLDAuthRepository: OLDAuthRepository,
 ) : ViewModel() {
     
     private var _uiState = MutableStateFlow(IntakeRecordsUiState())
@@ -31,7 +31,7 @@ constructor(
     
     private fun fetchUserIntakes() {
         viewModelScope.launch {
-            val uid = authRepository.getUserId().getOrThrow()
+            val uid = OLDAuthRepository.getUserId().getOrThrow()
             
             intakesRepository
                 .observeUserIntakes(userId = uid.toString())

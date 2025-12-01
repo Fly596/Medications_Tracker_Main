@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.galeria.medicationstracker.data.DomainMedication
 import com.galeria.medicationstracker.data.repository.NewMedicationRepository
-import com.galeria.medicationstracker.data.source.network.AuthRepository
+import com.galeria.medicationstracker.data.source.network.OLDAuthRepository
 import com.galeria.medicationstracker.data.source.network.NetworkMedication
 import com.galeria.medicationstracker.data.toDomain
 import com.galeria.medicationstracker.data.toEntity
@@ -26,7 +26,7 @@ class MedicationsViewModel
 @Inject
 constructor(
     private val medicationRepository: NewMedicationRepository,
-    private val authRepository: AuthRepository,
+    private val OLDAuthRepository: OLDAuthRepository,
 ) : ViewModel() {
     
     private val _uiState = MutableStateFlow(MedicationsUiState())
@@ -35,7 +35,7 @@ constructor(
     init {
         viewModelScope.launch {
             try {
-                val uid = authRepository.getUserId().getOrThrow()
+                val uid = OLDAuthRepository.getUserId().getOrThrow()
                 fetchMedications(uid.toString())
             } catch (e: Exception) {
                 Log.e("checkIntake", "Error fetching intake data", e)
@@ -63,7 +63,7 @@ constructor(
     fun deleteMedicationFromFirestore(medId: String) {
         viewModelScope.launch {
             try {
-                val uid = authRepository.getUserId().getOrThrow()
+                val uid = OLDAuthRepository.getUserId().getOrThrow()
                 medicationRepository.deleteMedication(uid.toString(), medId)
             } catch (e: Exception) {
                 Log.e("ERROR REMOVE", "Error deleting medication", e)

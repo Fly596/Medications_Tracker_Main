@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.galeria.medicationstracker.data.repository.NewUserRepository
-import com.galeria.medicationstracker.data.source.network.AuthRepository
+import com.galeria.medicationstracker.data.source.network.OLDAuthRepository
 import com.galeria.medicationstracker.data.source.network.NetworkUser
 import com.galeria.medicationstracker.navigation.AuthScreen
 import com.galeria.medicationstracker.utils.toTimestamp
@@ -35,7 +35,7 @@ data class SignupScreenState(
 class SignupScreenViewModel
 @Inject
 constructor(
-    private val repository: AuthRepository,
+    private val repository: OLDAuthRepository,
     private val userRepo: NewUserRepository,
     savedStateHandle: SavedStateHandle,
 ) :
