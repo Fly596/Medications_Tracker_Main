@@ -1,4 +1,4 @@
-package com.galeria.medicationstracker.domain.model
+package com.galeria.medicationstracker.feature_auth.domain.models
 
 import kotlin.time.Instant
 
