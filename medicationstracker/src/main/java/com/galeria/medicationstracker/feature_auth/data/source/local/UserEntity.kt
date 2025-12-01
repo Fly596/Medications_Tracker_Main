@@ -2,13 +2,11 @@ package com.galeria.medicationstracker.feature_auth.data.source.local
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.util.UUID
 import kotlin.time.Instant
 
-@Entity(tableName = "user" /* ,
-    indices = [Index(value = ["firestoreId"], unique = true)] */)
+@Entity(tableName = "user" )
 data class UserEntity(
-    @PrimaryKey val id: String = UUID.randomUUID().toString(),
+    @PrimaryKey val id: String,
     val name: String,
     val email: String,
     val weightKg: Double,
