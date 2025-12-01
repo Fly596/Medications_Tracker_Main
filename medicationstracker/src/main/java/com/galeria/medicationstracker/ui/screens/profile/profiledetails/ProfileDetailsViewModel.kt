@@ -2,9 +2,9 @@ package com.galeria.medicationstracker.ui.screens.profile.profiledetails
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.galeria.medicationstracker.data.NewUserRepository
-import com.galeria.medicationstracker.data.network.AuthRepository
-import com.galeria.medicationstracker.data.network.NetworkUser
+import com.galeria.medicationstracker.data.repository.NewUserRepository
+import com.galeria.medicationstracker.data.source.network.AuthRepository
+import com.galeria.medicationstracker.data.source.network.NetworkUser
 import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

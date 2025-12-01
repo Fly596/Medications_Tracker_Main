@@ -1,6 +1,6 @@
-package com.galeria.medicationstracker.data
+package com.galeria.medicationstracker.data.repository
 
-import com.galeria.medicationstracker.data.network.NetworkUserNote
+import com.galeria.medicationstracker.data.source.network.NetworkUserNote
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow

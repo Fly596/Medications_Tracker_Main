@@ -1,8 +1,8 @@
-package com.galeria.medicationstracker.data
+package com.galeria.medicationstracker.data.repository
 
 import android.util.Log
-import com.galeria.medicationstracker.data.network.NetworkIntake
-import com.galeria.medicationstracker.data.network.NetworkMedication
+import com.galeria.medicationstracker.data.source.network.NetworkIntake
+import com.galeria.medicationstracker.data.source.network.NetworkMedication
 import com.galeria.medicationstracker.utils.toTimestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.awaitClose

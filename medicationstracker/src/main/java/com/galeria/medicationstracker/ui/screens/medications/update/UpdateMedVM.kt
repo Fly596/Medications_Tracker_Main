@@ -5,10 +5,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.galeria.medicationstracker.data.NewMedicationRepository
-import com.galeria.medicationstracker.data.network.AuthRepository
-import com.galeria.medicationstracker.data.network.MedicationForm
-import com.galeria.medicationstracker.data.network.NetworkMedication
+import com.galeria.medicationstracker.data.repository.NewMedicationRepository
+import com.galeria.medicationstracker.data.source.network.AuthRepository
+import com.galeria.medicationstracker.data.source.network.MedicationForm
+import com.galeria.medicationstracker.data.source.network.NetworkMedication
 import com.galeria.medicationstracker.navigation.MedicationScreen
 import com.galeria.medicationstracker.utils.FirestoreFunctions.FirestoreService
 import com.google.firebase.Timestamp

@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.galeria.medicationstracker.SnackbarController
 import com.galeria.medicationstracker.SnackbarEvent
-import com.galeria.medicationstracker.data.network.AuthRepository
+import com.galeria.medicationstracker.data.source.network.AuthRepository
 import com.galeria.medicationstracker.navigation.AuthScreen
 import com.galeria.medicationstracker.utils.AuthResult
 import dagger.hilt.android.lifecycle.HiltViewModel

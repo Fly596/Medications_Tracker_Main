@@ -1,7 +1,7 @@
 package com.galeria.medicationstracker.ui.screens.medications.newmed
 
 import androidx.lifecycle.ViewModel
-import com.galeria.medicationstracker.data.NewMedicationRepository
+import com.galeria.medicationstracker.data.repository.NewMedicationRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

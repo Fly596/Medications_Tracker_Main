@@ -2,9 +2,9 @@ package com.galeria.medicationstracker.ui.screens.dashboard.record
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.galeria.medicationstracker.data.NewIntakeRepository
-import com.galeria.medicationstracker.data.network.AuthRepository
-import com.galeria.medicationstracker.data.network.NetworkIntake
+import com.galeria.medicationstracker.data.repository.NewIntakeRepository
+import com.galeria.medicationstracker.data.source.network.AuthRepository
+import com.galeria.medicationstracker.data.source.network.NetworkIntake
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

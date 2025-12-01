@@ -4,9 +4,9 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.galeria.medicationstracker.data.DomainMedication
-import com.galeria.medicationstracker.data.NewMedicationRepository
-import com.galeria.medicationstracker.data.network.AuthRepository
-import com.galeria.medicationstracker.data.network.NetworkMedication
+import com.galeria.medicationstracker.data.repository.NewMedicationRepository
+import com.galeria.medicationstracker.data.source.network.AuthRepository
+import com.galeria.medicationstracker.data.source.network.NetworkMedication
 import com.galeria.medicationstracker.data.toDomain
 import com.galeria.medicationstracker.data.toEntity
 import dagger.hilt.android.lifecycle.HiltViewModel

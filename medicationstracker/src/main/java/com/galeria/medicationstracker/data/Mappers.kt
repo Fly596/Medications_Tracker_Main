@@ -1,8 +1,8 @@
 package com.galeria.medicationstracker.data
 
-import com.galeria.medicationstracker.data.local.Dosage
-import com.galeria.medicationstracker.data.local.Medication
-import com.galeria.medicationstracker.data.network.NetworkMedication
+import com.galeria.medicationstracker.data.source.local.entities.Dosage
+import com.galeria.medicationstracker.data.source.local.entities.Medication
+import com.galeria.medicationstracker.data.source.network.NetworkMedication
 import java.time.Instant
 import java.time.ZoneId
 

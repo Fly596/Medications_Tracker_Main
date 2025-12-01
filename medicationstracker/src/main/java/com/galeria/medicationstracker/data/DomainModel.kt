@@ -1,7 +1,6 @@
 package com.galeria.medicationstracker.data
 
-import com.galeria.medicationstracker.data.local.Dosage
-import com.galeria.medicationstracker.data.network.IntakeStatus
+import com.galeria.medicationstracker.data.source.network.IntakeStatus
 import java.time.LocalDate
 import java.time.LocalDateTime
 

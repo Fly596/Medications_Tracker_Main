@@ -1,10 +1,11 @@
-package com.galeria.medicationstracker.data.local
+package com.galeria.medicationstracker.data.source.local.daos
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Update
 import androidx.room.Upsert
+import com.galeria.medicationstracker.data.source.local.entities.Intake
 import kotlinx.coroutines.flow.Flow
 
 @Dao

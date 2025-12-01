@@ -1,9 +1,10 @@
-package com.galeria.medicationstracker.data
+package com.galeria.medicationstracker.data.repository
 
-import com.galeria.medicationstracker.data.local.Dosage
-import com.galeria.medicationstracker.data.local.Medication
-import com.galeria.medicationstracker.data.local.MedicationDao
-import com.galeria.medicationstracker.data.network.NetworkMedication
+import com.galeria.medicationstracker.data.source.local.entities.Dosage
+import com.galeria.medicationstracker.data.source.local.entities.Medication
+import com.galeria.medicationstracker.data.source.local.daos.MedicationDao
+import com.galeria.medicationstracker.data.source.network.NetworkMedication
+import com.galeria.medicationstracker.data.toEntity
 import com.galeria.medicationstracker.utils.formatTimestampToWeekday
 import com.galeria.medicationstracker.utils.toTimestamp
 import com.google.firebase.Timestamp
@@ -22,6 +23,7 @@ import java.time.LocalDate
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.resume
+import kotlin.invoke
 
 interface NewMedicationRepository {
     

@@ -1,0 +1,3 @@
+package com.galeria.medicationstracker.feature_medications.presentation.dashboard
+
+class DashboardViewModel {}

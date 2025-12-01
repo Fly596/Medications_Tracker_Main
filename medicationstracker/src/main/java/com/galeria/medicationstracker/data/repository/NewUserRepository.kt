@@ -1,7 +1,7 @@
-package com.galeria.medicationstracker.data
+package com.galeria.medicationstracker.data.repository
 
 import android.util.Log.e
-import com.galeria.medicationstracker.data.network.NetworkUser
+import com.galeria.medicationstracker.data.source.network.NetworkUser
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject

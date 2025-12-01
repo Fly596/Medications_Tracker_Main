@@ -46,7 +46,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medicationstracker.R
-import com.galeria.medicationstracker.data.network.MedicationForm
+import com.galeria.medicationstracker.data.source.network.MedicationForm
 import com.galeria.medicationstracker.data.old.MedicationUnit
 import com.galeria.medicationstracker.ui.components.GDropdownList
 import com.galeria.medicationstracker.ui.components.GOutlinedButton

@@ -1,8 +1,8 @@
 package com.galeria.medicationstracker.ui.screens.profile.notes
 
 import androidx.lifecycle.ViewModel
-import com.galeria.medicationstracker.data.NewUserRepository
-import com.galeria.medicationstracker.data.network.NetworkMedication
+import com.galeria.medicationstracker.data.repository.NewUserRepository
+import com.galeria.medicationstracker.data.source.network.NetworkMedication
 import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -1,4 +1,4 @@
-package com.galeria.medicationstracker.data.network
+package com.galeria.medicationstracker.data.source.network
 
 import com.galeria.medicationstracker.utils.AuthResult
 import com.google.firebase.auth.FirebaseAuth

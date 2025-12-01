@@ -1,6 +1,6 @@
-package com.galeria.medicationstracker.data.network
+package com.galeria.medicationstracker.data.source.network
 
-import com.galeria.medicationstracker.data.local.Dosage
+import com.galeria.medicationstracker.data.source.local.entities.Dosage
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.ServerTimestamp
