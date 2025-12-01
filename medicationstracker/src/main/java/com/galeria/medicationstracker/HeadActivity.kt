@@ -11,12 +11,12 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class HeadActivity : ComponentActivity() {
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
-    setContent {
-      enableEdgeToEdge()
-      MedTrackerTheme { ApplicationNavHost() }
+        setContent {
+            enableEdgeToEdge()
+            MedTrackerTheme { ApplicationNavHost() }
+        }
     }
-  }
 }
