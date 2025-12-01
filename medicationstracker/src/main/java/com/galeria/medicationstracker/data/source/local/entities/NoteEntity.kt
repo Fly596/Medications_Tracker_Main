@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import com.galeria.medicationstracker.feature_auth.data.source.local.User
 
 @Entity(
     tableName = "note",

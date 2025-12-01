@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.galeria.medicationstracker.data.source.local.entities.User
+import com.galeria.medicationstracker.feature_auth.data.source.local.User
 
 @Dao
 interface UserDao {

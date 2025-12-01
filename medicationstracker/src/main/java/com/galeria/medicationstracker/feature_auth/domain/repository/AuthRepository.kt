@@ -10,7 +10,7 @@ interface AuthRepository {
 
     suspend fun register(email: String, password: String): ResourceRes<FirebaseUser>
 
-    suspend fun restorePassword(email: String)
+    suspend fun restorePassword(email: String): Boolean
 
     fun getAuthState(): Flow<FirebaseUser?>
 

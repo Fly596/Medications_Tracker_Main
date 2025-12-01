@@ -41,6 +41,6 @@ class LoginUseCase @Inject constructor(private val repository: AuthRepository) {
         if (email.isBlank() || password.isBlank()) {
             return ResourceRes.Error("Email and password can't be empty")
         }
-        return repository.register(email = email, password = password)
+        return repository.login(email = email, password = password)
     }
 }
