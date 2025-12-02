@@ -1,4 +1,4 @@
-package com.galeria.medicationstracker.feature_auth.presentation.registration
+package com.galeria.medtracker2.feature_auth.presentation.registration
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
