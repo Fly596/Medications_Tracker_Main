@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="padding_small">8dp</dimen>
+    <dimen name="padding_medium">16dp</dimen>
+    <dimen name="padding_large">24dp</dimen>
+
+    <dimen name="corner_radius_small">12dp</dimen>
+    <dimen name="corner_radius_large">40dp</dimen>
+
+    <dimen name="list_corner_radius_default">10dp</dimen>
+
+    <dimen name="card_content_padding_horizontal">24dp</dimen>
+    <dimen name="card_content_padding_vertical">16dp</dimen>
+</resources>

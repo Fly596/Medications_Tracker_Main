@@ -36,12 +36,12 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.galeria.medicationstracker.R
-import com.galeria.medicationstracker.ui.componentsOld.FlyButton
-import com.galeria.medicationstracker.ui.componentsOld.FlyTextButton
-import com.galeria.medicationstracker.ui.componentsOld.MyTextField
-import com.galeria.medicationstracker.ui.screens.auth.login.RememberMeSwitch
-import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
+import com.galeria.medtracker2.R
+import com.galeria.medtracker2.feature_auth.presentation.login.RememberMeSwitch
+import com.galeria.medtracker2.shared.components.FlyButton
+import com.galeria.medtracker2.shared.components.FlyTextButton
+import com.galeria.medtracker2.shared.components.MyTextField
+import com.galeria.medtracker2.ui.theme.MedTrackerTheme
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -162,7 +162,7 @@ fun RegistrationScreen2(
         )
 
         Spacer(modifier = Modifier.weight(1f))
-
+        
         MyTextField(
             value = state.value.name,
             onValueChange = { viewModel.updateUserName(it) },
@@ -209,7 +209,7 @@ fun RegistrationScreen2(
         )
         FlyButton(onClick = { viewModel.showDatePicker() }) { Text("Show datePicker") }
         // Show password switch.
-        RememberMeSwitch(
+        RememberMeSwitch (
             checked = state.value.showPassword,
             onCheckedChange = { viewModel.isShowPasswordChecked(state.value.showPassword) },
         )
