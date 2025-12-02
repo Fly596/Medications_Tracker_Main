@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Locale
 import javax.inject.Inject
 import kotlin.time.Clock
 import kotlin.time.Instant
@@ -34,8 +36,10 @@ class RegistrationViewModel @Inject constructor(private val repository: AuthRepo
         _uiState.update { it.copy(isLoading = true) }
 
         viewModelScope.launch {
-            when (val registrationResult =
-                repository.register(_uiState.value.email, _uiState.value.password)) {
+            when (
+                val registrationResult =
+                    repository.register(_uiState.value.email, _uiState.value.password)
+            ) {
                 is ResourceRes.Error -> {
                     // TODO: show error.
                 }
@@ -50,7 +54,8 @@ class RegistrationViewModel @Inject constructor(private val repository: AuthRepo
                             email = _uiState.value.email,
                             weightKg = 0.0,
                             heightCm = 0.0,
-                            dateOfBirth = _uiState.value.birthDate)
+                            dateOfBirth = _uiState.value.birthDate,
+                        )
 
                     val saveResult = repository.addUser(newUser)
 
@@ -64,5 +69,40 @@ class RegistrationViewModel @Inject constructor(private val repository: AuthRepo
                 else -> {}
             }
         }
+    }
+
+    fun updateBirthDate(date: Long?) {
+        if (date != null) {
+            _uiState.update { it.copy(birthDate = Instant.fromEpochMilliseconds(date)) }
+        }
+    }
+
+    fun updateUserName(input: String) {
+        _uiState.value = _uiState.value.copy(name = input)
+    }
+
+    fun updateEmail(input: String) {
+        _uiState.value = _uiState.value.copy(email = input)
+    }
+
+    fun updatePassword(input: String) {
+        _uiState.value = _uiState.value.copy(password = input)
+    }
+
+    fun isShowPasswordChecked(input: Boolean) {
+        _uiState.value = _uiState.value.copy(showPassword = !input)
+    }
+
+    fun showDatePicker() {
+        _uiState.update { it.copy(showDatePicker = true) }
+    }
+
+    fun dismissDatePicker() {
+        _uiState.update { it.copy(showDatePicker = false) }
+    }
+
+    fun convertMilliisToStringDate(millis: Long): String {
+        val formatter = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
+        return formatter.format(millis)
     }
 }
