@@ -12,7 +12,7 @@ fun UserDomain.toEntity(): UserEntity {
         email = this.email,
         weightKg = this.weightKg,
         heightCm = this.heightCm,
-        dateOfBirth = this.dateOfBirth,
+        dateOfBirth = this.dateOfBirth.toEpochMilliseconds(),
     )
 }
 

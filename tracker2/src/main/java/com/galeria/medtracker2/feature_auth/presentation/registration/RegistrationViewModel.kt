@@ -10,6 +10,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import java.text.SimpleDateFormat
 import java.util.Locale
 import javax.inject.Inject
@@ -24,6 +27,9 @@ data class RegistrationUiState(
     val showPassword: Boolean = false,
     val showDatePicker: Boolean = false,
     val isLoading: Boolean = false,
+    val passwordErrorMessage: String? = null,
+    val emailErrorMessage: String? = null,
+    val generalError: String? = null,
 )
 
 @HiltViewModel
@@ -37,15 +43,13 @@ class RegistrationViewModel @Inject constructor(private val repository: AuthRepo
         _uiState.update { it.copy(isLoading = true) }
 
         viewModelScope.launch {
-            when (
-                val registrationResult =
-                    repository.register(_uiState.value.email, _uiState.value.password)
-            ) {
+            when (val registrationResult =
+                repository.register(_uiState.value.email, _uiState.value.password)) {
                 is ResourceRes.Error -> {
                     // TODO: show error.
                 }
 
-                is ResourceRes.Success<*> -> {
+                is ResourceRes.Success -> {
                     val firebaseUser = registrationResult.data
                     val uid = firebaseUser.uid
                     val newUser =
@@ -104,5 +108,10 @@ class RegistrationViewModel @Inject constructor(private val repository: AuthRepo
     fun convertMilliisToStringDate(millis: Long): String {
         val formatter = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
         return formatter.format(millis)
+    }
+    
+    fun convertLongToLocalDate(epochMillis: Long, timeZone: TimeZone): LocalDate {
+        val instant = Instant.fromEpochMilliseconds(epochMillis)
+        return instant.toLocalDateTime(timeZone).date
     }
 }
