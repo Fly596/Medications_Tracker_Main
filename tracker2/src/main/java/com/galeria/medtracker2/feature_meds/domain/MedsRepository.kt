@@ -1,5 +1,7 @@
 package com.galeria.medtracker2.feature_meds.domain
 
+import kotlinx.coroutines.flow.Flow
+
 interface MedsRepository {
     suspend fun addMedication(
         name: String,
@@ -13,9 +15,9 @@ interface MedsRepository {
         medicationId: String
     )
     
-    suspend fun getMedication(
+    suspend fun getMedication (
         medicationId: String
-    )
+    ): DomainMedication
     
-    fun getAllMedications()
+    fun getAllMedications(): Flow<List<DomainMedication>>
 }
