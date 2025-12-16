@@ -62,7 +62,6 @@ fun RegistrationScreen(
         modifier = modifier.fillMaxWidth().padding(12.dp),
         horizontalAlignment = Alignment.Start,
     ) {
-
         if (state.value.showDatePicker) {
             Popup(
                 onDismissRequest = { viewModel.dismissDatePicker() },
