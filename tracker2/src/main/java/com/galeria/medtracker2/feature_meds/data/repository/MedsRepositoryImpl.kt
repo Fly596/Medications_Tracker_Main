@@ -2,8 +2,10 @@ package com.galeria.medtracker2.feature_meds.data.repository
 
 import com.galeria.medtracker2.feature_meds.data.source.local.MedicationDao
 import com.galeria.medtracker2.feature_meds.data.source.local.MedicationEntity
+import com.galeria.medtracker2.feature_meds.domain.DomainMedication
 import com.galeria.medtracker2.feature_meds.domain.MedsRepository
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.tasks.await
 import java.util.UUID
 import javax.inject.Inject
@@ -46,11 +48,11 @@ constructor(private val firestore: FirebaseFirestore, private val medicationDao:
         }
     }
 
-    override suspend fun getMedication(medicationId: String) {
+    override suspend fun getMedication(medicationId: String):DomainMedication {
         TODO("Not yet implemented")
     }
 
-    override fun getAllMedications() {
+    override fun getAllMedications():Flow<List<DomainMedication>> {
         TODO("Not yet implemented")
     }
 }

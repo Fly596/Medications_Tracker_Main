@@ -54,9 +54,9 @@ enum class HIGButtonStyle {
 fun HIGButton(
     text: String,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     enabled: Boolean = true,
     style: HIGButtonStyle = HIGButtonStyle.Filled,
-    modifier: Modifier = Modifier,
 ) {
     val buttonColors =
         when (style) {
@@ -441,6 +441,7 @@ fun GLargeButton(
         android.content.res.Configuration.UI_MODE_NIGHT_NO or
             android.content.res.Configuration.UI_MODE_TYPE_NORMAL,
 )
+
 @Composable
 private fun PreviewButtons() {
     MedTrackerTheme {
@@ -449,14 +450,14 @@ private fun PreviewButtons() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            Row {
-                GMediumButton(onClick = {}, enabled = true, text = "Sign In")
-                GLargeButton(onClick = {}, enabled = true, text = "Sign In")
-                /*                 FlyButton(onClick = {}, enabled = true) { Text(text = "Sign In") }
+            Column {
+                GMediumButton(onClick = {}, enabled = true, text = "GMediumButton")
+                GLargeButton(onClick = {}, enabled = true, text = "GLargeButton")
+                                 FlyButton(onClick = {}, enabled = true) { Text(text = "Sign In") }
                 FlyTextButton(onClick = {}, enabled = true) { Text(text = "Sign In") }
-                // FlyElevatedButton(onClick = {}, enabled = true) { Text(text = "Sign In") }
-                // FlyTonalButton(onClick = {}, enabled = true) { Text(text = "Sign In") }
-                HIGListButton("text", onClick = {}, enabled = true) */
+                FlyElevatedButton(onClick = {}, enabled = true) { Text(text = "Sign In") }
+                 FlyTonalButton(onClick = {}, enabled = true) { Text(text = "Sign In") }
+                HIGListButton("text", onClick = {}, enabled = true)
             }
         }
     }
