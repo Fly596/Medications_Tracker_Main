@@ -1,13 +1,5 @@
 package com.galeria.medicationstracker.data.source.local.entities
-
-import androidx.room.Embedded
-import androidx.room.Entity
-import androidx.room.Index
-import androidx.room.PrimaryKey
-import androidx.room.TypeConverters
-import com.galeria.medicationstracker.data.source.local.Converters
-import kotlin.time.Instant
-
+/*
 data class Dosage(val value: Double = 0.0, val unit: String = "mg")
 
 @Entity(tableName = "medication", indices = [Index(value = ["firestoreId"], unique = true)])
@@ -23,3 +15,4 @@ data class Medication(
     val daysOfWeek: List<String>,
     val intakeTime: Int,
 )
+*/

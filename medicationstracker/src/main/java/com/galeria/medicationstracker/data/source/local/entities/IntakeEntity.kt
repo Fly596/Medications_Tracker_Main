@@ -13,13 +13,9 @@ import com.galeria.medicationstracker.data.source.network.IntakeStatus
         [
             ForeignKey(
                 entity = Medication::class, // С какой таблицей связываем..
-                parentColumns =
-                    ["firestoreId"], // По какому полю в родительской таблице..
-                childColumns =
-                    ["medicationId"], // По какому полю в текущей таблице..
-                onDelete =
-                    ForeignKey
-                        .CASCADE, // Что делать, если родитель удален (удалить и
+                parentColumns = ["firestoreId"], // По какому полю в родительской таблице..
+                childColumns = ["medicationId"], // По какому полю в текущей таблице..
+                onDelete = ForeignKey.CASCADE, // Что делать, если родитель удален (удалить и
                 // эту запись)..
             )],
 )

@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -15,8 +16,9 @@ interface MedicationDao {
 
     @Delete suspend fun deleteMedication(medication: MedicationEntity)
 
-    @Query("SELECT * FROM medication")
-    fun getAllMedications(): Flow<List<MedicationEntity>>
+    @Update suspend fun updateMedication(medication: MedicationEntity)
+
+    @Query("SELECT * FROM medication") fun getAllMedications(): Flow<List<MedicationEntity>>
 
     @Query("SELECT * FROM medication WHERE id = :id")
     suspend fun getMedicationById(id: Int): MedicationEntity?

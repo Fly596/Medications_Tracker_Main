@@ -15,7 +15,7 @@ enum class FrequencyType {
 }
 
 @Entity(
-    tableName = "regiments",
+    tableName = "medication-regiments",
     foreignKeys =
         [
             ForeignKey(
@@ -25,7 +25,7 @@ enum class FrequencyType {
             )
         ],
 )
-data class RegimentEntity(
+data class MedicationScheduleEntity(
     @PrimaryKey val id: String = UUID.randomUUID().toString(),
     val medicationId: String,
     val startDate: LocalDate,

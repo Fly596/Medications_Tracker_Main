@@ -5,7 +5,7 @@ import com.galeria.medicationstracker.feature_auth.data.toDto
 import com.galeria.medicationstracker.feature_auth.data.toEntity
 import com.galeria.medicationstracker.feature_auth.domain.UserDomain
 import com.galeria.medicationstracker.feature_auth.domain.repository.AuthRepository
-import com.galeria.medicationstracker.utils.ResourceRes
+import com.galeria.medicationstracker.utils.Response
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
@@ -21,36 +21,36 @@ constructor(
     private val userDao: UserDao
 ) : AuthRepository {
 
-    override suspend fun login(email: String, password: String): ResourceRes<FirebaseUser> {
+    override suspend fun login(email: String, password: String): Response<FirebaseUser> {
         return try {
             val authResult = auth.signInWithEmailAndPassword(email, password).await()
             
             if (authResult.user != null) {
-                ResourceRes.Success(authResult.user!!)
+                Response.Success(authResult.user!!)
             } else {
-                ResourceRes.Error("User Data is null")
+                Response.Error("User Data is null")
             }
         } catch (e: Exception) {
-            ResourceRes.Error(e.localizedMessage ?: "Unknown Error")
+            Response.Error(e.localizedMessage ?: "Unknown Error")
         }
     }
 
-    override suspend fun register(email: String, password: String): ResourceRes<FirebaseUser> {
+    override suspend fun register(email: String, password: String): Response<FirebaseUser> {
         return try {
             val result = auth.createUserWithEmailAndPassword(email, password).await()
             val user = result.user
 
             if (user != null) {
-                ResourceRes.Success(user)
+                Response.Success(user)
             } else {
-                ResourceRes.Error("Registration failed: User is null.")
+                Response.Error("Registration failed: User is null.")
             }
         } catch (e: Exception) {
-            ResourceRes.Error(e.localizedMessage ?: "Registration error")
+            Response.Error(e.localizedMessage ?: "Registration error")
         }
     }
 
-    override suspend fun addUser(userDomain: UserDomain): ResourceRes<String> {
+    override suspend fun addUser(userDomain: UserDomain): Response<String> {
         return try {
             // Подготовка данных.
             val userDto = userDomain.toDto()
@@ -60,9 +60,9 @@ constructor(
 
             userDao.insertUser(userEntity)
 
-            ResourceRes.Success("User saved successfully")
+            Response.Success("User saved successfully")
         } catch (e: Exception) {
-            ResourceRes.Error(e.localizedMessage ?: "Failed to save user data")
+            Response.Error(e.localizedMessage ?: "Failed to save user data")
         }
     }
 

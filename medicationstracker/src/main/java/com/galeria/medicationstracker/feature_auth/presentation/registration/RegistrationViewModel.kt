@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.galeria.medicationstracker.feature_auth.domain.UserDomain
 import com.galeria.medicationstracker.feature_auth.domain.repository.AuthRepository
-import com.galeria.medicationstracker.utils.ResourceRes
+import com.galeria.medicationstracker.utils.Response
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -40,10 +40,10 @@ class RegistrationViewModel @Inject constructor(private val repository: AuthRepo
                 val registrationResult =
                     repository.register(_uiState.value.email, _uiState.value.password)
             ) {
-                is ResourceRes.Error -> {
+                is Response.Error -> {
                     // TODO: show error.
                 }
-                is ResourceRes.Success -> {
+                is Response.Success -> {
                     val firebaseUser = registrationResult.data
                     val uid = firebaseUser.uid
 
@@ -59,7 +59,7 @@ class RegistrationViewModel @Inject constructor(private val repository: AuthRepo
 
                     val saveResult = repository.addUser(newUser)
 
-                    if (saveResult is ResourceRes.Success) {
+                    if (saveResult is Response.Success) {
                         // TODO: navigate to main screen.
                     } else {
                         // error saving files.
