@@ -1,17 +1,26 @@
 package com.galeria.medicationstracker.feature_medications.domain.model
 
-import com.galeria.medicationstracker.feature_medications.data.source.local.FrequencyType
-import java.time.LocalDateTime
+import java.time.Instant
 
 data class Regiments(
     val id: String = "",
-    val medicationId: String= "",
-    val startDate: LocalDateTime,
-    val endDate: LocalDateTime,
+    val medicationId: String = "",
+    val startDate: Instant,
+    val endDate: Instant?,
     val frequencyType: FrequencyType,
     val frequencyDetails: String?,
-    val timeSlots: List<LocalDateTime>,
+    val timeSlots: List<Instant>,
     val dosage: Double,
+)
 
+// domain/model/FrequencyType.kt
+enum class FrequencyType {
     
-    )
+    DAILY, SPECIFIC_DAYS, INTERVAL;
+    
+    companion object {
+        
+        fun safeValueOf(value: String): FrequencyType =
+            runCatching { valueOf(value) }.getOrDefault(DAILY)
+    }
+}

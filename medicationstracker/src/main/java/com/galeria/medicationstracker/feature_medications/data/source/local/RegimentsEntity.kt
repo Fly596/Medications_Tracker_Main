@@ -29,3 +29,4 @@ data class RegimentsEntity(
     val timeSlots: List<String>,
     val dosage: Double,
 )
+

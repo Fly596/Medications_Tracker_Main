@@ -15,7 +15,7 @@ import com.galeria.medicationstracker.data.repository.NewUserRepositoryImpl
 import com.galeria.medicationstracker.data.source.local.AppDatabase
 import com.galeria.medicationstracker.data.source.network.OLDAuthRepository
 import com.galeria.medicationstracker.data.source.network.OLDAuthRepositoryImpl
-import com.galeria.medicationstracker.feature_medications.data.MedicationRepositoryImpl
+import com.galeria.medicationstracker.feature_medications.data.repository.MedicationRepositoryImpl
 import com.galeria.medicationstracker.feature_medications.domain.repository.MedicationRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
