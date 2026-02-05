@@ -4,8 +4,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import com.galeria.medicationstracker.feature_medications.domain.model.FrequencyType
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalTime
+import java.time.Instant
 import java.util.UUID
 
 // enum class FrequencyType {
@@ -25,12 +24,12 @@ import java.util.UUID
             )
         ],
 )
-data class MedicationScheduleEntity(
+data class RegimentEntity(
     @PrimaryKey
     val id: String = UUID.randomUUID().toString(),
     val medicationId: String,
-    val startDate: LocalDate,
-    val endDate: LocalDate?, // null - вечно.
+    val startDate: Instant,
+    val endDate: Instant?, // null - вечно.
     val frequencyType: FrequencyType,
     // Детали частоты (JSON или через TypeConverter).
     // Если SPECIFIC_DAYS -> [MONDAY, WEDNESDAY].
@@ -38,6 +37,6 @@ data class MedicationScheduleEntity(
     val frequencyDetails: String?,
     // Время приемов в течение дня (JSON List<LocalTime>).
     // Например: ["08:00", "14:00", "20:00"].
-    val timeSlots: List<LocalTime>,
+    val timeSlots: List<Instant>,
     val dosage: Double,
 )
