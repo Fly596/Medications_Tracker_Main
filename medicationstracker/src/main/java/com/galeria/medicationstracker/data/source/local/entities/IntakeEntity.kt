@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import com.galeria.medicationstracker.data.source.network.IntakeStatus
+import com.galeria.medicationstracker.feature_medications.data.source.local.MedicationEntity
 
 @Entity(
     tableName = "intake",
@@ -12,8 +13,8 @@ import com.galeria.medicationstracker.data.source.network.IntakeStatus
     foreignKeys =
         [
             ForeignKey(
-                entity = Medication::class, // С какой таблицей связываем..
-                parentColumns = ["firestoreId"], // По какому полю в родительской таблице..
+                entity = MedicationEntity::class, // С какой таблицей связываем..
+                parentColumns = ["id"], // По какому полю в родительской таблице..
                 childColumns = ["medicationId"], // По какому полю в текущей таблице..
                 onDelete = ForeignKey.CASCADE, // Что делать, если родитель удален (удалить и
                 // эту запись)..

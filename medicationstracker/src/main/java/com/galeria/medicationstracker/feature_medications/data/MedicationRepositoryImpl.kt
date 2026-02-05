@@ -24,85 +24,88 @@ constructor(
     private val auth: FirebaseAuth,
     private val dispatcher: CoroutineDispatcher // Всегда инжекть диспетчер!
 ) : MedicationRepository {
-
-    val userId = auth.currentUser?.uid
-
+    
+    private val userId: String
+        get() = auth.currentUser?.uid
+            ?: throw IllegalStateException("User must be logged in to access medications.")
+    
     companion object {
-
+        
         private const val USERS_COLLECTION = "User"
         private const val MEDICATIONS_SUBCOLLECTION = "medications"
     }
-
+    
     val medicationsRef =
         firestore
             .collection(USERS_COLLECTION)
             .document(userId.toString())
             .collection(MEDICATIONS_SUBCOLLECTION)
-
+    
     override fun getMedications(): Flow<Response<List<Medication>>> =
         callbackFlow {
-                val subscription =
-                    medicationsRef.addSnapshotListener { snapshot, error ->
-                        if (error != null) {
-                            trySend(Response.Error(error.message.toString()))
-                            return@addSnapshotListener
-                        }
-
-                        val meds =
-                            snapshot?.documents?.mapNotNull { doc ->
-                                doc.toObject(MedicationDto::class.java)
-                                    ?.copy(id = doc.id)
-                                    ?.toDomain()
-                            } ?: emptyList()
-
-                        trySend(Response.Success(meds))
+            val subscription =
+                medicationsRef.addSnapshotListener { snapshot, error ->
+                    if (error != null) {
+                        trySend(Response.Error(error.message.toString()))
+                        return@addSnapshotListener
                     }
-                awaitClose { subscription.remove() }
-            }
+                    val meds =
+                        snapshot?.documents?.mapNotNull { doc ->
+                            doc.toObject(MedicationDto::class.java)
+                                ?.copy(id = doc.id)
+                                ?.toDomain()
+                        } ?: emptyList()
+                    
+                    trySend(Response.Success(meds))
+                }
+            awaitClose { subscription.remove() }
+        }
             .flowOn(dispatcher)
-
+    
     override fun getMedication(medicationId: String): Flow<Response<Medication>> =
         callbackFlow {
-                val subscription =
-                    medicationsRef.document(medicationId).addSnapshotListener { snapshot, error ->
+            val subscription =
+                medicationsRef.document(medicationId)
+                    .addSnapshotListener { snapshot, error ->
                         if (error != null) {
                             trySend(Response.Error(error.message.toString()))
                             return@addSnapshotListener
                         }
-                        val medication = snapshot?.toObject(MedicationDto::class.java)
+                        val medication =
+                            snapshot?.toObject(MedicationDto::class.java)
                         if (medication == null) {
                             trySend(Response.Error("Medication not found"))
                         } else {
                             trySend(Response.Success(medication.toDomain()))
                         }
                     }
-                awaitClose { subscription.remove() }
-            }
+            awaitClose { subscription.remove() }
+        }
             .flowOn(dispatcher)
-
+    
     override suspend fun addMedication(medication: Medication): Response<Unit> =
         withContext(dispatcher) {
             runCatching {
-                    val dto = medication.toDto()
-                    if (dto.id.isEmpty()) {
-                        medicationsRef.add(dto).await()
-                    } else {
-                        medicationsRef.document(dto.id).set(dto).await()
-                    }
-                    Response.Success(Unit)
+                val dto = medication.toDto()
+                if (dto.id.isEmpty()) {
+                    medicationsRef.add(dto).await()
+                } else {
+                    medicationsRef.document(dto.id).set(dto).await()
                 }
+                Response.Success(Unit)
+            }
                 .getOrElse { Response.Error(it.message.toString()) }
         }
-
+    
     override suspend fun deleteMedication(id: String): Response<Unit> =
         withContext(dispatcher) {
             runCatching {
-                    medicationsRef.document(id).delete().await()
-                    Response.Success(Unit)
-                }
+                medicationsRef.document(id).delete().await()
+                Response.Success(Unit)
+            }
                 .getOrElse { Response.Error(it.message.toString()) }
         }
-
+    
     override suspend fun updateMedication(medication: Medication): Response<Unit> {
         TODO("Not yet implemented")
     }

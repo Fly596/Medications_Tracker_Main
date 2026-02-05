@@ -1,8 +1,8 @@
-package com.galeria.medicationstracker.feature_medications.data.source.remote
+package com.galeria.medicationstracker.feature_medications.data.source.remote.model
 
 data class RegimentsDto(
-    val id: String,
-    val medicationId: String,
+    val id: String = "",
+    val medicationId: String= "",
     val startDate: String,
     val endDate: String?, // null - вечно.
     val frequencyType: String,

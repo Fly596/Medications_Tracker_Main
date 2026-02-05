@@ -10,16 +10,20 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MedicationDao {
-
+    
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMedication(medication: MedicationEntity)
-
-    @Delete suspend fun deleteMedication(medication: MedicationEntity)
-
-    @Update suspend fun updateMedication(medication: MedicationEntity)
-
-    @Query("SELECT * FROM medication") fun getAllMedications(): Flow<List<MedicationEntity>>
-
+    
+    @Delete
+    suspend fun deleteMedication(medication: MedicationEntity)
+    
+    @Update
+    suspend fun updateMedication(medication: MedicationEntity)
+    
+    @Query("SELECT * FROM medication")
+    fun getAllMedications(): Flow<List<MedicationEntity>>
+    
     @Query("SELECT * FROM medication WHERE id = :id")
     suspend fun getMedicationById(id: Int): MedicationEntity?
 }
+
