@@ -1,6 +1,7 @@
 package com.galeria.medicationstracker.data.source.network
 
 import com.galeria.medicationstracker.data.source.local.entities.Dosage
+import com.galeria.medicationstracker.feature_medications.domain.model.MedicationForm
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.ServerTimestamp
@@ -69,11 +70,3 @@ enum class IntakeStatus {
     PENDING, // default color.
 }
 
-enum class MedicationForm {
-    TABLET,
-    CAPSULE,
-    LIQUID,
-    INJECTION,
-    POWDER,
-    UNKNOWN,
-}
