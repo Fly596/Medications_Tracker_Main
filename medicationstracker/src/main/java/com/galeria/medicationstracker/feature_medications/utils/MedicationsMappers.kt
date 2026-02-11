@@ -12,7 +12,18 @@ fun MedicationEntity.toDomain(): Medication {
         form = this.form,
         stockCount = this.stockCount,
         measureUnit = this.measureUnit,
-        drugClass = this.drugClass)
+        drugClass = this.drugClass
+    )
+}
+
+fun MedicationEntity.toDto(): MedicationDto {
+    return MedicationDto(
+        id = this.id,
+        name = this.name,
+        form = this.form.name,
+        stockCount = this.stockCount,
+        measureUnit = this.measureUnit
+    )
 }
 
 fun Medication.toEntity(): MedicationEntity {
@@ -22,7 +33,8 @@ fun Medication.toEntity(): MedicationEntity {
         form = this.form,
         stockCount = this.stockCount,
         measureUnit = this.measureUnit,
-        drugClass = this.drugClass)
+        drugClass = this.drugClass
+    )
 }
 
 fun MedicationDto.toDomain() =
@@ -42,4 +54,5 @@ fun Medication.toDto() =
         form = form.name,
         stockCount = stockCount,
         measureUnit = measureUnit,
-        drugClass = drugClass)
+        drugClass = drugClass
+    )

@@ -1,10 +1,12 @@
 package com.galeria.medicationstracker.feature_medications.data.repository
 
+import com.galeria.medicationstracker.feature_medications.data.source.local.MedicationDao
 import com.galeria.medicationstracker.feature_medications.data.source.remote.model.MedicationDto
 import com.galeria.medicationstracker.feature_medications.domain.model.Medication
 import com.galeria.medicationstracker.feature_medications.domain.repository.MedicationRepository
 import com.galeria.medicationstracker.feature_medications.utils.toDomain
 import com.galeria.medicationstracker.feature_medications.utils.toDto
+import com.galeria.medicationstracker.feature_medications.utils.toEntity
 import com.galeria.medicationstracker.utils.Response
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -24,7 +26,8 @@ class MedicationRepositoryImpl
 constructor(
     private val firestore: FirebaseFirestore,
     private val auth: FirebaseAuth,
-    private val dispatcher: CoroutineDispatcher // Всегда инжекть диспетчер!
+    private val dispatcher: CoroutineDispatcher, // Всегда инжекть диспетчер!
+    private val medicationDao: MedicationDao,
 ) : MedicationRepository {
     
     private val userId: String
@@ -85,19 +88,27 @@ constructor(
         }
             .flowOn(dispatcher)
     
-    override suspend fun addMedication(medication: Medication): Response<Unit> =
-        withContext(dispatcher) {
-            runCatching {
-                val dto = medication.toDto()
-                if (dto.id.isEmpty()) {
-                    medicationsRef.add(dto).await()
-                } else {
-                    medicationsRef.document(dto.id).set(dto).await()
-                }
-                Response.Success(Unit)
-            }
-                .getOrElse { Response.Error(it.message.toString()) }
-        }
+    // override suspend fun addMedication(medication: Medication): Response<Unit> =
+    //     withContext(dispatcher) {
+    //         runCatching {
+    //             val dto = medication.toDto()
+    //             if (dto.id.isEmpty()) {
+    //                 medicationsRef.add(dto).await()
+    //             } else {
+    //                 medicationsRef.document(dto.id).set(dto).await()
+    //             }
+    //             Response.Success(Unit)
+    //         }
+    //             .getOrElse { Response.Error(it.message.toString()) }
+    //     }
+    override suspend fun addMedication(medication: Medication): Response<Unit> {
+        val medicationEntity = medication.toEntity()
+        
+        medicationDao.insertMedication(medicationEntity)
+        medicationsRef.document(medicationEntity.id)
+            .set(medicationEntity.toDto()).await()
+        return Response.Success(Unit)
+    }
     
     override suspend fun deleteMedication(id: String): Response<Unit> =
         withContext(dispatcher) {
