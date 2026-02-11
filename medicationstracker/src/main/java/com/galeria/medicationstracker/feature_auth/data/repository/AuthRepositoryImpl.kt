@@ -1,7 +1,7 @@
 package com.galeria.medicationstracker.feature_auth.data.repository
 
 import com.galeria.medicationstracker.feature_auth.data.source.local.UserDao
-import com.galeria.medicationstracker.feature_auth.domain.UserDomain
+import com.galeria.medicationstracker.feature_auth.domain.model.UserDomain
 import com.galeria.medicationstracker.feature_auth.domain.repository.AuthRepository
 import com.galeria.medicationstracker.feature_auth.utils.toDto
 import com.galeria.medicationstracker.feature_auth.utils.toEntity
@@ -24,7 +24,7 @@ constructor(
     override suspend fun login(email: String, password: String): Response<FirebaseUser> {
         return try {
             val authResult = auth.signInWithEmailAndPassword(email, password).await()
-            
+
             if (authResult.user != null) {
                 Response.Success(authResult.user!!)
             } else {
@@ -55,10 +55,9 @@ constructor(
             // Подготовка данных.
             val userDto = userDomain.toDto()
             val userEntity = userDomain.toEntity()
+            userDao.insertUser(userEntity)
 
             firestore.collection("User").document(userDomain.id).set(userDto).await()
-
-            userDao.insertUser(userEntity)
 
             Response.Success("User saved successfully")
         } catch (e: Exception) {

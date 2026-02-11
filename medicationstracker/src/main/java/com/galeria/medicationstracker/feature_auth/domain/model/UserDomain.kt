@@ -1,6 +1,6 @@
-package com.galeria.medicationstracker.feature_auth.domain
+package com.galeria.medicationstracker.feature_auth.domain.model
 
-import kotlin.time.Instant
+import java.time.Instant
 
 data class UserDomain(
     val id: String,

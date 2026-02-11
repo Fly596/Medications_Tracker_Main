@@ -2,7 +2,7 @@ package com.galeria.medicationstracker.feature_auth.presentation.registration
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.galeria.medicationstracker.feature_auth.domain.UserDomain
+import com.galeria.medicationstracker.feature_auth.domain.model.UserDomain
 import com.galeria.medicationstracker.feature_auth.domain.repository.AuthRepository
 import com.galeria.medicationstracker.utils.Response
 import dagger.hilt.android.lifecycle.HiltViewModel

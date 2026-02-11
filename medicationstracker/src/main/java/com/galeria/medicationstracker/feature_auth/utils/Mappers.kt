@@ -2,7 +2,9 @@ package com.galeria.medicationstracker.feature_auth.utils
 
 import com.galeria.medicationstracker.feature_auth.data.source.local.UserEntity
 import com.galeria.medicationstracker.feature_auth.data.source.network.UserDto
-import com.galeria.medicationstracker.feature_auth.domain.UserDomain
+import com.galeria.medicationstracker.feature_auth.domain.model.UserDomain
+import com.google.firebase.Timestamp
+import java.util.Date
 
 // Превращаем Domain в Entity для Room
 fun UserDomain.toEntity(): UserEntity {
@@ -25,6 +27,6 @@ fun UserDomain.toDto(): UserDto {
         email = this.email,
         weightKg = this.weightKg,
         heightCm = this.heightCm,
-        dateOfBirth = this.dateOfBirth.toString() // Firestore не умеет хранить Instant напрямую в JSON, лучше String ISO
+        dateOfBirth = Timestamp(Date.from(this.dateOfBirth)) // Firestore не умеет хранить Instant напрямую в JSON, лучше String ISO
     )
 }

@@ -15,12 +15,13 @@ data class Regiments(
 
 // domain/model/FrequencyType.kt
 enum class FrequencyType {
-    
-    DAILY, SPECIFIC_DAYS, INTERVAL;
-    
+
+    DAILY,
+    SPECIFIC_DAYS,
+    INTERVAL;
+
     companion object {
-        
-        val time = kotlinx.datetime.LocalTime(6, 50, 0, 0)
+
         fun safeValueOf(value: String): FrequencyType =
             runCatching { valueOf(value) }.getOrDefault(DAILY)
     }

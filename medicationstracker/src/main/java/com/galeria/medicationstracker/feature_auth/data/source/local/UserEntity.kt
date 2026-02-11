@@ -2,7 +2,7 @@ package com.galeria.medicationstracker.feature_auth.data.source.local
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import kotlin.time.Instant
+import java.time.Instant
 
 @Entity(tableName = "user" )
 data class UserEntity(

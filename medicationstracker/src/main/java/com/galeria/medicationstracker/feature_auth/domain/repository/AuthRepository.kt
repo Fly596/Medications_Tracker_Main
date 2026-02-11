@@ -1,6 +1,6 @@
 package com.galeria.medicationstracker.feature_auth.domain.repository
 
-import com.galeria.medicationstracker.feature_auth.domain.UserDomain
+import com.galeria.medicationstracker.feature_auth.domain.model.UserDomain
 import com.galeria.medicationstracker.utils.Response
 import com.google.firebase.auth.FirebaseUser
 
