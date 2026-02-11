@@ -1,10 +1,10 @@
 package com.galeria.medicationstracker.feature_medications.data.repository
 
 import com.galeria.medicationstracker.feature_medications.data.source.remote.model.RegimentsDto
-import com.galeria.medicationstracker.feature_medications.data.toDomain
-import com.galeria.medicationstracker.feature_medications.data.toDto
 import com.galeria.medicationstracker.feature_medications.domain.model.Regiments
 import com.galeria.medicationstracker.feature_medications.domain.repository.RegimentsRepository
+import com.galeria.medicationstracker.feature_medications.utils.toDomain
+import com.galeria.medicationstracker.feature_medications.utils.toDto
 import com.galeria.medicationstracker.utils.Response
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore

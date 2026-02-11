@@ -1,10 +1,10 @@
 package com.galeria.medicationstracker.feature_auth.data.repository
 
 import com.galeria.medicationstracker.feature_auth.data.source.local.UserDao
-import com.galeria.medicationstracker.feature_auth.data.toDto
-import com.galeria.medicationstracker.feature_auth.data.toEntity
 import com.galeria.medicationstracker.feature_auth.domain.UserDomain
 import com.galeria.medicationstracker.feature_auth.domain.repository.AuthRepository
+import com.galeria.medicationstracker.feature_auth.utils.toDto
+import com.galeria.medicationstracker.feature_auth.utils.toEntity
 import com.galeria.medicationstracker.utils.Response
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -56,7 +56,7 @@ constructor(
             val userDto = userDomain.toDto()
             val userEntity = userDomain.toEntity()
 
-            firestore.collection("users").document(userDomain.id).set(userDto).await()
+            firestore.collection("User").document(userDomain.id).set(userDto).await()
 
             userDao.insertUser(userEntity)
 

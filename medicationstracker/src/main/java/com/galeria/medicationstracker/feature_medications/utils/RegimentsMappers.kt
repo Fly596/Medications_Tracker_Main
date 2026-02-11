@@ -1,4 +1,4 @@
-package com.galeria.medicationstracker.feature_medications.data
+package com.galeria.medicationstracker.feature_medications.utils
 
 import com.galeria.medicationstracker.feature_medications.data.source.local.RegimentsEntity
 import com.galeria.medicationstracker.feature_medications.data.source.remote.model.RegimentsDto

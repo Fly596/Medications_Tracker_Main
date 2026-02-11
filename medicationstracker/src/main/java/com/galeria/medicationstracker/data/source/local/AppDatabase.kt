@@ -12,12 +12,14 @@ import com.galeria.medicationstracker.feature_auth.data.source.local.UserDao
 import com.galeria.medicationstracker.feature_auth.data.source.local.UserEntity
 import com.galeria.medicationstracker.feature_medications.data.source.local.MedicationDao
 import com.galeria.medicationstracker.feature_medications.data.source.local.MedicationEntity
+import com.galeria.medicationstracker.feature_medications.domain.model.Regiments
 
 @Database(
     entities =
         [
-            UserEntity::class,
             MedicationEntity::class,
+            Regiments::class,
+            UserEntity::class,
             Intake::class,
             UserNote::class,
             Mood::class,
@@ -27,12 +29,12 @@ import com.galeria.medicationstracker.feature_medications.data.source.local.Medi
 )
 @TypeConverters(Converters::class, DateConverters::class)
 abstract class AppDatabase : RoomDatabase() {
-    
+
     abstract fun medicationDao(): MedicationDao
-    
+
     abstract fun userDao(): UserDao
-    
+
     abstract fun intakeDao(): IntakeDao
-    
+
     abstract fun moodDao(): MoodDao
 }

@@ -1,4 +1,4 @@
-package com.galeria.medicationstracker.feature_auth.data
+package com.galeria.medicationstracker.feature_auth.utils
 
 import com.galeria.medicationstracker.feature_auth.data.source.local.UserEntity
 import com.galeria.medicationstracker.feature_auth.data.source.network.UserDto
