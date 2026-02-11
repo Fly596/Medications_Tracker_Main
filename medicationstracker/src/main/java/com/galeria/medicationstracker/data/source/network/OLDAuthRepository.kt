@@ -20,7 +20,7 @@ interface OLDAuthRepository {
     fun getAuthState(): Flow<FirebaseUser?>
     
     suspend fun signIn(email: String, password: String): AuthResult
-    
+
     suspend fun signUp(email: String, password: String): AuthResult
 
     suspend fun resetPassword(email: String): AuthResult
@@ -46,16 +46,6 @@ class OLDAuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) 
         auth.addAuthStateListener(authStateListener)
         awaitClose { auth.removeAuthStateListener(authStateListener) }
     }
-
-    override suspend fun getUserId(): Result<String?> {
-        return Result.success(auth.currentUser?.uid)
-        // return runCatching { auth.currentUser?.uid }
-    }
-
-    override suspend fun getUserEmail(): Result<String?> {
-        return Result.success(auth.currentUser?.email)
-    }
-    
     override suspend fun signIn(email: String, password: String): AuthResult {
         if (email.isBlank() || password.isBlank()) {
             return AuthResult.ValidationError("Blank fields")
@@ -65,19 +55,29 @@ class OLDAuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) 
         }
         return AuthResult.Success /* Result.success("ass") */
     }
-    
+
+    override suspend fun getUserId(): Result<String?> {
+        return Result.success(auth.currentUser?.uid)
+        // return runCatching { auth.currentUser?.uid }
+    }
+
+    override suspend fun getUserEmail(): Result<String?> {
+        return Result.success(auth.currentUser?.email)
+    }
+
+
     override suspend fun signUp(email: String, password: String): AuthResult {
         if (email.isBlank() || password.isBlank()) {
             return AuthResult.ValidationError("Email or password cannot be empty.")
         }
-        
+
         return runAuthOperation {
             auth.createUserWithEmailAndPassword(email, password).await()
             AuthResult.Success
         }
-        
+
     }
-    
+
     // Сбрасывает пароль.
     override suspend fun resetPassword(email: String): AuthResult {
         return runAuthOperation { auth.sendPasswordResetEmail(email).await() }
@@ -101,12 +101,12 @@ class OLDAuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) 
                 }
         } */
     }
-    
+
     // Выход из аккаунта.
     override suspend fun signOut() {
         withContext(Dispatchers.IO) { auth.signOut() }
     }
-    
+
     private suspend fun <T> runAuthOperation(block: suspend () -> T): AuthResult {
         return try {
             block()

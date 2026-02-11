@@ -44,7 +44,6 @@ fun ApplicationNavHost(
     viewModel: MainViewModel = hiltViewModel(),
 ) {
     val authState by viewModel.uiState.collectAsState()
-    // val state = viewModel.uiState.collectAsStateWithLifecycle()
     // Текущий элемент стека навигации.
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     // Получаем route (уникальный идентификатор текущего экрана).
@@ -53,7 +52,7 @@ fun ApplicationNavHost(
             ?: BottomNavigation.DASHBOARD.route::class.qualifiedName.orEmpty()
     // Очищаем route от query параметров (берём всё, что после "?").
     val currentRouteTrimmed by
-    remember(currentRoute) { derivedStateOf { currentRoute.substringAfter("?") } }
+    remember(currentRoute) { derivedStateOf { currentRoute.substringBefore("?") } } // was substringAfter.
     // Определяем, нужно ли показывать нижнюю панель навигации на текущем экране.
     val shouldShowBottomBar =
         BottomNavigation.entries.any { it.route::class.qualifiedName == currentRouteTrimmed }
@@ -117,9 +116,6 @@ fun ApplicationNavHost(
                         .padding(innerPadding),
                 ) {
                     authGraph(navController)
-                    homeScreenGraph(navController)
-                    medicationsGraph(navController)
-                    profileGraph(navController)
                 }
             }
         }
