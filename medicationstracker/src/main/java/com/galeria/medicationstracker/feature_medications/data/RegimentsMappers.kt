@@ -5,7 +5,6 @@ import com.galeria.medicationstracker.feature_medications.data.source.remote.mod
 import com.galeria.medicationstracker.feature_medications.domain.model.FrequencyType
 import com.galeria.medicationstracker.feature_medications.domain.model.Regiments
 import com.google.firebase.Timestamp
-import java.time.Instant
 import java.util.Date
 import java.util.UUID
 
@@ -13,24 +12,24 @@ import java.util.UUID
 fun RegimentsEntity.toDomain(): Regiments = Regiments(
     id = id,
     medicationId = medicationId,
-    startDate = java.time.Instant.ofEpochMilli(startDate),
-    endDate = endDate?.let { Instant.ofEpochMilli(it) } as Instant,
-    frequencyType = FrequencyType.safeValueOf(frequencyType),
+    startDate = startDate,
+    endDate = endDate,
+    frequencyType = FrequencyType.safeValueOf(frequencyType.name),
     frequencyDetails = frequencyDetails,
     // Парсим ISO строки обратно в Instant
-    timeSlots = timeSlots.map { Instant.parse(it) },
+    timeSlots = timeSlots,
     dosage = dosage
 )
 
 fun Regiments.toEntity(): RegimentsEntity = RegimentsEntity(
     id = id.ifBlank { UUID.randomUUID().toString() },
     medicationId = medicationId,
-    startDate = startDate.toEpochMilli(),
-    endDate = endDate?.toEpochMilli(),
-    frequencyType = frequencyType.name,
+    startDate = startDate,
+    endDate = endDate,
+    frequencyType = frequencyType,
     frequencyDetails = frequencyDetails,
     // Храним Instant как ISO-8601 строки для читаемости в БД или Long
-    timeSlots = timeSlots.map { it.toString() },
+    timeSlots = timeSlots,
     dosage = dosage
 )
 
@@ -42,7 +41,7 @@ fun RegimentsDto.toDomain(): Regiments = Regiments(
     endDate = endDate?.toDate()?.toInstant(),
     frequencyType = FrequencyType.safeValueOf(frequencyType),
     frequencyDetails = frequencyDetails,
-    timeSlots = timeSlots.map { it.toDate().toInstant() },
+    timeSlots = timeSlots,
     dosage = dosage
 )
 
@@ -53,6 +52,6 @@ fun Regiments.toDto(): RegimentsDto = RegimentsDto(
     endDate = endDate?.let { Timestamp(Date.from(it)) },
     frequencyType = frequencyType.name,
     frequencyDetails = frequencyDetails,
-    timeSlots = timeSlots.map { Timestamp(Date.from(it)) },
+    timeSlots = timeSlots,
     dosage = dosage
 )

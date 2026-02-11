@@ -13,6 +13,6 @@ data class RegimentsDto(
     val frequencyDetails: String?,
     // Время приемов в течение дня (JSON List<LocalTime>).
     // Например: ["08:00", "14:00", "20:00"].
-    val timeSlots: List<Timestamp>,
+    val timeSlots: List<Int>,
     val dosage: Double,
 )

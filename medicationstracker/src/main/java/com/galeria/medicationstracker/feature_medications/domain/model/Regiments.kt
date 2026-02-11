@@ -9,7 +9,7 @@ data class Regiments(
     val endDate: Instant?,
     val frequencyType: FrequencyType,
     val frequencyDetails: String?,
-    val timeSlots: List<Instant>,
+    val timeSlots: List<Int>,
     val dosage: Double,
 )
 
@@ -20,6 +20,7 @@ enum class FrequencyType {
     
     companion object {
         
+        val time = kotlinx.datetime.LocalTime(6, 50, 0, 0)
         fun safeValueOf(value: String): FrequencyType =
             runCatching { valueOf(value) }.getOrDefault(DAILY)
     }

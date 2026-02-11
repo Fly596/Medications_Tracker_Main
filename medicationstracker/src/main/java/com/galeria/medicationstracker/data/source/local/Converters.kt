@@ -11,6 +11,12 @@ class Converters {
     
     @TypeConverter
     fun listToString(list: List<String>): String = list.joinToString(",")
+    
+    @TypeConverter
+    fun fromIntList(value: List<Int>): String {
+        return value.joinToString(",")
+    }
+    
 }
 
 class DateConverters {

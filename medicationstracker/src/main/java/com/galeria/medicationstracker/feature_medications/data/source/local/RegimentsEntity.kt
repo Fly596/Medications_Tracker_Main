@@ -26,12 +26,12 @@ data class RegimentsEntity(
     val medicationId: String,
     val startDate: Instant,
     val endDate: Instant?, // null - вечно.
-    // Детали частоты (JSON или через TypeConverter).
-    // Если SPECIFIC_DAYS -> [MONDAY, WEDNESDAY].
-    // Если INTERVAL -> 2 (раз в 2 дня).
     val frequencyType: FrequencyType,
+    // Детали частоты (JSON или через TypeConverter).
+    // Если frequencyType = SPECIFIC_DAYS -> [MONDAY, WEDNESDAY].
+    // Если frequencyType = INTERVAL -> 2 (раз в 2 дня).
     val frequencyDetails: String?,
-    val timeSlots: List<Instant>,
+    val timeSlots: List<Int>,
     val dosage: Double,
 )
 
