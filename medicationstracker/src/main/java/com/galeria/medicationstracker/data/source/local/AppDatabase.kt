@@ -25,14 +25,14 @@ import com.galeria.medicationstracker.feature_medications.data.source.local.Medi
     version = 1,
     exportSchema = false,
 )
-@TypeConverters(Converters::class)
+@TypeConverters(Converters::class, DateConverters::class)
 abstract class AppDatabase : RoomDatabase() {
-
+    
     abstract fun medicationDao(): MedicationDao
-
+    
     abstract fun userDao(): UserDao
-
+    
     abstract fun intakeDao(): IntakeDao
-
+    
     abstract fun moodDao(): MoodDao
 }

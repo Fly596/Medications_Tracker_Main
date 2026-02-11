@@ -16,8 +16,13 @@ class Converters {
 class DateConverters {
     
     @TypeConverter
-    fun fromInstant(value: Instant): Long {
-        return value.toEpochMilli()
+    fun fromInstant(value: Instant?): Long? {
+        return value?.toEpochMilli()
+    }
+    
+    @TypeConverter
+    fun toInstant(value: Long?): Instant? {
+        return value?.let { Instant.ofEpochMilli(it) }
     }
     
     
