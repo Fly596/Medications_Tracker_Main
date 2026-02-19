@@ -8,13 +8,13 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -39,13 +39,15 @@ import kotlinx.serialization.Serializable
 
 @Composable
 fun ApplicationNavHost(
-    modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
     viewModel: MainViewModel = hiltViewModel(),
 ) {
-    val authState by viewModel.uiState.collectAsState()
+    val authState by viewModel.uiState.collectAsStateWithLifecycle()
+
     // Текущий элемент стека навигации.
     val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+
     // Получаем route (уникальный идентификатор текущего экрана).
     val currentRoute =
         navBackStackEntry?.destination?.route
@@ -87,38 +89,59 @@ fun ApplicationNavHost(
             }
         }
     ) { innerPadding ->
-        when (authState) {
-            is AuthState.Loading -> {
-                // Todo: loading screen
-            }
-            
-            is AuthState.Authenticated -> {
-                NavHost(
-                    navController = navController,
-                    startDestination = GraphRoutes.Home,
-                    modifier = modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
-                ) {
-                    authGraph(navController)
-                    homeScreenGraph(navController)
-                    medicationsGraph(navController)
-                    profileGraph(navController)
-                }
-            }
-            
-            is AuthState.Unauthenticated -> {
-                NavHost(
-                    navController = navController,
-                    startDestination = GraphRoutes.Auth,
-                    modifier = modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
-                ) {
-                    authGraph(navController)
-                }
+
+        val startDest = when (authState) {
+            is AuthState.Authenticated -> GraphRoutes.Home
+            else -> GraphRoutes.Auth
+        }
+        if (authState is AuthState.Loading) {
+            //FullScreenLoader() // Не "Todo", а делай сразу нормально, ленивая ты задница
+        }else{
+            NavHost(
+                navController = navController,
+                startDestination = startDest,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
+                authGraph(navController)
+                homeScreenGraph(navController)
+                medicationsGraph(navController)
+                profileGraph(navController)
             }
         }
+        /*        when (authState) {
+                    is AuthState.Loading -> {
+                        // Todo: loading screen
+                    }
+
+                    is AuthState.Authenticated -> {
+                        NavHost(
+                            navController = navController,
+                            startDestination = GraphRoutes.Home,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(innerPadding),
+                        ) {
+                            authGraph(navController)
+                            homeScreenGraph(navController)
+                            medicationsGraph(navController)
+                            profileGraph(navController)
+                        }
+                    }
+
+                    is AuthState.Unauthenticated -> {
+                        NavHost(
+                            navController = navController,
+                            startDestination = GraphRoutes.Auth,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(innerPadding),
+                        ) {
+                            authGraph(navController)
+                        }
+                    }
+                }*/
     }
 }
 

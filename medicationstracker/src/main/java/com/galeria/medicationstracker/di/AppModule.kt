@@ -2,20 +2,12 @@ package com.galeria.medicationstracker.di
 
 import android.content.Context
 import androidx.room.Room
-import com.galeria.medicationstracker.data.repository.NewIntakeRepository
-import com.galeria.medicationstracker.data.repository.NewIntakeRepositoryImpl
-import com.galeria.medicationstracker.data.repository.NewMedicationRepository
-import com.galeria.medicationstracker.data.repository.NewMedicationRepositoryImpl
-import com.galeria.medicationstracker.data.repository.NewMoodRepository
-import com.galeria.medicationstracker.data.repository.NewMoodRepositoryImpl
-import com.galeria.medicationstracker.data.repository.NewNoteRepository
-import com.galeria.medicationstracker.data.repository.NewNoteRepositoryImpl
-import com.galeria.medicationstracker.data.repository.NewUserRepository
-import com.galeria.medicationstracker.data.repository.NewUserRepositoryImpl
 import com.galeria.medicationstracker.data.source.local.AppDatabase
-import com.galeria.medicationstracker.data.source.network.OLDAuthRepository
-import com.galeria.medicationstracker.data.source.network.OLDAuthRepositoryImpl
+import com.galeria.medicationstracker.feature_auth.data.repository.AuthRepositoryImpl
+import com.galeria.medicationstracker.feature_auth.data.source.local.UserDao
+import com.galeria.medicationstracker.feature_auth.domain.repository.AuthRepository
 import com.galeria.medicationstracker.feature_medications.data.repository.MedicationRepositoryImpl
+import com.galeria.medicationstracker.feature_medications.data.source.local.MedicationDao
 import com.galeria.medicationstracker.feature_medications.domain.repository.MedicationRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -30,67 +22,38 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-    
+
+    @Provides @Singleton fun provideFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
+
+    @Provides @Singleton fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
+
     @Provides
     @Singleton
-    fun provideFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
-    
-    @Provides
-    @Singleton
-    fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
-    
-    @Provides
-    @Singleton
-    fun provideDatabase(
-        @ApplicationContext
-        context: Context
-    ): AppDatabase =
-        Room.databaseBuilder(context, AppDatabase::class.java, "app_database")
-            .build()
-    
-    @Provides
-    fun provideMedicationDao(database: AppDatabase) = database.medicationDao()
-    
+    fun provideDatabase(@ApplicationContext context: Context): AppDatabase =
+        Room.databaseBuilder(context, AppDatabase::class.java, "app_database").build()
+
+    @Provides fun provideMedicationDao(database: AppDatabase) = database.medicationDao()
+
+    @Provides fun provideUserDao(database: AppDatabase) = database.userDao()
+
+    @Provides fun provideRegimentsDao(database: AppDatabase) = database.regimentsDao()
+
     @Provides
     @Singleton
     fun bindMedicationRepository(
         firestore: FirebaseFirestore,
         dispatcher: CoroutineDispatcher,
-    ): MedicationRepository = MedicationRepositoryImpl(
-        firestore,
-        FirebaseAuth.getInstance(),
-        dispatcher
-    )
-    
-    @Provides
-    fun provideUserDao(database: AppDatabase) = database.userDao()
-    
-    @Provides
-    fun provideIntakeDao(database: AppDatabase) = database.intakeDao()
-    
+        medicationDao: MedicationDao
+    ): MedicationRepository =
+        MedicationRepositoryImpl(firestore, FirebaseAuth.getInstance(), dispatcher, medicationDao)
+
     @Provides
     @Singleton
-    fun bindNewAuthRepository(auth: FirebaseAuth): OLDAuthRepository =
-        OLDAuthRepositoryImpl(auth)
-    
-    @Provides
-    @Singleton
-    fun bindNewIntakeRepository(
-        firestore: FirebaseFirestore
-    ): NewIntakeRepository = NewIntakeRepositoryImpl(firestore)
-    
-    @Provides
-    @Singleton
-    fun bindNewUserRepository(firestore: FirebaseFirestore): NewUserRepository =
-        NewUserRepositoryImpl(firestore)
-    
-    @Provides
-    @Singleton
-    fun bindNewMoodRepository(firestore: FirebaseFirestore): NewMoodRepository =
-        NewMoodRepositoryImpl(firestore)
-    
-    @Provides
-    @Singleton
-    fun bindNewNoteRepository(firestore: FirebaseFirestore): NewNoteRepository =
-        NewNoteRepositoryImpl(firestore)
+    fun bindAuthRepository(
+        auth: FirebaseAuth,
+        firestore: FirebaseFirestore,
+        userDao: UserDao
+    ): AuthRepository = AuthRepositoryImpl(auth, firestore, userDao)
+
+
 }

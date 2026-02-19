@@ -1,11 +1,5 @@
 package com.galeria.medicationstracker.data.source.local.entities
-
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.PrimaryKey
-import com.galeria.medicationstracker.feature_auth.data.source.local.UserEntity
-
+/*
 @Entity(
     tableName = "note",
     // Указываем, что в этой таблице есть внешний ключ..
@@ -33,3 +27,4 @@ data class UserNote(
     val tags: List<String>,
     val timestamp: Long,
 )
+*/

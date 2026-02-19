@@ -3,26 +3,21 @@ package com.galeria.medicationstracker.data.source.local
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.galeria.medicationstracker.data.source.local.daos.IntakeDao
-import com.galeria.medicationstracker.data.source.local.daos.MoodDao
 import com.galeria.medicationstracker.data.source.local.entities.Intake
-import com.galeria.medicationstracker.data.source.local.entities.Mood
-import com.galeria.medicationstracker.data.source.local.entities.UserNote
 import com.galeria.medicationstracker.feature_auth.data.source.local.UserDao
 import com.galeria.medicationstracker.feature_auth.data.source.local.UserEntity
 import com.galeria.medicationstracker.feature_medications.data.source.local.MedicationDao
 import com.galeria.medicationstracker.feature_medications.data.source.local.MedicationEntity
-import com.galeria.medicationstracker.feature_medications.domain.model.Regiments
+import com.galeria.medicationstracker.feature_medications.data.source.local.RegimentsDao
+import com.galeria.medicationstracker.feature_medications.data.source.local.RegimentsEntity
 
 @Database(
     entities =
         [
             MedicationEntity::class,
-            Regiments::class,
+            RegimentsEntity::class,
             UserEntity::class,
             Intake::class,
-            UserNote::class,
-            Mood::class,
         ],
     version = 1,
     exportSchema = false,
@@ -34,7 +29,7 @@ abstract class AppDatabase : RoomDatabase() {
 
     abstract fun userDao(): UserDao
 
-    abstract fun intakeDao(): IntakeDao
+    abstract fun regimentsDao( ): RegimentsDao
 
-    abstract fun moodDao(): MoodDao
+
 }

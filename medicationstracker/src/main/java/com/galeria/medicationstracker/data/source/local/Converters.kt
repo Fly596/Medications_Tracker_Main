@@ -13,8 +13,13 @@ class Converters {
     fun listToString(list: List<String>): String = list.joinToString(",")
     
     @TypeConverter
-    fun fromIntList(value: List<Int>): String {
-        return value.joinToString(",")
+    fun fromIntList(list: List<Int>): String {
+        return list.joinToString(",")
+    }
+
+    @TypeConverter
+    fun toIntList(value: String): List<Int> {
+        return value.split(",").map { it.toInt() }
     }
     
 }

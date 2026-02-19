@@ -4,7 +4,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import com.galeria.medicationstracker.data.source.network.IntakeStatus
 import com.galeria.medicationstracker.feature_medications.data.source.local.MedicationEntity
 
 @Entity(
@@ -29,3 +28,9 @@ data class Intake(
     val presetMinutesFromMidnight: Int,
     val factTimestamp: Long?,
 )
+
+enum class IntakeStatus {
+    TAKEN, // green color.
+    SKIPPED, // yellow color.
+    PENDING, // default color.
+}

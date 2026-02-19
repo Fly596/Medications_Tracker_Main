@@ -1,11 +1,5 @@
 package com.galeria.medicationstracker.data.source.local.entities
-
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.PrimaryKey
-import com.galeria.medicationstracker.feature_auth.data.source.local.UserEntity
-
+/*
 @Entity(
     tableName = "mood",
     // Указываем, что в этой таблице есть внешний ключ..
@@ -32,3 +26,4 @@ data class Mood(
     val note: String,
     val timestamp: Long,
 )
+*/
