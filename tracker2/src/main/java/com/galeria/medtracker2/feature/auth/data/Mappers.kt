@@ -1,8 +1,8 @@
 package com.galeria.medtracker2.feature.auth.data
 
-import com.galeria.medtracker2.feature_auth.data.source.local.UserEntity
-import com.galeria.medtracker2.feature_auth.data.source.network.UserDto
-import com.galeria.medtracker2.feature_auth.domain.UserDomain
+import com.galeria.medtracker2.feature.auth.data.source.local.UserEntity
+import com.galeria.medtracker2.feature.auth.data.source.network.UserDto
+import com.galeria.medtracker2.feature.auth.domain.model.UserDomain
 
 // Превращаем Domain в Entity для Room
 fun UserDomain.toEntity(): UserEntity {

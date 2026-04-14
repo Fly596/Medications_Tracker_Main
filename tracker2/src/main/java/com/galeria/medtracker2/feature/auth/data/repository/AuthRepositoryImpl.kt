@@ -2,10 +2,10 @@ package com.galeria.medtracker2.feature.auth.data.repository
 
 import com.galeria.medtracker2.core.common.ResourceRes
 import com.galeria.medtracker2.feature.auth.data.source.local.UserDao
+import com.galeria.medtracker2.feature.auth.data.toDto
+import com.galeria.medtracker2.feature.auth.data.toEntity
 import com.galeria.medtracker2.feature.auth.domain.AuthRepository
-import com.galeria.medtracker2.feature_auth.data.toDto
-import com.galeria.medtracker2.feature_auth.data.toEntity
-import com.galeria.medtracker2.feature_auth.domain.UserDomain
+import com.galeria.medtracker2.feature.auth.domain.model.UserDomain
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
