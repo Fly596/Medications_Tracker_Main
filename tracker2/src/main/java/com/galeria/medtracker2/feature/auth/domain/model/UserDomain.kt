@@ -1,4 +1,4 @@
-package com.galeria.medtracker2.feature.auth.domain
+package com.galeria.medtracker2.feature.auth.domain.model
 
 import kotlin.time.Instant
 
