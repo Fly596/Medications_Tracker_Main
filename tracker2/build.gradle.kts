@@ -10,18 +10,18 @@ plugins {
 
 android {
     namespace = "com.galeria.medtracker2"
-    compileSdk { version = release(36) }
-
+    compileSdk { version = release(37) }
+    
     defaultConfig {
         applicationId = "com.galeria.medtracker2"
         minSdk = 31
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
-
+        
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-
+    
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -74,10 +74,10 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
+    
     implementation(libs.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
-
+    
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
     // Hilt
@@ -86,4 +86,10 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
+    // nav3
+    implementation(libs.androidx.navigation3.ui)
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.lifecycle.viewmodel.navigation3)
+    implementation(libs.androidx.material3.adaptive.navigation3)
+    implementation(libs.kotlinx.serialization.core)
 }

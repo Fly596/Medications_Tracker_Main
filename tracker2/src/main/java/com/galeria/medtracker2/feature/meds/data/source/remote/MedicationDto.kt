@@ -1,6 +1,6 @@
 package com.galeria.medtracker2.feature.meds.data.source.remote
 
-import com.galeria.medtracker2.feature_meds.domain.DomainMedication
+import com.galeria.medtracker2.feature.meds.domain.DomainMedication
 
 data class MedicationDto(
     val id: String,
@@ -9,8 +9,9 @@ data class MedicationDto(
     val stock: Double?, // Кол-во штук/грамм..
     val stockMeasureUnit: String?, // Показывает это штуки или граммы.
     val drugClass: String?, // stim/opioid/benz..
-){
-    fun toDomain(): DomainMedication{
+) {
+    
+    fun toDomain(): DomainMedication {
         return DomainMedication(
             id = id,
             name = name,
@@ -20,9 +21,10 @@ data class MedicationDto(
             drugClass = drugClass,
         )
     }
-
-    companion object{
-        fun fromDomainToDto(domainMedication: DomainMedication): MedicationDto{
+    
+    companion object {
+        
+        fun fromDomainToDto(domainMedication: DomainMedication): MedicationDto {
             return MedicationDto(
                 id = domainMedication.id,
                 name = domainMedication.name,

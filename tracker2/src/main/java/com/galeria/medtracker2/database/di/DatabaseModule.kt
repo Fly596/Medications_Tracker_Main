@@ -23,4 +23,10 @@ object DatabaseModule {
         Room.databaseBuilder(context, AppDatabase::class.java, "app_database")
             .build()
     
+    @Provides
+    fun provideUserDao(database: AppDatabase) = database.userDao()
+    
+    @Provides
+    fun provideMedicationDao(database: AppDatabase) = database.medicationDao()
+    
 }
