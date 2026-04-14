@@ -5,7 +5,7 @@ import androidx.room.Room
 import com.galeria.medtracker2.feature_auth.data.repository.AuthRepositoryImpl
 import com.galeria.medtracker2.feature_auth.data.source.local.UserDao
 import com.galeria.medtracker2.feature_auth.domain.repository.AuthRepository
-import com.galeria.medtracker2.shared.data.AppDatabase
+import com.galeria.medtracker2.database.AppDatabase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module

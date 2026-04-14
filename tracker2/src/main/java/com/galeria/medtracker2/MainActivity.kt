@@ -12,8 +12,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.galeria.medtracker2.feature_auth.presentation.registration.RegistrationScreen
-import com.galeria.medtracker2.ui.theme.SpeechRecognitionAppTheme
+import com.galeria.medtracker2.core.ui.theme.SpeechRecognitionAppTheme
+import com.galeria.medtracker2.feature.auth.presentation.registration.RegistrationScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
