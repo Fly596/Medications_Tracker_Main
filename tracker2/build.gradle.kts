@@ -10,7 +10,7 @@ plugins {
 
 android {
     namespace = "com.galeria.medtracker2"
-    compileSdk { version = release(37) }
+    compileSdk(rootProject.extra["compileSdkVersion"] as Int)
     
     defaultConfig {
         applicationId = "com.galeria.medtracker2"
