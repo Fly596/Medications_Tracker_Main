@@ -1,15 +1,15 @@
 [versions]
-agp = "9.1.1"
+agp = "8.13.2"
 firebaseBom = "34.6.0"
 hiltAndroid = "2.57"
-kotlin = "2.2.10"
+kotlin = "2.1.10"
 coreKtx = "1.17.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
 lifecycleRuntimeKtx = "2.9.2"
 androidxHiltNavigationCompose = "1.2.0"
-ksp = "2.3.2"
+ksp = "2.1.10-1.0.30"
 activityCompose = "1.10.1"
 composeBom = "2025.08.01"
 comGoogleGmsGoogleServicesGradlePlugin = "4.4.3"
@@ -21,12 +21,7 @@ playServicesLocation = "21.3.0"
 appcompat = "1.7.1"
 materialIconsExtendedAndroid = "1.7.8"
 comGoogleDaggerHiltAndroidGradlePlugin = "2.57.1"
-# Nav 3
-nav3Core = "1.1.0"
-lifecycleViewmodelNav3 = "2.11.0-alpha03"
-material3AdaptiveNav3 = "1.3.0-alpha10"
-kotlinSerialization = "2.2.21"
-kotlinxSerializationCore = "1.9.0"
+
 
 # Database
 room = "2.8.4"
@@ -67,19 +62,11 @@ androidx-room-runtime = { group = "androidx.room", name = "room-runtime", versio
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinxDatetime" }
-# Core Navigation 3 libraries
-androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "nav3Core" }
-androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "nav3Core" }
-
-# Optional add-on libraries
-androidx-lifecycle-viewmodel-navigation3 = { module = "androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "lifecycleViewmodelNav3" }
-kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinxSerializationCore" }
-androidx-material3-adaptive-navigation3 = { group = "androidx.compose.material3.adaptive", name = "adaptive-navigation3", version.ref = "material3AdaptiveNav3" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinSerialization" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hiltAndroid" }
