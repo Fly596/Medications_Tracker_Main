@@ -1,23 +1,36 @@
 package com.galeria.medtracker2.navigation
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed interface Graph {
+sealed interface AppRoutes {
 
     @Serializable
-    data object App : Graph
+    data object Home : AppRoutes
+
+    @Serializable
+    data object Medications : AppRoutes
+
+    @Serializable
+    data object AddMedication : AppRoutes
 }
 
-@Serializable
-sealed interface AppScreen {
+@Composable
+fun AppNavHost(
+    modifier: Modifier = Modifier,
+    navController: NavHostController = rememberNavController()
+) {
 
-    @Serializable
-    data object Home : AppScreen
+    NavHost(
+        modifier = modifier,
+        navController = navController,
+        startDestination = AppRoutes.Home
+    ) {
 
-    @Serializable
-    data object Medications : AppScreen
-
-    @Serializable
-    data object Account : AppScreen
+    }
 }
