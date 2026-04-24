@@ -1,24 +1,6 @@
 package com.galeria.medtracker2.feature.auth.presentation.registration
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.galeria.medtracker2.core.common.ResultState
-import com.galeria.medtracker2.feature.auth.domain.AuthRepository
-import com.galeria.medtracker2.feature.auth.domain.model.UserDomain
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
-import java.text.SimpleDateFormat
-import java.util.Locale
-import javax.inject.Inject
-import kotlin.time.Clock
-import kotlin.time.Instant
-
+/*
 data class RegistrationUiState(
     val name: String = "",
     val birthDate: Instant = Clock.System.now(),
@@ -127,3 +109,4 @@ class RegistrationViewModel @Inject constructor(private val repository: AuthRepo
         return instant.toLocalDateTime(timeZone).date
     }
 }
+*/

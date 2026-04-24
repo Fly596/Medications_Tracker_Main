@@ -5,8 +5,8 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
+import java.util.UUID
 import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalUuidApi::class)
 @Dao
@@ -16,11 +16,11 @@ interface IntakeDao {
     suspend fun insertIntake(intake: IntakeEntity)
 
     @Query("DELETE FROM intakes WHERE id = :id")
-    suspend fun deleteIntakeById(id: Uuid)
+    suspend fun deleteIntakeById(id: UUID)
 
     @Query("SELECT * FROM intakes")
     fun getAllIntakes(): Flow<List<IntakeEntity>>
 
     @Query("SELECT * FROM intakes WHERE id = :id")
-    suspend fun getIntakeById(id: Uuid): IntakeEntity?
+    suspend fun getIntakeById(id: UUID): IntakeEntity?
 }

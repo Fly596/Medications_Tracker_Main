@@ -1,5 +1,6 @@
 package com.galeria.medtracker2.feature.auth.data.source.network
 
+/*
 data class UserDto(
     val id: String,
     val name: String,
@@ -8,3 +9,4 @@ data class UserDto(
     val heightCm: Double,
     val dateOfBirth: String,
 )
+*/

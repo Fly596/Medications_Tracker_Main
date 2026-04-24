@@ -18,20 +18,16 @@ constructor(
 
     override suspend fun addMedication(
         name: String,
-        doseMg: Double?,
     ) {
-        val id = UUID.randomUUID().toString()
         val newMedication =
             MedicationEntity(
-                id = id,
                 name = name,
-                doseMg = doseMg,
             )
 
         medicationDao.insertMedication(newMedication)
     }
 
-    override suspend fun removeMedication(medicationId: String) {
+    override suspend fun removeMedication(medicationId: UUID) {
         try {
             medicationDao.deleteMedicationById(medicationId)
         } catch (e: Exception) {
@@ -39,7 +35,7 @@ constructor(
         }
     }
 
-    override suspend fun getMedication(medicationId: String): DomainMedication {
+    override suspend fun getMedication(medicationId: UUID): DomainMedication {
         TODO("Not yet implemented")
     }
 

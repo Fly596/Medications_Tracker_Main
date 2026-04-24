@@ -1,19 +1,7 @@
 package com.galeria.medtracker2.feature.auth.data.repository
 
-import com.galeria.medtracker2.core.common.ResultState
-import com.galeria.medtracker2.feature.auth.data.source.local.UserDao
-import com.galeria.medtracker2.feature.auth.data.toDto
-import com.galeria.medtracker2.feature.auth.data.toEntity
-import com.galeria.medtracker2.feature.auth.domain.AuthRepository
-import com.galeria.medtracker2.feature.auth.domain.model.UserDomain
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.tasks.await
-import javax.inject.Inject
-
 // TODO: 12/1/2025, 1:35pm
-class AuthRepositoryImpl
+/*class AuthRepositoryImpl
 @Inject
 constructor(
     private val auth: FirebaseAuth,
@@ -82,4 +70,4 @@ constructor(
     override suspend fun signOut() {
         TODO("Not yet implemented")
     }
-}
+}*/

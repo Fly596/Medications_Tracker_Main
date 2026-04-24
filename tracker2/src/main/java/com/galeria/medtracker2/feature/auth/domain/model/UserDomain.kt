@@ -1,7 +1,6 @@
 package com.galeria.medtracker2.feature.auth.domain.model
 
-import kotlin.time.Instant
-
+/*
 data class UserDomain(
     val id: String,
     val name: String,
@@ -9,4 +8,4 @@ data class UserDomain(
     val weightKg: Double,
     val heightCm: Double,
     val dateOfBirth: Instant,
-)
+)*/

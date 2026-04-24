@@ -1,9 +1,6 @@
 package com.galeria.medtracker2.feature.auth.domain
 
-import com.galeria.medtracker2.core.common.ResultState
-import com.galeria.medtracker2.feature.auth.domain.model.UserDomain
-import com.google.firebase.auth.FirebaseUser
-
+/*
 interface AuthRepository {
     
     suspend fun login(
@@ -21,4 +18,4 @@ interface AuthRepository {
     suspend fun signOut()
     
     suspend fun addUser(userDomain: UserDomain): ResultState<String>
-}
+}*/

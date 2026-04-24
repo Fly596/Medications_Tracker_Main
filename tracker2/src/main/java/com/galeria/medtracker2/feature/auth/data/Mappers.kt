@@ -1,10 +1,7 @@
 package com.galeria.medtracker2.feature.auth.data
 
-import com.galeria.medtracker2.feature.auth.data.source.local.UserEntity
-import com.galeria.medtracker2.feature.auth.data.source.network.UserDto
-import com.galeria.medtracker2.feature.auth.domain.model.UserDomain
-
 // Превращаем Domain в Entity для Room
+/*
 fun UserDomain.toEntity(): UserEntity {
     return UserEntity(
         id = this.id, // ID должен приходить извне (Firebase UID)
@@ -30,3 +27,4 @@ fun UserDomain.toDto(): UserDto {
                 .toString(), // Firestore не умеет хранить Instant напрямую в JSON, лучше String ISO
     )
 }
+*/

@@ -13,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.galeria.medtracker2.core.ui.theme.SpeechRecognitionAppTheme
-import com.galeria.medtracker2.feature.auth.presentation.registration.RegistrationScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -25,7 +24,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             SpeechRecognitionAppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    RegistrationScreen(modifier = Modifier.padding(innerPadding))
+                    Greeting(modifier = Modifier.padding(innerPadding))
                 }
             }
         }
@@ -33,7 +32,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
+fun Greeting(name: String = "", modifier: Modifier = Modifier) {
     Text(text = "Hello $name!", modifier = modifier)
 }
 

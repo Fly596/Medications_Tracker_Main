@@ -5,8 +5,8 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
+import java.util.UUID
 import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalUuidApi::class)
 @Dao
@@ -16,11 +16,11 @@ interface MedicationRegimenDao {
     suspend fun insertMedicationRegimen(medicationRegimen: MedicationRegimenEntity)
 
     @Query("DELETE FROM medications_regimens WHERE id = :id")
-    suspend fun deleteMedicationRegimenById(id: Uuid)
+    suspend fun deleteMedicationRegimenById(id: UUID)
 
     @Query("SELECT * FROM medications_regimens")
     fun getAllMedicationRegimens(): Flow<List<MedicationRegimenEntity>>
 
     @Query("SELECT * FROM medications_regimens WHERE id = :id")
-    suspend fun getMedicationRegimenById(id: Uuid): MedicationRegimenEntity?
+    suspend fun getMedicationRegimenById(id: UUID): MedicationRegimenEntity?
 }
