@@ -1,7 +1,7 @@
 package com.galeria.medtracker2.feature.meds.data
 
-import com.galeria.medtracker2.feature.meds.data.local.MedicationDao
-import com.galeria.medtracker2.feature.meds.data.local.MedicationEntity
+import com.galeria.medtracker2.feature.meds.data.local.medication.MedicationDao
+import com.galeria.medtracker2.feature.meds.data.local.medication.MedicationEntity
 import com.galeria.medtracker2.feature.meds.domain.DomainMedication
 import com.galeria.medtracker2.feature.meds.domain.MedsRepository
 import kotlinx.coroutines.flow.Flow

@@ -1,4 +1,4 @@
-package com.galeria.medtracker2.feature.meds.data.local
+package com.galeria.medtracker2.feature.meds.data.local.medication
 
 import androidx.room.Dao
 import androidx.room.Insert
@@ -8,16 +8,16 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MedicationDao {
-    
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMedication(medication: MedicationEntity)
-    
+
     @Query("DELETE FROM medication WHERE id = :id")
     suspend fun deleteMedicationById(id: String)
-    
+
     @Query("SELECT * FROM medication")
     fun getAllMedications(): Flow<List<MedicationEntity>>
-    
+
     @Query("SELECT * FROM medication WHERE id = :id")
     suspend fun getMedicationById(id: String): MedicationEntity?
 }
