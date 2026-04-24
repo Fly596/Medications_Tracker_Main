@@ -19,8 +19,9 @@ import kotlin.uuid.Uuid
     ]
 )
 data class IntakeEntity(
-    val id: Uuid = Uuid.Companion.random(),
+    val id: Uuid = Uuid.random(),
     val medicationScheduleId: Uuid,
     val actualIntakeDateTime: Instant,
     val notes: String?
 )
+

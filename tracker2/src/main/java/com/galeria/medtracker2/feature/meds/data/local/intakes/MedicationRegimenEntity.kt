@@ -28,3 +28,4 @@ data class MedicationRegimenEntity constructor(
     val startDate: Instant,
     val endDate: Instant?,
 )
+

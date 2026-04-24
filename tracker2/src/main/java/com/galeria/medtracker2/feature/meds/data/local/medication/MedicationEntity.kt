@@ -12,6 +12,5 @@ data class MedicationEntity(
     @PrimaryKey
     val id: Uuid = Uuid.random(),
     val name: String,
-    val intakeTimeSeconds: Int,
 )
 

@@ -21,7 +21,7 @@ import kotlin.uuid.Uuid
 )
 data class ScheduledDateTimeEntity(
     @PrimaryKey
-    val id: Uuid = Uuid.Companion.random(),
+    val id: Uuid = Uuid.random(),
     val medicationScheduleId: Uuid,
     val scheduledIntakeDateTime: Instant,
 )
