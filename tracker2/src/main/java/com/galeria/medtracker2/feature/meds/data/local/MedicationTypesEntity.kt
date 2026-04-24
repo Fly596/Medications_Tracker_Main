@@ -1,4 +1,4 @@
-package com.galeria.medtracker2.feature.meds.data.source.local
+package com.galeria.medtracker2.feature.meds.data.local
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

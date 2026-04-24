@@ -1,7 +1,7 @@
-package com.galeria.medtracker2.feature.meds.data.repository
+package com.galeria.medtracker2.feature.meds.data
 
-import com.galeria.medtracker2.feature.meds.data.source.local.MedicationDao
-import com.galeria.medtracker2.feature.meds.data.source.local.MedicationEntity
+import com.galeria.medtracker2.feature.meds.data.local.MedicationDao
+import com.galeria.medtracker2.feature.meds.data.local.MedicationEntity
 import com.galeria.medtracker2.feature.meds.domain.DomainMedication
 import com.galeria.medtracker2.feature.meds.domain.MedsRepository
 import com.google.firebase.firestore.FirebaseFirestore

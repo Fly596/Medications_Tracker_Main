@@ -1,10 +1,15 @@
-package com.galeria.medtracker2.feature.meds.data.source.remote
+package com.galeria.medtracker2.feature.meds.data.local
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.galeria.medtracker2.feature.meds.domain.DomainMedication
 
-data class MedicationDto(
+@Entity(tableName = "medication")
+data class MedicationEntity(
+    @PrimaryKey
     val id: String,
     val name: String,
+    // В 1 единице (таблетке), для не мед препаратов мб упустить.
     val doseMg: Double?,
     val stock: Double?, // Кол-во штук/грамм..
     val stockMeasureUnit: String?, // Показывает это штуки или граммы.
@@ -24,8 +29,8 @@ data class MedicationDto(
     
     companion object {
         
-        fun fromDomainToDto(domainMedication: DomainMedication): MedicationDto {
-            return MedicationDto(
+        fun fromDomainToEntity(domainMedication: DomainMedication): MedicationEntity {
+            return MedicationEntity(
                 id = domainMedication.id,
                 name = domainMedication.name,
                 doseMg = domainMedication.doseMg,
@@ -36,3 +41,4 @@ data class MedicationDto(
         }
     }
 }
+

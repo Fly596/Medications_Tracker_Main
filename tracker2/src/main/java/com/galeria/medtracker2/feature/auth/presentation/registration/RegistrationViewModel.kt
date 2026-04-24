@@ -2,7 +2,7 @@ package com.galeria.medtracker2.feature.auth.presentation.registration
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.galeria.medtracker2.core.common.ResourceRes
+import com.galeria.medtracker2.core.common.ResultState
 import com.galeria.medtracker2.feature.auth.domain.AuthRepository
 import com.galeria.medtracker2.feature.auth.domain.model.UserDomain
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -48,11 +48,11 @@ class RegistrationViewModel @Inject constructor(private val repository: AuthRepo
                     _uiState.value.email,
                     _uiState.value.password
                 )) {
-                is ResourceRes.Error -> {
+                is ResultState.Error -> {
                     // TODO: show error.
                 }
                 
-                is ResourceRes.Success -> {
+                is ResultState.Success -> {
                     val firebaseUser = registrationResult.data
                     val uid = firebaseUser.uid
                     val newUser =
@@ -66,7 +66,7 @@ class RegistrationViewModel @Inject constructor(private val repository: AuthRepo
                         )
                     val saveResult = repository.addUser(newUser)
                     
-                    if (saveResult is ResourceRes.Success) {
+                    if (saveResult is ResultState.Success) {
                         // TODO: navigate to main screen.
                     } else {
                         // error saving files.

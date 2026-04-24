@@ -24,9 +24,6 @@ object DatabaseModule {
             .build()
     
     @Provides
-    fun provideUserDao(database: AppDatabase) = database.userDao()
-    
-    @Provides
     fun provideMedicationDao(database: AppDatabase) = database.medicationDao()
     
 }
