@@ -17,6 +17,9 @@ data class AddMedicationScreenState(
     val startDate: String = "",
     val endDate: String = "",
     val selectedTime: String = "",
+    val startDateLong: Long = 0,
+    val endDateLong: Long = 0,
+    val selectedTimeInt: Pair<Int, Int> = Pair(0, 0)
 )
 
 @HiltViewModel
@@ -35,26 +38,29 @@ class AddMedicationVM @Inject constructor(private val repository: MedsRepository
 
     fun updateStartDate(input: Long) {
         viewModelScope.launch {
-            val parsedDate = DateTimeUtils.fromTimestamp(input)
+            val parsedDate = DateTimeUtils.fromTimestampToLocalDateTime(input)
 
             val formattedDate = parsedDate.format(DateTimeUtils.dateFormatter)
 
-            _state.update { it.copy(startDate = formattedDate) }
+            _state.update { it.copy(startDate = formattedDate, startDateLong = input) }
         }
     }
 
     fun updateEndDate(input: Long) {
         viewModelScope.launch {
-            val parsedDate = DateTimeUtils.fromTimestamp(input)
+            val parsedDate = DateTimeUtils.fromTimestampToLocalDateTime(input)
 
             val formattedDate = parsedDate.format(DateTimeUtils.dateFormatter)
 
-            _state.update { it.copy(endDate = formattedDate) }
+            _state.update { it.copy(endDate = formattedDate, endDateLong = input) }
         }
     }
 
     fun updateTime(time: Pair<Int, Int>) {
-        val formattedTime = "%02d:%02d".format(time.first, time.second)
-        _state.update { it.copy(selectedTime = formattedTime) }
+        viewModelScope.launch {
+            val formattedTime = "%02d:%02d".format(time.first, time.second)
+            _state.update { it.copy(selectedTime = formattedTime, selectedTimeInt = time) }
+        }
+
     }
 }

@@ -14,7 +14,10 @@ class ScheduleNotification {
         context: Context,
         timePickerState: TimePickerState,
         datePickerState: DatePickerState,
-        title: String
+        title: String,
+        selectedDate: Long = 0,
+        selectedHour: Int = 0,
+        selectedMinute: Int = 0,
     ) {
         // Сообщение о намерении выполнить действие.
         val intent = Intent(context.applicationContext, ReminderReceiver::class.java)
@@ -38,6 +41,7 @@ class ScheduleNotification {
         val day = selectedDate.get(Calendar.DAY_OF_MONTH)
 
         val calendar = Calendar.getInstance()
+        //calendar.set(year, month, day, selectedHour,selectedMinute)
         calendar.set(year, month, day, timePickerState.hour, timePickerState.minute)
 
         // Устанавливает оповещение в определенное время, даже если приложение закрыто.

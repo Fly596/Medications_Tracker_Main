@@ -1,6 +1,7 @@
 package com.galeria.medtracker2.core.common
 
 import java.time.Instant
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -12,9 +13,15 @@ object DateTimeUtils {
     private val zoneId: ZoneId = ZoneId.of("UTC")
     val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("MMM dd, yyyy", Locale.US)
 
-    fun fromTimestamp(value: Long?): LocalDateTime {
+    fun fromTimestampToLocalDateTime(value: Long?): LocalDateTime {
         return value?.let {
             LocalDateTime.ofInstant(Instant.ofEpochMilli(it), zoneId)
         } ?: LocalDateTime.now()
+    }
+
+    fun fromTimestampToLocalDate(value: Long?): LocalDate {
+        return value?.let {
+            LocalDate.ofInstant(Instant.ofEpochMilli(it), zoneId)
+        } ?: LocalDate.now()
     }
 }
