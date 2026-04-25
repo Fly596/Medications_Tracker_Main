@@ -8,7 +8,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor() : ViewModel() {
 
     // Список запрашиваемых разрешений.
-    val visiblePermissionsDialogQueue = mutableListOf<String>()
+    var visiblePermissionsDialogQueue = mutableListOf<String>()
 
     fun dismissDialog() {
         visiblePermissionsDialogQueue.removeLast()
