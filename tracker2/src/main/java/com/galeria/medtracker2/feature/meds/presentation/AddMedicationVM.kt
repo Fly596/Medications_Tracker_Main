@@ -7,6 +7,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
+data class AddMedicationScreenState(
+    val name: String = "",
+    val dose: String = "",
+)
+
 @HiltViewModel
 class AddMedicationVM @Inject constructor(
     private val repository: MedsRepository

@@ -11,17 +11,17 @@ plugins {
 android {
     namespace = "com.galeria.medtracker2"
     compileSdk(rootProject.extra["compileSdkVersion"] as Int)
-    
+
     defaultConfig {
         applicationId = "com.galeria.medtracker2"
-        minSdk = 31
+        minSdk = 35
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
-        
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-    
+
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -74,10 +74,10 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    
+
     implementation(libs.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
-    
+
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
     // Hilt

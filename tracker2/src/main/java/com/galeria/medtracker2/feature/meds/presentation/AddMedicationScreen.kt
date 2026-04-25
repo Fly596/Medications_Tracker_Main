@@ -9,7 +9,3 @@ fun AddMedicationScreen(viewModel: AddMedicationVM = hiltViewModel()) {
     val state = viewModel.state.collectAsStateWithLifecycle()
 }
 
-data class AddMedicationScreenState(
-    val name: String = "",
-    val dose: String = "",
-)
