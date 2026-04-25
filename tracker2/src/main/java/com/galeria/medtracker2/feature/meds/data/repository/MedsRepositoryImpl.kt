@@ -17,8 +17,7 @@ class MedsRepositoryImpl
 @Inject
 constructor(
     private val medicationDao: MedicationDao
-) :
-    MedsRepository {
+) : MedsRepository {
 
     override suspend fun addMedication(
         medication: MedicationDomain
