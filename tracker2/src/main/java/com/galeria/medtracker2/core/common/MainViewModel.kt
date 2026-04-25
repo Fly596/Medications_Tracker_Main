@@ -1,4 +1,4 @@
-package com.galeria.medtracker2
+package com.galeria.medtracker2.core.common
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
