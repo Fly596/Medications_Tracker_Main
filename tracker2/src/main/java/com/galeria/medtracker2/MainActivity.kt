@@ -24,13 +24,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.galeria.medtracker2.core.common.MainViewModel
 import com.galeria.medtracker2.core.ui.theme.SpeechRecognitionAppTheme
-import com.galeria.medtracker2.navigation.AppRoutes
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -57,6 +52,7 @@ class MainActivity : ComponentActivity() {
                         contract = ActivityResultContracts.RequestPermission(),
                         onResult = { isGranted -> hasNotificationPermission = isGranted },
                     )
+
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
@@ -88,16 +84,6 @@ class MainActivity : ComponentActivity() {
 //        val notificationManager =
 //                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-    }
-}
-
-@Composable
-fun AppNavHost(
-    modifier: Modifier = Modifier,
-    navController: NavHostController = rememberNavController(),
-) {
-    NavHost(modifier = modifier, navController = navController, startDestination = AppRoutes.Home) {
-        composable<AppRoutes.Home> {}
     }
 }
 
