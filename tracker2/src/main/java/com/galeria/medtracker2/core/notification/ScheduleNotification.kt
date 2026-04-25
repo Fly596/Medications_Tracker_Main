@@ -15,9 +15,6 @@ class ScheduleNotification {
         timePickerState: TimePickerState,
         datePickerState: DatePickerState,
         title: String,
-        selectedDate: Long = 0,
-        selectedHour: Int = 0,
-        selectedMinute: Int = 0,
     ) {
         // Сообщение о намерении выполнить действие.
         val intent = Intent(context.applicationContext, ReminderReceiver::class.java)

@@ -1,19 +1,14 @@
 package com.galeria.medtracker2.feature.meds.presentation
 
-import android.icu.util.Calendar
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
-import androidx.compose.material3.CalendarLocale
-import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TimePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -21,7 +16,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.galeria.medtracker2.core.notification.ScheduleNotification
 import com.galeria.medtracker2.core.ui.components.DateSelectionRow
 import com.galeria.medtracker2.core.ui.components.TimeSelectionRow
 
@@ -29,8 +23,6 @@ import com.galeria.medtracker2.core.ui.components.TimeSelectionRow
 fun AddMedicationScreen(viewModel: AddMedicationVM = hiltViewModel()) {
     val context = LocalContext.current
     val state = viewModel.state.collectAsStateWithLifecycle()
-
-    val date = remember { Calendar.getInstance().timeInMillis }
 
     Column(
         modifier = Modifier
@@ -70,22 +62,23 @@ fun AddMedicationScreen(viewModel: AddMedicationVM = hiltViewModel()) {
         )
         Button(
             onClick = {
-                ScheduleNotification()
-                    .scheduleNotification(
-                        context = context,
-                        timePickerState =
-                                TimePickerState(
-                                    state.value.selectedTimeInt.first,
-                                    state.value.selectedTimeInt.second,
-                                    false,
-                                ),
-                        datePickerState =
-                                DatePickerState(
-                                    locale = CalendarLocale.getDefault(),
-                                    initialSelectedDateMillis = state.value.startDateLong,
-                                ),
-                        title = "",
-                    )
+                viewModel.addMedication(context)
+//                ScheduleNotification()
+//                    .scheduleNotification(
+//                        context = context,
+//                        timePickerState =
+//                            TimePickerState(
+//                                state.value.selectedTimeInt.first,
+//                                state.value.selectedTimeInt.second,
+//                                false,
+//                            ),
+//                        datePickerState =
+//                            DatePickerState(
+//                                locale = CalendarLocale.getDefault(),
+//                                initialSelectedDateMillis = state.value.startDateLong,
+//                            ),
+//                        title = "",
+//                    )
             }
         ) {
             Text("Set alarm")

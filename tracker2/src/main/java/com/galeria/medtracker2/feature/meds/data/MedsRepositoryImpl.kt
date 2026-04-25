@@ -1,10 +1,10 @@
 package com.galeria.medtracker2.feature.meds.data
 
 import com.galeria.medtracker2.feature.meds.data.local.medication.MedicationDao
-import com.galeria.medtracker2.feature.meds.data.local.medication.MedicationEntity
-import com.galeria.medtracker2.feature.meds.domain.DomainMedication
+import com.galeria.medtracker2.feature.meds.domain.MedicationDomain
 import com.galeria.medtracker2.feature.meds.domain.MedsRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import java.util.UUID
 import javax.inject.Inject
 
@@ -17,14 +17,11 @@ constructor(
     MedsRepository {
 
     override suspend fun addMedication(
-        name: String,
+        medication: MedicationDomain
     ) {
-        val newMedication =
-            MedicationEntity(
-                name = name,
-            )
 
-        medicationDao.insertMedication(newMedication)
+        val medicationEntity = medication.toEntity()
+        medicationDao.insertMedication(medicationEntity)
     }
 
     override suspend fun removeMedication(medicationId: UUID) {
@@ -35,11 +32,12 @@ constructor(
         }
     }
 
-    override suspend fun getMedication(medicationId: UUID): DomainMedication {
-        TODO("Not yet implemented")
+    override suspend fun getMedication(medicationId: UUID): MedicationDomain {
+        val medicationEntity = medicationDao.getMedicationById(medicationId)
+        return medicationEntity?.toDomain() ?: throw Exception("Medication not found")
     }
 
-    override fun getAllMedications(): Flow<List<DomainMedication>> {
-        TODO("Not yet implemented")
+    override fun getAllMedications(): Flow<List<MedicationDomain>> {
+        return medicationDao.getAllMedications().map { it.toDomain() }
     }
 }

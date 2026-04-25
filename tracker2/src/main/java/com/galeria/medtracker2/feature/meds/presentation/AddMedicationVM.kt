@@ -1,14 +1,22 @@
 package com.galeria.medtracker2.feature.meds.presentation
 
+import android.content.Context
+import androidx.compose.material3.CalendarLocale
+import androidx.compose.material3.DatePickerState
+import androidx.compose.material3.TimePickerState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.galeria.medtracker2.core.common.DateTimeUtils
+import com.galeria.medtracker2.core.notification.ScheduleNotification
+import com.galeria.medtracker2.feature.meds.domain.MedicationDomain
 import com.galeria.medtracker2.feature.meds.domain.MedsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.Instant
+import java.util.UUID
 import javax.inject.Inject
 
 data class AddMedicationScreenState(
@@ -23,7 +31,10 @@ data class AddMedicationScreenState(
 )
 
 @HiltViewModel
-class AddMedicationVM @Inject constructor(private val repository: MedsRepository) : ViewModel() {
+class AddMedicationVM @Inject constructor(
+    private val repository: MedsRepository,
+    private val scheduleNotification: ScheduleNotification
+) : ViewModel() {
 
     private val _state = MutableStateFlow(AddMedicationScreenState())
     val state = _state.asStateFlow()
@@ -62,5 +73,33 @@ class AddMedicationVM @Inject constructor(private val repository: MedsRepository
             _state.update { it.copy(selectedTime = formattedTime, selectedTimeInt = time) }
         }
 
+    }
+
+    fun addMedication(context: Context) {
+        viewModelScope.launch {
+            // Установка уведомления приема.
+            scheduleNotification.scheduleNotification(
+                context = context,
+                timePickerState =
+                    TimePickerState(
+                        state.value.selectedTimeInt.first,
+                        state.value.selectedTimeInt.second,
+                        false,
+                    ),
+                datePickerState =
+                    DatePickerState(
+                        locale = CalendarLocale.getDefault(),
+                        initialSelectedDateMillis = state.value.startDateLong,
+                    ),
+                title = "",
+            )
+            // Добавление лекарства в БД.
+            val newMedication = MedicationDomain(
+                id = UUID.randomUUID(),
+                name = _state.value.name,
+                creationDate = Instant.now()
+            )
+            repository.addMedication(newMedication)
+        }
     }
 }

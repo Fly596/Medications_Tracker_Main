@@ -6,7 +6,7 @@ import java.util.UUID
 interface MedsRepository {
 
     suspend fun addMedication(
-        name: String,
+        medication: MedicationDomain
     )
 
     suspend fun removeMedication(
@@ -15,7 +15,7 @@ interface MedsRepository {
 
     suspend fun getMedication(
         medicationId: UUID
-    ): DomainMedication
+    ): MedicationDomain
 
-    fun getAllMedications(): Flow<List<DomainMedication>>
+    fun getAllMedications(): Flow<List<MedicationDomain>>
 }

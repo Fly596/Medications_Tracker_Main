@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 sealed interface AppRoutes {
 
     @Serializable
-    data object Home : AppRoutes
+    data object Home : AppRoutes // расписание приемов.
 
     @Serializable
     data object Medications : AppRoutes
