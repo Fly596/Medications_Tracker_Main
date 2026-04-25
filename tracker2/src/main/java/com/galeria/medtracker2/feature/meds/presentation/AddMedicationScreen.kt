@@ -14,6 +14,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.galeria.medtracker2.core.ui.components.DateSelectionRow
+import com.galeria.medtracker2.core.ui.components.TimeSelectionRow
 
 @Composable
 fun AddMedicationScreen(viewModel: AddMedicationVM = hiltViewModel()) {
@@ -43,6 +45,16 @@ fun AddMedicationScreen(viewModel: AddMedicationVM = hiltViewModel()) {
             label = "Start Date",
             selectedDateString = state.value.startDate,
             onDateSelected = { viewModel.updateStartDate(it) }
+        )
+        DateSelectionRow(
+            label = "End Date",
+            selectedDateString = state.value.endDate,
+            onDateSelected = { viewModel.updateEndDate(it) }
+        )
+        TimeSelectionRow(
+            label = "Time",
+            selectedTimeString = state.value.selectedTime,
+            onTimeSelected = { viewModel.updateTime(it) }
         )
     }
 }

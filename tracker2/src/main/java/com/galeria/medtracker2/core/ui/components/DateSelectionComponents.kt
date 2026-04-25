@@ -1,4 +1,4 @@
-package com.galeria.medtracker2.feature.meds.presentation
+package com.galeria.medtracker2.core.ui.components
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
@@ -9,7 +9,6 @@ import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -30,7 +29,6 @@ fun DateSelectionRow(
     label: String = "Date",
     selectedDateString: String,
     onDateSelected: (Long) -> Unit,
-    onValueChange: (String) -> Unit = {},
 ) {
     // Состояние для даты.
     var showDatePicker by rememberSaveable { mutableStateOf(false) }
@@ -42,12 +40,13 @@ fun DateSelectionRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text(text = label, style = MaterialTheme.typography.bodyMedium)
+        //Text(text = label, style = MaterialTheme.typography.bodyMedium)
         TextField(
             value = selectedDateString,
             onValueChange = { selectedDate.value = it },
             singleLine = true,
             readOnly = true,
+            label = { Text(label) },
             modifier = Modifier,/*.weight(1f)*/
             interactionSource = remember { MutableInteractionSource() }.also { interactionSource ->
                 LaunchedEffect(interactionSource) {
@@ -62,9 +61,9 @@ fun DateSelectionRow(
         // Отображение диалогов.
         if (showDatePicker) {
             DatePickerModalInput(
-                onDateSelected = { timestamp ->
-                    if (timestamp != null) {
-                        onDateSelected(timestamp)
+                onDateSelected = { selectedDate ->
+                    if (selectedDate != null) {
+                        onDateSelected(selectedDate)
                     }
                     showDatePicker = false
                 },

@@ -15,37 +15,22 @@ data class AddMedicationScreenState(
     val name: String = "",
     val dose: String = "",
     val startDate: String = "",
-    val endDate: String = ""
+    val endDate: String = "",
+    val selectedTime: String = "",
 )
 
 @HiltViewModel
-class AddMedicationVM @Inject constructor(
-    private val repository: MedsRepository
-) : ViewModel() {
+class AddMedicationVM @Inject constructor(private val repository: MedsRepository) : ViewModel() {
 
     private val _state = MutableStateFlow(AddMedicationScreenState())
     val state = _state.asStateFlow()
 
     fun updateName(input: String) {
-        viewModelScope.launch {
-            _state.update {
-                it.copy(
-                    name = input
-                )
-            }
-
-        }
+        viewModelScope.launch { _state.update { it.copy(name = input) } }
     }
 
     fun updateDose(input: String) {
-        viewModelScope.launch {
-            _state.update {
-                it.copy(
-                    dose = input
-                )
-            }
-
-        }
+        viewModelScope.launch { _state.update { it.copy(dose = input) } }
     }
 
     fun updateStartDate(input: Long) {
@@ -54,11 +39,7 @@ class AddMedicationVM @Inject constructor(
 
             val formattedDate = parsedDate.format(DateTimeUtils.dateFormatter)
 
-            _state.update {
-                it.copy(
-                    startDate = formattedDate
-                )
-            }
+            _state.update { it.copy(startDate = formattedDate) }
         }
     }
 
@@ -68,12 +49,12 @@ class AddMedicationVM @Inject constructor(
 
             val formattedDate = parsedDate.format(DateTimeUtils.dateFormatter)
 
-            _state.update {
-                it.copy(
-                    endDate = formattedDate
-                )
-            }
+            _state.update { it.copy(endDate = formattedDate) }
         }
     }
 
+    fun updateTime(time: Pair<Int, Int>) {
+        val formattedTime = "%02d:%02d".format(time.first, time.second)
+        _state.update { it.copy(selectedTime = formattedTime) }
+    }
 }

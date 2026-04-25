@@ -25,7 +25,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.galeria.medtracker2.core.common.MainViewModel
+import com.galeria.medtracker2.core.notification.ReminderNotification
 import com.galeria.medtracker2.core.ui.theme.SpeechRecognitionAppTheme
+import com.galeria.medtracker2.navigation.AppNavHost
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -52,37 +54,38 @@ class MainActivity : ComponentActivity() {
                         contract = ActivityResultContracts.RequestPermission(),
                         onResult = { isGranted -> hasNotificationPermission = isGranted },
                     )
+                AppNavHost()
+                /*          Column(
+                              modifier = Modifier.fillMaxSize().padding(top = 64.dp),
+                              verticalArrangement = Arrangement.Center,
+                              horizontalAlignment = Alignment.CenterHorizontally,
+                          ) {
+                              Button(
+                                  onClick = {
+                                      permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                                  }
+                              ) {
+                                  Text(text = "Request the permission")
+                              }
+                              Button(
+                                  onClick = {
+                                      if (hasNotificationPermission) {
+                                          showNotification()
+                                      }
+                                  }
+                              ) {
+                                  Text(text = "Show notification")
+                              }
 
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Button(
-                        onClick = {
-                            permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                        }
-                    ) {
-                        Text(text = "Request the permission")
-                    }
-                    Button(
-                        onClick = {
-                            if (hasNotificationPermission) {
-                                showNotification()
-                            }
-                        }
-                    ) {
-                        Text(text = "Show notification")
-                    }
-                }
+                          }*/
                 // AppNavHost()
             }
         }
     }
 
     private fun showNotification() {
-//        val notificationManager =
-//                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val remNot = ReminderNotification(this)
+        remNot.showNotification("Notification")
 
     }
 }

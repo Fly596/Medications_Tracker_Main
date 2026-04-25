@@ -46,5 +46,5 @@ fun SpeechRecognitionAppTheme(
             else -> LightColorScheme
         }
 
-    MaterialTheme(colorScheme = colorScheme, typography = Typography, content = content)
+    MaterialTheme(colorScheme = LightColorScheme, typography = Typography, content = content)
 }
