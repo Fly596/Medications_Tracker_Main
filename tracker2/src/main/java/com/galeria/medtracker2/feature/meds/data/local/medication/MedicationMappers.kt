@@ -1,12 +1,12 @@
-package com.galeria.medtracker2.feature.meds.data
+package com.galeria.medtracker2.feature.meds.data.local.medication
 
-import com.galeria.medtracker2.feature.meds.data.local.medication.MedicationEntity
 import com.galeria.medtracker2.feature.meds.domain.MedicationDomain
 
 fun MedicationDomain.toEntity(): MedicationEntity {
     return MedicationEntity(
         id = this.id,
-        name = this.name
+        name = this.name,
+        creationDate = this.creationDate
     )
 }
 

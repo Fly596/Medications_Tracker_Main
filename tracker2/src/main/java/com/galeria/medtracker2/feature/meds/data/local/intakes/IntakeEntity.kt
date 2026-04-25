@@ -2,10 +2,10 @@ package com.galeria.medtracker2.feature.meds.data.local.intakes
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import com.galeria.medtracker2.feature.meds.data.local.schedule.ScheduledDateTimeEntity
 import java.util.UUID
 import kotlin.time.Instant
 import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalUuidApi::class)
 @Entity(
@@ -21,7 +21,7 @@ import kotlin.uuid.Uuid
 )
 data class IntakeEntity(
     val id: UUID = UUID.randomUUID(),
-    val medicationScheduleId: Uuid,
+    val medicationScheduleId: UUID,
     val actualIntakeDateTime: Instant,
     val notes: String?
 )
