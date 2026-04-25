@@ -1,8 +1,6 @@
 package com.galeria.medtracker2
 
 import android.Manifest
-import android.app.NotificationManager
-import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -24,7 +22,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -56,10 +53,10 @@ class MainActivity : ComponentActivity() {
                     )
                 }
                 val permissionLauncher =
-                        rememberLauncherForActivityResult(
-                            contract = ActivityResultContracts.RequestPermission(),
-                            onResult = { isGranted -> hasNotificationPermission = isGranted },
-                        )
+                    rememberLauncherForActivityResult(
+                        contract = ActivityResultContracts.RequestPermission(),
+                        onResult = { isGranted -> hasNotificationPermission = isGranted },
+                    )
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
@@ -88,15 +85,9 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun showNotification() {
-        val notificationManager =
-                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val notification =
-                NotificationCompat.Builder(applicationContext, "channel_id")
-                    .setContentText("Time to get paper")
-                    .setContentTitle("Hello Broke Nigga")
-                    .setSmallIcon(R.drawable.ic_launcher_background)
-                    .build()
-        notificationManager.notify(1, notification)
+//        val notificationManager =
+//                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
     }
 }
 
@@ -117,15 +108,15 @@ fun Greeting(
     viewModel: MainViewModel = hiltViewModel(),
 ) {
     val postNotificationsResultLauncher =
-            rememberLauncherForActivityResult(
-                contract = ActivityResultContracts.RequestPermission(),
-                onResult = {
-                    viewModel.onPermissionResult(
-                        permission = Manifest.permission.POST_NOTIFICATIONS,
-                        isGranted = it,
-                    )
-                },
-            )
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestPermission(),
+            onResult = {
+                viewModel.onPermissionResult(
+                    permission = Manifest.permission.POST_NOTIFICATIONS,
+                    isGranted = it,
+                )
+            },
+        )
 
     Column(
         modifier = modifier.fillMaxSize(),
