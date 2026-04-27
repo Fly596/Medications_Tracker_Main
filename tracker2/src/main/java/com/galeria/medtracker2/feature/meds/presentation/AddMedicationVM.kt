@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.galeria.medtracker2.core.common.DateTimeUtils
-import com.galeria.medtracker2.core.notification.ScheduleNotification
 import com.galeria.medtracker2.feature.meds.domain.MedicationDomain
 import com.galeria.medtracker2.feature.meds.domain.MedsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,10 +31,10 @@ data class AddMedUiState(
     val dose: String = "",
     val startDate: Long? = null,
     val endDate: Long? = null,
-    val dailyIntakeTimes: MutableList<Pair<Int, Int>> = mutableListOf(),
+    val intakeTime: Int? = null,
     val startDateString: String = "",
     val endDateString: String = "",
-    val dailyIntakes: MutableList<String> = mutableListOf(),
+    val intakeTimeString: String = "",
     val isStartDatePickerVisible: Boolean = false,
     val isEndDatePickerVisible: Boolean = false,
     val isTimePickerVisible: Boolean = false
@@ -44,7 +43,6 @@ data class AddMedUiState(
 @HiltViewModel
 class AddMedicationVM @Inject constructor(
     private val repository: MedsRepository,
-    private val scheduleNotification: ScheduleNotification
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(AddMedUiState())
