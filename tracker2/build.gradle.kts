@@ -1,20 +1,20 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id("com.google.gms.google-services")
+    alias(libs.plugins.kotlin.compose.compiler)
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.google.services) // Подключаем плагин Firebase правильно!
 }
 
 android {
     namespace = "com.galeria.medtracker2"
-    compileSdk(rootProject.extra["compileSdkVersion"] as Int)
+    compileSdk = 36 // Не используй extra[""], просто пиши напрямую
 
     defaultConfig {
         applicationId = "com.galeria.medtracker2"
-        minSdk = 35
+        minSdk = 32 // Android 8.0 (Это оптимальный баланс современных фич и покрытия рынка)
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -31,45 +31,65 @@ android {
             isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
+                "proguard-rules.pro"
             )
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_19
-        targetCompatibility = JavaVersion.VERSION_19
+        // Стандарт индустрии. На Android использовать Java 19 нельзя, он ее не скомпилирует нормально.
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "19"
-        freeCompilerArgs +=
-            listOf(
-                "-opt-in=kotlin.time.ExperimentalTime",
-                "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
-            )
+        jvmTarget = "17"
+        freeCompilerArgs += listOf(
+            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
+        )
     }
-    buildFeatures { compose = true }
+    buildFeatures {
+        compose = true
+        buildConfig = true // Полезно, если нужен класс BuildConfig
+    }
 }
 
 dependencies {
+    // --- Core & Architecture ---
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+
+    // --- Compose ---
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.com.google.gms.google.services.gradle.plugin)
+    implementation(libs.androidx.material.icons.extended)
+    implementation(libs.androidx.navigation.compose)
+
+    // --- DI (Hilt) ---
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
+
+    // --- Database (Room) ---
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+
+    // --- Firebase & Google Services ---
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.play.services.location)
-    implementation(libs.androidx.material.icons.extended.android)
-    implementation(libs.com.google.dagger.hilt.android.gradle.plugin)
-    implementation(libs.androidx.appcompat)
+
+    // --- Utils ---
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.datetime)
+
+    // --- Tests ---
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -77,16 +97,4 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
-    implementation(libs.navigation.compose)
-    implementation(libs.kotlinx.serialization.json)
-
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.android.compiler)
-    // Hilt
-    implementation(libs.androidx.hilt.navigation.compose)
-    // Database (Room)
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    ksp(libs.androidx.room.compiler)
 }
