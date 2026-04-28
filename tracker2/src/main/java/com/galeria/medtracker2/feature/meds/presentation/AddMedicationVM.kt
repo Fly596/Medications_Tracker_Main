@@ -153,10 +153,43 @@ constructor(
             )
         )
 
+        val dailyIntakes = currentState.intakeTimes
         var currentPointerDate = start
+        // На каждый день.
         for (i in 0..daysCount) {
-            val scheduleId = UUID.randomUUID()
-            val intakeMoment =
+
+            // На каждое время приемов.
+            dailyIntakes.forEachIndexed { index, value ->
+                val scheduleId = UUID.randomUUID()
+                val intakeTimeMoment =
+                        DateTimeUtils.fromDateTimeValues(
+                            currentPointerDate,
+                            value.first,
+                            value.second,
+                        )
+
+                // 1. Сохраняем прием в БД.
+                medRegRepository.addSchedule(
+                    ScheduledDateTimeDomain(
+                        id = scheduleId,
+                        medicationRegimentId = medRegId,
+                        scheduledIntakeDateTime = intakeTimeMoment,
+                    )
+                )
+
+                // 2. Планируем уведомление (только если время еще не прошло)
+                if (intakeTimeMoment.isAfter(Instant.now())) {
+                    notificationService.schedule(
+                        scheduleId = scheduleId,
+                        timeMillis = intakeTimeMoment.toEpochMilli(),
+                        title = currentState.name,
+                        dose = currentState.dose,
+                    )
+                }
+            }
+
+            // region ver2
+            /*            val intakeMoment =
                     DateTimeUtils.fromDateTimeValues(
                         currentPointerDate,
                         currentState.intakeTime.first,
@@ -180,7 +213,8 @@ constructor(
                     title = currentState.name,
                     dose = currentState.dose,
                 )
-            }
+            }*/
+            // endregion
             currentPointerDate = currentPointerDate.plusDays(1)
         }
 

@@ -85,15 +85,6 @@ fun AddMedicationScreen(
                 )
             }
         }
-        /*     LazyRow(modifier = Modifier.fillMaxWidth()) {
-            items(state.intakeTimes) { intTimes ->
-                TimeSelectionButton(
-                    label = "%02d:%02d".format(intTimes.first, intTimes.second),
-                    selectedTimeString = "%02d:%02d".format(intTimes.first, intTimes.second),
-                    onTimeSelected = viewModel::updateTime,
-                )
-            }
-        }*/
 
         Spacer(modifier = Modifier.weight(1f))
 
