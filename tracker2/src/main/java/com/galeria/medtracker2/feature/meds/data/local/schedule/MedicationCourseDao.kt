@@ -10,19 +10,19 @@ import kotlin.uuid.ExperimentalUuidApi
 
 @OptIn(ExperimentalUuidApi::class)
 @Dao
-interface MedicationRegimenDao {
+interface MedicationCourseDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertMedicationRegimen(medicationRegimen: MedicationRegimenEntity)
+    suspend fun insertMedicationRegimen(medicationRegimen: MedicationCourseEntity)
 
     @Query("DELETE FROM medications_regimens WHERE id = :id")
     suspend fun deleteMedicationRegimenById(id: UUID)
 
     @Query("SELECT * FROM medications_regimens")
-    fun getAllMedicationRegimens(): Flow<List<MedicationRegimenEntity>>
+    fun getAllMedicationRegimens(): Flow<List<MedicationCourseEntity>>
 
     @Query("SELECT * FROM medications_regimens WHERE id = :id")
-    suspend fun getMedicationRegimenById(id: UUID): MedicationRegimenEntity?
+    suspend fun getMedicationRegimenById(id: UUID): MedicationCourseEntity?
 
     @Query(
         """

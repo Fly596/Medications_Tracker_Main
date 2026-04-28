@@ -3,24 +3,29 @@ package com.galeria.medtracker2.feature.meds.data.local.schedule
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import com.galeria.medtracker2.feature.meds.data.local.medication.MedicationEntity
 import java.util.UUID
 import kotlin.uuid.ExperimentalUuidApi
 
 @OptIn(ExperimentalUuidApi::class)
 @Entity(
-    tableName = "scheduled_date_times",
+    tableName = "medications_regimens",
     foreignKeys = [
         ForeignKey(
-            entity = MedicationRegimenEntity::class,
+            entity = MedicationEntity::class,
             parentColumns = ["id"],
-            childColumns = ["medicationScheduleId"],
+            childColumns = ["medicationId"],
             onDelete = ForeignKey.Companion.CASCADE
         )
     ]
 )
-data class ScheduledDateTimeEntity(
+data class MedicationCourseEntity(
     @PrimaryKey
     val id: UUID = UUID.randomUUID(),
-    val medicationScheduleId: UUID,
-    val scheduledIntakeDateTime: Long,
+    val medicationId: UUID,
+    val doseMg: Double,
+    val startDate: Long,
+    val endDate: Long?,
 )
+
+

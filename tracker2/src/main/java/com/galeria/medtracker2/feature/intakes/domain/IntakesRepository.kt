@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface IntakesRepository {
 
-    suspend fun addIntake(intake: IntakeDomain)
+    suspend fun addIntake(intake: IntakeLogDomain)
 
-    fun getIntakes(): Flow<List<IntakeDomain>>
+    fun getIntakes(): Flow<List<IntakeLogDomain>>
 }

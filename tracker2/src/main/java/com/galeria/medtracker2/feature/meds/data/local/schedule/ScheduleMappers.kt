@@ -1,9 +1,9 @@
 package com.galeria.medtracker2.feature.meds.data.local.schedule
 
-import com.galeria.medtracker2.feature.meds.domain.MedicationRegimentDomain
+import com.galeria.medtracker2.feature.meds.domain.MedicationCourseDomain
 
-fun MedicationRegimentDomain.toEntity(): MedicationRegimenEntity {
-    return MedicationRegimenEntity(
+fun MedicationCourseDomain.toEntity(): MedicationCourseEntity {
+    return MedicationCourseEntity(
         id = this.id,
         medicationId = this.medicationId, // генерировать при создании.
         doseMg = this.doseMg,
@@ -12,8 +12,8 @@ fun MedicationRegimentDomain.toEntity(): MedicationRegimenEntity {
     )
 }
 
-fun MedicationRegimenEntity.toDomain(): MedicationRegimentDomain {
-    return MedicationRegimentDomain(
+fun MedicationCourseEntity.toDomain(): MedicationCourseDomain {
+    return MedicationCourseDomain(
         id = this.id,
         medicationId = this.medicationId,
         doseMg = this.doseMg,

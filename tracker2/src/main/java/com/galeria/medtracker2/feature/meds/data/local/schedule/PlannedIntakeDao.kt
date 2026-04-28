@@ -10,17 +10,17 @@ import kotlin.uuid.ExperimentalUuidApi
 
 @Dao
 @OptIn(ExperimentalUuidApi::class)
-interface ScheduledDateTimeDao {
+interface PlannedIntakeDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertScheduledDateTime(scheduledDateTime: ScheduledDateTimeEntity)
+    suspend fun insertScheduledDateTime(scheduledDateTime: PlannedIntakeEntity)
 
     @Query("DELETE FROM scheduled_date_times WHERE id = :id")
     suspend fun deleteScheduledDateTimeById(id: UUID)
 
     @Query("SELECT * FROM scheduled_date_times")
-    fun getAllScheduledDateTimes(): Flow<List<ScheduledDateTimeEntity>>
+    fun getAllScheduledDateTimes(): Flow<List<PlannedIntakeEntity>>
 
     @Query("SELECT * FROM scheduled_date_times WHERE id = :id")
-    suspend fun getScheduledDateTimeById(id: UUID): ScheduledDateTimeEntity?
+    suspend fun getScheduledDateTimeById(id: UUID): PlannedIntakeEntity?
 }

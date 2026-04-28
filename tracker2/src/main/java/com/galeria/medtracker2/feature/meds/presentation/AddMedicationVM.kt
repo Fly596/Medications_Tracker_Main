@@ -6,11 +6,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.galeria.medtracker2.core.common.DateTimeUtils
 import com.galeria.medtracker2.core.notification.ScheduleNotification
+import com.galeria.medtracker2.feature.meds.domain.MedicationCourseDomain
 import com.galeria.medtracker2.feature.meds.domain.MedicationDomain
 import com.galeria.medtracker2.feature.meds.domain.MedicationRegimenRepo
-import com.galeria.medtracker2.feature.meds.domain.MedicationRegimentDomain
 import com.galeria.medtracker2.feature.meds.domain.MedsRepository
-import com.galeria.medtracker2.feature.meds.domain.ScheduledDateTimeDomain
+import com.galeria.medtracker2.feature.meds.domain.PlannedIntakeDomain
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -134,9 +134,9 @@ constructor(
     private suspend fun generateScheduleEntries(medId: UUID, currentState: AddMedUiState) {
         val start = DateTimeUtils.fromTimestampToLocalDate(currentState.startDate!!)
         val end =
-                DateTimeUtils.fromTimestampToLocalDate(
-                    currentState.endDate ?: currentState.startDate // TODO: увеличить.
-                )
+            DateTimeUtils.fromTimestampToLocalDate(
+                currentState.endDate ?: currentState.startDate // TODO: увеличить.
+            )
 
         // Считаем кол-во дней.
         val daysCount = ChronoUnit.DAYS.between(start, end).toInt()
@@ -144,7 +144,7 @@ constructor(
 
         // Сохраняем общ инфу о курсе (режим приема).
         medRegRepository.addRegiment(
-            MedicationRegimentDomain(
+            MedicationCourseDomain(
                 id = medRegId,
                 medicationId = medId,
                 doseMg = currentState.dose.toDoubleOrNull() ?: 0.0,
@@ -162,15 +162,15 @@ constructor(
             dailyIntakes.forEachIndexed { index, value ->
                 val scheduleId = UUID.randomUUID()
                 val intakeTimeMoment =
-                        DateTimeUtils.fromDateTimeValues(
-                            currentPointerDate,
-                            value.first,
-                            value.second,
-                        )
+                    DateTimeUtils.fromDateTimeValues(
+                        currentPointerDate,
+                        value.first,
+                        value.second,
+                    )
 
                 // 1. Сохраняем прием в БД.
                 medRegRepository.addSchedule(
-                    ScheduledDateTimeDomain(
+                    PlannedIntakeDomain(
                         id = scheduleId,
                         medicationRegimentId = medRegId,
                         scheduledIntakeDateTime = intakeTimeMoment,

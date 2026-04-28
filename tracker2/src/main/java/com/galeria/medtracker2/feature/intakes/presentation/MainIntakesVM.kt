@@ -2,7 +2,7 @@ package com.galeria.medtracker2.feature.intakes.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.galeria.medtracker2.feature.intakes.domain.IntakeDomain
+import com.galeria.medtracker2.feature.intakes.domain.IntakeLogDomain
 import com.galeria.medtracker2.feature.intakes.domain.IntakesRepository
 import com.galeria.medtracker2.feature.meds.data.local.schedule.FullSchedule
 import com.galeria.medtracker2.feature.meds.domain.MedicationRegimenRepo
@@ -37,7 +37,7 @@ constructor(
     }
 
     fun checkIntake(status: Boolean, intake: FullSchedule, intakeDateTime: Instant) {
-        val newIntake = IntakeDomain(
+        val newIntake = IntakeLogDomain(
             id = UUID.randomUUID(),
             medicationScheduleId = intake.idDateTime,
             actualIntakeDateTime = intakeDateTime,

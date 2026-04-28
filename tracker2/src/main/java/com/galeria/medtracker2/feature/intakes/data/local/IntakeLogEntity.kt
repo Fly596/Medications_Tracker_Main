@@ -2,8 +2,9 @@ package com.galeria.medtracker2.feature.intakes.data.local
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.galeria.medtracker2.feature.meds.data.local.schedule.ScheduledDateTimeEntity
+import com.galeria.medtracker2.feature.meds.data.local.schedule.PlannedIntakeEntity
 import java.util.UUID
 import kotlin.uuid.ExperimentalUuidApi
 
@@ -12,14 +13,15 @@ import kotlin.uuid.ExperimentalUuidApi
     tableName = "intakes",
     foreignKeys = [
         ForeignKey(
-            entity = ScheduledDateTimeEntity::class,
+            entity = PlannedIntakeEntity::class,
             parentColumns = ["id"],
             childColumns = ["medicationScheduleId"],
             onDelete = ForeignKey.CASCADE
         )
-    ]
+    ],
+    indices = [Index("medicationScheduleId")]
 )
-data class IntakeEntity(
+data class IntakeLogEntity(
     @PrimaryKey
     val id: UUID = UUID.randomUUID(),
     val medicationScheduleId: UUID,

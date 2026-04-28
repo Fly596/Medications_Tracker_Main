@@ -3,7 +3,7 @@ package com.galeria.medtracker2.feature.meds.domain
 import java.time.Instant
 import java.util.UUID
 
-data class MedicationRegimentDomain(
+data class MedicationCourseDomain(
     val id: UUID,
     val medicationId: UUID,
     val doseMg: Double = 0.0,

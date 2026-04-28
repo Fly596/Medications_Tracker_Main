@@ -10,44 +10,23 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class MedsModule {
+abstract class RepositoryModule {
 
     @Binds
-    abstract fun bindMedsRepository(
-        medsRepository: MedsRepositoryImpl
-    ): MedsRepository
-}
-
-@Module
-@InstallIn(SingletonComponent::class)
-abstract class ScheduleNotificationModule {
+    @Singleton
+    abstract fun bindMedicationRepository(impl: MedsRepositoryImpl): MedsRepository
 
     @Binds
-    abstract fun bindMedsRepository(
-        medsRepository: ScheduleNotification
-    ): ScheduleNotificationRepo
-}
-
-//@Module
-//@InstallIn(SingletonComponent::class)
-//object MedicationRegimenDaoModule {
-//
-//    @Provides
-//    fun provideMedicationRegimenDao(
-//        database: AppDatabase,
-//    ): MedicationRegimenDao = database.medicationRegimenDao()
-//
-//}
-
-@Module
-@InstallIn(SingletonComponent::class)
-abstract class MedsRegModule {
-
-    @Binds
-    abstract fun bindMedsRegimenRepository(
-        medsRepository: MedicationRegimenRepoImp
+    @Singleton
+    abstract fun bindMedicationCourseRepository(
+        impl: MedicationRegimenRepoImp
     ): MedicationRegimenRepo
+
+    @Binds
+    @Singleton
+    abstract fun bindNotificationRepository(impl: ScheduleNotification): ScheduleNotificationRepo
 }
