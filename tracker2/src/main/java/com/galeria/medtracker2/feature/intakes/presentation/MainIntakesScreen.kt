@@ -44,11 +44,9 @@ fun MainIntakesScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(16.dp)) {
         Button(
             onClick = onAddMedicationClick,
             modifier = Modifier.fillMaxWidth(),
@@ -88,65 +86,60 @@ fun IntakeList(intakes: List<FullSchedule>) {
 }
 
 @Composable
-fun IntakeCard(
-    intake: FullSchedule,
-    onCheck: (Boolean) -> Unit = {}
-) {
+fun IntakeCard(intake: FullSchedule, onCheck: (Boolean) -> Unit = {}) {
     var showDialog by remember { mutableStateOf(false) }
+
     if (showDialog) {
         CheckIntakeDialog(intake = intake, onCheck = {})
-    }
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(12.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(text = intake.name, style = MaterialTheme.typography.titleLarge)
-                Text(
-                    text = "${intake.doseMg} mg",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                )
-
-            }
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            // Форматирование даты и времени
-            val formattedTime =
-                DateTimeUtils.fromTimestampToLocalDateTime(intake.scheduledIntakeDateTime)
-                    .format(DateTimeUtils.dateTimeFormatter)
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Bottom,
-            ) {
-                Text(
-                    text = formattedTime,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                // TODO: функционал отметки приема.
-
-                Button(
-                    onClick = {
-                        // open intake dialog.
-                        showDialog = !showDialog
-                    },
-                    shape = RoundedCornerShape(percent = 100)
+    } else {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Icon(imageVector = Icons.Default.Add, contentDescription = "check intake")
+                    Text(text = intake.name, style = MaterialTheme.typography.titleLarge)
+                    Text(
+                        text = "${intake.doseMg} mg",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(4.dp))
+                // Форматирование даты и времени
+                val formattedTime =
+                        DateTimeUtils.fromTimestampToLocalDateTime(intake.scheduledIntakeDateTime)
+                            .format(DateTimeUtils.dateTimeFormatter)
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Bottom,
+                ) {
+                    Text(
+                        text = formattedTime,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    // TODO: функционал отметки приема.
+                    Button(
+                        onClick = {
+                            // open intake dialog.
+                            showDialog = !showDialog
+                        },
+                        shape = RoundedCornerShape(percent = 100),
+                    ) {
+                        Icon(imageVector = Icons.Default.Add, contentDescription = "check intake")
+                    }
                 }
             }
-
         }
     }
 }
@@ -156,7 +149,7 @@ fun CheckIntakeDialog(intake: FullSchedule, onCheck: (Boolean) -> Unit) {
 
     Card(
         shape = MaterialTheme.shapes.medium,
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
@@ -197,13 +190,14 @@ fun GreetingPreview() {
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(4) {
                 IntakeCard(
-                    intake = FullSchedule(
-                        idDateTime = UUID.randomUUID(),
-                        idRegiment = UUID.randomUUID(),
-                        name = "Name",
-                        doseMg = 56.0,
-                        scheduledIntakeDateTime = 0
-                    )
+                    intake =
+                            FullSchedule(
+                                idDateTime = UUID.randomUUID(),
+                                idRegiment = UUID.randomUUID(),
+                                name = "Name",
+                                doseMg = 56.0,
+                                scheduledIntakeDateTime = 0,
+                            )
                 )
             }
         }

@@ -5,7 +5,7 @@ import com.galeria.medtracker2.feature.meds.domain.PlannedIntakeDomain
 fun PlannedIntakeDomain.toEntity(): PlannedIntakeEntity {
     return PlannedIntakeEntity(
         id = this.id,
-        medicationScheduleId = this.medicationRegimentId,
+        medicationScheduleId = this.medicationCourseId,
         scheduledIntakeDateTime = this.scheduledIntakeDateTime.toEpochMilli()
     )
 }
@@ -13,7 +13,7 @@ fun PlannedIntakeDomain.toEntity(): PlannedIntakeEntity {
 fun PlannedIntakeEntity.toDomain(): PlannedIntakeDomain {
     return PlannedIntakeDomain(
         id = this.id,
-        medicationRegimentId = this.medicationScheduleId,
+        medicationCourseId = this.medicationScheduleId,
         scheduledIntakeDateTime = java.time.Instant.ofEpochMilli(this.scheduledIntakeDateTime)
     )
 }

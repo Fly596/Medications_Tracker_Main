@@ -36,6 +36,7 @@ data class AddMedUiState(
     val isTimePickerVisible: Boolean = false,
 )
 
+const val TAG: String = "MyActivity"
 @HiltViewModel
 class AddMedicationVM
 @Inject
@@ -94,13 +95,19 @@ constructor(
 
         viewModelScope.launch {
             try {
-                val medId = UUID.randomUUID()
+                val medicationId = UUID.randomUUID()
 
                 // Сначала сохраняем основную запись
-                repository.addMedication(MedicationDomain(medId, currentState.name, Instant.now()))
+                repository.addMedication(
+                    MedicationDomain(
+                        medicationId,
+                        currentState.name,
+                        Instant.now()
+                    )
+                )
 
                 // 2. Генерируем дни приема и ставим алармы
-                generateScheduleEntries(medId, currentState)
+                generateScheduleEntries(medicationId, currentState)
             } catch (e: Exception) {
                 // В продакшене здесь должен быть вывод ошибки пользователю (через SideEffect)
                 Log.e("AddMedicationVM", "Error saving medication", e)
@@ -131,22 +138,22 @@ constructor(
         }
     }
 
-    private suspend fun generateScheduleEntries(medId: UUID, currentState: AddMedUiState) {
-        val start = DateTimeUtils.fromTimestampToLocalDate(currentState.startDate!!)
+    private suspend fun generateScheduleEntries(medicationId: UUID, currentState: AddMedUiState) {
+        val start = DateTimeUtils.fromTimestampToLocalDate(currentState.startDate)
         val end =
-            DateTimeUtils.fromTimestampToLocalDate(
-                currentState.endDate ?: currentState.startDate // TODO: увеличить.
-            )
+                DateTimeUtils.fromTimestampToLocalDate(
+                    currentState.endDate ?: currentState.startDate
+                )
 
         // Считаем кол-во дней.
         val daysCount = ChronoUnit.DAYS.between(start, end).toInt()
-        val medRegId = UUID.randomUUID()
+        val medicationCourseId = UUID.randomUUID()
 
         // Сохраняем общ инфу о курсе (режим приема).
         medRegRepository.addRegiment(
             MedicationCourseDomain(
-                id = medRegId,
-                medicationId = medId,
+                id = medicationCourseId,
+                medicationId = medicationId,
                 doseMg = currentState.dose.toDoubleOrNull() ?: 0.0,
                 startDate = Instant.ofEpochMilli(currentState.startDate),
                 endDate = Instant.ofEpochMilli(currentState.endDate ?: currentState.startDate),
@@ -157,10 +164,12 @@ constructor(
         var currentPointerDate = start
         // На каждый день.
         for (i in 0..daysCount) {
+            Log.e(TAG, "for loop, i = $i")
 
             // На каждое время приемов.
             dailyIntakes.forEachIndexed { index, value ->
-                val scheduleId = UUID.randomUUID()
+                Log.e(TAG, "foreach loop, index = $index, value = $value")
+                val plannedIntakeId = UUID.randomUUID()
                 val intakeTimeMoment =
                     DateTimeUtils.fromDateTimeValues(
                         currentPointerDate,
@@ -171,8 +180,8 @@ constructor(
                 // 1. Сохраняем прием в БД.
                 medRegRepository.addSchedule(
                     PlannedIntakeDomain(
-                        id = scheduleId,
-                        medicationRegimentId = medRegId,
+                        id = plannedIntakeId,
+                        medicationCourseId = medicationCourseId,
                         scheduledIntakeDateTime = intakeTimeMoment,
                     )
                 )
@@ -180,7 +189,7 @@ constructor(
                 // 2. Планируем уведомление (только если время еще не прошло)
                 if (intakeTimeMoment.isAfter(Instant.now())) {
                     notificationService.schedule(
-                        scheduleId = scheduleId,
+                        scheduleId = plannedIntakeId,
                         timeMillis = intakeTimeMoment.toEpochMilli(),
                         title = currentState.name,
                         dose = currentState.dose,
