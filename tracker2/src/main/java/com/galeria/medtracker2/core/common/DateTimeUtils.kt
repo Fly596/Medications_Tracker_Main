@@ -19,11 +19,11 @@ object DateTimeUtils {
 
     fun fromTimestampToLocalDate(value: Long): LocalDate {
         return LocalDate.ofInstant(Instant.ofEpochMilli(value), zoneId)
-
     }
 
     fun fromDateTimeValues(date: LocalDate, hour: Int, minute: Int): Instant {
-        val instantLocal = date.atTime(hour, minute).atZone(ZoneId.systemDefault()).toInstant()
-        return instantLocal
+        return date.atTime(hour, minute)
+            .atZone(ZoneId.systemDefault()) // Или ZoneOffset.UTC
+            .toInstant()
     }
 }

@@ -20,17 +20,6 @@ import java.time.temporal.ChronoUnit
 import java.util.UUID
 import javax.inject.Inject
 
-data class AddMedicationScreenState(
-    val name: String = "",
-    val dose: String = "",
-    val startDate: String = "",
-    val endDate: String = "",
-    val selectedTime: String = "",
-    val startDateLong: Long = 0,
-    val endDateLong: Long = 0,
-    val selectedTimeInt: Pair<Int, Int> = Pair(0, 0),
-)
-
 data class AddMedUiState(
     val name: String = "test",
     val dose: String = "56",
@@ -102,11 +91,11 @@ constructor(
             try {
                 val newMedId = UUID.randomUUID()
                 val newMedication =
-                        MedicationDomain(
-                            id = newMedId,
-                            name = _state.value.name,
-                            creationDate = Instant.now(),
-                        )
+                    MedicationDomain(
+                        id = newMedId,
+                        name = _state.value.name,
+                        creationDate = Instant.now(),
+                    )
 
                 // Сначала сохраняем основную запись
                 repository.addMedication(newMedication)
@@ -175,10 +164,10 @@ constructor(
 
             medRegRepository.addSchedule(
                 schedule =
-                        ScheduledDateTimeDomain(
+                    ScheduledDateTimeDomain(
                         id = schId,
                         medicationRegimentId = medRegId,
-                            scheduledIntakeDateTime = dateTimeInst,
+                        scheduledIntakeDateTime = dateTimeInst,
                     )
             )
 

@@ -7,9 +7,11 @@ import android.content.Intent
 import android.icu.util.Calendar
 import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.TimePickerState
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 interface ScheduleNotificationRepo {
+
     fun scheduleNotification(
         context: Context,
         timePickerState: TimePickerState,
@@ -18,7 +20,12 @@ interface ScheduleNotificationRepo {
     )
 }
 
-class ScheduleNotification @Inject constructor() : ScheduleNotificationRepo {
+class ScheduleNotification @Inject constructor(
+    @ApplicationContext
+    private val context: Context
+) : ScheduleNotificationRepo {
+
+    private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
     override fun scheduleNotification(
         context: Context,
@@ -38,7 +45,6 @@ class ScheduleNotification @Inject constructor() : ScheduleNotificationRepo {
         )
 
         // Нужен для запуска действий приложения в будущем в заданные моменты времени.
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val selectedDate = java.util.Calendar.getInstance().apply {
             timeInMillis = datePickerState.selectedDateMillis!!
         }
