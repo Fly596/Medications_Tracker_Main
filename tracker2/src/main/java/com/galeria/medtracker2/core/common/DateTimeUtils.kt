@@ -13,14 +13,13 @@ object DateTimeUtils {
     private val zoneId: ZoneId = ZoneId.of("UTC")
     val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("MMM dd, yyyy", Locale.US)
 
-    fun fromTimestampToLocalDateTime(value: Long?): LocalDateTime {
-        return value?.let { LocalDateTime.ofInstant(Instant.ofEpochMilli(it), zoneId) }
-            ?: LocalDateTime.now()
+    fun fromTimestampToLocalDateTime(value: Long): LocalDateTime {
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(value), zoneId)
     }
 
-    fun fromTimestampToLocalDate(value: Long?): LocalDate {
-        return value?.let { LocalDate.ofInstant(Instant.ofEpochMilli(it), zoneId) }
-            ?: LocalDate.now()
+    fun fromTimestampToLocalDate(value: Long): LocalDate {
+        return LocalDate.ofInstant(Instant.ofEpochMilli(value), zoneId)
+
     }
 
     fun fromDateTimeValues(date: LocalDate, hour: Int, minute: Int): Instant {

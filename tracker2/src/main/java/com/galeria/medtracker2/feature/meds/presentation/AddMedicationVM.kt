@@ -6,10 +6,12 @@ import androidx.lifecycle.viewModelScope
 import com.galeria.medtracker2.core.common.DateTimeUtils
 import com.galeria.medtracker2.core.notification.ScheduleNotification
 import com.galeria.medtracker2.feature.meds.data.local.schedule.MedicationRegimenDao
+import com.galeria.medtracker2.feature.meds.data.local.schedule.ScheduledDateTimeDao
+import com.galeria.medtracker2.feature.meds.data.local.schedule.toEntity
 import com.galeria.medtracker2.feature.meds.domain.MedicationDomain
 import com.galeria.medtracker2.feature.meds.domain.MedicationRegimentDomain
 import com.galeria.medtracker2.feature.meds.domain.MedsRepository
-import com.galeria.medtracker2.feature.meds.domain.ScheduledDomain
+import com.galeria.medtracker2.feature.meds.domain.ScheduledDateTimeDomain
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,8 +34,8 @@ data class AddMedicationScreenState(
 )
 
 data class AddMedUiState(
-    val name: String = "",
-    val dose: String = "",
+    val name: String = "test",
+    val dose: String = "56",
     val startDate: Long? = null,
     val endDate: Long? = null,
     val intakeTime: Pair<Int, Int> = Pair(0, 0),
@@ -58,41 +60,69 @@ constructor(
     val state = _state.asStateFlow()
 
     fun updateName(input: String) {
-        viewModelScope.launch { _state.update { it.copy(name = input) } }
+        _state.update { it.copy(name = input) }
     }
 
     fun updateDose(input: String) {
-        viewModelScope.launch { _state.update { it.copy(dose = input) } }
+        _state.update { it.copy(dose = input) }
     }
 
     fun updateStartDate(input: Long?) {
-        viewModelScope.launch {
-            val parsedDate = DateTimeUtils.fromTimestampToLocalDateTime(input)
+        input?.let {
+            val parsedDate = DateTimeUtils.fromTimestampToLocalDate(it)
             val formattedDate = parsedDate.format(DateTimeUtils.dateFormatter)
-
-            _state.update { it.copy(startDateString = formattedDate, startDate = input) }
+            _state.update { s -> s.copy(startDateString = formattedDate, startDate = it) }
         }
     }
 
     fun updateEndDate(input: Long?) {
-        viewModelScope.launch {
-            val parsedDate = DateTimeUtils.fromTimestampToLocalDateTime(input)
+        input?.let {
+            val parsedDate = DateTimeUtils.fromTimestampToLocalDate(it)
             val formattedDate = parsedDate.format(DateTimeUtils.dateFormatter)
-
-            _state.update { it.copy(endDateString = formattedDate, endDate = input) }
+            _state.update { s -> s.copy(endDateString = formattedDate, endDate = it) }
         }
     }
 
     fun updateTime(time: Pair<Int, Int>) {
-
-        viewModelScope.launch {
-            val formattedTime = "%02d:%02d".format(time.first, time.second)
-
-            _state.update { it.copy(intakeTime = time, intakeTimeString = formattedTime) }
-        }
+        val formattedTime = "%02d:%02d".format(time.first, time.second)
+        _state.update { it.copy(intakeTime = time, intakeTimeString = formattedTime) }
     }
 
     fun addMedication(context: Context) {
+        val currentState = _state.value
+
+        // Базовая валидация
+        if (
+            currentState.name.isBlank() ||
+            currentState.startDate == null ||
+            currentState.endDate == null
+        )
+            return
+
+        // TODO
+        viewModelScope.launch {
+            try {
+                val newMedId = UUID.randomUUID()
+                val newMedication =
+                        MedicationDomain(
+                            id = newMedId,
+                            name = _state.value.name,
+                            creationDate = Instant.now(),
+                        )
+
+                // Сначала сохраняем основную запись
+                repository.addMedication(newMedication)
+
+                // Затем создаем расписание
+                createSchedule(newMedId, currentState)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun addNotif(context: Context) {
+
         // TODO
         viewModelScope.launch {
             // Установка уведомления приема.
@@ -111,69 +141,78 @@ constructor(
                     ),
                 title = "",
             )*/
-            // Добавление лекарства в БД.
-            val newMedication =
-                    MedicationDomain(
-                        id = UUID.randomUUID(),
-                        name = _state.value.name,
-                        creationDate = Instant.now(),
-                    )
-            repository.addMedication(newMedication)
-            createSchedule()
         }
     }
 
-    fun createSchedule() {
-        viewModelScope.launch {
-            val start = _state.value.startDate
-            val end = _state.value.endDate
-            val startConv = DateTimeUtils.fromTimestampToLocalDate(start)
-            val endConv = DateTimeUtils.fromTimestampToLocalDate(end)
-            val daysBetween = ChronoUnit.DAYS.between(endConv, startConv).toInt()
+    private suspend fun createSchedule(medId: UUID, currentState: AddMedUiState) {
+        val startConv = DateTimeUtils.fromTimestampToLocalDate(currentState.startDate ?: 0)
+        val endConv = DateTimeUtils.fromTimestampToLocalDate(currentState.endDate ?: 0)
 
-            val medId = UUID.randomUUID()
-            val medRegId = UUID.randomUUID()
-            // Добавление графика приема лекарства.
-            medRegRepository.addRegiment(
-                regiment =
-                        MedicationRegimentDomain(
-                            id = medRegId,
-                            medicationId = medId,
-                            doseMg = _state.value.dose.toDouble(),
-                            startDate = Instant.ofEpochMilli(_state.value.startDate ?: 0),
-                            endDate = Instant.ofEpochMilli(_state.value.endDate ?: 0),
-                        )
+        val daysBetween = ChronoUnit.DAYS.between(startConv, endConv).toInt()
+
+        val medRegId = UUID.randomUUID()
+        val doseValue = currentState.dose.toDoubleOrNull() ?: 0.0
+
+        // Добавление режима (Regiment)
+        medRegRepository.addRegiment(
+            MedicationRegimentDomain(
+                id = medRegId,
+                medicationId = medId,
+                doseMg = doseValue,
+                startDate = Instant.ofEpochMilli(currentState.startDate!!),
+                endDate = Instant.ofEpochMilli(currentState.endDate!!),
             )
+        )
 
-            val selHour = _state.value.intakeTime.first
-            val selMin = _state.value.intakeTime.second
-            var curDate = startConv
-            for (i in 0..daysBetween) {
-                val schId = UUID.randomUUID()
-                val dateTimeInst = DateTimeUtils.fromDateTimeValues(curDate, selHour, selMin)
-                medRegRepository.addSchedule(
-                    schedule = ScheduledDomain(
+        val selHour = currentState.intakeTime.first
+        val selMin = currentState.intakeTime.second
+
+        var curDate = startConv
+
+        for (i in 0..daysBetween) {
+            val schId = UUID.randomUUID()
+
+            // Используем объединение даты и времени в Instant
+            val dateTimeInst = DateTimeUtils.fromDateTimeValues(curDate, selHour, selMin)
+
+            medRegRepository.addSchedule(
+                schedule =
+                        ScheduledDateTimeDomain(
                         id = schId,
                         medicationRegimentId = medRegId,
-                        scheduledIntakeDateTime = dateTimeInst
+                            scheduledIntakeDateTime = dateTimeInst,
                     )
-                )
-                curDate.plusDays(1)
-            }
+            )
+
+            // Присваиваем результат обратно переменной.
+            curDate = curDate.plusDays(1)
         }
+
+        // TODO: После создания всех записей в БД можно запланировать уведомления
+        // scheduleNotification.planNext(medId)
     }
 }
 
 interface MedicationRegimenRepo {
 
     suspend fun addRegiment(regiment: MedicationRegimentDomain)
-    suspend fun addSchedule(schedule: ScheduledDomain)
+
+    suspend fun addSchedule(schedule: ScheduledDateTimeDomain)
 }
 
 class MedicationRegimenRepoImp
 @Inject
-constructor(private val medicationRegimenDao: MedicationRegimenDao) : MedicationRegimenRepo {
+constructor(
+    private val medicationRegimenDao: MedicationRegimenDao,
+    private val scheduledDateTimeDao: ScheduledDateTimeDao,
+) : MedicationRegimenRepo {
 
-    override suspend fun addRegiment(regiment: MedicationRegimentDomain) {}
-    override suspend fun addSchedule(schedule: ScheduledDomain) {}
+    override suspend fun addRegiment(regiment: MedicationRegimentDomain) {
+
+        medicationRegimenDao.insertMedicationRegimen(regiment.toEntity())
+    }
+
+    override suspend fun addSchedule(schedule: ScheduledDateTimeDomain) {
+        scheduledDateTimeDao.insertScheduledDateTime(schedule.toEntity())
+    }
 }

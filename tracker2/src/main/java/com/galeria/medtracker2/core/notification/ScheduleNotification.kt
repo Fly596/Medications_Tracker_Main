@@ -7,10 +7,20 @@ import android.content.Intent
 import android.icu.util.Calendar
 import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.TimePickerState
+import javax.inject.Inject
 
-class ScheduleNotification {
-
+interface ScheduleNotificationRepo {
     fun scheduleNotification(
+        context: Context,
+        timePickerState: TimePickerState,
+        datePickerState: DatePickerState,
+        title: String,
+    )
+}
+
+class ScheduleNotification @Inject constructor() : ScheduleNotificationRepo {
+
+    override fun scheduleNotification(
         context: Context,
         timePickerState: TimePickerState,
         datePickerState: DatePickerState,

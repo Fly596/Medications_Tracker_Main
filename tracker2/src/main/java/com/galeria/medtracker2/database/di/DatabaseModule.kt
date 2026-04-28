@@ -13,17 +13,22 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
-    
+
     @Provides
     @Singleton
     fun provideDatabase(
         @ApplicationContext
         context: Context
     ): AppDatabase =
-        Room.databaseBuilder(context, AppDatabase::class.java, "app_database")
-            .build()
-    
+            Room.databaseBuilder(context, AppDatabase::class.java, "app_database").build()
+
     @Provides
     fun provideMedicationDao(database: AppDatabase) = database.medicationDao()
-    
+
+
+    @Provides
+    fun provideScheduledDateTimeDao(database: AppDatabase) = database.scheduledDateTimeDao()
+
+    @Provides
+    fun provideIntakeDao(database: AppDatabase) = database.intakeDao()
 }
