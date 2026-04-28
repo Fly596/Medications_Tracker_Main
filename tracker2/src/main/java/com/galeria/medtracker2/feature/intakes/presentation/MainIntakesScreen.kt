@@ -12,10 +12,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -89,9 +92,14 @@ fun IntakeCard(
     intake: FullSchedule,
     onCheck: (Boolean) -> Unit = {}
 ) {
-    var isChecked by remember { mutableStateOf(true) }
+    var showDialog by remember { mutableStateOf(false) }
+    if (showDialog) {
+        CheckIntakeDialog(intake = intake, onCheck = {})
+    }
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(12.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -109,7 +117,7 @@ fun IntakeCard(
 
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
 
             // Форматирование даты и времени
             val formattedTime =
@@ -127,9 +135,50 @@ fun IntakeCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 // TODO: функционал отметки приема.
-                Checkbox(checked = isChecked, onCheckedChange = { isChecked = it })
+
+                Button(
+                    onClick = {
+                        // open intake dialog.
+                        showDialog = !showDialog
+                    },
+                    shape = RoundedCornerShape(percent = 100)
+                ) {
+                    Icon(imageVector = Icons.Default.Add, contentDescription = "check intake")
+                }
             }
 
+        }
+    }
+}
+
+@Composable
+fun CheckIntakeDialog(intake: FullSchedule, onCheck: (Boolean) -> Unit) {
+
+    Card(
+        shape = MaterialTheme.shapes.medium,
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(text = intake.name, style = MaterialTheme.typography.titleLarge)
+                Text(
+                    text = "${intake.doseMg} mg",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.Bottom,
+            ) {
+                Button(onClick = { onCheck(true) }) { Text("Confirm") }
+                Button(onClick = { onCheck(false) }) { Text("Skip") }
+            }
         }
     }
 }
@@ -145,16 +194,18 @@ private fun EmptySchedulePlaceholder() {
 @Composable
 fun GreetingPreview() {
     SpeechRecognitionAppTheme {
-        Column(modifier = Modifier.fillMaxSize()) {
-            IntakeCard(
-                intake = FullSchedule(
-                    idDateTime = UUID.randomUUID(),
-                    idRegiment = UUID.randomUUID(),
-                    name = "Name",
-                    doseMg = 56.0,
-                    scheduledIntakeDateTime = 0
+        LazyColumn(modifier = Modifier.fillMaxSize()) {
+            items(4) {
+                IntakeCard(
+                    intake = FullSchedule(
+                        idDateTime = UUID.randomUUID(),
+                        idRegiment = UUID.randomUUID(),
+                        name = "Name",
+                        doseMg = 56.0,
+                        scheduledIntakeDateTime = 0
+                    )
                 )
-            )
+            }
         }
     }
 }
