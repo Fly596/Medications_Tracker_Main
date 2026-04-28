@@ -5,10 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.galeria.medtracker2.core.common.DateTimeUtils
 import com.galeria.medtracker2.core.notification.ScheduleNotification
-import com.galeria.medtracker2.feature.meds.data.local.schedule.MedicationRegimenDao
-import com.galeria.medtracker2.feature.meds.data.local.schedule.ScheduledDateTimeDao
-import com.galeria.medtracker2.feature.meds.data.local.schedule.toEntity
 import com.galeria.medtracker2.feature.meds.domain.MedicationDomain
+import com.galeria.medtracker2.feature.meds.domain.MedicationRegimenRepo
 import com.galeria.medtracker2.feature.meds.domain.MedicationRegimentDomain
 import com.galeria.medtracker2.feature.meds.domain.MedsRepository
 import com.galeria.medtracker2.feature.meds.domain.ScheduledDateTimeDomain
@@ -190,29 +188,5 @@ constructor(
 
         // TODO: После создания всех записей в БД можно запланировать уведомления
         // scheduleNotification.planNext(medId)
-    }
-}
-
-interface MedicationRegimenRepo {
-
-    suspend fun addRegiment(regiment: MedicationRegimentDomain)
-
-    suspend fun addSchedule(schedule: ScheduledDateTimeDomain)
-}
-
-class MedicationRegimenRepoImp
-@Inject
-constructor(
-    private val medicationRegimenDao: MedicationRegimenDao,
-    private val scheduledDateTimeDao: ScheduledDateTimeDao,
-) : MedicationRegimenRepo {
-
-    override suspend fun addRegiment(regiment: MedicationRegimentDomain) {
-
-        medicationRegimenDao.insertMedicationRegimen(regiment.toEntity())
-    }
-
-    override suspend fun addSchedule(schedule: ScheduledDateTimeDomain) {
-        scheduledDateTimeDao.insertScheduledDateTime(schedule.toEntity())
     }
 }
