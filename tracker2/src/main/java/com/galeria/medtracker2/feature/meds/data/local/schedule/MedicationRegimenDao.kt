@@ -35,7 +35,7 @@ interface MedicationRegimenDao {
 
     @Query(
         """
-            SELECT std.id, m.name, mr.doseMg, std.scheduledIntakeDateTime
+            SELECT std.id AS'idDateTime', mr.id AS 'idRegiment', m.name, mr.doseMg, std.scheduledIntakeDateTime
             FROM medications AS m
             JOIN medications_regimens AS mr ON m.id = mr.medicationId
             LEFT JOIN scheduled_date_times AS std ON std.medicationScheduleId = mr.id
@@ -52,7 +52,8 @@ data class RegimentWithNameDoseDate(
 )
 
 data class FullSchedule(
-    val id: UUID,
+    val idDateTime: UUID,
+    val idRegiment: UUID,
     val name: String,
     val doseMg: Double,
     val scheduledIntakeDateTime: Long,

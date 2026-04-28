@@ -7,5 +7,6 @@ data class IntakeDomain(
     val id: UUID,
     val medicationScheduleId: UUID,
     val actualIntakeDateTime: Instant,
+    val status: Boolean,
     val notes: String = ""
 )

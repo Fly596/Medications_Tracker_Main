@@ -15,27 +15,24 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewModelScope
 import com.galeria.medtracker2.core.common.DateTimeUtils
+import com.galeria.medtracker2.core.ui.theme.SpeechRecognitionAppTheme
 import com.galeria.medtracker2.feature.meds.data.local.schedule.FullSchedule
-import com.galeria.medtracker2.feature.meds.domain.MedicationRegimenRepo
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
-import javax.inject.Inject
+import java.util.UUID
 
 @Composable
 fun MainIntakesScreen(
@@ -44,9 +41,11 @@ fun MainIntakesScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
         Button(
             onClick = onAddMedicationClick,
             modifier = Modifier.fillMaxWidth(),
@@ -81,12 +80,16 @@ fun IntakeList(intakes: List<FullSchedule>) {
         contentPadding = PaddingValues(bottom = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        items(items = intakes, key = { it.id }) { intake -> IntakeCard(intake) }
+        items(items = intakes, key = { it.idDateTime }) { intake -> IntakeCard(intake) }
     }
 }
 
 @Composable
-fun IntakeCard(intake: FullSchedule) {
+fun IntakeCard(
+    intake: FullSchedule,
+    onCheck: (Boolean) -> Unit = {}
+) {
+    var isChecked by remember { mutableStateOf(true) }
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
@@ -103,20 +106,30 @@ fun IntakeCard(intake: FullSchedule) {
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.primary,
                 )
+
             }
 
             Spacer(modifier = Modifier.height(8.dp))
 
             // Форматирование даты и времени
             val formattedTime =
-                    DateTimeUtils.fromTimestampToLocalDateTime(intake.scheduledIntakeDateTime)
-                        .format(DateTimeUtils.dateTimeFormatter)
+                DateTimeUtils.fromTimestampToLocalDateTime(intake.scheduledIntakeDateTime)
+                    .format(DateTimeUtils.dateTimeFormatter)
 
-            Text(
-                text = formattedTime,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Bottom,
+            ) {
+                Text(
+                    text = formattedTime,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                // TODO: функционал отметки приема.
+                Checkbox(checked = isChecked, onCheckedChange = { isChecked = it })
+            }
+
         }
     }
 }
@@ -128,30 +141,20 @@ private fun EmptySchedulePlaceholder() {
     }
 }
 
-data class ScheduleUiState(
-    val plannedIntakes: List<FullSchedule> = emptyList(),
-    val isLoading: Boolean = true,
-)
-
-@HiltViewModel
-class MainIntakesVM
-@Inject
-constructor(
-    private val regimentsRepository: MedicationRegimenRepo,
-) : ViewModel() {
-
-    private val _state = MutableStateFlow(ScheduleUiState())
-    val state = _state.asStateFlow()
-
-    init {
-        loadSchedule()
-    }
-
-    private fun loadSchedule() {
-        viewModelScope.launch {
-            regimentsRepository.getFullSchedule().distinctUntilChanged().collect { schedule ->
-                _state.update { it.copy(plannedIntakes = schedule, isLoading = false) }
-            }
+@Preview(showBackground = true)
+@Composable
+fun GreetingPreview() {
+    SpeechRecognitionAppTheme {
+        Column(modifier = Modifier.fillMaxSize()) {
+            IntakeCard(
+                intake = FullSchedule(
+                    idDateTime = UUID.randomUUID(),
+                    idRegiment = UUID.randomUUID(),
+                    name = "Name",
+                    doseMg = 56.0,
+                    scheduledIntakeDateTime = 0
+                )
+            )
         }
     }
 }

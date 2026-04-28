@@ -22,9 +22,7 @@ constructor(
     override suspend fun addMedication(
         medication: MedicationDomain
     ) {
-
-        val medicationEntity = medication.toEntity()
-        medicationDao.insertMedication(medicationEntity)
+        medicationDao.insertMedication(medication.toEntity())
     }
 
     override suspend fun removeMedication(medicationId: UUID) {

@@ -19,7 +19,7 @@ import kotlin.uuid.ExperimentalUuidApi
         )
     ]
 )
-data class MedicationRegimenEntity constructor(
+data class MedicationRegimenEntity(
     @PrimaryKey
     val id: UUID = UUID.randomUUID(),
     val medicationId: UUID,

@@ -8,23 +8,12 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.galeria.medtracker2.core.common.MainViewModel
 import com.galeria.medtracker2.core.notification.ReminderNotification
 import com.galeria.medtracker2.core.ui.theme.SpeechRecognitionAppTheme
 import com.galeria.medtracker2.navigation.AppNavHost
@@ -90,41 +79,3 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun Greeting(
-    name: String = "",
-    modifier: Modifier = Modifier,
-    viewModel: MainViewModel = hiltViewModel(),
-) {
-    val postNotificationsResultLauncher =
-        rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.RequestPermission(),
-            onResult = {
-                viewModel.onPermissionResult(
-                    permission = Manifest.permission.POST_NOTIFICATIONS,
-                    isGranted = it,
-                )
-            },
-        )
-
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Button(
-            onClick = {
-                postNotificationsResultLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-            }
-        ) {
-            Text(text = "Request the permission")
-        }
-    }
-    Text(text = "Hello $name!", modifier = modifier)
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    SpeechRecognitionAppTheme { Greeting("Android") }
-}

@@ -20,7 +20,7 @@ object DatabaseModule {
         @ApplicationContext
         context: Context
     ): AppDatabase =
-            Room.databaseBuilder(context, AppDatabase::class.java, "app_database").build()
+        Room.databaseBuilder(context, AppDatabase::class.java, "app_database").build()
 
     @Provides
     fun provideMedicationDao(database: AppDatabase) = database.medicationDao()

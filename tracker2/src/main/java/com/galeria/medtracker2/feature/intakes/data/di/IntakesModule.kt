@@ -1,7 +1,7 @@
 package com.galeria.medtracker2.feature.intakes.data.di
 
+import com.galeria.medtracker2.feature.intakes.data.IntakesRepositoryImpl
 import com.galeria.medtracker2.feature.intakes.domain.IntakesRepository
-import com.galeria.medtracker2.feature.intakes.domain.IntakesRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

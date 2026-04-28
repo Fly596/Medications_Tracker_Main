@@ -24,6 +24,7 @@ data class IntakeEntity(
     val id: UUID = UUID.randomUUID(),
     val medicationScheduleId: UUID,
     val actualIntakeDateTime: Long,
+    val status: Boolean = false,
     val notes: String?
 )
 

@@ -9,8 +9,6 @@ import java.util.Locale
 
 // Утилиты для работы с датой вынесены в object для удобства доступа
 object DateTimeUtils {
-
-    private val zoneId: ZoneId = ZoneId.of("UTC")
     val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("MMM dd, yyyy", Locale.US)
     val dateTimeFormatter: DateTimeFormatter =
             DateTimeFormatter.ofPattern("MMM dd, yyyy, h:m a", Locale.US)
