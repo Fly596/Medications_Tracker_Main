@@ -6,7 +6,7 @@ fun IntakeDomain.toEntity(): IntakeEntity {
     return IntakeEntity(
         id = this.id,
         medicationScheduleId = this.medicationScheduleId,
-        actualIntakeDateTime = this.actualIntakeDateTime,
+        actualIntakeDateTime = this.actualIntakeDateTime.toEpochMilli(),
         notes = this.notes
     )
 }
@@ -15,7 +15,7 @@ fun IntakeEntity.toDomain(): IntakeDomain {
     return IntakeDomain(
         id = this.id,
         medicationScheduleId = this.medicationScheduleId,
-        actualIntakeDateTime = this.actualIntakeDateTime,
+        actualIntakeDateTime = java.time.Instant.ofEpochMilli(this.actualIntakeDateTime),
         notes = this.notes ?: ""
     )
 }

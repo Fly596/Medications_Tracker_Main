@@ -4,7 +4,6 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import com.galeria.medtracker2.feature.meds.data.local.medication.MedicationEntity
-import java.time.Instant
 import java.util.UUID
 import kotlin.uuid.ExperimentalUuidApi
 
@@ -25,8 +24,8 @@ data class MedicationRegimenEntity constructor(
     val id: UUID = UUID.randomUUID(),
     val medicationId: UUID,
     val doseMg: Double,
-    val startDate: Instant,
-    val endDate: Instant?,
+    val startDate: Long,
+    val endDate: Long?,
 )
 
 

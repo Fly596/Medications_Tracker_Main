@@ -2,6 +2,8 @@ package com.galeria.medtracker2.feature.meds.data.di
 
 import com.galeria.medtracker2.feature.meds.data.repository.MedsRepositoryImpl
 import com.galeria.medtracker2.feature.meds.domain.MedsRepository
+import com.galeria.medtracker2.feature.meds.presentation.MedicationRegimenRepo
+import com.galeria.medtracker2.feature.meds.presentation.MedicationRegimenRepoImp
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -15,4 +17,10 @@ abstract class MedsModule {
     abstract fun bindMedsRepository(
         medsRepository: MedsRepositoryImpl
     ): MedsRepository
+
+    @Binds
+    abstract fun bindMedsRegimenRepository(
+        medsRepository: MedicationRegimenRepoImp
+    ): MedicationRegimenRepo
 }
+

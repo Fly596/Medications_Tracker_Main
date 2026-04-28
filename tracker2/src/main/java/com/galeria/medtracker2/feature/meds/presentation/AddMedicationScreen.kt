@@ -47,17 +47,17 @@ fun AddMedicationScreen(viewModel: AddMedicationVM = hiltViewModel()) {
 
         DateSelectionRow(
             label = "Start Date",
-            selectedDateString = state.value.startDate,
+            selectedDateString = state.value.startDateString,
             onDateSelected = { viewModel.updateStartDate(it) },
         )
         DateSelectionRow(
             label = "End Date",
-            selectedDateString = state.value.endDate,
+            selectedDateString = state.value.endDateString,
             onDateSelected = { viewModel.updateEndDate(it) },
         )
         TimeSelectionRow(
             label = "Time",
-            selectedTimeString = state.value.selectedTime,
+            selectedTimeString = state.value.intakeTimeString,
             onTimeSelected = { viewModel.updateTime(it) },
         )
         Button(

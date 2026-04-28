@@ -5,15 +5,15 @@ import com.galeria.medtracker2.feature.meds.domain.ScheduledDomain
 fun ScheduledDomain.toEntity(): ScheduledDateTimeEntity {
     return ScheduledDateTimeEntity(
         id = this.id,
-        medicationScheduleId = this.medicationScheduleId,
-        scheduledIntakeDateTime = this.scheduledIntakeDateTime
+        medicationScheduleId = this.medicationRegimentId,
+        scheduledIntakeDateTime = this.scheduledIntakeDateTime.toEpochMilli()
     )
 }
 
 fun ScheduledDateTimeEntity.toDomain(): ScheduledDomain {
     return ScheduledDomain(
         id = this.id,
-        medicationScheduleId = this.medicationScheduleId,
-        scheduledIntakeDateTime = this.scheduledIntakeDateTime
+        medicationRegimentId = this.medicationScheduleId,
+        scheduledIntakeDateTime = java.time.Instant.ofEpochMilli(this.scheduledIntakeDateTime)
     )
 }
