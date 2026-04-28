@@ -5,10 +5,10 @@ import com.galeria.medtracker2.core.notification.ScheduleNotificationRepo
 import com.galeria.medtracker2.database.AppDatabase
 import com.galeria.medtracker2.feature.meds.data.local.intakes.IntakeDao
 import com.galeria.medtracker2.feature.meds.data.local.schedule.MedicationRegimenDao
+import com.galeria.medtracker2.feature.meds.data.repository.MedicationRegimenRepoImp
 import com.galeria.medtracker2.feature.meds.data.repository.MedsRepositoryImpl
+import com.galeria.medtracker2.feature.meds.domain.MedicationRegimenRepo
 import com.galeria.medtracker2.feature.meds.domain.MedsRepository
-import com.galeria.medtracker2.feature.meds.presentation.MedicationRegimenRepo
-import com.galeria.medtracker2.feature.meds.presentation.MedicationRegimenRepoImp
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -24,6 +24,7 @@ abstract class MedsModule {
         medsRepository: MedsRepositoryImpl
     ): MedsRepository
 }
+
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class ScheduleNotificationModule {
@@ -44,6 +45,7 @@ object IntakeDaoModule {
     ): IntakeDao = database.intakeDao()
 
 }
+
 @Module
 @InstallIn(SingletonComponent::class)
 object MedicationRegimenDaoModule {
