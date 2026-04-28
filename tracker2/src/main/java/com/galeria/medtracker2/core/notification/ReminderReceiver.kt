@@ -10,10 +10,12 @@ import com.galeria.medtracker2.R
 class ReminderReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
+
         context?.let {
             val title = intent?.getStringExtra("EXTRA_TITLE") ?: "Medicine"
             val dose = intent?.getStringExtra("EXTRA_DOSE") ?: ""
 
+            // var2
             showNotification(it, title, dose)
         }
     }

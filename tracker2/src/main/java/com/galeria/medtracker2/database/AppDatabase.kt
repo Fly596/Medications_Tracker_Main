@@ -2,8 +2,8 @@ package com.galeria.medtracker2.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.galeria.medtracker2.feature.meds.data.local.intakes.IntakeDao
-import com.galeria.medtracker2.feature.meds.data.local.intakes.IntakeEntity
+import com.galeria.medtracker2.feature.intakes.data.local.IntakeDao
+import com.galeria.medtracker2.feature.intakes.data.local.IntakeEntity
 import com.galeria.medtracker2.feature.meds.data.local.medication.MedicationDao
 import com.galeria.medtracker2.feature.meds.data.local.medication.MedicationEntity
 import com.galeria.medtracker2.feature.meds.data.local.schedule.MedicationRegimenDao

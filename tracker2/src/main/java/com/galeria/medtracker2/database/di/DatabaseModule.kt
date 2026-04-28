@@ -25,7 +25,6 @@ object DatabaseModule {
     @Provides
     fun provideMedicationDao(database: AppDatabase) = database.medicationDao()
 
-
     @Provides
     fun provideScheduledDateTimeDao(database: AppDatabase) = database.scheduledDateTimeDao()
 

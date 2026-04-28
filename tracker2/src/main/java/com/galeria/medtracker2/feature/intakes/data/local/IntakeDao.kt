@@ -1,4 +1,4 @@
-package com.galeria.medtracker2.feature.meds.data.local.intakes
+package com.galeria.medtracker2.feature.intakes.data.local
 
 import androidx.room.Dao
 import androidx.room.Insert

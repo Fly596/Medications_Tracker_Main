@@ -55,29 +55,29 @@ class MainActivity : ComponentActivity() {
                         onResult = { isGranted -> hasNotificationPermission = isGranted },
                     )
                 AppNavHost()
-                /*          Column(
-                              modifier = Modifier.fillMaxSize().padding(top = 64.dp),
-                              verticalArrangement = Arrangement.Center,
-                              horizontalAlignment = Alignment.CenterHorizontally,
-                          ) {
-                              Button(
-                                  onClick = {
-                                      permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                                  }
-                              ) {
-                                  Text(text = "Request the permission")
-                              }
-                              Button(
-                                  onClick = {
-                                      if (hasNotificationPermission) {
-                                          showNotification()
-                                      }
-                                  }
-                              ) {
-                                  Text(text = "Show notification")
-                              }
+                /*             Column(
+                                 modifier = Modifier.fillMaxSize().padding(top = 64.dp),
+                                 verticalArrangement = Arrangement.Center,
+                                 horizontalAlignment = Alignment.CenterHorizontally,
+                             ) {
+                                 Button(
+                                     onClick = {
+                                         permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                                     }
+                                 ) {
+                                     Text(text = "Request the permission")
+                                 }
+                                 Button(
+                                     onClick = {
+                                         if (hasNotificationPermission) {
+                                             showNotification()
+                                         }
+                                     }
+                                 ) {
+                                     Text(text = "Show notification")
+                                 }
 
-                          }*/
+                             }*/
                 // AppNavHost()
             }
         }

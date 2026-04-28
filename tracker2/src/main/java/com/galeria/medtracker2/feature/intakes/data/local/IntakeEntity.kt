@@ -1,4 +1,4 @@
-package com.galeria.medtracker2.feature.meds.data.local.intakes
+package com.galeria.medtracker2.feature.intakes.data.local
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
@@ -15,7 +15,7 @@ import kotlin.uuid.ExperimentalUuidApi
             entity = ScheduledDateTimeEntity::class,
             parentColumns = ["id"],
             childColumns = ["medicationScheduleId"],
-            onDelete = ForeignKey.Companion.CASCADE
+            onDelete = ForeignKey.CASCADE
         )
     ]
 )

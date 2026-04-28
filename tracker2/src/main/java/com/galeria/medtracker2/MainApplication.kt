@@ -20,9 +20,18 @@ class MainApplication : Application() {
             )
         channel.description = "description"
 
+        val channelMain =
+                NotificationChannel(
+                    "medication_reminders",
+                    "channel_reminders",
+                    NotificationManager.IMPORTANCE_HIGH,
+                )
+        channelMain.description = "medications_channel"
+
         // Регистрируем канал системой.
         val notificationManager =
             getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
+        notificationManager.createNotificationChannel(channelMain)
     }
 }

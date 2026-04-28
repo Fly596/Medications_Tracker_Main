@@ -23,4 +23,36 @@ interface MedicationRegimenDao {
 
     @Query("SELECT * FROM medications_regimens WHERE id = :id")
     suspend fun getMedicationRegimenById(id: UUID): MedicationRegimenEntity?
+
+    @Query(
+        """
+            SELECT m.name, mr.doseMg, mr.startDate, mr.endDate
+            FROM medications AS m JOIN medications_regimens AS mr
+            ON m.id = mr.medicationId
+            """
+    )
+    fun getRegimentWithNameDoseDates(): Flow<List<RegimentWithNameDoseDate>>
+
+    @Query(
+        """
+            SELECT m.name, mr.doseMg, std.scheduledIntakeDateTime
+            FROM medications AS m
+            JOIN medications_regimens AS mr ON m.id = mr.medicationId
+            LEFT JOIN scheduled_date_times AS std ON std.medicationScheduleId = mr.id
+            """
+    )
+    fun getFullScheduleDateTimes(): Flow<List<FullSchedule>>
 }
+
+data class RegimentWithNameDoseDate(
+    val name: String,
+    val doseMg: Double,
+    val startDate: Long,
+    val endDate: Long
+)
+
+data class FullSchedule(
+    val name: String,
+    val doseMg: Double,
+    val scheduledIntakeDateTime: Long,
+)

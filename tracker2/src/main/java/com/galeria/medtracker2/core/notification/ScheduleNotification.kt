@@ -25,7 +25,7 @@ class ScheduleNotification @Inject constructor(
     override fun schedule(
         scheduleId: UUID, timeMillis: Long, title: String, dose: String
     ) {
-        val intent = Intent(context, ReminderReceiver::class.java).apply {
+        val intent = Intent(context.applicationContext, ReminderReceiver::class.java).apply {
             putExtra("EXTRA_TITLE", title)
             putExtra("EXTRA_DOSE", dose)
         }
@@ -36,7 +36,7 @@ class ScheduleNotification @Inject constructor(
          * Это гарантирует, что каждый прием — это отдельный аларм в системе.
          */
         val pendingIntent = PendingIntent.getBroadcast(
-            context,
+            context.applicationContext,
             scheduleId.hashCode(),
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
@@ -49,7 +49,11 @@ class ScheduleNotification @Inject constructor(
             )
         } else {
             // Если нет разрешения, используем обычный сеттер
-            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, timeMillis, pendingIntent)
+            alarmManager.setExactAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                timeMillis,
+                pendingIntent
+            )
         }
 
     }

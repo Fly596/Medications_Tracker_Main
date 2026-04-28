@@ -3,7 +3,6 @@ package com.galeria.medtracker2.feature.meds.data.di
 import com.galeria.medtracker2.core.notification.ScheduleNotification
 import com.galeria.medtracker2.core.notification.ScheduleNotificationRepo
 import com.galeria.medtracker2.database.AppDatabase
-import com.galeria.medtracker2.feature.meds.data.local.intakes.IntakeDao
 import com.galeria.medtracker2.feature.meds.data.local.schedule.MedicationRegimenDao
 import com.galeria.medtracker2.feature.meds.data.repository.MedicationRegimenRepoImp
 import com.galeria.medtracker2.feature.meds.data.repository.MedsRepositoryImpl
@@ -35,16 +34,7 @@ abstract class ScheduleNotificationModule {
     ): ScheduleNotificationRepo
 }
 
-@Module
-@InstallIn(SingletonComponent::class)
-object IntakeDaoModule {
 
-    @Provides
-    fun providesIntakeDao(
-        database: AppDatabase,
-    ): IntakeDao = database.intakeDao()
-
-}
 
 @Module
 @InstallIn(SingletonComponent::class)

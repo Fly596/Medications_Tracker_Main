@@ -24,7 +24,10 @@ import com.galeria.medtracker2.core.ui.components.DateSelectionRow
 import com.galeria.medtracker2.core.ui.components.TimeSelectionRow
 
 @Composable
-fun AddMedicationScreen(viewModel: AddMedicationVM = hiltViewModel()) {
+fun AddMedicationScreen(
+    onMainClick: () -> Unit = {},
+    viewModel: AddMedicationVM = hiltViewModel()
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     Column(
@@ -34,6 +37,7 @@ fun AddMedicationScreen(viewModel: AddMedicationVM = hiltViewModel()) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+
         // Поля ввода основной информации.
         TextField(
             value = state.name,
@@ -79,5 +83,7 @@ fun AddMedicationScreen(viewModel: AddMedicationVM = hiltViewModel()) {
         ) {
             Text("Set alarm")
         }
+        Button(onMainClick) { Text("On add med page") }
+
     }
 }
