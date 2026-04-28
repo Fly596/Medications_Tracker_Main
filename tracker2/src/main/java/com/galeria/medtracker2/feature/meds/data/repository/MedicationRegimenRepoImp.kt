@@ -9,9 +9,7 @@ import com.galeria.medtracker2.feature.meds.data.local.schedule.toEntity
 import com.galeria.medtracker2.feature.meds.domain.MedicationRegimenRepo
 import com.galeria.medtracker2.feature.meds.domain.MedicationRegimentDomain
 import com.galeria.medtracker2.feature.meds.domain.ScheduledDateTimeDomain
-import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -31,38 +29,19 @@ constructor(
         scheduledDateTimeDao.insertScheduledDateTime(schedule.toEntity())
     }
 
-    override fun getRegiments(): Flow<List<MedicationRegimentDomain>> = callbackFlow {
-        val regiments = medicationRegimenDao.getAllMedicationRegimens().map { regimentsList ->
-            regimentsList.map {
-                it.toDomain()
+    override fun getRegiments(): Flow<List<MedicationRegimentDomain>> =
+            medicationRegimenDao.getAllMedicationRegimens().map { regimentsList ->
+                regimentsList.map { it.toDomain() }
             }
-        }
-        regiments.collect {
-            trySend(it)
-        }
-        awaitClose { }
-    }
 
     // Возвращает совмещенную таблицу с именем и датами начала и конца приема.
     override fun getRegimentsWithNameDoseDates(): Flow<List<RegimentWithNameDoseDate>> =
-            callbackFlow {
-                val flowValues = medicationRegimenDao.getRegimentWithNameDoseDates()
-
-                flowValues.collect {
-                    trySend(it)
-                }
-                awaitClose { }
-            }
+            medicationRegimenDao.getRegimentWithNameDoseDates()
 
     // Возвращает совмещенную таблицу вмсех приемов по времени.
-    override fun getFullSchedule(): Flow<List<FullSchedule>> = callbackFlow {
-        val flowValues = medicationRegimenDao.getFullScheduleDateTimes()
+    override fun getFullSchedule(): Flow<List<FullSchedule>> =
+            medicationRegimenDao.getFullScheduleDateTimes()
 
-        flowValues.collect {
-            trySend(it)
-        }
-        awaitClose { }
-    }
-//        getRegimentWithNameDoseDates
+    //        getRegimentWithNameDoseDates
 
 }

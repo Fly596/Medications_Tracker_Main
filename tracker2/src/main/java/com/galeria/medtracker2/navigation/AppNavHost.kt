@@ -25,7 +25,7 @@ fun AppNavHost(
         ) {
             composable<AppRoutes.Home> {
                 MainIntakesScreen(
-                    onAddMedClick = {
+                    onAddMedicationClick = {
                         navController.navigate(AppRoutes.AddMedication) { popUpTo(AppRoutes.Home) }
                     }
                 )
