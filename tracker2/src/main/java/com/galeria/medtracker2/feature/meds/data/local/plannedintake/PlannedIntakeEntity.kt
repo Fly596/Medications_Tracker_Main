@@ -1,9 +1,10 @@
-package com.galeria.medtracker2.feature.meds.data.local.schedule
+package com.galeria.medtracker2.feature.meds.data.local.plannedintake
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.galeria.medtracker2.feature.meds.data.local.course.MedicationCourseEntity
 import java.util.UUID
 import kotlin.uuid.ExperimentalUuidApi
 

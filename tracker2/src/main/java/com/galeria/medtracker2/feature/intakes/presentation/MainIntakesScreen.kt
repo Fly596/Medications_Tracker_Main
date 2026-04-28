@@ -34,7 +34,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medtracker2.core.common.DateTimeUtils
 import com.galeria.medtracker2.core.ui.theme.SpeechRecognitionAppTheme
-import com.galeria.medtracker2.feature.meds.data.local.schedule.FullSchedule
+import com.galeria.medtracker2.feature.meds.data.local.combined.FullSchedule
 import java.util.UUID
 
 @Composable
@@ -44,9 +44,11 @@ fun MainIntakesScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
         Button(
             onClick = onAddMedicationClick,
             modifier = Modifier.fillMaxWidth(),
@@ -115,8 +117,8 @@ fun IntakeCard(intake: FullSchedule, onCheck: (Boolean) -> Unit = {}) {
                 Spacer(modifier = Modifier.height(4.dp))
                 // Форматирование даты и времени
                 val formattedTime =
-                        DateTimeUtils.fromTimestampToLocalDateTime(intake.scheduledIntakeDateTime)
-                            .format(DateTimeUtils.dateTimeFormatter)
+                    DateTimeUtils.fromTimestampToLocalDateTime(intake.scheduledIntakeDateTime)
+                        .format(DateTimeUtils.dateTimeFormatter)
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -191,13 +193,13 @@ fun GreetingPreview() {
             items(4) {
                 IntakeCard(
                     intake =
-                            FullSchedule(
-                                idDateTime = UUID.randomUUID(),
-                                idRegiment = UUID.randomUUID(),
-                                name = "Name",
-                                doseMg = 56.0,
-                                scheduledIntakeDateTime = 0,
-                            )
+                        FullSchedule(
+                            idDateTime = UUID.randomUUID(),
+                            idRegiment = UUID.randomUUID(),
+                            name = "Name",
+                            doseMg = 56.0,
+                            scheduledIntakeDateTime = 0,
+                        )
                 )
             }
         }

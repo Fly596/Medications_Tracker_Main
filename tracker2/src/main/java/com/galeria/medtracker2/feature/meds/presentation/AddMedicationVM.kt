@@ -8,7 +8,7 @@ import com.galeria.medtracker2.core.common.DateTimeUtils
 import com.galeria.medtracker2.core.notification.ScheduleNotification
 import com.galeria.medtracker2.feature.meds.domain.MedicationCourseDomain
 import com.galeria.medtracker2.feature.meds.domain.MedicationDomain
-import com.galeria.medtracker2.feature.meds.domain.MedicationRegimenRepo
+import com.galeria.medtracker2.feature.meds.domain.MedicationScheduleIntakesRepository
 import com.galeria.medtracker2.feature.meds.domain.MedsRepository
 import com.galeria.medtracker2.feature.meds.domain.PlannedIntakeDomain
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -37,12 +37,14 @@ data class AddMedUiState(
 )
 
 const val TAG: String = "MyActivity"
+const val DEFAULT_SCHEDULE_DAYS: Int = 7
+
 @HiltViewModel
 class AddMedicationVM
 @Inject
 constructor(
     private val repository: MedsRepository,
-    private val medRegRepository: MedicationRegimenRepo,
+    private val medRegRepository: MedicationScheduleIntakesRepository,
     private val notificationService: ScheduleNotification,
 ) : ViewModel() {
 
@@ -55,7 +57,7 @@ constructor(
     fun updateDose(input: String) = _state.update { it.copy(dose = input) }
 
     fun updateStartDate(input: Long) {
-        val date = DateTimeUtils.fromTimestampToLocalDate(input)
+        val date = DateTimeUtils.fromTimestampToDate(input)
         _state.update {
             it.copy(startDateString = date.format(DateTimeUtils.dateFormatter), startDate = input)
         }
@@ -63,7 +65,7 @@ constructor(
 
     fun updateEndDate(input: Long?) {
         input?.let {
-            val date = DateTimeUtils.fromTimestampToLocalDate(it)
+            val date = DateTimeUtils.fromTimestampToDate(it)
             _state.update {
                 it.copy(endDateString = date.format(DateTimeUtils.dateFormatter), endDate = input)
             }
@@ -115,48 +117,32 @@ constructor(
         }
     }
 
-    fun addNotif(context: Context) {
-
-        // TODO
-        viewModelScope.launch {
-            // Установка уведомления приема.
-            /*                scheduleNotification.scheduleNotification(
-                context = context,
-                timePickerState =
-                    TimePickerState(
-                        state.value.intakeTime.first,
-                        state.value.intakeTime.second,
-                        false,
-                    ),
-                datePickerState =
-                    DatePickerState(
-                        locale = CalendarLocale.getDefault(),
-                        initialSelectedDateMillis = state.value.startDateLong,
-                    ),
-                title = "",
-            )*/
-        }
-    }
-
     private suspend fun generateScheduleEntries(medicationId: UUID, currentState: AddMedUiState) {
-        val start = DateTimeUtils.fromTimestampToLocalDate(currentState.startDate)
-        val end =
-                DateTimeUtils.fromTimestampToLocalDate(
-                    currentState.endDate ?: currentState.startDate
-                )
+        // Проверка, чтобы не создавать записи за прошедшие дни.
+        val start = if (currentState.startDate < Instant.now().toEpochMilli()) {
+            DateTimeUtils.fromTimestampToDate(Instant.now().toEpochMilli())
+        } else {
+            DateTimeUtils.fromTimestampToDate(currentState.startDate)
+        }
 
-        // Считаем кол-во дней.
+        val end = DateTimeUtils.fromTimestampToDate(
+            currentState.endDate ?: currentState.startDate.plus(DEFAULT_SCHEDULE_DAYS)
+        )
+
+        // TODO: сделать, чтобы при входе в прилоюение подгружались данные по приемам на N дней вперед.
         val daysCount = ChronoUnit.DAYS.between(start, end).toInt()
         val medicationCourseId = UUID.randomUUID()
 
         // Сохраняем общ инфу о курсе (режим приема).
-        medRegRepository.addRegiment(
+        medRegRepository.addCourse(
             MedicationCourseDomain(
                 id = medicationCourseId,
                 medicationId = medicationId,
                 doseMg = currentState.dose.toDoubleOrNull() ?: 0.0,
                 startDate = Instant.ofEpochMilli(currentState.startDate),
-                endDate = Instant.ofEpochMilli(currentState.endDate ?: currentState.startDate),
+                endDate = Instant.ofEpochMilli(
+                    currentState.endDate ?: currentState.startDate.plus(DEFAULT_SCHEDULE_DAYS)
+                ),
             )
         )
 
@@ -178,7 +164,7 @@ constructor(
                     )
 
                 // 1. Сохраняем прием в БД.
-                medRegRepository.addSchedule(
+                medRegRepository.addPlannedIntake(
                     PlannedIntakeDomain(
                         id = plannedIntakeId,
                         medicationCourseId = medicationCourseId,
@@ -230,4 +216,28 @@ constructor(
         // TODO: После создания всех записей в БД можно запланировать уведомления
         // scheduleNotification.planNext(medId)
     }
+
+    fun addNotif(context: Context) {
+
+        // TODO
+        viewModelScope.launch {
+            // Установка уведомления приема.
+            /*                scheduleNotification.scheduleNotification(
+                context = context,
+                timePickerState =
+                    TimePickerState(
+                        state.value.intakeTime.first,
+                        state.value.intakeTime.second,
+                        false,
+                    ),
+                datePickerState =
+                    DatePickerState(
+                        locale = CalendarLocale.getDefault(),
+                        initialSelectedDateMillis = state.value.startDateLong,
+                    ),
+                title = "",
+            )*/
+        }
+    }
+
 }

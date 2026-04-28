@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.galeria.medtracker2.feature.intakes.domain.IntakeLogDomain
 import com.galeria.medtracker2.feature.intakes.domain.IntakesRepository
-import com.galeria.medtracker2.feature.meds.data.local.schedule.FullSchedule
-import com.galeria.medtracker2.feature.meds.domain.MedicationRegimenRepo
+import com.galeria.medtracker2.feature.meds.data.local.combined.FullSchedule
+import com.galeria.medtracker2.feature.meds.domain.MedicationScheduleIntakesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,7 +25,7 @@ data class ScheduleUiState(
 class MainIntakesVM
 @Inject
 constructor(
-    private val regimentsRepository: MedicationRegimenRepo,
+    private val regimentsRepository: MedicationScheduleIntakesRepository,
     private val intakesRepository: IntakesRepository
 ) : ViewModel() {
 

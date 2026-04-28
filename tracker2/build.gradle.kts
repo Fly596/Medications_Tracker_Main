@@ -14,7 +14,7 @@ android {
 
     defaultConfig {
         applicationId = "com.galeria.medtracker2"
-        minSdk = 32 // Android 8.0 (Это оптимальный баланс современных фич и покрытия рынка)
+        minSdk = 34 // Android 8.0 (Это оптимальный баланс современных фич и покрытия рынка)
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"

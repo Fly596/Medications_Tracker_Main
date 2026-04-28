@@ -1,6 +1,7 @@
-package com.galeria.medtracker2.feature.meds.data.local.schedule
+package com.galeria.medtracker2.feature.meds.data.local.plannedintake
 
 import com.galeria.medtracker2.feature.meds.domain.PlannedIntakeDomain
+import java.time.Instant
 
 fun PlannedIntakeDomain.toEntity(): PlannedIntakeEntity {
     return PlannedIntakeEntity(
@@ -14,6 +15,6 @@ fun PlannedIntakeEntity.toDomain(): PlannedIntakeDomain {
     return PlannedIntakeDomain(
         id = this.id,
         medicationCourseId = this.medicationScheduleId,
-        scheduledIntakeDateTime = java.time.Instant.ofEpochMilli(this.scheduledIntakeDateTime)
+        scheduledIntakeDateTime = Instant.ofEpochMilli(this.scheduledIntakeDateTime)
     )
 }

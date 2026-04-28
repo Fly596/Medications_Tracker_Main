@@ -33,4 +33,7 @@ object DatabaseModule {
 
     @Provides
     fun provideMedicationCourseDao(database: AppDatabase) = database.medicationCourseDao()
+
+    @Provides
+    fun provideCombinedDao(database: AppDatabase) = database.combinedDao()
 }

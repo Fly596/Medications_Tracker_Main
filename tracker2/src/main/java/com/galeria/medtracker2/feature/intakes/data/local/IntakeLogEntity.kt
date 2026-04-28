@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.galeria.medtracker2.feature.meds.data.local.schedule.PlannedIntakeEntity
+import com.galeria.medtracker2.feature.meds.data.local.plannedintake.PlannedIntakeEntity
 import java.util.UUID
 import kotlin.uuid.ExperimentalUuidApi
 

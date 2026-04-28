@@ -27,8 +27,11 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             SpeechRecognitionAppTheme {
+                AppNavHost()
+
+                // region permission
                 val context = LocalContext.current
-                // Check if permission granted.
+
                 // TODO: запрашивать разрешение только после настройки первого приема.
                 var hasNotificationPermission by remember {
                     mutableStateOf(
@@ -43,7 +46,7 @@ class MainActivity : ComponentActivity() {
                         contract = ActivityResultContracts.RequestPermission(),
                         onResult = { isGranted -> hasNotificationPermission = isGranted },
                     )
-                AppNavHost()
+
                 /*             Column(
                                  modifier = Modifier.fillMaxSize().padding(top = 64.dp),
                                  verticalArrangement = Arrangement.Center,
@@ -67,7 +70,7 @@ class MainActivity : ComponentActivity() {
                                  }
 
                              }*/
-                // AppNavHost()
+                // endregion
             }
         }
     }

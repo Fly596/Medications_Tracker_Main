@@ -9,15 +9,16 @@ import java.util.Locale
 
 // Утилиты для работы с датой вынесены в object для удобства доступа
 object DateTimeUtils {
+
     val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("MMM dd, yyyy", Locale.US)
     val dateTimeFormatter: DateTimeFormatter =
-            DateTimeFormatter.ofPattern("MMM dd, yyyy, h:m a", Locale.US)
+        DateTimeFormatter.ofPattern("MMM dd, yyyy, h:m a", Locale.US)
 
     fun fromTimestampToLocalDateTime(value: Long): LocalDateTime {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(value), ZoneId.systemDefault())
     }
 
-    fun fromTimestampToLocalDate(value: Long): LocalDate {
+    fun fromTimestampToDate(value: Long): LocalDate {
         return LocalDate.ofInstant(Instant.ofEpochMilli(value), ZoneId.systemDefault())
     }
 
