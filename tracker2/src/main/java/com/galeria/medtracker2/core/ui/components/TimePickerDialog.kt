@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -30,17 +31,16 @@ fun TimeSelectionRow(
     label: String = "Time",
     selectedTimeString: String,
     onTimeSelected: (Pair<Int, Int>) -> Unit,
-    onValueChange: (String) -> Unit = {}
+    onValueChange: (String) -> Unit = {},
 ) {
     // Состояние для времени (часы и минуты).
     var showTimePicker by rememberSaveable { mutableStateOf(false) }
     val selectedTime = remember { mutableStateOf(selectedTimeString) }
 
     Row(
-        modifier = Modifier
-            .padding(vertical = 8.dp),
+        modifier = Modifier.padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         TextField(
             value = selectedTimeString,
@@ -48,16 +48,18 @@ fun TimeSelectionRow(
             onValueChange = { selectedTime.value = it },
             singleLine = true,
             readOnly = true,
-            modifier = Modifier,/*.weight(1f)*/
-            interactionSource = remember { MutableInteractionSource() }.also { interactionSource ->
-                LaunchedEffect(interactionSource) {
-                    interactionSource.interactions.collect {
-                        if (it is PressInteraction.Release) {
-                            showTimePicker = true
-                        }
-                    }
-                }
-            },
+            modifier = Modifier, /*.weight(1f)*/
+            interactionSource =
+                    remember { MutableInteractionSource() }
+                        .also { interactionSource ->
+                            LaunchedEffect(interactionSource) {
+                                interactionSource.interactions.collect {
+                                    if (it is PressInteraction.Release) {
+                                        showTimePicker = true
+                                    }
+                                }
+                            }
+                        },
         )
         // Отображение диалогов.
         if (showTimePicker) {
@@ -66,11 +68,57 @@ fun TimeSelectionRow(
                     onTimeSelected(Pair(hour, minute))
                     showTimePicker = false
                 },
-                onDismiss = { showTimePicker = false }
+                onDismiss = { showTimePicker = false },
             )
         }
     }
+}
 
+@Composable
+fun TimeSelectionButton(
+    label: String = "Time",
+    selectedTimeString: String,
+    onTimeSelected: (Pair<Int, Int>) -> Unit,
+    onValueChange: (String) -> Unit = {},
+) {
+    // Состояние для времени (часы и минуты).
+    var showTimePicker by rememberSaveable { mutableStateOf(false) }
+    val selectedTime = remember { mutableStateOf(selectedTimeString) }
+
+    Row(
+        modifier = Modifier.padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Button(
+            modifier = Modifier,
+            onClick = { selectedTime.value = selectedTimeString },
+            interactionSource =
+                    remember { MutableInteractionSource() }
+                        .also { interactionSource ->
+                            LaunchedEffect(interactionSource) {
+                                interactionSource.interactions.collect {
+                                    if (it is PressInteraction.Release) {
+                                        showTimePicker = true
+                                    }
+                                }
+                            }
+                        },
+        ) {
+            Text(label)
+        }
+
+        // Отображение диалогов.
+        if (showTimePicker) {
+            TimePickerDialog(
+                onConfirm = { hour, minute ->
+                    onTimeSelected(Pair(hour, minute))
+                    showTimePicker = false
+                },
+                onDismiss = { showTimePicker = false },
+            )
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -80,11 +128,12 @@ fun TimePickerDialog(
     onDismiss: () -> Unit,
 ) {
     val currentTime = Calendar.getInstance()
-    val timePickerState = rememberTimePickerState(
-        initialHour = currentTime.get(Calendar.HOUR),
-        initialMinute = currentTime.get(Calendar.MINUTE),
-        is24Hour = false,
-    )
+    val timePickerState =
+            rememberTimePickerState(
+                initialHour = currentTime.get(Calendar.HOUR),
+                initialMinute = currentTime.get(Calendar.MINUTE),
+                is24Hour = false,
+            )
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -93,15 +142,11 @@ fun TimePickerDialog(
                 Text("Confirm")
             }
         },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Dismiss")
-            }
-        },
+        dismissButton = { TextButton(onClick = onDismiss) { Text("Dismiss") } },
         text = {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 TimeInput(state = timePickerState)
             }
-        }
+        },
     )
 }

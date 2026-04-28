@@ -7,6 +7,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -21,12 +24,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medtracker2.core.ui.components.DateSelectionRow
+import com.galeria.medtracker2.core.ui.components.TimeSelectionButton
 import com.galeria.medtracker2.core.ui.components.TimeSelectionRow
 
 @Composable
 fun AddMedicationScreen(
     onMainClick: () -> Unit = {},
-    viewModel: AddMedicationVM = hiltViewModel()
+    viewModel: AddMedicationVM = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -35,7 +39,7 @@ fun AddMedicationScreen(
             .fillMaxSize()
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
 
         // Поля ввода основной информации.
@@ -59,18 +63,37 @@ fun AddMedicationScreen(
         DateSelectionRow(
             label = "Start Date",
             selectedDateString = state.startDateString,
-            onDateSelected = viewModel::updateStartDate
+            onDateSelected = viewModel::updateStartDate,
         )
         DateSelectionRow(
             label = "End Date",
             selectedDateString = state.endDateString,
-            onDateSelected = viewModel::updateEndDate
+            onDateSelected = viewModel::updateEndDate,
         )
         TimeSelectionRow(
             label = "Time",
             selectedTimeString = state.intakeTimeString,
-            onTimeSelected = viewModel::updateTime
+            onTimeSelected = viewModel::updateTime,
         )
+
+        LazyVerticalGrid(columns = GridCells.Adaptive(minSize = 90.dp)) {
+            items(items = state.intakeTimes) { intTimes ->
+                TimeSelectionButton(
+                    label = "%02d:%02d".format(intTimes.first, intTimes.second),
+                    selectedTimeString = "%02d:%02d".format(intTimes.first, intTimes.second),
+                    onTimeSelected = viewModel::updateTime,
+                )
+            }
+        }
+        /*     LazyRow(modifier = Modifier.fillMaxWidth()) {
+            items(state.intakeTimes) { intTimes ->
+                TimeSelectionButton(
+                    label = "%02d:%02d".format(intTimes.first, intTimes.second),
+                    selectedTimeString = "%02d:%02d".format(intTimes.first, intTimes.second),
+                    onTimeSelected = viewModel::updateTime,
+                )
+            }
+        }*/
 
         Spacer(modifier = Modifier.weight(1f))
 
@@ -79,11 +102,14 @@ fun AddMedicationScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),
-            shape = MaterialTheme.shapes.medium
+            shape = MaterialTheme.shapes.medium,
         ) {
             Text("Set alarm")
         }
         Button(onMainClick) { Text("On add med page") }
-
     }
+}
+
+@Composable
+fun TimeValues(values: Pair<Int, Int>) {
 }

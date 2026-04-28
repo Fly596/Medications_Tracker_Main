@@ -27,6 +27,7 @@ data class AddMedUiState(
     val startDate: Long = 0,
     val endDate: Long? = null,
     val intakeTime: Pair<Int, Int> = Pair(0, 0),
+    val intakeTimes: List<Pair<Int, Int>> = emptyList(),
     val startDateString: String = "Choose date",
     val endDateString: String = "Choose date",
     val intakeTimeString: String = "Выберите время",
@@ -55,9 +56,7 @@ constructor(
     fun updateStartDate(input: Long) {
         val date = DateTimeUtils.fromTimestampToLocalDate(input)
         _state.update {
-            it.copy(
-                startDateString = date.format(DateTimeUtils.dateFormatter), startDate = input
-            )
+            it.copy(startDateString = date.format(DateTimeUtils.dateFormatter), startDate = input)
         }
     }
 
@@ -65,24 +64,30 @@ constructor(
         input?.let {
             val date = DateTimeUtils.fromTimestampToLocalDate(it)
             _state.update {
-                it.copy(
-                    endDateString = date.format(DateTimeUtils.dateFormatter),
-                    endDate = input
-                )
+                it.copy(endDateString = date.format(DateTimeUtils.dateFormatter), endDate = input)
             }
         }
     }
 
     fun updateTime(time: Pair<Int, Int>) {
         val formattedTime = "%02d:%02d".format(time.first, time.second)
-        _state.update { it.copy(intakeTime = time, intakeTimeString = formattedTime) }
-    }
-// endregion
+        val changedTimesList = _state.value.intakeTimes.toMutableList()
+        changedTimesList.add(time)
 
-    /**
-     * Основной метод сохранения.
-     * Сначала создаем запись лекарства, затем генерируем расписание.
-     */
+        _state.update { st ->
+            st.copy(
+                intakeTime = time,
+                intakeTimeString = formattedTime,
+                intakeTimes = changedTimesList.toList(),
+            )
+        }
+    }
+
+    fun updateTimeEntities() {}
+
+    // endregion
+
+    /** Основной метод сохранения. Сначала создаем запись лекарства, затем генерируем расписание. */
     fun addMedication() {
         val currentState = _state.value
         if (currentState.name.isBlank()) return
@@ -92,9 +97,7 @@ constructor(
                 val medId = UUID.randomUUID()
 
                 // Сначала сохраняем основную запись
-                repository.addMedication(
-                    MedicationDomain(medId, currentState.name, Instant.now())
-                )
+                repository.addMedication(MedicationDomain(medId, currentState.name, Instant.now()))
 
                 // 2. Генерируем дни приема и ставим алармы
                 generateScheduleEntries(medId, currentState)
@@ -130,9 +133,10 @@ constructor(
 
     private suspend fun generateScheduleEntries(medId: UUID, currentState: AddMedUiState) {
         val start = DateTimeUtils.fromTimestampToLocalDate(currentState.startDate!!)
-        val end = DateTimeUtils.fromTimestampToLocalDate(
-            currentState.endDate ?: currentState.startDate // TODO: увеличить.
-        )
+        val end =
+                DateTimeUtils.fromTimestampToLocalDate(
+                    currentState.endDate ?: currentState.startDate // TODO: увеличить.
+                )
 
         // Считаем кол-во дней.
         val daysCount = ChronoUnit.DAYS.between(start, end).toInt()
@@ -152,18 +156,19 @@ constructor(
         var currentPointerDate = start
         for (i in 0..daysCount) {
             val scheduleId = UUID.randomUUID()
-            val intakeMoment = DateTimeUtils.fromDateTimeValues(
-                currentPointerDate,
-                currentState.intakeTime.first,
-                currentState.intakeTime.second
-            )
+            val intakeMoment =
+                    DateTimeUtils.fromDateTimeValues(
+                        currentPointerDate,
+                        currentState.intakeTime.first,
+                        currentState.intakeTime.second,
+                    )
 
             // 1. Сохраняем прием в БД.
             medRegRepository.addSchedule(
                 ScheduledDateTimeDomain(
                     id = scheduleId,
                     medicationRegimentId = medRegId,
-                    scheduledIntakeDateTime = intakeMoment
+                    scheduledIntakeDateTime = intakeMoment,
                 )
             )
 
@@ -173,11 +178,10 @@ constructor(
                     scheduleId = scheduleId,
                     timeMillis = intakeMoment.toEpochMilli(),
                     title = currentState.name,
-                    dose = currentState.dose
+                    dose = currentState.dose,
                 )
             }
             currentPointerDate = currentPointerDate.plusDays(1)
-
         }
 
         // TODO: После создания всех записей в БД можно запланировать уведомления
