@@ -1,6 +1,7 @@
 package com.galeria.medtracker2.feature.intakes.data
 
 import com.galeria.medtracker2.feature.intakes.data.local.IntakeDao
+import com.galeria.medtracker2.feature.intakes.data.local.toEntity
 import com.galeria.medtracker2.feature.intakes.domain.IntakeLogDomain
 import com.galeria.medtracker2.feature.intakes.domain.IntakesRepository
 import kotlinx.coroutines.flow.Flow
@@ -11,7 +12,7 @@ class IntakesRepositoryImpl @Inject constructor(
 ) : IntakesRepository {
 
     override suspend fun addIntake(intake: IntakeLogDomain) {
-        TODO("Not yet implemented")
+        intakeDao.insertIntake(intake.toEntity())
     }
 
     override fun getIntakes(): Flow<List<IntakeLogDomain>> {

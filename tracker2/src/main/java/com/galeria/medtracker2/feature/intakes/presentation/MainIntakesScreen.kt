@@ -20,7 +20,9 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,11 +32,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medtracker2.core.common.DateTimeUtils
 import com.galeria.medtracker2.core.common.data.FullSchedule
 import com.galeria.medtracker2.core.ui.theme.SpeechRecognitionAppTheme
+import java.time.Instant
 import java.util.UUID
 
 @Composable
@@ -44,55 +48,63 @@ fun MainIntakesScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Button(
-            onClick = onAddMedicationClick,
-            modifier = Modifier.fillMaxWidth(),
-            shape = MaterialTheme.shapes.medium,
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                title = { Text("Nearest intakes", style = MaterialTheme.typography.displaySmall) }
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(horizontal = 16.dp),
         ) {
-            Text("On add med page")
+            Button(
+                onClick = onAddMedicationClick,
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.medium,
+            ) {
+                Text("On add med page")
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            if (state.plannedIntakes.isEmpty() && !state.isLoading) {
+                EmptySchedulePlaceholder()
+            } else {
+                IntakeList(state.plannedIntakes, onCheck = viewModel::checkIntake)
+            }
+
+            // Полный список приемов.
+
         }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Text(
-            text = "Ближайшие приемы",
-            style = MaterialTheme.typography.headlineSmall,
-            modifier = Modifier.padding(bottom = 8.dp),
-        )
-
-        if (state.plannedIntakes.isEmpty() && !state.isLoading) {
-            EmptySchedulePlaceholder()
-        } else {
-            IntakeList(state.plannedIntakes)
-        }
-
-        // Полный список приемов.
-
     }
 }
 
 @Composable
-fun IntakeList(intakes: List<FullSchedule>) {
+fun IntakeList(intakes: List<FullSchedule>, onCheck: (Boolean, FullSchedule, Instant) -> Unit) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(bottom = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        items(items = intakes, key = { it.idDateTime }) { intake -> IntakeCard(intake) }
+        items(items = intakes, key = { it.idDateTime }) { intake -> IntakeCard(intake, onCheck) }
     }
 }
 
 @Composable
-fun IntakeCard(intake: FullSchedule, onCheck: (Boolean) -> Unit = {}) {
+fun IntakeCard(intake: FullSchedule, onCheck: (Boolean, FullSchedule, Instant) -> Unit) {
     var showDialog by remember { mutableStateOf(false) }
 
     if (showDialog) {
-        CheckIntakeDialog(intake = intake, onCheck = {})
+        CheckIntakeDialog(
+            intake = intake,
+            onCheck = onCheck,
+            onDismissRequest = { showDialog = false },
+        )
     } else {
         Card(
             modifier = Modifier
@@ -147,32 +159,51 @@ fun IntakeCard(intake: FullSchedule, onCheck: (Boolean) -> Unit = {}) {
 }
 
 @Composable
-fun CheckIntakeDialog(intake: FullSchedule, onCheck: (Boolean) -> Unit) {
-
-    Card(
-        shape = MaterialTheme.shapes.medium,
-        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(text = intake.name, style = MaterialTheme.typography.titleLarge)
-                Text(
-                    text = "${intake.doseMg} mg",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                )
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.Bottom,
-            ) {
-                Button(onClick = { onCheck(true) }) { Text("Confirm") }
-                Button(onClick = { onCheck(false) }) { Text("Skip") }
+fun CheckIntakeDialog(
+    intake: FullSchedule,
+    onCheck: (Boolean, FullSchedule, Instant) -> Unit,
+    onDismissRequest: () -> Unit = {},
+) {
+    Dialog(onDismissRequest = { onDismissRequest() }) {
+        Card(
+            shape = MaterialTheme.shapes.medium,
+            elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(text = intake.name, style = MaterialTheme.typography.titleLarge)
+                    Text(
+                        text = "${intake.doseMg} mg",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.Bottom,
+                ) {
+                    Button(
+                        onClick = {
+                            onCheck(true, intake, Instant.now())
+                            onDismissRequest()
+                        }
+                    ) {
+                        Text("Confirm")
+                    }
+                    Button(
+                        onClick = {
+                            onCheck(false, intake, Instant.now())
+                            onDismissRequest()
+                        }
+                    ) {
+                        Text("Skip")
+                    }
+                }
             }
         }
     }
@@ -199,7 +230,8 @@ fun GreetingPreview() {
                             name = "Name",
                             doseMg = 56.0,
                             scheduledIntakeDateTime = 0,
-                        )
+                        ),
+                    onCheck = { _, _, _ -> },
                 )
             }
         }
