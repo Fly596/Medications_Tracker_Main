@@ -52,14 +52,17 @@ constructor(
     val state = _state.asStateFlow()
 
     // region ui update.
-    fun updateName(input: String) = _state.update { it.copy(name = input) }
+    fun updateName(input: String?) = _state.update { it.copy(name = input ?: "") }
 
-    fun updateDose(input: String) = _state.update { it.copy(dose = input) }
+    fun updateDose(input: String?) = _state.update { it.copy(dose = input ?: "") }
 
-    fun updateStartDate(input: Long) {
-        val date = DateTimeUtils.fromTimestampToDate(input)
+    fun updateStartDate(input: Long?) {
+        val date = DateTimeUtils.fromTimestampToDate(input ?: Instant.now().toEpochMilli())
         _state.update {
-            it.copy(startDateString = date.format(DateTimeUtils.dateFormatter), startDate = input)
+            it.copy(
+                startDateString = date.format(DateTimeUtils.dateFormatter),
+                startDate = input ?: Instant.now().toEpochMilli(),
+            )
         }
     }
 
@@ -101,11 +104,7 @@ constructor(
 
                 // Сначала сохраняем основную запись
                 repository.addMedication(
-                    MedicationDomain(
-                        medicationId,
-                        currentState.name,
-                        Instant.now()
-                    )
+                    MedicationDomain(medicationId, currentState.name, Instant.now())
                 )
 
                 // 2. Генерируем дни приема и ставим алармы
@@ -119,17 +118,20 @@ constructor(
 
     private suspend fun generateScheduleEntries(medicationId: UUID, currentState: AddMedUiState) {
         // Проверка, чтобы не создавать записи за прошедшие дни.
-        val start = if (currentState.startDate < Instant.now().toEpochMilli()) {
-            DateTimeUtils.fromTimestampToDate(Instant.now().toEpochMilli())
-        } else {
-            DateTimeUtils.fromTimestampToDate(currentState.startDate)
-        }
+        val start =
+                if (currentState.startDate < Instant.now().toEpochMilli()) {
+                    DateTimeUtils.fromTimestampToDate(Instant.now().toEpochMilli())
+                } else {
+                    DateTimeUtils.fromTimestampToDate(currentState.startDate)
+                }
 
-        val end = DateTimeUtils.fromTimestampToDate(
-            currentState.endDate ?: currentState.startDate.plus(DEFAULT_SCHEDULE_DAYS)
-        )
+        val end =
+                DateTimeUtils.fromTimestampToDate(
+                    currentState.endDate ?: currentState.startDate.plus(DEFAULT_SCHEDULE_DAYS)
+                )
 
-        // TODO: сделать, чтобы при входе в прилоюение подгружались данные по приемам на N дней вперед.
+        // TODO: сделать, чтобы при входе в прилоюение подгружались данные по приемам на N дней
+        // вперед.
         val daysCount = ChronoUnit.DAYS.between(start, end).toInt()
         val medicationCourseId = UUID.randomUUID()
 
@@ -140,9 +142,12 @@ constructor(
                 medicationId = medicationId,
                 doseMg = currentState.dose.toDoubleOrNull() ?: 0.0,
                 startDate = Instant.ofEpochMilli(currentState.startDate),
-                endDate = Instant.ofEpochMilli(
-                    currentState.endDate ?: currentState.startDate.plus(DEFAULT_SCHEDULE_DAYS)
-                ),
+                endDate =
+                        Instant.ofEpochMilli(
+                            currentState.endDate ?: currentState.startDate.plus(
+                                DEFAULT_SCHEDULE_DAYS
+                            )
+                        ),
             )
         )
 
@@ -239,5 +244,4 @@ constructor(
             )*/
         }
     }
-
 }

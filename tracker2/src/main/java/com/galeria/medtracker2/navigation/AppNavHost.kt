@@ -1,8 +1,5 @@
 package com.galeria.medtracker2.navigation
 
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -17,11 +14,11 @@ fun AppNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
 ) {
-    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+    //Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
         NavHost(
-            modifier = Modifier.padding(innerPadding),
+            modifier = Modifier,
             navController = navController,
-            startDestination = AppRoutes.Home,
+            startDestination = AppRoutes.AddMedication,
         ) {
             composable<AppRoutes.Home> {
                 MainIntakesScreen(
@@ -43,5 +40,5 @@ fun AppNavHost(
                 )
             }
         }
-    }
+    //}
 }

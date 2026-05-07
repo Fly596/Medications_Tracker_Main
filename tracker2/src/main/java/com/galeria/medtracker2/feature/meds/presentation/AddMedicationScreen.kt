@@ -13,8 +13,10 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -33,71 +35,79 @@ fun AddMedicationScreen(
     viewModel: AddMedicationVM = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-
-        // Поля ввода основной информации.
-        TextField(
-            value = state.name,
-            onValueChange = viewModel::updateName,
-            label = { Text("Medication name") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-        )
-        TextField(
-            value = state.dose,
-            onValueChange = viewModel::updateDose,
-            label = { Text("Medication dose") },
-            modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-            singleLine = true,
-        )
-
-        // Блок выбора дат и времени.
-        DateSelectionRow(
-            label = "Start Date",
-            selectedDateString = state.startDateString,
-            onDateSelected = viewModel::updateStartDate,
-        )
-        DateSelectionRow(
-            label = "End Date",
-            selectedDateString = state.endDateString,
-            onDateSelected = viewModel::updateEndDate,
-        )
-        TimeSelectionRow(
-            label = "Time",
-            selectedTimeString = state.intakeTimeString,
-            onTimeSelected = viewModel::updateTime,
-        )
-
-        LazyVerticalGrid(columns = GridCells.Adaptive(minSize = 90.dp)) {
-            items(items = state.intakeTimes) { intTimes ->
-                TimeSelectionButton(
-                    label = "%02d:%02d".format(intTimes.first, intTimes.second),
-                    selectedTimeString = "%02d:%02d".format(intTimes.first, intTimes.second),
-                    onTimeSelected = viewModel::updateTime,
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        Button(
-            onClick = viewModel::addMedication,
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                title = { Text("New medication", style = MaterialTheme.typography.displaySmall) }
+            )
+        },
+    ) { innerPadding ->
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(56.dp),
-            shape = MaterialTheme.shapes.medium,
+                .padding(innerPadding),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            Text("Set alarm")
+
+            // Поля ввода основной информации.
+            TextField(
+                value = state.name,
+                onValueChange = viewModel::updateName,
+                label = { Text("Medication name") },
+                modifier = Modifier,
+                singleLine = true,
+            )
+            TextField(
+                value = state.dose,
+                onValueChange = viewModel::updateDose,
+                label = { Text("Medication dose") },
+                modifier = Modifier,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                singleLine = true,
+            )
+
+            // Блок выбора дат и времени.
+            DateSelectionRow(
+                label = "Start Date",
+                selectedDateString = state.startDateString,
+                onDateSelected = viewModel::updateStartDate,
+            )
+            DateSelectionRow(
+                label = "End Date",
+                selectedDateString = state.endDateString,
+                onDateSelected = viewModel::updateEndDate,
+            )
+            TimeSelectionRow(
+                label = "Time",
+                selectedTimeString = state.intakeTimeString,
+                onTimeSelected = viewModel::updateTime,
+            )
+
+            LazyVerticalGrid(columns = GridCells.Adaptive(minSize = 90.dp)) {
+                items(items = state.intakeTimes) { intTimes ->
+                    TimeSelectionButton(
+                        label = "%02d:%02d".format(intTimes.first, intTimes.second),
+                        selectedTimeString = "%02d:%02d".format(intTimes.first, intTimes.second),
+                        onTimeSelected = viewModel::updateTime,
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Button(
+                onClick = viewModel::addMedication,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                shape = MaterialTheme.shapes.medium,
+            ) {
+                Text("Set alarm")
+            }
+            Button(onMainClick) { Text("On add med page") }
         }
-        Button(onMainClick) { Text("On add med page") }
     }
 }
 

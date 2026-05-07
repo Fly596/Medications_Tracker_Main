@@ -1,8 +1,8 @@
 package com.galeria.medtracker2.feature.meds.data.repository
 
+import com.galeria.medtracker2.core.common.data.FullSchedule
+import com.galeria.medtracker2.core.common.data.RegimentWithNameDoseDate
 import com.galeria.medtracker2.feature.meds.data.local.combined.CombinedDao
-import com.galeria.medtracker2.feature.meds.data.local.combined.FullSchedule
-import com.galeria.medtracker2.feature.meds.data.local.combined.RegimentWithNameDoseDate
 import com.galeria.medtracker2.feature.meds.data.local.course.MedicationCourseDao
 import com.galeria.medtracker2.feature.meds.data.local.course.toDomain
 import com.galeria.medtracker2.feature.meds.data.local.course.toEntity

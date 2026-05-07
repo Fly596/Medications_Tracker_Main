@@ -1,4 +1,4 @@
-package com.galeria.medtracker2.feature.meds.data.local.combined
+package com.galeria.medtracker2.core.common.data
 
 data class RegimentWithNameDoseDate(
     val name: String,

@@ -33,8 +33,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medtracker2.core.common.DateTimeUtils
+import com.galeria.medtracker2.core.common.data.FullSchedule
 import com.galeria.medtracker2.core.ui.theme.SpeechRecognitionAppTheme
-import com.galeria.medtracker2.feature.meds.data.local.combined.FullSchedule
 import java.util.UUID
 
 @Composable

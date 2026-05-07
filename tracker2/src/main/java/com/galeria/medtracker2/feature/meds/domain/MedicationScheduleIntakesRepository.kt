@@ -1,7 +1,7 @@
 package com.galeria.medtracker2.feature.meds.domain
 
-import com.galeria.medtracker2.feature.meds.data.local.combined.FullSchedule
-import com.galeria.medtracker2.feature.meds.data.local.combined.RegimentWithNameDoseDate
+import com.galeria.medtracker2.core.common.data.FullSchedule
+import com.galeria.medtracker2.core.common.data.RegimentWithNameDoseDate
 import com.galeria.medtracker2.feature.meds.data.local.plannedintake.PlannedIntakeEntity
 import kotlinx.coroutines.flow.Flow
 import java.util.UUID

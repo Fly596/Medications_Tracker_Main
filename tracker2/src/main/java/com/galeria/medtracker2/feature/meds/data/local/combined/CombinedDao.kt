@@ -2,6 +2,8 @@ package com.galeria.medtracker2.feature.meds.data.local.combined
 
 import androidx.room.Dao
 import androidx.room.Query
+import com.galeria.medtracker2.core.common.data.FullSchedule
+import com.galeria.medtracker2.core.common.data.RegimentWithNameDoseDate
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -26,3 +28,4 @@ interface CombinedDao {
     )
     fun getFullScheduleDateTimes(): Flow<List<FullSchedule>>
 }
+

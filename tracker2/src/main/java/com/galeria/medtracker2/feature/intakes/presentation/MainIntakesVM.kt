@@ -2,9 +2,9 @@ package com.galeria.medtracker2.feature.intakes.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.galeria.medtracker2.core.common.data.FullSchedule
 import com.galeria.medtracker2.feature.intakes.domain.IntakeLogDomain
 import com.galeria.medtracker2.feature.intakes.domain.IntakesRepository
-import com.galeria.medtracker2.feature.meds.data.local.combined.FullSchedule
 import com.galeria.medtracker2.feature.meds.domain.MedicationScheduleIntakesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
