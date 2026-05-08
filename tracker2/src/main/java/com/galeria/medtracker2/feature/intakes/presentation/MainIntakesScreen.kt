@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -72,11 +73,21 @@ fun MainIntakesScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            if (state.plannedIntakes.isEmpty() && !state.isLoading) {
+            if (state.isLoading) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+            } else if (state.todaysIntakes.isEmpty()) {
                 EmptySchedulePlaceholder()
             } else {
-                IntakeList(state.plannedIntakes, onCheck = viewModel::checkIntake)
+                IntakeList(
+                    intakes = state.todaysIntakes,
+                    onCheck = viewModel::checkIntake
+                )
             }
+//            if (state.plannedIntakes.isEmpty() && !state.isLoading) {
+//                EmptySchedulePlaceholder()
+//            } else {
+//                IntakeList(state.plannedIntakes, onCheck = viewModel::checkIntake)
+//            }
 
             // Полный список приемов.
 
@@ -117,7 +128,7 @@ fun IntakeCard(intake: FullSchedule, onCheck: (Boolean, FullSchedule, Instant) -
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text(text = intake.name, style = MaterialTheme.typography.titleLarge)
+                    Text(text = intake.medName, style = MaterialTheme.typography.titleLarge)
                     Text(
                         text = "${intake.doseMg} mg",
                         style = MaterialTheme.typography.bodyLarge,
@@ -183,7 +194,7 @@ fun CheckIntakeDialog(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text(text = intake.name, style = MaterialTheme.typography.titleLarge)
+                    Text(text = intake.medName, style = MaterialTheme.typography.titleLarge)
                     Text(
                         text = "${intake.doseMg} mg",
                         style = MaterialTheme.typography.bodyLarge,
@@ -235,7 +246,7 @@ fun GreetingPreview() {
                         FullSchedule(
                             idDateTime = UUID.randomUUID(),
                             idRegiment = UUID.randomUUID(),
-                            name = "Name",
+                            medName = "Name",
                             doseMg = 56.0,
                             scheduledIntakeDateTime = 0,
                             status = null

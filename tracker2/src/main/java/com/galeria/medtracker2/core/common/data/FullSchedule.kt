@@ -5,7 +5,7 @@ import java.util.UUID
 data class FullSchedule(
     val idDateTime: UUID,
     val idRegiment: UUID,
-    val name: String,
+    val medName: String,
     val doseMg: Double,
     val scheduledIntakeDateTime: Long,
     val status: Boolean?
