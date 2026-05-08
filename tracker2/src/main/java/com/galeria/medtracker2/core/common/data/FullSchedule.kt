@@ -8,4 +8,5 @@ data class FullSchedule(
     val name: String,
     val doseMg: Double,
     val scheduledIntakeDateTime: Long,
+    val status: Boolean?
 )

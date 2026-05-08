@@ -142,6 +142,15 @@ fun IntakeCard(intake: FullSchedule, onCheck: (Boolean, FullSchedule, Instant) -
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
+                    val statusText = when (intake.status) {
+                        null -> "No Status"
+                        true -> "Taken"
+                        false -> "Missed"
+                    }
+                    Text(
+                        text = statusText,
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
                     // TODO: функционал отметки приема.
                     Button(
                         onClick = {
@@ -230,6 +239,7 @@ fun GreetingPreview() {
                             name = "Name",
                             doseMg = 56.0,
                             scheduledIntakeDateTime = 0,
+                            status = null
                         ),
                     onCheck = { _, _, _ -> },
                 )

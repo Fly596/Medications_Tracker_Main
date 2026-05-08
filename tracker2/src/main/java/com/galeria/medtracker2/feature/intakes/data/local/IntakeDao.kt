@@ -25,6 +25,6 @@ interface IntakeDao {
     suspend fun getIntakeById(id: UUID): IntakeLogEntity?
 
     // для проверки статуса приема.
-    @Query("SELECT status FROM intakes WHERE plannedIntakeId = plannedIntakeId")
+    @Query("SELECT status FROM intakes WHERE plannedIntakeId = :plannedIntakeId")
     suspend fun checkIntakeStatus(plannedIntakeId: UUID): Boolean
 }

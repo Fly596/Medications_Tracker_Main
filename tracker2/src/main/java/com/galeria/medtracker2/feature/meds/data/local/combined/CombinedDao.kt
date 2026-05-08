@@ -20,10 +20,18 @@ interface CombinedDao {
 
     @Query(
         """
-            SELECT std.id AS 'idDateTime', mr.id AS 'idRegiment', m.name, mr.doseMg, std.scheduledIntakeDateTime
+            SELECT 
+                std.id AS 'idDateTime',
+                mr.id AS 'idRegiment',
+                m.name,
+                mr.doseMg,
+                std.scheduledIntakeDateTime,
+                i.status AS status
             FROM medications AS m
             JOIN medications_regimens AS mr ON m.id = mr.medicationId
             INNER JOIN scheduled_date_times AS std ON mr.id = std.medicationScheduleId
+            LEFT JOIN intakes AS i ON std.id = i.plannedIntakeId
+            ORDER BY std.scheduledIntakeDateTime
             """
     )
     fun getFullScheduleDateTimes(): Flow<List<FullSchedule>>
