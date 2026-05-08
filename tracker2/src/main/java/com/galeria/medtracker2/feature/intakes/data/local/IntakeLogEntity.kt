@@ -15,11 +15,11 @@ import kotlin.uuid.ExperimentalUuidApi
         ForeignKey(
             entity = PlannedIntakeEntity::class,
             parentColumns = ["id"],
-            childColumns = ["medicationScheduleId"],
+            childColumns = ["plannedIntakeId"],
             onDelete = ForeignKey.CASCADE
         )
     ],
-    indices = [Index("medicationScheduleId")]
+    indices = [Index("plannedIntakeId")]
 )
 data class IntakeLogEntity(
     @PrimaryKey
