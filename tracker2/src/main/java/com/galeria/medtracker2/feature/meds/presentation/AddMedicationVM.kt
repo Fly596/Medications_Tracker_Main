@@ -5,7 +5,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.galeria.medtracker2.core.common.DateTimeUtils
-import com.galeria.medtracker2.core.notification.ScheduleNotification
+import com.galeria.medtracker2.core.notification.data.ScheduleNotificationRepoImpl
 import com.galeria.medtracker2.feature.meds.domain.MedicationCourseDomain
 import com.galeria.medtracker2.feature.meds.domain.MedicationDomain
 import com.galeria.medtracker2.feature.meds.domain.MedicationScheduleIntakesRepository
@@ -45,7 +45,7 @@ class AddMedicationVM
 constructor(
     private val repository: MedsRepository,
     private val medRegRepository: MedicationScheduleIntakesRepository,
-    private val notificationService: ScheduleNotification,
+    private val notificationService: ScheduleNotificationRepoImpl,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(AddMedUiState())
@@ -119,16 +119,16 @@ constructor(
     private suspend fun generateScheduleEntries(medicationId: UUID, currentState: AddMedUiState) {
         // Проверка, чтобы не создавать записи за прошедшие дни.
         val start =
-                if (currentState.startDate < Instant.now().toEpochMilli()) {
-                    DateTimeUtils.fromTimestampToDate(Instant.now().toEpochMilli())
-                } else {
-                    DateTimeUtils.fromTimestampToDate(currentState.startDate)
-                }
+            if (currentState.startDate < Instant.now().toEpochMilli()) {
+                DateTimeUtils.fromTimestampToDate(Instant.now().toEpochMilli())
+            } else {
+                DateTimeUtils.fromTimestampToDate(currentState.startDate)
+            }
 
         val end =
-                DateTimeUtils.fromTimestampToDate(
-                    currentState.endDate ?: currentState.startDate.plus(DEFAULT_SCHEDULE_DAYS)
-                )
+            DateTimeUtils.fromTimestampToDate(
+                currentState.endDate ?: currentState.startDate.plus(DEFAULT_SCHEDULE_DAYS)
+            )
 
         // TODO: сделать, чтобы при входе в прилоюение подгружались данные по приемам на N дней
         // вперед.
@@ -143,11 +143,11 @@ constructor(
                 doseMg = currentState.dose.toDoubleOrNull() ?: 0.0,
                 startDate = Instant.ofEpochMilli(currentState.startDate),
                 endDate =
-                        Instant.ofEpochMilli(
-                            currentState.endDate ?: currentState.startDate.plus(
-                                DEFAULT_SCHEDULE_DAYS
-                            )
-                        ),
+                    Instant.ofEpochMilli(
+                        currentState.endDate ?: currentState.startDate.plus(
+                            DEFAULT_SCHEDULE_DAYS
+                        )
+                    ),
             )
         )
 
