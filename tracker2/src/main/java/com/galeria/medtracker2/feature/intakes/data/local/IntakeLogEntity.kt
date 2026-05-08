@@ -24,7 +24,7 @@ import kotlin.uuid.ExperimentalUuidApi
 data class IntakeLogEntity(
     @PrimaryKey
     val id: UUID = UUID.randomUUID(),
-    val medicationScheduleId: UUID,
+    val plannedIntakeId: UUID,
     val actualIntakeDateTime: Long,
     val status: Boolean = false,
     val notes: String?

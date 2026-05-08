@@ -6,7 +6,7 @@ import java.time.Instant
 fun IntakeLogDomain.toEntity(): IntakeLogEntity {
     return IntakeLogEntity(
         id = this.id,
-        medicationScheduleId = this.medicationScheduleId,
+        plannedIntakeId = this.medicationScheduleId,
         actualIntakeDateTime = this.actualIntakeDateTime.toEpochMilli(),
         status = this.status,
         notes = this.notes
@@ -16,7 +16,7 @@ fun IntakeLogDomain.toEntity(): IntakeLogEntity {
 fun IntakeLogEntity.toDomain(): IntakeLogDomain {
     return IntakeLogDomain(
         id = this.id,
-        medicationScheduleId = this.medicationScheduleId,
+        medicationScheduleId = this.plannedIntakeId,
         actualIntakeDateTime = Instant.ofEpochMilli(this.actualIntakeDateTime),
         status = this.status,
         notes = this.notes ?: ""

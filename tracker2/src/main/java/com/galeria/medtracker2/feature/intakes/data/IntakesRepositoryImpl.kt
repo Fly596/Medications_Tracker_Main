@@ -5,6 +5,7 @@ import com.galeria.medtracker2.feature.intakes.data.local.toEntity
 import com.galeria.medtracker2.feature.intakes.domain.IntakeLogDomain
 import com.galeria.medtracker2.feature.intakes.domain.IntakesRepository
 import kotlinx.coroutines.flow.Flow
+import java.util.UUID
 import javax.inject.Inject
 
 class IntakesRepositoryImpl @Inject constructor(
@@ -18,5 +19,8 @@ class IntakesRepositoryImpl @Inject constructor(
     override fun getIntakes(): Flow<List<IntakeLogDomain>> {
         TODO("Not yet implemented")
     }
+
+    override suspend fun checkIntakeStatus(plannedIntakeId: UUID): Boolean =
+        intakeDao.checkIntakeStatus(plannedIntakeId)
 
 }
