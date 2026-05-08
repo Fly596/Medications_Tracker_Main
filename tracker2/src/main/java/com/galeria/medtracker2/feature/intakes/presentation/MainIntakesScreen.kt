@@ -89,7 +89,7 @@ fun IntakeList(intakes: List<FullSchedule>, onCheck: (Boolean, FullSchedule, Ins
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(bottom = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         items(items = intakes, key = { it.idDateTime }) { intake -> IntakeCard(intake, onCheck) }
     }
@@ -108,8 +108,7 @@ fun IntakeCard(intake: FullSchedule, onCheck: (Boolean, FullSchedule, Instant) -
     } else {
         Card(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp),
+                .fillMaxWidth(),
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
