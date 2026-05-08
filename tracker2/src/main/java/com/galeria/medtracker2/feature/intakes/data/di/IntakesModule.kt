@@ -16,15 +16,3 @@ abstract class IntakesModule {
         medsRepository: IntakesRepositoryImpl
     ): IntakesRepository
 }
-
-/*
-@Module
-@InstallIn(SingletonComponent::class)
-object IntakeDaoModule {
-
-    @Provides
-    fun providesIntakeDao(
-        database: AppDatabase,
-    ): IntakeDao = database.intakeDao()
-
-}*/
