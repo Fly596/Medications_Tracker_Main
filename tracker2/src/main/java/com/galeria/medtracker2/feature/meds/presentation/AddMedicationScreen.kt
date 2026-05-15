@@ -28,6 +28,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medtracker2.core.ui.components.DateSelectionRow
 import com.galeria.medtracker2.core.ui.components.TimeSelectionButton
 import com.galeria.medtracker2.core.ui.components.TimeSelectionRow
+import com.galeria.medtracker2.core.ui.components.rememberNotificationPermissionHandler
 
 @Composable
 fun AddMedicationScreen(
@@ -35,6 +36,15 @@ fun AddMedicationScreen(
     viewModel: AddMedicationVM = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    // Получаем функцию-триггер.
+    val requestPermission = rememberNotificationPermissionHandler { isGranted ->
+        if (isGranted) {
+            viewModel.addMedication()
+        } else {
+            println("Permission denied. Notifications won't work.")
+        }
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -99,7 +109,10 @@ fun AddMedicationScreen(
             Spacer(modifier = Modifier.weight(1f))
 
             Button(
-                onClick = viewModel::addMedication,
+                onClick = {
+                    // Вызываем проверку перед сохранением.
+                    requestPermission()
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),

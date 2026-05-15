@@ -21,7 +21,7 @@ interface CombinedDao {
             SELECT 
                 std.id AS 'idDateTime',
                 mr.id AS 'idRegiment',
-                m.name,
+                m.name AS 'medName',
                 mr.doseMg,
                 std.scheduledIntakeDateTime,
                 i.status AS status
