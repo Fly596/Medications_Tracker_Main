@@ -15,12 +15,12 @@ interface PlannedIntakeDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertScheduledDateTime(scheduledDateTime: PlannedIntakeEntity)
 
-    @Query("DELETE FROM scheduled_date_times WHERE id = :id")
+    @Query("DELETE FROM planned_intakes WHERE id = :id")
     suspend fun deleteScheduledDateTimeById(id: UUID)
 
-    @Query("SELECT * FROM scheduled_date_times")
+    @Query("SELECT * FROM planned_intakes")
     fun getAllScheduledDateTimes(): Flow<List<PlannedIntakeEntity>>
 
-    @Query("SELECT * FROM scheduled_date_times WHERE id = :id")
+    @Query("SELECT * FROM planned_intakes WHERE id = :id")
     suspend fun getScheduledDateTimeById(id: UUID): PlannedIntakeEntity?
 }

@@ -1,8 +1,8 @@
 package com.galeria.medtracker2.feature.meds.data.repository
 
-import com.galeria.medtracker2.core.common.data.CombinedDao
-import com.galeria.medtracker2.core.common.data.FullSchedule
-import com.galeria.medtracker2.core.common.data.RegimentWithNameDoseDate
+import com.galeria.medtracker2.core.common.data.MedicationCourseSummary
+import com.galeria.medtracker2.core.common.data.MedicationScheduleDao
+import com.galeria.medtracker2.core.common.data.ScheduledIntakeDetails
 import com.galeria.medtracker2.feature.meds.data.local.course.MedicationCourseDao
 import com.galeria.medtracker2.feature.meds.data.local.course.toDomain
 import com.galeria.medtracker2.feature.meds.data.local.course.toEntity
@@ -22,7 +22,7 @@ class MedicationScheduleIntakesRepositoryImp
 constructor(
     private val medicationCourseDao: MedicationCourseDao,
     private val plannedIntakeDao: PlannedIntakeDao,
-    private val combinedDao: CombinedDao
+    private val medicationScheduleDao: MedicationScheduleDao,
 ) : MedicationScheduleIntakesRepository {
 
     override suspend fun addCourse(regiment: MedicationCourseDomain) {
@@ -39,18 +39,15 @@ constructor(
             regimentsList.map { it.toDomain() }
         }
 
-    override fun getPlannedIntakeById(
-        id: UUID
-    ): Flow<PlannedIntakeEntity> {
+    override fun getPlannedIntakeById(id: UUID): Flow<PlannedIntakeEntity> {
         TODO("Not yet implemented")
     }
 
     // Возвращает совмещенную таблицу с именем и датами начала и конца приема.
-    override fun getRegimentsWithNameDoseDates(): Flow<List<RegimentWithNameDoseDate>> =
-        combinedDao.getMedicationsNameDoseDates()
+    override fun getRegimentsWithNameDoseDates(): Flow<List<MedicationCourseSummary>> =
+        medicationScheduleDao.getCourseSummaries()
 
     // Возвращает совмещенную таблицу вмсех приемов по времени.
-    override fun getFullSchedule(): Flow<List<FullSchedule>> =
-        combinedDao.getFullScheduleDateTimes()
-
+    override fun getFullSchedule(): Flow<List<ScheduledIntakeDetails>> =
+        medicationScheduleDao.getScheduledIntakesWithDetails()
 }

@@ -15,13 +15,12 @@ interface MedicationCourseDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMedicationCourse(medicationCourse: MedicationCourseEntity)
 
-    @Query("DELETE FROM medications_regimens WHERE id = :id")
+    @Query("DELETE FROM medication_courses WHERE id = :id")
     suspend fun deleteMedicationCourseById(id: UUID)
 
-    @Query("SELECT * FROM medications_regimens")
+    @Query("SELECT * FROM medication_courses")
     fun getAllMedicationCourses(): Flow<List<MedicationCourseEntity>>
 
-    @Query("SELECT * FROM medications_regimens WHERE id = :id")
+    @Query("SELECT * FROM medication_courses WHERE id = :id")
     suspend fun getMedicationCourseById(id: UUID): MedicationCourseEntity?
-
 }

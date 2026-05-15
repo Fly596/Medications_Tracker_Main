@@ -37,7 +37,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medtracker2.core.common.DateTimeUtils
-import com.galeria.medtracker2.core.common.data.FullSchedule
+import com.galeria.medtracker2.core.common.data.ScheduledIntakeDetails
 import com.galeria.medtracker2.core.ui.theme.SpeechRecognitionAppTheme
 import java.time.Instant
 import java.util.UUID
@@ -90,23 +90,31 @@ fun MainIntakesScreen(
 }
 
 @Composable
-fun IntakeList(intakes: List<FullSchedule>, onCheck: (Boolean, FullSchedule, Instant) -> Unit) {
+fun IntakeList(
+    intakes: List<ScheduledIntakeDetails>,
+    onCheck: (Boolean, ScheduledIntakeDetails, Instant) -> Unit,
+) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(bottom = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        items(items = intakes, key = { it.idDateTime }) { intake -> IntakeCard(intake, onCheck) }
+        items(items = intakes, key = { it.plannedIntakeId }) { intake ->
+            IntakeCard(intake, onCheck)
+        }
     }
 }
 
 @Composable
-fun IntakeCard(intake: FullSchedule, onCheck: (Boolean, FullSchedule, Instant) -> Unit) {
+fun IntakeCard(
+    intake: ScheduledIntakeDetails,
+    onCheck: (Boolean, ScheduledIntakeDetails, Instant) -> Unit,
+) {
     var isDialogVisible by remember { mutableStateOf(false) }
     // Кешируем отформатированное время, чтобы не перечитывать при каждом рекомпозе.
     val formattedTime =
-        remember(intake.scheduledIntakeDateTime) {
-            DateTimeUtils.fromTimestampToLocalDateTime(intake.scheduledIntakeDateTime)
+        remember(intake.scheduledTimestamp) {
+            DateTimeUtils.fromTimestampToLocalDateTime(intake.scheduledTimestamp)
                 .format(DateTimeUtils.dateTimeFormatter)
         }
 
@@ -127,7 +135,7 @@ fun IntakeCard(intake: FullSchedule, onCheck: (Boolean, FullSchedule, Instant) -
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text(text = intake.medName, style = MaterialTheme.typography.titleLarge)
+                    Text(text = intake.medicationName, style = MaterialTheme.typography.titleLarge)
                     Text(
                         text = "${intake.doseMg} mg",
                         style = MaterialTheme.typography.bodyLarge,
@@ -148,7 +156,7 @@ fun IntakeCard(intake: FullSchedule, onCheck: (Boolean, FullSchedule, Instant) -
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     val statusText =
-                        when (intake.status) {
+                        when (intake.isTaken) {
                             null -> "No Status"
                             true -> "Taken"
                             false -> "Missed"
@@ -175,8 +183,8 @@ fun IntakeCard(intake: FullSchedule, onCheck: (Boolean, FullSchedule, Instant) -
 
 @Composable
 fun CheckIntakeDialog(
-    intake: FullSchedule,
-    onCheck: (Boolean, FullSchedule, Instant) -> Unit,
+    intake: ScheduledIntakeDetails,
+    onCheck: (Boolean, ScheduledIntakeDetails, Instant) -> Unit,
     onDismissRequest: () -> Unit = {},
 ) {
     Dialog(onDismissRequest = { onDismissRequest() }) {
@@ -190,7 +198,7 @@ fun CheckIntakeDialog(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text(text = intake.medName, style = MaterialTheme.typography.titleLarge)
+                    Text(text = intake.medicationName, style = MaterialTheme.typography.titleLarge)
                     Text(
                         text = "${intake.doseMg} mg",
                         style = MaterialTheme.typography.bodyLarge,
@@ -239,13 +247,13 @@ fun GreetingPreview() {
             items(4) {
                 IntakeCard(
                     intake =
-                        FullSchedule(
-                            idDateTime = UUID.randomUUID(),
-                            idRegiment = UUID.randomUUID(),
-                            medName = "Name",
+                        ScheduledIntakeDetails(
+                            plannedIntakeId = UUID.randomUUID(),
+                            courseId = UUID.randomUUID(),
+                            medicationName = "Name",
                             doseMg = 56.0,
-                            scheduledIntakeDateTime = 0,
-                            status = null,
+                            scheduledTimestamp = 0,
+                            isTaken = null,
                         ),
                     onCheck = { _, _, _ -> },
                 )

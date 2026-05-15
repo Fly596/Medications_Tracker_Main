@@ -15,16 +15,14 @@ interface IntakeDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertIntake(intake: IntakeLogEntity)
 
-    @Query("DELETE FROM intakes WHERE id = :id")
-    suspend fun deleteIntakeById(id: UUID)
+    @Query("DELETE FROM intake_logs WHERE id = :id") suspend fun deleteIntakeById(id: UUID)
 
-    @Query("SELECT * FROM intakes")
-    fun getAllIntakes(): Flow<List<IntakeLogEntity>>
+    @Query("SELECT * FROM intake_logs") fun getAllIntakes(): Flow<List<IntakeLogEntity>>
 
-    @Query("SELECT * FROM intakes WHERE id = :id")
+    @Query("SELECT * FROM intake_logs WHERE id = :id")
     suspend fun getIntakeById(id: UUID): IntakeLogEntity?
 
     // для проверки статуса приема.
-    @Query("SELECT status FROM intakes WHERE plannedIntakeId = :plannedIntakeId")
+    @Query("SELECT isTaken FROM intake_logs WHERE plannedIntakeId = :plannedIntakeId")
     suspend fun checkIntakeStatus(plannedIntakeId: UUID): Boolean
 }

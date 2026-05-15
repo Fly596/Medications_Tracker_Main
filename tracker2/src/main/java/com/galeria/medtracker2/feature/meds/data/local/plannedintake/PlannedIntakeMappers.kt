@@ -6,15 +6,15 @@ import java.time.Instant
 fun PlannedIntakeDomain.toEntity(): PlannedIntakeEntity {
     return PlannedIntakeEntity(
         id = this.id,
-        medicationScheduleId = this.medicationCourseId,
-        scheduledIntakeDateTime = this.scheduledIntakeDateTime.toEpochMilli()
+        courseId = this.courseId,
+        scheduledTimestamp = this.scheduledTimestamp.toEpochMilli(),
     )
 }
 
 fun PlannedIntakeEntity.toDomain(): PlannedIntakeDomain {
     return PlannedIntakeDomain(
         id = this.id,
-        medicationCourseId = this.medicationScheduleId,
-        scheduledIntakeDateTime = Instant.ofEpochMilli(this.scheduledIntakeDateTime)
+        courseId = this.courseId,
+        scheduledTimestamp = Instant.ofEpochMilli(this.scheduledTimestamp),
     )
 }

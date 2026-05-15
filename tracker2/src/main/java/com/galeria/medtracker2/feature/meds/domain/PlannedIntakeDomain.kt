@@ -5,6 +5,6 @@ import java.util.UUID
 
 data class PlannedIntakeDomain(
     val id: UUID,
-    val medicationCourseId: UUID,
-    val scheduledIntakeDateTime: Instant
+    val courseId: UUID,
+    val scheduledTimestamp: Instant,
 )

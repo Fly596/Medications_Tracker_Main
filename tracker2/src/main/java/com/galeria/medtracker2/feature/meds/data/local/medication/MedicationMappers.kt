@@ -7,7 +7,7 @@ fun MedicationDomain.toEntity(): MedicationEntity {
     return MedicationEntity(
         id = this.id,
         name = this.name,
-        creationDate = this.creationDate.toEpochMilli()
+        creationTimestamp = this.creationTimestamp.toEpochMilli(),
     )
 }
 
@@ -15,6 +15,6 @@ fun MedicationEntity.toDomain(): MedicationDomain {
     return MedicationDomain(
         id = this.id,
         name = this.name,
-        creationDate = Instant.ofEpochMilli(this.creationDate)
+        creationTimestamp = Instant.ofEpochMilli(this.creationTimestamp),
     )
 }

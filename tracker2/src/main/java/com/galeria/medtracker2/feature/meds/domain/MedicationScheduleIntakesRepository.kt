@@ -1,7 +1,7 @@
 package com.galeria.medtracker2.feature.meds.domain
 
-import com.galeria.medtracker2.core.common.data.FullSchedule
-import com.galeria.medtracker2.core.common.data.RegimentWithNameDoseDate
+import com.galeria.medtracker2.core.common.data.MedicationCourseSummary
+import com.galeria.medtracker2.core.common.data.ScheduledIntakeDetails
 import com.galeria.medtracker2.feature.meds.data.local.plannedintake.PlannedIntakeEntity
 import kotlinx.coroutines.flow.Flow
 import java.util.UUID
@@ -16,7 +16,7 @@ interface MedicationScheduleIntakesRepository {
 
     fun getPlannedIntakeById(id: UUID): Flow<PlannedIntakeEntity>
 
-    fun getRegimentsWithNameDoseDates(): Flow<List<RegimentWithNameDoseDate>>
+    fun getRegimentsWithNameDoseDates(): Flow<List<MedicationCourseSummary>>
 
-    fun getFullSchedule(): Flow<List<FullSchedule>>
+    fun getFullSchedule(): Flow<List<ScheduledIntakeDetails>>
 }

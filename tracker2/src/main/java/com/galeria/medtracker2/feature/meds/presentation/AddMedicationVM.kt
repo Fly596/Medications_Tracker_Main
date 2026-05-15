@@ -144,9 +144,7 @@ constructor(
                 startDate = Instant.ofEpochMilli(currentState.startDate),
                 endDate =
                     Instant.ofEpochMilli(
-                        currentState.endDate ?: currentState.startDate.plus(
-                            DEFAULT_SCHEDULE_DAYS
-                        )
+                        currentState.endDate ?: currentState.startDate.plus(DEFAULT_SCHEDULE_DAYS)
                     ),
             )
         )
@@ -172,8 +170,8 @@ constructor(
                 medRegRepository.addPlannedIntake(
                     PlannedIntakeDomain(
                         id = plannedIntakeId,
-                        medicationCourseId = medicationCourseId,
-                        scheduledIntakeDateTime = intakeTimeMoment,
+                        courseId = medicationCourseId,
+                        scheduledTimestamp = intakeTimeMoment,
                     )
                 )
 

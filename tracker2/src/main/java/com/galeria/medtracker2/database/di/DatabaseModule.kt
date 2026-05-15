@@ -16,24 +16,16 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideDatabase(
-        @ApplicationContext
-        context: Context
-    ): AppDatabase =
+    fun provideDatabase(@ApplicationContext context: Context): AppDatabase =
         Room.databaseBuilder(context, AppDatabase::class.java, "app_database").build()
 
-    @Provides
-    fun provideMedicationDao(database: AppDatabase) = database.medicationDao()
+    @Provides fun provideMedicationDao(database: AppDatabase) = database.medicationDao()
 
-    @Provides
-    fun providePlannedIntakeDao(database: AppDatabase) = database.plannedIntakeDao()
+    @Provides fun providePlannedIntakeDao(database: AppDatabase) = database.plannedIntakeDao()
 
-    @Provides
-    fun provideIntakeDao(database: AppDatabase) = database.intakeDao()
+    @Provides fun provideIntakeDao(database: AppDatabase) = database.intakeDao()
 
-    @Provides
-    fun provideMedicationCourseDao(database: AppDatabase) = database.medicationCourseDao()
+    @Provides fun provideMedicationCourseDao(database: AppDatabase) = database.medicationCourseDao()
 
-    @Provides
-    fun provideCombinedDao(database: AppDatabase) = database.combinedDao()
+    @Provides fun provideCombinedDao(database: AppDatabase) = database.medicationScheduleDao()
 }

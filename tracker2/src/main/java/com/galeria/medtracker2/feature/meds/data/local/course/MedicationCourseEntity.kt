@@ -10,24 +10,22 @@ import kotlin.uuid.ExperimentalUuidApi
 
 @OptIn(ExperimentalUuidApi::class)
 @Entity(
-    tableName = "medications_regimens",
-    foreignKeys = [
-        ForeignKey(
-            entity = MedicationEntity::class,
-            parentColumns = ["id"],
-            childColumns = ["medicationId"],
-            onDelete = ForeignKey.CASCADE
-        )
-    ],
-    indices = [Index("medicationId")]
+    tableName = "medication_courses", // Было medications_regimens
+    foreignKeys =
+        [
+            ForeignKey(
+                entity = MedicationEntity::class,
+                parentColumns = ["id"],
+                childColumns = ["medicationId"],
+                onDelete = ForeignKey.CASCADE,
+            )
+        ],
+    indices = [Index("medicationId")],
 )
 data class MedicationCourseEntity(
-    @PrimaryKey
-    val id: UUID = UUID.randomUUID(),
+    @PrimaryKey val id: UUID = UUID.randomUUID(),
     val medicationId: UUID,
     val doseMg: Double,
     val startDate: Long,
     val endDate: Long?,
 )
-
-

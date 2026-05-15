@@ -5,8 +5,8 @@ import java.util.UUID
 
 data class IntakeLogDomain(
     val id: UUID,
-    val medicationScheduleId: UUID,
-    val actualIntakeDateTime: Instant,
-    val status: Boolean,
-    val notes: String = ""
+    val plannedIntakeId: UUID,
+    val actualTimestamp: Instant,
+    val isTaken: Boolean,
+    val notes: String = "",
 )
