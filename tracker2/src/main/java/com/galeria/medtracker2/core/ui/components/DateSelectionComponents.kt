@@ -4,6 +4,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -29,13 +30,14 @@ fun DateSelectionRow(
     label: String = "Date",
     selectedDateString: String,
     onDateSelected: (Long) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     // Состояние для даты.
     var showDatePicker by rememberSaveable { mutableStateOf(false) }
     val selectedDate = remember { mutableStateOf(selectedDateString) }
 
     Row(
-        modifier = Modifier
+        modifier = modifier
             .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -47,7 +49,7 @@ fun DateSelectionRow(
             singleLine = true,
             readOnly = true,
             label = { Text(label) },
-            modifier = Modifier,/*.weight(1f)*/
+            modifier = Modifier.fillMaxWidth(),/*.weight(1f)*/
             interactionSource = remember { MutableInteractionSource() }.also { interactionSource ->
                 LaunchedEffect(interactionSource) {
                     interactionSource.interactions.collect {

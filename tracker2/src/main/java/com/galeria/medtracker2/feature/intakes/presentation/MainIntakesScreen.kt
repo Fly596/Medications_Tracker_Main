@@ -58,10 +58,7 @@ fun MainIntakesScreen(
         },
     ) { innerPadding ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(horizontal = 16.dp),
+            modifier = Modifier.fillMaxSize().padding(innerPadding).padding(horizontal = 16.dp),
         ) {
             Button(
                 onClick = onAddMedicationClick,
@@ -78,16 +75,13 @@ fun MainIntakesScreen(
             } else if (state.todaysIntakes.isEmpty()) {
                 EmptySchedulePlaceholder()
             } else {
-                IntakeList(
-                    intakes = state.todaysIntakes,
-                    onCheck = viewModel::checkIntake
-                )
+                IntakeList(intakes = state.todaysIntakes, onCheck = viewModel::checkIntake)
             }
-//            if (state.plannedIntakes.isEmpty() && !state.isLoading) {
-//                EmptySchedulePlaceholder()
-//            } else {
-//                IntakeList(state.plannedIntakes, onCheck = viewModel::checkIntake)
-//            }
+            //            if (state.plannedIntakes.isEmpty() && !state.isLoading) {
+            //                EmptySchedulePlaceholder()
+            //            } else {
+            //                IntakeList(state.plannedIntakes, onCheck = viewModel::checkIntake)
+            //            }
 
             // Полный список приемов.
 
@@ -108,18 +102,23 @@ fun IntakeList(intakes: List<FullSchedule>, onCheck: (Boolean, FullSchedule, Ins
 
 @Composable
 fun IntakeCard(intake: FullSchedule, onCheck: (Boolean, FullSchedule, Instant) -> Unit) {
-    var showDialog by remember { mutableStateOf(false) }
+    var isDialogVisible by remember { mutableStateOf(false) }
+    // Кешируем отформатированное время, чтобы не перечитывать при каждом рекомпозе.
+    val formattedTime =
+        remember(intake.scheduledIntakeDateTime) {
+            DateTimeUtils.fromTimestampToLocalDateTime(intake.scheduledIntakeDateTime)
+                .format(DateTimeUtils.dateTimeFormatter)
+        }
 
-    if (showDialog) {
+    if (isDialogVisible) {
         CheckIntakeDialog(
             intake = intake,
             onCheck = onCheck,
-            onDismissRequest = { showDialog = false },
+            onDismissRequest = { isDialogVisible = false },
         )
     } else {
         Card(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
@@ -137,10 +136,6 @@ fun IntakeCard(intake: FullSchedule, onCheck: (Boolean, FullSchedule, Instant) -
                 }
 
                 Spacer(modifier = Modifier.height(4.dp))
-                // Форматирование даты и времени
-                val formattedTime =
-                    DateTimeUtils.fromTimestampToLocalDateTime(intake.scheduledIntakeDateTime)
-                        .format(DateTimeUtils.dateTimeFormatter)
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -152,11 +147,12 @@ fun IntakeCard(intake: FullSchedule, onCheck: (Boolean, FullSchedule, Instant) -
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
-                    val statusText = when (intake.status) {
-                        null -> "No Status"
-                        true -> "Taken"
-                        false -> "Missed"
-                    }
+                    val statusText =
+                        when (intake.status) {
+                            null -> "No Status"
+                            true -> "Taken"
+                            false -> "Missed"
+                        }
                     Text(
                         text = statusText,
                         style = MaterialTheme.typography.bodyMedium,
@@ -165,7 +161,7 @@ fun IntakeCard(intake: FullSchedule, onCheck: (Boolean, FullSchedule, Instant) -
                     Button(
                         onClick = {
                             // open intake dialog.
-                            showDialog = !showDialog
+                            isDialogVisible = !isDialogVisible
                         },
                         shape = RoundedCornerShape(percent = 100),
                     ) {
@@ -249,7 +245,7 @@ fun GreetingPreview() {
                             medName = "Name",
                             doseMg = 56.0,
                             scheduledIntakeDateTime = 0,
-                            status = null
+                            status = null,
                         ),
                     onCheck = { _, _, _ -> },
                 )

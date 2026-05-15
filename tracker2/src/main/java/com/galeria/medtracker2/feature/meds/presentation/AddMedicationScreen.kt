@@ -39,6 +39,7 @@ fun AddMedicationScreen(
     // Получаем функцию-триггер.
     val requestPermission = rememberNotificationPermissionHandler { isGranted ->
         if (isGranted) {
+            // Добавляем лекарство.
             viewModel.addMedication()
         } else {
             println("Permission denied. Notifications won't work.")
@@ -54,48 +55,48 @@ fun AddMedicationScreen(
         },
     ) { innerPadding ->
         Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(innerPadding).fillMaxWidth().padding(horizontal = 16.dp),
+            horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-
-            // Поля ввода основной информации.
+            // region Поля ввода основной информации.
             TextField(
                 value = state.name,
                 onValueChange = viewModel::updateName,
                 label = { Text("Medication name") },
-                modifier = Modifier,
+                modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
             )
             TextField(
                 value = state.dose,
                 onValueChange = viewModel::updateDose,
                 label = { Text("Medication dose") },
-                modifier = Modifier,
+                modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 singleLine = true,
             )
-
-            // Блок выбора дат и времени.
+            // endregion
+            // region Блок выбора дат и времени.
             DateSelectionRow(
                 label = "Start Date",
                 selectedDateString = state.startDateString,
                 onDateSelected = viewModel::updateStartDate,
+                modifier = Modifier.fillMaxWidth(),
             )
             DateSelectionRow(
                 label = "End Date",
                 selectedDateString = state.endDateString,
                 onDateSelected = viewModel::updateEndDate,
+                modifier = Modifier.fillMaxWidth(),
             )
             TimeSelectionRow(
                 label = "Time",
                 selectedTimeString = state.intakeTimeString,
                 onTimeSelected = viewModel::updateTime,
+                modifier = Modifier.fillMaxWidth(),
             )
-
+            // endregion
+            // Грид выбранных значений времени приема.
             LazyVerticalGrid(columns = GridCells.Adaptive(minSize = 90.dp)) {
                 items(items = state.intakeTimes) { intTimes ->
                     TimeSelectionButton(
@@ -113,9 +114,7 @@ fun AddMedicationScreen(
                     // Вызываем проверку перед сохранением.
                     requestPermission()
                 },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
+                modifier = Modifier.fillMaxWidth().height(56.dp),
                 shape = MaterialTheme.shapes.medium,
             ) {
                 Text("Set alarm")
@@ -123,8 +122,4 @@ fun AddMedicationScreen(
             Button(onMainClick) { Text("On add med page") }
         }
     }
-}
-
-@Composable
-fun TimeValues(values: Pair<Int, Int>) {
 }

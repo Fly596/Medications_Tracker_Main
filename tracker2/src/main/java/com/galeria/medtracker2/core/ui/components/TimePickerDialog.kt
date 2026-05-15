@@ -5,6 +5,7 @@ import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -32,13 +33,14 @@ fun TimeSelectionRow(
     selectedTimeString: String,
     onTimeSelected: (Pair<Int, Int>) -> Unit,
     onValueChange: (String) -> Unit = {},
+    modifier: Modifier = Modifier
 ) {
     // Состояние для времени (часы и минуты).
     var showTimePicker by rememberSaveable { mutableStateOf(false) }
     val selectedTime = remember { mutableStateOf(selectedTimeString) }
 
     Row(
-        modifier = Modifier.padding(vertical = 8.dp),
+        modifier = modifier.padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
@@ -48,7 +50,7 @@ fun TimeSelectionRow(
             onValueChange = { selectedTime.value = it },
             singleLine = true,
             readOnly = true,
-            modifier = Modifier, /*.weight(1f)*/
+            modifier = Modifier.fillMaxWidth(), /*.weight(1f)*/
             interactionSource =
                     remember { MutableInteractionSource() }
                         .also { interactionSource ->
