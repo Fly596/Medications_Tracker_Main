@@ -14,6 +14,9 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -21,8 +24,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,10 +41,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medtracker2.core.common.DateTimeUtils
-import com.galeria.medtracker2.core.ui.components.DateSelectionRow
 import com.galeria.medtracker2.core.ui.components.TimePickerDialogNew
-import com.galeria.medtracker2.core.ui.components.TimeSelectionRow
 import com.galeria.medtracker2.core.ui.components.rememberNotificationPermissionHandler
+import java.time.Instant
 
 @Composable
 fun AddMedicationScreen(
@@ -51,15 +55,14 @@ fun AddMedicationScreen(
     // Получаем функцию-триггер.
     val requestPermission = rememberNotificationPermissionHandler { isGranted ->
         if (isGranted) {
-            // Добавляем лекарство.
             viewModel.addMedication()
-        } else {
-            println("Permission denied. Notifications won't work.")
         }
     }
 
-    // Состояние для диалога времени держим на уровне ЭКРАНА, а не внутри кнопки
+    // Управление видимостью диалогов на уровне экрана
     var isTimePickerVisible by rememberSaveable { mutableStateOf(false) }
+    var showStartDatePicker by rememberSaveable { mutableStateOf(false) }
+    var showEndDatePicker by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -98,81 +101,71 @@ fun AddMedicationScreen(
             ClickableReadonlyField(
                 label = "Start Date",
                 text = DateTimeUtils.formatDatePickerMillis(state.startDateMillis),
-                onClick = { /* TODO: Открыть DatePicker для Start Date */ })
+                onClick = { showStartDatePicker = true },
+            )
             ClickableReadonlyField(
                 label = "End Date",
                 text = DateTimeUtils.formatDatePickerMillis(state.endDateMillis),
-                onClick = { /* TODO: Открыть DatePicker для End Date */ }
+                onClick = { showEndDatePicker = true },
             )
-            Button(
-                onClick = { isTimePickerVisible = true },
-                modifier = Modifier.fillMaxWidth()
-            ) {
+            Button(onClick = { isTimePickerVisible = true }, modifier = Modifier.fillMaxWidth()) {
                 Text("Add Intake Time")
             }
 
-            // region old Блок выбора дат и времени.
-            DateSelectionRow(
-                label = "Start Date",
-                selectedDateString = state.startDateString,
-                onDateSelected = viewModel::updateStartDate,
-                modifier = Modifier.fillMaxWidth(),
-            )
-            DateSelectionRow(
-                label = "End Date",
-                selectedDateString = state.endDateString,
-                onDateSelected = viewModel::updateEndDate,
-                modifier = Modifier.fillMaxWidth(),
-            )
-            TimeSelectionRow(
-                label = "Time",
-                selectedTimeString = state.intakeTimeString,
-                onTimeSelected = viewModel::updateTime,
-                modifier = Modifier.fillMaxWidth(),
-            )
-            // endregion
-
             // Грид выбранных значений времени приема.
             LazyVerticalGrid(columns = GridCells.Adaptive(minSize = 90.dp)) {
-                items(items = state.intakeTimesNew) { time ->
+                items(items = state.intakeTimes) { time ->
                     SuggestionChip(
                         onClick = { viewModel.removeTime(time) },
-                        label = { Text(DateTimeUtils.formatLocalTime(time)) }
+                        label = { Text(DateTimeUtils.formatLocalTime(time)) },
                     )
-                    //                    TimeSelectionButton(
-//                        label = "%02d:%02d".format(intTimes.first, intTimes.second),
-//                        selectedTimeString = "%02d:%02d".format(intTimes.first, intTimes.second),
-//                        onTimeSelected = viewModel::updateTime,
-//                    )
                 }
             }
-
-            if (isTimePickerVisible) {
-                TimePickerDialogNew(
-                    onConfirm = { time ->
-                        viewModel.addTime(time)
-                        isTimePickerVisible = false
-                    },
-                    onDismiss = { isTimePickerVisible = false }
-                )
-            }
-
             Spacer(modifier = Modifier.weight(1f))
 
             Button(
-                onClick = {
-                    // Вызываем проверку перед сохранением.
-                    requestPermission()
-                },
+                onClick = { requestPermission() },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
-                shape = MaterialTheme.shapes.medium,
             ) {
                 Text("Set alarm")
             }
             Button(onMainClick) { Text("On add med page") }
+
         }
+    }
+    // Рендер диалогов поверх экрана
+    if (showStartDatePicker) {
+        DatePickerModal(
+            initialMillis = state.startDateMillis,
+            onDateSelected = { millis ->
+                if (millis != null) viewModel.updateStartDate(millis)
+                showStartDatePicker = false
+            },
+            onDismiss = { showStartDatePicker = false }
+        )
+    }
+
+    if (showEndDatePicker) {
+        DatePickerModal(
+            initialMillis = state.endDateMillis,
+            onDateSelected = { millis ->
+                if (millis != null) viewModel.updateEndDate(millis)
+                showEndDatePicker = false
+            },
+            onDismiss = { showEndDatePicker = false }
+        )
+    }
+
+    if (isTimePickerVisible) {
+        TimePickerDialogNew(
+            onConfirm = { time ->
+                viewModel.addTime(time)
+                isTimePickerVisible = false
+            },
+            onDismiss = { isTimePickerVisible = false }
+        )
     }
 }
 
@@ -182,7 +175,7 @@ fun ClickableReadonlyField(
     label: String,
     text: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier.fillMaxWidth()) {
         OutlinedTextField(
@@ -192,19 +185,46 @@ fun ClickableReadonlyField(
             readOnly = true,
             modifier = Modifier.fillMaxWidth(),
             // Делаем цвета как у активного поля, чтобы оно не выглядело "выключенным"
-            colors = OutlinedTextFieldDefaults.colors(
-                disabledTextColor = MaterialTheme.colorScheme.onSurface,
-                disabledBorderColor = MaterialTheme.colorScheme.outline,
-                disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant
-            ),
-            enabled = false // Важно: отключает фокус и клавиатуру!
+            colors =
+                    OutlinedTextFieldDefaults.colors(
+                        disabledTextColor = MaterialTheme.colorScheme.onSurface,
+                        disabledBorderColor = MaterialTheme.colorScheme.outline,
+                        disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    ),
+            enabled = false, // Важно: отключает фокус и клавиатуру!
         )
         // Невидимый слой поверх поля, который перехватывает клики
         Surface(
             modifier = Modifier
                 .matchParentSize()
                 .clickable { onClick() },
-            color = Color.Transparent
+            color = Color.Transparent,
         ) {}
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DatePickerModal(
+    initialMillis: Long?,
+    onDateSelected: (Long?) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = initialMillis ?: Instant.now().toEpochMilli()
+    )
+
+    DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(onClick = { onDateSelected(datePickerState.selectedDateMillis) }) {
+                Text("OK")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text("Cancel") }
+        }
+    ) {
+        DatePicker(state = datePickerState)
     }
 }

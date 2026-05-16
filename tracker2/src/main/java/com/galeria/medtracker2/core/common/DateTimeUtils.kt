@@ -12,23 +12,32 @@ import java.util.Locale
 // Утилиты для работы с датой вынесены в object для удобства доступа
 object DateTimeUtils {
 
-    val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("MMM dd, yyyy", Locale.US)
-    val dateTimeFormatter: DateTimeFormatter =
-        DateTimeFormatter.ofPattern("MMM dd, yyyy, hh:mm a", Locale.US)
 
     private val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("hh:mm a", Locale.US)
 
     fun formatDatePickerMillis(millis: Long?): String {
         if (millis == null) return "Choose date"
-        return Instant.ofEpochMilli(millis)
-            .atZone(ZoneOffset.UTC) // timestamp из DatePicker в UTC!
-            .toLocalDate()
-            .format(dateFormatter)
+        return fromDatePickerMillisToLocalDate(millis).format(dateFormatter)
     }
 
     fun formatLocalTime(time: LocalTime): String {
         return time.format(timeFormatter)
     }
+
+    // БЕЗОПАСНАЯ конвертация миллисекунд DatePicker'а (UTC) в LocalDate
+    fun fromDatePickerMillisToLocalDate(millis: Long): LocalDate {
+        return Instant.ofEpochMilli(millis).atZone(ZoneOffset.UTC).toLocalDate()
+    }
+
+    // Соединяет LocalDate и LocalTime в Instant текущей временной зоны
+    fun combineDateAndTime(date: LocalDate, time: LocalTime): Instant {
+        return date.atTime(time).atZone(ZoneId.systemDefault()).toInstant()
+    }
+
+    // region old
+    val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("MMM dd, yyyy", Locale.US)
+    val dateTimeFormatter: DateTimeFormatter =
+            DateTimeFormatter.ofPattern("MMM dd, yyyy, hh:mm a", Locale.US)
 
     fun fromTimestampToLocalDateTime(value: Long): LocalDateTime {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(value), ZoneId.systemDefault())
@@ -43,4 +52,6 @@ object DateTimeUtils {
             .atZone(ZoneId.systemDefault()) // Или ZoneOffset.UTC
             .toInstant()
     }
+    // endregion
+
 }

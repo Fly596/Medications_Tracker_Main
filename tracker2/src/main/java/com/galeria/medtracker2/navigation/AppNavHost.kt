@@ -38,6 +38,11 @@ fun AppNavHost(
                     navController.navigate(AppRoutes.Home) { popUpTo(AppRoutes.AddMedication) }
                 }
             )
+            /* AddMedicationScreen(
+                 onMainClick = {
+                     navController.navigate(AppRoutes.Home) { popUpTo(AppRoutes.AddMedication) }
+                 }
+             )*/
         }
     }
     //}
