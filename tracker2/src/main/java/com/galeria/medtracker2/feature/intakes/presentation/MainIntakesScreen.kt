@@ -59,10 +59,7 @@ fun MainIntakesScreen(
         },
     ) { innerPadding ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(horizontal = 16.dp),
+            modifier = Modifier.fillMaxSize().padding(innerPadding).padding(horizontal = 16.dp),
         ) {
             Button(
                 onClick = onNavigateToAddMedication,
@@ -125,30 +122,24 @@ fun IntakeCard(
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        onClick = { isDialogVisible = true }
+        onClick = { isDialogVisible = true },
     ) {
         Row(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
+            modifier = Modifier.padding(16.dp).fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(text = intake.medicationName, style = MaterialTheme.typography.titleLarge)
                 Text(
                     text = "$formattedTime • ${intake.doseMg} mg",
                     style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.primary,
                 )
             }
 
             // Визуальный индикатор статуса
             StatusBadge(status = intake.isTaken)
         }
-
     }
     if (isDialogVisible) {
         CheckIntakeDialog(
@@ -162,88 +153,91 @@ fun IntakeCard(
     }
 
     // region old
-//    if (isDialogVisible) {
-//        CheckIntakeDialog(
-//            intake = intake,
-//            onCheck = onCheck,
-//            onDismissRequest = { isDialogVisible = false },
-//        )
-//    } else {
-//        Card(
-//            modifier = Modifier.fillMaxWidth(),
-//            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-//        ) {
-//            Column(modifier = Modifier.padding(16.dp)) {
-//                Row(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    horizontalArrangement = Arrangement.SpaceBetween,
-//                    verticalAlignment = Alignment.CenterVertically,
-//                ) {
-//                    Text(text = intake.medicationName, style = MaterialTheme.typography.titleLarge)
-//                    Text(
-//                        text = "${intake.doseMg} mg",
-//                        style = MaterialTheme.typography.bodyLarge,
-//                        color = MaterialTheme.colorScheme.primary,
-//                    )
-//                }
-//
-//                Spacer(modifier = Modifier.height(4.dp))
-//
-//                Row(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    horizontalArrangement = Arrangement.SpaceBetween,
-//                    verticalAlignment = Alignment.Bottom,
-//                ) {
-//                    Text(
-//                        text = formattedTime,
-//                        style = MaterialTheme.typography.bodyMedium,
-//                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-//                    )
-//                    val statusText =
-//                        when (intake.isTaken) {
-//                            null -> "No Status"
-//                            true -> "Taken"
-//                            false -> "Missed"
-//                        }
-//                    Text(
-//                        text = statusText,
-//                        style = MaterialTheme.typography.bodyMedium,
-//                    )
-//                    // TODO: функционал отметки приема.
-//                    Button(
-//                        onClick = {
-//                            // open intake dialog.
-//                            isDialogVisible = !isDialogVisible
-//                        },
-//                        shape = RoundedCornerShape(percent = 100),
-//                    ) {
-//                        Icon(imageVector = Icons.Default.Add, contentDescription = "check intake")
-//                    }
-//                }
-//            }
-//        }
-//    }
+    //    if (isDialogVisible) {
+    //        CheckIntakeDialog(
+    //            intake = intake,
+    //            onCheck = onCheck,
+    //            onDismissRequest = { isDialogVisible = false },
+    //        )
+    //    } else {
+    //        Card(
+    //            modifier = Modifier.fillMaxWidth(),
+    //            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+    //        ) {
+    //            Column(modifier = Modifier.padding(16.dp)) {
+    //                Row(
+    //                    modifier = Modifier.fillMaxWidth(),
+    //                    horizontalArrangement = Arrangement.SpaceBetween,
+    //                    verticalAlignment = Alignment.CenterVertically,
+    //                ) {
+    //                    Text(text = intake.medicationName, style =
+    // MaterialTheme.typography.titleLarge)
+    //                    Text(
+    //                        text = "${intake.doseMg} mg",
+    //                        style = MaterialTheme.typography.bodyLarge,
+    //                        color = MaterialTheme.colorScheme.primary,
+    //                    )
+    //                }
+    //
+    //                Spacer(modifier = Modifier.height(4.dp))
+    //
+    //                Row(
+    //                    modifier = Modifier.fillMaxWidth(),
+    //                    horizontalArrangement = Arrangement.SpaceBetween,
+    //                    verticalAlignment = Alignment.Bottom,
+    //                ) {
+    //                    Text(
+    //                        text = formattedTime,
+    //                        style = MaterialTheme.typography.bodyMedium,
+    //                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    //                    )
+    //                    val statusText =
+    //                        when (intake.isTaken) {
+    //                            null -> "No Status"
+    //                            true -> "Taken"
+    //                            false -> "Missed"
+    //                        }
+    //                    Text(
+    //                        text = statusText,
+    //                        style = MaterialTheme.typography.bodyMedium,
+    //                    )
+    //                    // TODO: функционал отметки приема.
+    //                    Button(
+    //                        onClick = {
+    //                            // open intake dialog.
+    //                            isDialogVisible = !isDialogVisible
+    //                        },
+    //                        shape = RoundedCornerShape(percent = 100),
+    //                    ) {
+    //                        Icon(imageVector = Icons.Default.Add, contentDescription = "check
+    // intake")
+    //                    }
+    //                }
+    //            }
+    //        }
+    //    }
     // endregion
 }
 
 @Composable
 fun StatusBadge(status: Boolean?) {
-    val (text, color) = when (status) {
-        true -> "Принято" to Color(0xFF4CAF50)
-        false -> "Пропущено" to MaterialTheme.colorScheme.error
-        null -> "Ожидается" to MaterialTheme.colorScheme.outline
-    }
+    val (text, color) =
+        when (status) {
+            true -> "Taken" to Color(0xFF4CAF50)
+            false -> "Missed" to MaterialTheme.colorScheme.error
+            null -> "Await" to MaterialTheme.colorScheme.outline
+        }
 
     Surface(
         color = color.copy(alpha = 0.1f),
         shape = RoundedCornerShape(8.dp),
-        border = BorderStroke(1.dp, color.copy(alpha = 0.5f))
+        border = BorderStroke(1.dp, color.copy(alpha = 0.5f)),
     ) {
         Text(
             text = text,
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-            style = MaterialTheme.typography.labelSmall,
-            color = color
+            style = MaterialTheme.typography.labelLarge,
+            color = color,
         )
     }
 }
@@ -258,60 +252,59 @@ fun CheckIntakeDialog(
         onDismissRequest = onDismiss,
         title = { Text("Check intake") },
         text = { Text("You took ${intake.medicationName} (${intake.doseMg} mg)?") },
-        confirmButton = {
-            Button(onClick = { onConfirm(true, Instant.now()) }) { Text("Принял") }
-        },
+        confirmButton = { Button(onClick = { onConfirm(true, Instant.now()) }) { Text("Taken") } },
         dismissButton = {
             TextButton(onClick = { onConfirm(false, Instant.now()) }) {
-                Text("Пропустить", color = MaterialTheme.colorScheme.error)
+                Text("Skip", color = MaterialTheme.colorScheme.error)
             }
-        }
+        },
     )
 
-//    Dialog(onDismissRequest = { onDismiss() }) {
-//        Card(
-//            shape = MaterialTheme.shapes.medium,
-//            elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-//        ) {
-//            Column(modifier = Modifier.padding(16.dp)) {
-//                Row(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    horizontalArrangement = Arrangement.SpaceBetween,
-//                    verticalAlignment = Alignment.CenterVertically,
-//                ) {
-//                    Text(text = intake.medicationName, style = MaterialTheme.typography.titleLarge)
-//                    Text(
-//                        text = "${intake.doseMg} mg",
-//                        style = MaterialTheme.typography.bodyLarge,
-//                        color = MaterialTheme.colorScheme.primary,
-//                    )
-//                }
-//                Row(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    horizontalArrangement = Arrangement.SpaceEvenly,
-//                    verticalAlignment = Alignment.Bottom,
-//                ) {
-//                    Button(
-//                        onClick = {
-//                            // TODO: choose time.
-//                            onConfirm(true, Instant.now())
-//                            onDismiss()
-//                        }
-//                    ) {
-//                        Text("Confirm")
-//                    }
-//                    Button(
-//                        onClick = {
-//                            onCheck(false, intake, Instant.now())
-//                            onDismiss()
-//                        }
-//                    ) {
-//                        Text("Skip")
-//                    }
-//                }
-//            }
-//        }
-//    }
+    //    Dialog(onDismissRequest = { onDismiss() }) {
+    //        Card(
+    //            shape = MaterialTheme.shapes.medium,
+    //            elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+    //        ) {
+    //            Column(modifier = Modifier.padding(16.dp)) {
+    //                Row(
+    //                    modifier = Modifier.fillMaxWidth(),
+    //                    horizontalArrangement = Arrangement.SpaceBetween,
+    //                    verticalAlignment = Alignment.CenterVertically,
+    //                ) {
+    //                    Text(text = intake.medicationName, style =
+    // MaterialTheme.typography.titleLarge)
+    //                    Text(
+    //                        text = "${intake.doseMg} mg",
+    //                        style = MaterialTheme.typography.bodyLarge,
+    //                        color = MaterialTheme.colorScheme.primary,
+    //                    )
+    //                }
+    //                Row(
+    //                    modifier = Modifier.fillMaxWidth(),
+    //                    horizontalArrangement = Arrangement.SpaceEvenly,
+    //                    verticalAlignment = Alignment.Bottom,
+    //                ) {
+    //                    Button(
+    //                        onClick = {
+    //                            // TODO: choose time.
+    //                            onConfirm(true, Instant.now())
+    //                            onDismiss()
+    //                        }
+    //                    ) {
+    //                        Text("Confirm")
+    //                    }
+    //                    Button(
+    //                        onClick = {
+    //                            onCheck(false, intake, Instant.now())
+    //                            onDismiss()
+    //                        }
+    //                    ) {
+    //                        Text("Skip")
+    //                    }
+    //                }
+    //            }
+    //        }
+    //    }
 }
 
 @Composable

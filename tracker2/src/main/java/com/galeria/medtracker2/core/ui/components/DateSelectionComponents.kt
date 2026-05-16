@@ -27,38 +27,39 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun DateSelectionRow(
+    modifier: Modifier = Modifier,
     label: String = "Date",
     selectedDateString: String,
     onDateSelected: (Long) -> Unit,
-    modifier: Modifier = Modifier
 ) {
     // Состояние для даты.
     var showDatePicker by rememberSaveable { mutableStateOf(false) }
     val selectedDate = remember { mutableStateOf(selectedDateString) }
 
     Row(
-        modifier = modifier
-            .padding(vertical = 8.dp),
+        modifier = modifier.padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        //Text(text = label, style = MaterialTheme.typography.bodyMedium)
+        // Text(text = label, style = MaterialTheme.typography.bodyMedium)
         TextField(
             value = selectedDateString,
             onValueChange = { selectedDate.value = it },
             singleLine = true,
             readOnly = true,
             label = { Text(label) },
-            modifier = Modifier.fillMaxWidth(),/*.weight(1f)*/
-            interactionSource = remember { MutableInteractionSource() }.also { interactionSource ->
-                LaunchedEffect(interactionSource) {
-                    interactionSource.interactions.collect {
-                        if (it is PressInteraction.Release) {
-                            showDatePicker = true
+            modifier = Modifier.fillMaxWidth(), /*.weight(1f)*/
+            interactionSource =
+                remember { MutableInteractionSource() }
+                    .also { interactionSource ->
+                        LaunchedEffect(interactionSource) {
+                            interactionSource.interactions.collect {
+                                if (it is PressInteraction.Release) {
+                                    showDatePicker = true
+                                }
+                            }
                         }
-                    }
-                }
-            },
+                    },
         )
         // Отображение диалогов.
         if (showDatePicker) {
@@ -69,19 +70,15 @@ fun DateSelectionRow(
                     }
                     showDatePicker = false
                 },
-                onDismiss = { showDatePicker = false }
+                onDismiss = { showDatePicker = false },
             )
         }
     }
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DatePickerModalInput(
-    onDateSelected: (Long?) -> Unit,
-    onDismiss: () -> Unit
-) {
+fun DatePickerModalInput(onDateSelected: (Long?) -> Unit, onDismiss: () -> Unit) {
     val datePickerState = rememberDatePickerState(initialDisplayMode = DisplayMode.Input)
 
     DatePickerDialog(
@@ -91,13 +88,8 @@ fun DatePickerModalInput(
                 Text("OK")
             }
         },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancel")
-            }
-        }
+        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
     ) {
         DatePicker(state = datePickerState)
     }
 }
-

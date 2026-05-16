@@ -29,11 +29,11 @@ import java.util.Calendar
 
 @Composable
 fun TimeSelectionRow(
+    modifier: Modifier = Modifier,
     label: String = "Time",
     selectedTimeString: String,
     onTimeSelected: (Pair<Int, Int>) -> Unit,
     onValueChange: (String) -> Unit = {},
-    modifier: Modifier = Modifier
 ) {
     // Состояние для времени (часы и минуты).
     var showTimePicker by rememberSaveable { mutableStateOf(false) }
@@ -52,16 +52,16 @@ fun TimeSelectionRow(
             readOnly = true,
             modifier = Modifier.fillMaxWidth(), /*.weight(1f)*/
             interactionSource =
-                    remember { MutableInteractionSource() }
-                        .also { interactionSource ->
-                            LaunchedEffect(interactionSource) {
-                                interactionSource.interactions.collect {
-                                    if (it is PressInteraction.Release) {
-                                        showTimePicker = true
-                                    }
+                remember { MutableInteractionSource() }
+                    .also { interactionSource ->
+                        LaunchedEffect(interactionSource) {
+                            interactionSource.interactions.collect {
+                                if (it is PressInteraction.Release) {
+                                    showTimePicker = true
                                 }
                             }
-                        },
+                        }
+                    },
         )
         // Отображение диалогов.
         if (showTimePicker) {
@@ -96,16 +96,16 @@ fun TimeSelectionButton(
             modifier = Modifier,
             onClick = { selectedTime.value = selectedTimeString },
             interactionSource =
-                    remember { MutableInteractionSource() }
-                        .also { interactionSource ->
-                            LaunchedEffect(interactionSource) {
-                                interactionSource.interactions.collect {
-                                    if (it is PressInteraction.Release) {
-                                        showTimePicker = true
-                                    }
+                remember { MutableInteractionSource() }
+                    .also { interactionSource ->
+                        LaunchedEffect(interactionSource) {
+                            interactionSource.interactions.collect {
+                                if (it is PressInteraction.Release) {
+                                    showTimePicker = true
                                 }
                             }
-                        },
+                        }
+                    },
         ) {
             Text(label)
         }
@@ -131,11 +131,11 @@ fun TimePickerDialog(
 ) {
     val currentTime = Calendar.getInstance()
     val timePickerState =
-            rememberTimePickerState(
-                initialHour = currentTime.get(Calendar.HOUR),
-                initialMinute = currentTime.get(Calendar.MINUTE),
-                is24Hour = false,
-            )
+        rememberTimePickerState(
+            initialHour = currentTime.get(Calendar.HOUR),
+            initialMinute = currentTime.get(Calendar.MINUTE),
+            is24Hour = false,
+        )
 
     AlertDialog(
         onDismissRequest = onDismiss,
