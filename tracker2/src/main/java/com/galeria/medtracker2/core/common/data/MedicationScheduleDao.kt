@@ -10,6 +10,7 @@ interface MedicationScheduleDao {
     @Query(
         """
             SELECT
+                m.id AS 'medicationId',
                 m.name,
                 mr.doseMg,
                 mr.startDate,

@@ -73,10 +73,7 @@ fun AddMedicationScreen(
         },
     ) { innerPadding ->
         Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
+            modifier = Modifier.padding(innerPadding).fillMaxWidth().padding(horizontal = 16.dp),
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
@@ -125,14 +122,11 @@ fun AddMedicationScreen(
 
             Button(
                 onClick = { requestPermission() },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
+                modifier = Modifier.fillMaxWidth().height(56.dp),
             ) {
                 Text("Set alarm")
             }
             Button(onMainClick) { Text("On add med page") }
-
         }
     }
     // Рендер диалогов поверх экрана
@@ -143,7 +137,7 @@ fun AddMedicationScreen(
                 if (millis != null) viewModel.updateStartDate(millis)
                 showStartDatePicker = false
             },
-            onDismiss = { showStartDatePicker = false }
+            onDismiss = { showStartDatePicker = false },
         )
     }
 
@@ -154,7 +148,7 @@ fun AddMedicationScreen(
                 if (millis != null) viewModel.updateEndDate(millis)
                 showEndDatePicker = false
             },
-            onDismiss = { showEndDatePicker = false }
+            onDismiss = { showEndDatePicker = false },
         )
     }
 
@@ -164,12 +158,13 @@ fun AddMedicationScreen(
                 viewModel.addTime(time)
                 isTimePickerVisible = false
             },
-            onDismiss = { isTimePickerVisible = false }
+            onDismiss = { isTimePickerVisible = false },
         )
     }
 }
 
-// ПРАВИЛЬНЫЙ способ сделать TextField кликабельным (без костылей с InteractionSource)
+// ПРАВИЛЬНЫЙ способ сделать TextField кликабельным (без костылей с
+// InteractionSource)
 @Composable
 fun ClickableReadonlyField(
     label: String,
@@ -186,18 +181,16 @@ fun ClickableReadonlyField(
             modifier = Modifier.fillMaxWidth(),
             // Делаем цвета как у активного поля, чтобы оно не выглядело "выключенным"
             colors =
-                    OutlinedTextFieldDefaults.colors(
-                        disabledTextColor = MaterialTheme.colorScheme.onSurface,
-                        disabledBorderColor = MaterialTheme.colorScheme.outline,
-                        disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    ),
+                OutlinedTextFieldDefaults.colors(
+                    disabledTextColor = MaterialTheme.colorScheme.onSurface,
+                    disabledBorderColor = MaterialTheme.colorScheme.outline,
+                    disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                ),
             enabled = false, // Важно: отключает фокус и клавиатуру!
         )
         // Невидимый слой поверх поля, который перехватывает клики
         Surface(
-            modifier = Modifier
-                .matchParentSize()
-                .clickable { onClick() },
+            modifier = Modifier.matchParentSize().clickable { onClick() },
             color = Color.Transparent,
         ) {}
     }
@@ -205,14 +198,11 @@ fun ClickableReadonlyField(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DatePickerModal(
-    initialMillis: Long?,
-    onDateSelected: (Long?) -> Unit,
-    onDismiss: () -> Unit
-) {
-    val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = initialMillis ?: Instant.now().toEpochMilli()
-    )
+fun DatePickerModal(initialMillis: Long?, onDateSelected: (Long?) -> Unit, onDismiss: () -> Unit) {
+    val datePickerState =
+        rememberDatePickerState(
+            initialSelectedDateMillis = initialMillis ?: Instant.now().toEpochMilli()
+        )
 
     DatePickerDialog(
         onDismissRequest = onDismiss,
@@ -221,9 +211,7 @@ fun DatePickerModal(
                 Text("OK")
             }
         },
-        dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
-        }
+        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
     ) {
         DatePicker(state = datePickerState)
     }

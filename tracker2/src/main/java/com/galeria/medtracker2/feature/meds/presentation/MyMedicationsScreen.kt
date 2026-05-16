@@ -1,0 +1,78 @@
+package com.galeria.medtracker2.feature.meds.presentation
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.galeria.medtracker2.core.common.data.MedicationCourseSummary
+import java.util.UUID
+
+@Composable
+fun MyMedicationsScreen(
+    onNavigateToViewMedication: (UUID) -> Unit = {},
+    viewModel: MyMedicationsVM = hiltViewModel(),
+) {
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                title = { Text("New medication", style = MaterialTheme.typography.displaySmall) }
+            )
+        },
+    ) { innerPadding ->
+        Column(modifier = Modifier.padding(innerPadding)) {
+            if (state.isLoading) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+            } else if (state.medsList.isEmpty()) {
+                EmptyMedicationsPlaceholder()
+            } else {
+                MedsList(medications = state.medsList, onRemove = viewModel::removeMedication)
+            }
+        }
+    }
+}
+
+@Composable
+fun MedsList(medications: List<MedicationCourseSummary>, onRemove: (UUID) -> Unit) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(bottom = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        items(items = medications, key = { it.medicationId }) { med ->
+            MedicationCard(med, onRemove)
+        }
+    }
+}
+
+@Composable
+fun MedicationCard(
+    medication: MedicationCourseSummary,
+    onRemove: (UUID) -> Unit,
+    onSelect: (UUID) -> Unit = {},
+) {}
+
+@Composable
+private fun EmptyMedicationsPlaceholder() {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text("There's pretty empty.", style = MaterialTheme.typography.bodyLarge)
+    }
+}

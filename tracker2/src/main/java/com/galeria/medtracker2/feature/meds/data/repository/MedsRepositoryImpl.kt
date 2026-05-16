@@ -49,7 +49,4 @@ constructor(
         }
         awaitClose { }
     }
-//    override fun getAllMedications(): Flow<List<MedicationDomain>> {
-//        return medicationDao.getAllMedications().map { it.toDomain() }
-//    }
 }

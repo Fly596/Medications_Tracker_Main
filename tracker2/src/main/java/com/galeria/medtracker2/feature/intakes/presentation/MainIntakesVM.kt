@@ -37,78 +37,84 @@ constructor(
 ) : ViewModel() {
 
     val uiState: StateFlow<ScheduleUiState> =
-        regimentsRepository.getFullSchedule().distinctUntilChanged()
+        regimentsRepository
+            .getFullSchedule()
+            .distinctUntilChanged()
             .map { allRecords ->
                 val now = LocalDate.now()
                 ScheduleUiState(
                     plannedIntakes = allRecords,
-                    todaysIntakes = allRecords.filter {
-                        DateTimeUtils.fromTimestampToDate(it.scheduledTimestamp) == now
-                    },
-                    isLoading = false
+                    todaysIntakes =
+                        allRecords.filter {
+                            DateTimeUtils.fromTimestampToDate(it.scheduledTimestamp) == now
+                        },
+                    isLoading = false,
                 )
             }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
-                initialValue = ScheduleUiState(isLoading = true)
+                initialValue = ScheduleUiState(isLoading = true),
             )
 
     private val _state = MutableStateFlow(ScheduleUiState())
     val state = _state.asStateFlow()
 
     // region old
-//    init {
-//        loadSchedule()
-//    }
-//    private fun loadSchedule() {
-//        viewModelScope.launch {
-//            val temp = mutableListOf<ScheduledIntakeDetails>()
-//
-//            // TODO: Добавить отфильтрованные запросы на сегодня от репозитория, а не в UI.
-//            regimentsRepository.getFullSchedule().distinctUntilChanged().collect { schedule ->
-//                schedule.forEach {
-//                    if (
-//                        DateTimeUtils.fromTimestampToDate(it.scheduledTimestamp) == LocalDate.now()
-//                    ) {
-//                        temp.add(it)
-//                    }
-//                }
-//
-//                _state.update {
-//                    it.copy(plannedIntakes = schedule, isLoading = false, todaysIntakes = temp)
-//                }
-//            }
-//        }
-//    }
+    //    init {
+    //        loadSchedule()
+    //    }
+    //    private fun loadSchedule() {
+    //        viewModelScope.launch {
+    //            val temp = mutableListOf<ScheduledIntakeDetails>()
+    //
+    //            // TODO: Добавить отфильтрованные запросы на сегодня от репозитория, а не в UI.
+    //            regimentsRepository.getFullSchedule().distinctUntilChanged().collect { schedule ->
+    //                schedule.forEach {
+    //                    if (
+    //                        DateTimeUtils.fromTimestampToDate(it.scheduledTimestamp) ==
+    // LocalDate.now()
+    //                    ) {
+    //                        temp.add(it)
+    //                    }
+    //                }
+    //
+    //                _state.update {
+    //                    it.copy(plannedIntakes = schedule, isLoading = false, todaysIntakes =
+    // temp)
+    //                }
+    //            }
+    //        }
+    //    }
     // endregion
 
     // TODO: Добавить обработку ошибок.
     fun checkIntake(isTaken: Boolean, intake: ScheduledIntakeDetails, intakeDateTime: Instant) {
         viewModelScope.launch {
             try {
-                val log = IntakeLogDomain(
-                    id = UUID.randomUUID(),
-                    plannedIntakeId = intake.plannedIntakeId,
-                    actualTimestamp = intakeDateTime,
-                    isTaken = isTaken,
-                    notes = "",
-                )
+                val log =
+                    IntakeLogDomain(
+                        id = UUID.randomUUID(),
+                        plannedIntakeId = intake.plannedIntakeId,
+                        actualTimestamp = intakeDateTime,
+                        isTaken = isTaken,
+                        notes = "",
+                    )
                 intakesRepository.addIntake(log)
             } catch (e: Exception) {
                 Log.e("MainIntakesVM", "Failed to mark intake", e)
             }
         }
 
-//        val newIntake =
-//            IntakeLogDomain(
-//                id = UUID.randomUUID(),
-//                plannedIntakeId = intake.plannedIntakeId,
-//                actualTimestamp = intakeDateTime,
-//                isTaken = isTaken,
-//                notes = "",
-//            )
-//        viewModelScope.launch { intakesRepository.addIntake(newIntake) }
+        //        val newIntake =
+        //            IntakeLogDomain(
+        //                id = UUID.randomUUID(),
+        //                plannedIntakeId = intake.plannedIntakeId,
+        //                actualTimestamp = intakeDateTime,
+        //                isTaken = isTaken,
+        //                notes = "",
+        //            )
+        //        viewModelScope.launch { intakesRepository.addIntake(newIntake) }
     }
 
     // TODO: сделать получения расписания на сегодня отдельным запросом к БД, а не фильтрацией в UI.

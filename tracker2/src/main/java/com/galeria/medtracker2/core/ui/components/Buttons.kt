@@ -106,7 +106,7 @@ fun HIGListButton(
     textStyle: TextStyle = MedTrackerTheme.typography.bodyMedium,
     icon: ImageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
     leftIcon: ImageVector? = null,
-    rightText: String? = null
+    rightText: String? = null,
 ) {
     val buttonColors =
         when (style) {
@@ -144,37 +144,34 @@ fun HIGListButton(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                if (leftIcon != null) {
-                    Icon(
-                        imageVector = leftIcon,
-                        contentDescription = null,
-                        tint = colors.primaryLabel,
-                        modifier = Modifier.size(24.dp),
-                    )
-                }
-
-                Text(
-                    text = text,
-                    style = textStyle,
-                    modifier = Modifier.padding(vertical = 8.dp),
-                )
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                Text(
-                    text = rightText ?: "",
-                    style = MedTrackerTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(vertical = 8.dp),
-                )
-                Spacer(modifier = Modifier.width(8.dp))
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            if (leftIcon != null) {
                 Icon(
-                    imageVector = icon,
-                    contentDescription = "Show options",
-                    tint = colors.secondaryLabel,
-                    modifier = Modifier.size(16.dp),
+                    imageVector = leftIcon,
+                    contentDescription = null,
+                    tint = colors.primaryLabel,
+                    modifier = Modifier.size(24.dp),
                 )
             }
+
+            Text(text = text, style = textStyle, modifier = Modifier.padding(vertical = 8.dp))
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Text(
+                text = rightText ?: "",
+                style = MedTrackerTheme.typography.bodyMedium,
+                modifier = Modifier.padding(vertical = 8.dp),
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Icon(
+                imageVector = icon,
+                contentDescription = "Show options",
+                tint = colors.secondaryLabel,
+                modifier = Modifier.size(16.dp),
+            )
+        }
     }
 }
 
@@ -195,10 +192,14 @@ fun FlyTextButton(
         colors =
             if (errorButton) {
                 ButtonDefaults.textButtonColors(
-                    contentColor = colors.sysError, containerColor = colors.sysTransparent)
+                    contentColor = colors.sysError,
+                    containerColor = colors.sysTransparent,
+                )
             } else {
                 ButtonDefaults.textButtonColors(
-                    contentColor = colors.primary600, containerColor = colors.sysTransparent)
+                    contentColor = colors.primary600,
+                    containerColor = colors.sysTransparent,
+                )
             },
         content = { ProvideTextStyle(value = textStyle) { content() } },
     )
@@ -313,7 +314,7 @@ fun FlyIconButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
     size: Dp = 24.dp,
-    @DrawableRes icon: Int = R.drawable.male_symbol
+    @DrawableRes icon: Int = R.drawable.male_symbol,
 ) {
     Box(
         modifier =
@@ -324,13 +325,15 @@ fun FlyIconButton(
                 .background(colors.primaryBackgroundGrouped)
                 .padding(8.dp)
                 .size(size),
-        contentAlignment = Alignment.Center) {
-            Icon(
-                painterResource(icon),
-                contentDescription = null,
-                tint = colors.primary400,
-                modifier = Modifier)
-        }
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            painterResource(icon),
+            contentDescription = null,
+            tint = colors.primary400,
+            modifier = Modifier,
+        )
+    }
 }
 
 @Composable
@@ -339,15 +342,16 @@ fun FlyIconButtonWithText(
     text: String = "Fuck Me",
     onClick: () -> Unit = {},
     size: Dp = 20.dp,
-    @DrawableRes icon: Int = R.drawable.male_symbol
+    @DrawableRes icon: Int = R.drawable.male_symbol,
 ) {
     Row(
         modifier = modifier.clickable(onClick = { onClick.invoke() }),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            FlyIconButton(onClick = onClick, size = size, icon = icon)
-            Text(text = text, style = MedTrackerTheme.typography.labelLargeEmphasized)
-        }
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        FlyIconButton(onClick = onClick, size = size, icon = icon)
+        Text(text = text, style = MedTrackerTheme.typography.labelLargeEmphasized)
+    }
 }
 
 @Composable
@@ -355,7 +359,7 @@ fun GSmallButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    text: String = "Sign In"
+    text: String = "Sign In",
 ): Unit {
     Button(
         modifier = modifier,
@@ -373,7 +377,8 @@ fun GSmallButton(
         Text(
             text = text,
             style = MedTrackerTheme.typography.bodyMediumEmphasized,
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp))
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+        )
     }
 }
 
@@ -382,7 +387,7 @@ fun GMediumButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    text: String = "Sign In"
+    text: String = "Sign In",
 ): Unit {
     Button(
         modifier = modifier,
@@ -400,7 +405,8 @@ fun GMediumButton(
         Text(
             text = text,
             style = MedTrackerTheme.typography.bodyMediumEmphasized,
-            modifier = Modifier.padding(horizontal = 14.dp, vertical = 7.dp))
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 7.dp),
+        )
     }
 }
 
@@ -409,7 +415,7 @@ fun GLargeButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    text: String = "Sign In"
+    text: String = "Sign In",
 ): Unit {
     Button(
         modifier = modifier,
@@ -427,7 +433,8 @@ fun GLargeButton(
         Text(
             text = text,
             style = MedTrackerTheme.typography.bodyMediumEmphasized,
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 14.dp))
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 14.dp),
+        )
     }
 }
 
@@ -436,13 +443,10 @@ fun GLargeButton(
     name = "Buttons",
     showSystemUi = true,
     device = "spec:parent=pixel_8,navigation=buttons",
-    showBackground = true,
-    backgroundColor = 0xFFD4CBCB,
-    uiMode =
-        Configuration.UI_MODE_NIGHT_NO or
-            Configuration.UI_MODE_TYPE_NORMAL,
+    showBackground = false,
+    backgroundColor = 0xFFFFFFFF,
+    uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL,
 )
-
 @Composable
 private fun PreviewButtons() {
     MedTrackerTheme {
@@ -454,10 +458,10 @@ private fun PreviewButtons() {
             Column {
                 GMediumButton(onClick = {}, enabled = true, text = "GMediumButton")
                 GLargeButton(onClick = {}, enabled = true, text = "GLargeButton")
-                                 FlyButton(onClick = {}, enabled = true) { Text(text = "Sign In") }
+                FlyButton(onClick = {}, enabled = true) { Text(text = "Sign In") }
                 FlyTextButton(onClick = {}, enabled = true) { Text(text = "Sign In") }
                 FlyElevatedButton(onClick = {}, enabled = true) { Text(text = "Sign In") }
-                 FlyTonalButton(onClick = {}, enabled = true) { Text(text = "Sign In") }
+                FlyTonalButton(onClick = {}, enabled = true) { Text(text = "Sign In") }
                 HIGListButton("text", onClick = {}, enabled = true)
             }
         }
