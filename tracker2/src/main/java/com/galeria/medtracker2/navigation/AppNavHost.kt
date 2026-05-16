@@ -15,30 +15,30 @@ fun AppNavHost(
     navController: NavHostController = rememberNavController(),
 ) {
     //Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-        NavHost(
-            modifier = Modifier,
-            navController = navController,
-            startDestination = AppRoutes.AddMedication,
-        ) {
-            composable<AppRoutes.Home> {
-                MainIntakesScreen(
-                    onAddMedicationClick = {
-                        navController.navigate(AppRoutes.AddMedication) { popUpTo(AppRoutes.Home) }
-                    }
-                )
-            }
-
-            composable<AppRoutes.Medications> {
-                //
-            }
-
-            composable<AppRoutes.AddMedication> {
-                AddMedicationScreen(
-                    onMainClick = {
-                        navController.navigate(AppRoutes.Home) { popUpTo(AppRoutes.AddMedication) }
-                    }
-                )
-            }
+    NavHost(
+        modifier = Modifier,
+        navController = navController,
+        startDestination = AppRoutes.AddMedication,
+    ) {
+        composable<AppRoutes.Home> {
+            MainIntakesScreen(
+                onNavigateToAddMedication = {
+                    navController.navigate(AppRoutes.AddMedication) { popUpTo(AppRoutes.Home) }
+                }
+            )
         }
+
+        composable<AppRoutes.Medications> {
+            //
+        }
+
+        composable<AppRoutes.AddMedication> {
+            AddMedicationScreen(
+                onMainClick = {
+                    navController.navigate(AppRoutes.Home) { popUpTo(AppRoutes.AddMedication) }
+                }
+            )
+        }
+    }
     //}
 }
