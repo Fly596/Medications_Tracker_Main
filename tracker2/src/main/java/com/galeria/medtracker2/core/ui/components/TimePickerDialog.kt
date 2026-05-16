@@ -25,8 +25,43 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import java.time.LocalTime
 import java.util.Calendar
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TimePickerDialogNew(
+    onConfirm: (LocalTime) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val currentTime = remember { LocalTime.now() }
+    val timePickerState =
+        rememberTimePickerState(
+            initialHour = currentTime.hour,
+            initialMinute = currentTime.minute,
+            is24Hour = false,
+        )
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onConfirm(
+                        LocalTime.of(timePickerState.hour, timePickerState.minute)
+                    )
+                }) {
+                Text("Confirm")
+            }
+        },
+        dismissButton = { TextButton(onClick = onDismiss) { Text("Dismiss") } },
+        text = {
+            TimeInput(state = timePickerState)
+        },
+    )
+}
+
+// region old
 @Composable
 fun TimeSelectionRow(
     modifier: Modifier = Modifier,
@@ -152,3 +187,4 @@ fun TimePickerDialog(
         },
     )
 }
+// endregion

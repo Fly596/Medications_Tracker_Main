@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.Instant
+import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 import java.util.UUID
 import javax.inject.Inject
@@ -24,8 +25,10 @@ import javax.inject.Inject
 data class AddMedUiState(
     val name: String = "test",
     val dose: String = "56",
-    val startDate: Long = 0,
-    val endDate: Long? = null,
+    val startDateMillis: Long? = null,
+    val endDateMillis: Long? = null,
+    val intakeTimesNew: List<LocalTime> = emptyList(),
+
     val intakeTime: Pair<Int, Int> = Pair(0, 0),
     val intakeTimes: List<Pair<Int, Int>> = emptyList(),
     val startDateString: String = "Choose start date",
@@ -51,26 +54,43 @@ constructor(
     private val _state = MutableStateFlow(AddMedUiState())
     val state = _state.asStateFlow()
 
-    // region ui update.
-    fun updateName(input: String?) = _state.update { it.copy(name = input ?: "") }
+    // ui update.
+    fun updateName(input: String) = _state.update { it.copy(name = input) }
 
-    fun updateDose(input: String?) = _state.update { it.copy(dose = input ?: "") }
+    fun updateDose(input: String) = _state.update { it.copy(dose = input) }
 
-    fun updateStartDate(input: Long?) {
+    fun updateStartDate(millis: Long) = _state.update { it.copy(startDateMillis = millis) }
+    fun updateEndDate(millis: Long) = _state.update { it.copy(endDateMillis = millis) }
+
+    fun addTime(time: LocalTime) {
+        // check for duplicates.
+        if (time !in _state.value.intakeTimesNew) {
+            _state.update { it.copy(intakeTimesNew = it.intakeTimesNew + time) }
+        }
+    }
+
+    fun removeTime(time: LocalTime) {
+        _state.update { it.copy(intakeTimesNew = it.intakeTimesNew - time) }
+    }
+
+    // region old
+    fun updateStartDateOld(input: Long?) {
         val date = DateTimeUtils.fromTimestampToDate(input ?: Instant.now().toEpochMilli())
         _state.update {
             it.copy(
                 startDateString = date.format(DateTimeUtils.dateFormatter),
-                startDate = input ?: Instant.now().toEpochMilli(),
+                startDateMillis = input ?: Instant.now().toEpochMilli(),
             )
         }
     }
 
-    fun updateEndDate(input: Long?) {
+    fun updateEndDateOld(input: Long?) {
         input?.let {
             val date = DateTimeUtils.fromTimestampToDate(it)
             _state.update {
-                it.copy(endDateString = date.format(DateTimeUtils.dateFormatter), endDate = input)
+                it.copy(
+                    endDateString = date.format(DateTimeUtils.dateFormatter), endDateMillis = input
+                )
             }
         }
     }
@@ -119,15 +139,17 @@ constructor(
     private suspend fun generateScheduleEntries(medicationId: UUID, currentState: AddMedUiState) {
         // Проверка, чтобы не создавать записи за прошедшие дни.
         val start =
-            if (currentState.startDate < Instant.now().toEpochMilli()) {
+            if (currentState.startDateMillis < Instant.now().toEpochMilli()) {
                 DateTimeUtils.fromTimestampToDate(Instant.now().toEpochMilli())
             } else {
-                DateTimeUtils.fromTimestampToDate(currentState.startDate)
+                DateTimeUtils.fromTimestampToDate(currentState.startDateMillis)
             }
 
         val end =
             DateTimeUtils.fromTimestampToDate(
-                currentState.endDate ?: currentState.startDate.plus(DEFAULT_SCHEDULE_DAYS)
+                currentState.endDateMillis ?: currentState.startDateMillis.plus(
+                    DEFAULT_SCHEDULE_DAYS
+                )
             )
 
         // TODO: сделать, чтобы при входе в прилоюение подгружались данные по приемам на N дней
@@ -141,10 +163,12 @@ constructor(
                 id = medicationCourseId,
                 medicationId = medicationId,
                 doseMg = currentState.dose.toDoubleOrNull() ?: 0.0,
-                startDate = Instant.ofEpochMilli(currentState.startDate),
+                startDate = Instant.ofEpochMilli(currentState.startDateMillis),
                 endDate =
                     Instant.ofEpochMilli(
-                        currentState.endDate ?: currentState.startDate.plus(DEFAULT_SCHEDULE_DAYS)
+                        currentState.endDateMillis ?: currentState.startDateMillis.plus(
+                            DEFAULT_SCHEDULE_DAYS
+                        )
                     ),
             )
         )

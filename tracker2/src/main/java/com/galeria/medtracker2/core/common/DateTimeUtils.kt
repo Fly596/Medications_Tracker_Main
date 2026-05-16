@@ -3,7 +3,9 @@ package com.galeria.medtracker2.core.common
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -13,6 +15,20 @@ object DateTimeUtils {
     val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("MMM dd, yyyy", Locale.US)
     val dateTimeFormatter: DateTimeFormatter =
         DateTimeFormatter.ofPattern("MMM dd, yyyy, hh:mm a", Locale.US)
+
+    private val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("hh:mm a", Locale.US)
+
+    fun formatDatePickerMillis(millis: Long?): String {
+        if (millis == null) return "Choose date"
+        return Instant.ofEpochMilli(millis)
+            .atZone(ZoneOffset.UTC) // timestamp из DatePicker в UTC!
+            .toLocalDate()
+            .format(dateFormatter)
+    }
+
+    fun formatLocalTime(time: LocalTime): String {
+        return time.format(timeFormatter)
+    }
 
     fun fromTimestampToLocalDateTime(value: Long): LocalDateTime {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(value), ZoneId.systemDefault())
