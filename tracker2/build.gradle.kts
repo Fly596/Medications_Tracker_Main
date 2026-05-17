@@ -6,7 +6,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
     alias(libs.plugins.google.services) // Подключаем плагин Firebase правильно!
-    alias(libs.plugins.ncorti.ktfmt)
+    //alias(libs.plugins.ncorti.ktfmt)
 }
 
 android {

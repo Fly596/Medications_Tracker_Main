@@ -8,50 +8,57 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.galeria.medtracker2.feature.intakes.presentation.MainIntakesScreen
-import com.galeria.medtracker2.feature.meds.data.local.medication.MedicationEntity
 import com.galeria.medtracker2.feature.meds.presentation.AddMedicationScreen
 import com.galeria.medtracker2.feature.meds.presentation.MyMedicationsScreen
+import java.util.UUID
 
 @Composable
 fun AppNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
 ) {
-    // Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
     NavHost(
         modifier = Modifier,
         navController = navController,
-        startDestination = AppRoutes.AddMedication,
+        startDestination = AppRoutes.AddMedicationRoute,
     ) {
         composable<AppRoutes.Home> {
             MainIntakesScreen(
                 onNavigateToAddMedication = {
-                    navController.navigate(AppRoutes.AddMedication) { popUpTo(AppRoutes.Home) }
-                }
+                    navController.navigate(AppRoutes.AddMedicationRoute) { popUpTo(AppRoutes.Home) }
+                },
+                onNavigateToMedicationsList = {
+                    navController.navigate(AppRoutes.MedicationsListRoute) {
+                        popUpTo(AppRoutes.Home)
+                    }
+                },
             )
         }
 
-        composable<AppRoutes.AddMedication> {
+        composable<AppRoutes.AddMedicationRoute> {
             AddMedicationScreen(
                 onMainClick = {
-                    navController.navigate(AppRoutes.Home) { popUpTo(AppRoutes.AddMedication) }
+                    navController.navigate(AppRoutes.Home) { popUpTo(AppRoutes.AddMedicationRoute) }
                 }
             )
         }
 
-        composable<AppRoutes.MedicationsList> {
+        composable<AppRoutes.MedicationsListRoute> {
             MyMedicationsScreen(
                 onNavigateToViewMedication = { id ->
-                    navController.navigate(AppRoutes.Medication(id))
-                }
+                    navController.navigate(AppRoutes.MedicationDetailsRoute(id.toString()))
+                },
+                onNavigateToAddMedication = {
+                    navController.navigate(AppRoutes.AddMedicationRoute)
+                },
             )
         }
 
-        composable<AppRoutes.Medication> { backStackEntry ->
-            val medication: MedicationEntity = backStackEntry.toRoute()
+        composable<AppRoutes.MedicationDetailsRoute> { backStackEntry ->
+            val route = backStackEntry.toRoute<AppRoutes.MedicationDetailsRoute>()
+            val medicationId = UUID.fromString(route.medicationId)
 
             // MyMedicationsScreen(onNavigateToViewMedication = { id -> navController.navigate() })
         }
     }
-    // }
 }

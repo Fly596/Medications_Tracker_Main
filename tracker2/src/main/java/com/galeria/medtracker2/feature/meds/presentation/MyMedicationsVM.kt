@@ -11,8 +11,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
-import java.util.UUID
 import javax.inject.Inject
 
 data class MyMedicationsUiState(
@@ -42,7 +40,4 @@ constructor(
                 initialValue = MyMedicationsUiState(isLoading = true),
             )
 
-    fun removeMedication(id: UUID) {
-        viewModelScope.launch { medsRepository.removeMedication(id) }
-    }
 }

@@ -46,6 +46,7 @@ import java.util.UUID
 @Composable
 fun MainIntakesScreen(
     onNavigateToAddMedication: () -> Unit = {},
+    onNavigateToMedicationsList: () -> Unit = {},
     viewModel: MainIntakesVM = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -59,7 +60,10 @@ fun MainIntakesScreen(
         },
     ) { innerPadding ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(innerPadding).padding(horizontal = 16.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(horizontal = 16.dp),
         ) {
             Button(
                 onClick = onNavigateToAddMedication,
@@ -67,6 +71,13 @@ fun MainIntakesScreen(
                 shape = MaterialTheme.shapes.medium,
             ) {
                 Text("On add med page")
+            }
+            Button(
+                onClick = onNavigateToMedicationsList,
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.medium,
+            ) {
+                Text("On medications list page")
             }
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -125,7 +136,9 @@ fun IntakeCard(
         onClick = { isDialogVisible = true },
     ) {
         Row(
-            modifier = Modifier.padding(16.dp).fillMaxWidth(),
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
