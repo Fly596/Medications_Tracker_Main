@@ -6,12 +6,12 @@ import com.galeria.medtracker2.core.common.data.MedicationCourseSummary
 import com.galeria.medtracker2.feature.meds.domain.MedicationScheduleIntakesRepository
 import com.galeria.medtracker2.feature.meds.domain.MedsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import javax.inject.Inject
 
 data class MyMedicationsUiState(
     val medsList: List<MedicationCourseSummary> = emptyList(),
@@ -39,5 +39,4 @@ constructor(
                 started = SharingStarted.WhileSubscribed(5000),
                 initialValue = MyMedicationsUiState(isLoading = true),
             )
-
 }

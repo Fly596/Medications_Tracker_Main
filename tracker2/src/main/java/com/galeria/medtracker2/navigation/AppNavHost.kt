@@ -48,9 +48,7 @@ fun AppNavHost(
                 onNavigateToViewMedication = { id ->
                     navController.navigate(AppRoutes.MedicationDetailsRoute(id.toString()))
                 },
-                onNavigateToAddMedication = {
-                    navController.navigate(AppRoutes.AddMedicationRoute)
-                },
+                onNavigateToAddMedication = { navController.navigate(AppRoutes.AddMedicationRoute) },
             )
         }
 
