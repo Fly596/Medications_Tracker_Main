@@ -8,12 +8,15 @@ import kotlinx.coroutines.flow.Flow
 import java.util.UUID
 import javax.inject.Inject
 
-class IntakesRepositoryImpl @Inject constructor(
-    private val intakeDao: IntakeDao
-) : IntakesRepository {
+class IntakesRepositoryImpl @Inject constructor(private val intakeDao: IntakeDao) :
+    IntakesRepository {
 
     override suspend fun addIntake(intake: IntakeLogDomain) {
-        intakeDao.insertIntake(intake.toEntity())
+        if (intakeDao.checkIntakeExist(intake.plannedIntakeId)) {
+            intakeDao.update(intakeStatus = intake.isTaken, id = intake.plannedIntakeId)
+        } else {
+            intakeDao.insertIntake(intake.toEntity())
+        }
     }
 
     override fun getIntakes(): Flow<List<IntakeLogDomain>> {
@@ -22,5 +25,4 @@ class IntakesRepositoryImpl @Inject constructor(
 
     override suspend fun checkIntakeStatus(plannedIntakeId: UUID): Boolean =
         intakeDao.checkIntakeStatus(plannedIntakeId)
-
 }

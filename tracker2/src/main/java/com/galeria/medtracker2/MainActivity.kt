@@ -5,7 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.galeria.medtracker2.core.notification.ReminderNotification
-import com.galeria.medtracker2.core.ui.theme.SpeechRecognitionAppTheme
+import com.galeria.medtracker2.core.ui.theme.MedTrackerTheme
 import com.galeria.medtracker2.navigation.AppNavHost
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -15,7 +15,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContent { SpeechRecognitionAppTheme { AppNavHost() } }
+        setContent { MedTrackerTheme { AppNavHost() } }
     }
 
     private fun showNotification() {

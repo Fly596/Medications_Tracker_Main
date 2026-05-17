@@ -39,6 +39,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medtracker2.core.common.DateTimeUtils
 import com.galeria.medtracker2.core.common.data.ScheduledIntakeDetails
+import com.galeria.medtracker2.core.ui.theme.MedTrackerTheme
 import com.galeria.medtracker2.core.ui.theme.SpeechRecognitionAppTheme
 import java.time.Instant
 import java.util.UUID
@@ -134,6 +135,8 @@ fun IntakeCard(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         onClick = { isDialogVisible = true },
+        colors = CardDefaults.cardColors(containerColor = MedTrackerTheme.colors.secondaryBackground)
+
     ) {
         Row(
             modifier = Modifier

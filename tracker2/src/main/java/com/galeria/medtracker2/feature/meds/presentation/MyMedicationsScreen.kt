@@ -33,7 +33,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medtracker2.core.common.DateTimeUtils
 import com.galeria.medtracker2.core.common.data.MedicationCourseSummary
-import com.galeria.medtracker2.core.ui.theme.SpeechRecognitionAppTheme
+import com.galeria.medtracker2.core.ui.theme.MedTrackerTheme
 import java.util.UUID
 
 @Composable
@@ -49,7 +49,7 @@ fun MyMedicationsScreen(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text("My medications", style = MaterialTheme.typography.displaySmall) },
+                title = { Text("My medications", style = MedTrackerTheme.typography.display3) },
             )
         },
     ) { innerPadding ->
@@ -119,6 +119,7 @@ fun MedicationCard(
             .padding(6.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         onClick = { onSelect },
+        colors = CardDefaults.cardColors(containerColor = MedTrackerTheme.colors.secondaryBackground)
     ) {
         Row(
             modifier = Modifier
@@ -159,7 +160,7 @@ private fun EmptyMedicationsPlaceholder()
 @Composable
 fun MedsScreenPreview()
 {
-    SpeechRecognitionAppTheme {
+    MedTrackerTheme {
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(4) {
                 MedicationCard(
