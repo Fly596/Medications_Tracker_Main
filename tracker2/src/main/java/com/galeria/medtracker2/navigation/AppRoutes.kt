@@ -13,14 +13,12 @@ sealed interface AppRoutes {
 
     @Serializable data object Home : AppRoutes // расписание приемов на сегодня.
 
-    @Serializable data object IntakesHistory : AppRoutes
+    @Serializable data object AddMedication : AppRoutes
 
     @Serializable data object MedicationsList : AppRoutes // Мои приемы
 
     @Serializable
     data class Medication(@Serializable(with = UUIDSerializer::class) val id: UUID) : AppRoutes
-
-    @Serializable data object AddMedication : AppRoutes
 }
 
 object UUIDSerializer : KSerializer<UUID> {

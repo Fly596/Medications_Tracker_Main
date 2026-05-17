@@ -31,6 +31,14 @@ fun AppNavHost(
             )
         }
 
+        composable<AppRoutes.AddMedication> {
+            AddMedicationScreen(
+                onMainClick = {
+                    navController.navigate(AppRoutes.Home) { popUpTo(AppRoutes.AddMedication) }
+                }
+            )
+        }
+
         composable<AppRoutes.MedicationsList> {
             MyMedicationsScreen(
                 onNavigateToViewMedication = { id ->
@@ -43,19 +51,6 @@ fun AppNavHost(
             val medication: MedicationEntity = backStackEntry.toRoute()
 
             // MyMedicationsScreen(onNavigateToViewMedication = { id -> navController.navigate() })
-        }
-
-        composable<AppRoutes.AddMedication> {
-            AddMedicationScreen(
-                onMainClick = {
-                    navController.navigate(AppRoutes.Home) { popUpTo(AppRoutes.AddMedication) }
-                }
-            )
-            /* AddMedicationScreen(
-                onMainClick = {
-                    navController.navigate(AppRoutes.Home) { popUpTo(AppRoutes.AddMedication) }
-                }
-            )*/
         }
     }
     // }
