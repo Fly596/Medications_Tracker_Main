@@ -7,8 +7,8 @@ import com.galeria.medtracker2.core.common.DateTimeUtils
 import com.galeria.medtracker2.core.notification.data.ScheduleNotificationRepoImpl
 import com.galeria.medtracker2.feature.meds.domain.MedicationCourseDomain
 import com.galeria.medtracker2.feature.meds.domain.MedicationDomain
+import com.galeria.medtracker2.feature.meds.domain.MedicationRepository
 import com.galeria.medtracker2.feature.meds.domain.MedicationScheduleIntakesRepository
-import com.galeria.medtracker2.feature.meds.domain.MedsRepository
 import com.galeria.medtracker2.feature.meds.domain.PlannedIntakeDomain
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,6 +30,7 @@ data class AddMedUiState(
     val endDateMillis: Long? = null,
     val intakeTimes: List<LocalTime> = emptyList(), // Вернули нормальное имя
 )
+
 const val TAG: String = "MyActivity"
 const val DEFAULT_SCHEDULE_DAYS: Long = 7
 
@@ -37,10 +38,11 @@ const val DEFAULT_SCHEDULE_DAYS: Long = 7
 class AddMedicationVM
 @Inject
 constructor(
-    private val repository: MedsRepository,
+    private val repository: MedicationRepository,
     private val medRegRepository: MedicationScheduleIntakesRepository,
     private val notificationService: ScheduleNotificationRepoImpl,
 ) : ViewModel() {
+
     private val _state = MutableStateFlow(AddMedUiState())
     val state = _state.asStateFlow()
 
@@ -91,16 +93,16 @@ constructor(
         // 1. Получаем стартовую дату (LocalDate). Если не выбрана — берем сегодня.
         // Используем строго UTC конвертер, так как millis пришли из DatePicker!
         val rawStartDate =
-                currentState.startDateMillis?.let { DateTimeUtils.fromDatePickerMillisToLocalDate(it) }
-                    ?: today
+            currentState.startDateMillis?.let { DateTimeUtils.fromDatePickerMillisToLocalDate(it) }
+                ?: today
 
         // Не даем создавать расписание в прошлом. Если выбрали вчера, начинаем с сегодня.
         val start = if (rawStartDate.isBefore(today)) today else rawStartDate
 
         // 2. Получаем конечную дату. Если не выбрана, прибавляем дни к start.
         val end =
-                currentState.endDateMillis?.let { DateTimeUtils.fromDatePickerMillisToLocalDate(it) }
-                    ?: start.plusDays(DEFAULT_SCHEDULE_DAYS)
+            currentState.endDateMillis?.let { DateTimeUtils.fromDatePickerMillisToLocalDate(it) }
+                ?: start.plusDays(DEFAULT_SCHEDULE_DAYS)
 
         val daysCount = ChronoUnit.DAYS.between(start, end).toInt()
         val medicationCourseId = UUID.randomUUID()
@@ -123,7 +125,7 @@ constructor(
 
                 // Объединяем дату (PointerDate) и время (LocalTime) в нужный момент (Instant)
                 val intakeTimeMoment =
-                        DateTimeUtils.combineDateAndTime(currentPointerDate, localTime)
+                    DateTimeUtils.combineDateAndTime(currentPointerDate, localTime)
 
                 medRegRepository.addPlannedIntake(
                     PlannedIntakeDomain(

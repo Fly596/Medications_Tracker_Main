@@ -4,7 +4,7 @@ import com.galeria.medtracker2.feature.meds.data.local.medication.MedicationDao
 import com.galeria.medtracker2.feature.meds.data.local.medication.toDomain
 import com.galeria.medtracker2.feature.meds.data.local.medication.toEntity
 import com.galeria.medtracker2.feature.meds.domain.MedicationDomain
-import com.galeria.medtracker2.feature.meds.domain.MedsRepository
+import com.galeria.medtracker2.feature.meds.domain.MedicationRepository
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -13,11 +13,11 @@ import java.util.UUID
 import javax.inject.Inject
 
 // TODO: add implementation
-class MedsRepositoryImpl
+class MedicationRepositoryImpl
 @Inject
 constructor(
     private val medicationDao: MedicationDao
-) : MedsRepository {
+) : MedicationRepository {
 
     override suspend fun addMedication(
         medication: MedicationDomain

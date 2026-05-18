@@ -3,7 +3,10 @@ package com.galeria.medtracker2.feature.meds.domain
 import kotlinx.coroutines.flow.Flow
 import java.util.UUID
 
-interface MedsRepository {
+/**
+ * Отвечает только за медикаменты, без расписаний.
+ */
+interface MedicationRepository {
 
     suspend fun addMedication(
         medication: MedicationDomain
