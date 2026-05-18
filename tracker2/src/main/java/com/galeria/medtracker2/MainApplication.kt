@@ -21,11 +21,11 @@ class MainApplication : Application() {
         channel.description = "description"
 
         val channelMain =
-                NotificationChannel(
-                    "medication_reminders",
-                    "channel_reminders",
-                    NotificationManager.IMPORTANCE_HIGH,
-                )
+            NotificationChannel(
+                "medication_reminders",
+                "channel_reminders",
+                NotificationManager.IMPORTANCE_HIGH,
+            )
         channelMain.description = "medications_channel"
 
         // Регистрируем канал системой.

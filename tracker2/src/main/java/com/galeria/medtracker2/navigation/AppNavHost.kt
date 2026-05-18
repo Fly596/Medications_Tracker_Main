@@ -7,9 +7,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.galeria.medtracker2.feature.intakes.presentation.MainIntakesScreen
-import com.galeria.medtracker2.feature.meds.presentation.AddMedicationScreen
-import com.galeria.medtracker2.feature.meds.presentation.MyMedicationsScreen
+import com.galeria.medtracker2.feature.tracker.presentation.add_med.AddMedicationScreen
+import com.galeria.medtracker2.feature.tracker.presentation.medications.MyMedicationsScreen
+import com.galeria.medtracker2.feature.tracker.presentation.schedule.MainIntakesScreen
 import java.util.UUID
 
 @Composable

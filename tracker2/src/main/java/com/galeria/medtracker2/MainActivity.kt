@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.galeria.medtracker2.core.notification.ReminderNotification
+import com.galeria.medtracker2.core.notifications.ReminderNotification
 import com.galeria.medtracker2.core.ui.theme.MedTrackerTheme
 import com.galeria.medtracker2.navigation.AppNavHost
 import dagger.hilt.android.AndroidEntryPoint

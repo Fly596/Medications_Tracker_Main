@@ -27,7 +27,7 @@
             </intent-filter>
         </activity>
         <receiver
-            android:name=".core.notification.ReminderReceiver"
+            android:name=".core.notifications.ReminderReceiver"
             android:enabled="true" />
     </application>
 
