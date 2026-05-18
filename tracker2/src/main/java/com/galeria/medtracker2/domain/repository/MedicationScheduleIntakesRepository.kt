@@ -10,15 +10,17 @@ import java.util.UUID
 
 interface MedicationScheduleIntakesRepository {
 
-    suspend fun addCourse(regiment: MedicationCourseDomain)
+    suspend fun addCourse(course: MedicationCourseDomain)
 
-    suspend fun addPlannedIntake(schedule: PlannedIntakeDomain)
+    suspend fun addPlannedIntake(plannedIntake: PlannedIntakeDomain)
+
+    suspend fun addAllPlannedIntakes(plannedIntakes: List<PlannedIntakeDomain>)
 
     fun getCourses(): Flow<List<MedicationCourseDomain>>
 
     fun getPlannedIntakeById(id: UUID): Flow<PlannedIntakeEntity>
 
-    fun getRegimentsWithNameDoseDates(): Flow<List<MedicationCourseSummary>>
+    fun getCourseSummary(): Flow<List<MedicationCourseSummary>>
 
     fun getFullSchedule(): Flow<List<ScheduledIntakeDetails>>
 }

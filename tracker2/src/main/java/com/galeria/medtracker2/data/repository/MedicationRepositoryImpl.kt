@@ -1,10 +1,10 @@
 package com.galeria.medtracker2.data.repository
 
 import com.galeria.medtracker2.core.database.dao.MedicationDao
+import com.galeria.medtracker2.data.mappers.toDomain
+import com.galeria.medtracker2.data.mappers.toEntity
 import com.galeria.medtracker2.domain.model.MedicationDomain
 import com.galeria.medtracker2.domain.repository.MedicationRepository
-import com.galeria.medtracker2.feature.meds.data.local.medication.toDomain
-import com.galeria.medtracker2.feature.meds.data.local.medication.toEntity
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -33,9 +33,14 @@ constructor(
         }
     }
 
-    override suspend fun getMedication(medicationId: UUID): MedicationDomain {
+    override suspend fun getMedicationById(medicationId: UUID): MedicationDomain {
         val medicationEntity = medicationDao.getMedicationById(medicationId)
         return medicationEntity?.toDomain() ?: throw Exception("Medication not found")
+    }
+
+    override suspend fun getMedicationByName(name: String): MedicationDomain? {
+        val medicationEntity = medicationDao.getMedicationByName(name)
+        return medicationEntity?.toDomain()
     }
 
     override fun getAllMedications(): Flow<List<MedicationDomain>> = callbackFlow {

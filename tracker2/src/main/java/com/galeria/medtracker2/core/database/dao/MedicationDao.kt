@@ -22,4 +22,7 @@ interface MedicationDao {
 
     @Query("SELECT * FROM medications WHERE id = :id")
     suspend fun getMedicationById(id: UUID): MedicationEntity?
+
+    @Query("SELECT * FROM medications WHERE name = :name COLLATE NOCASE LIMIT 1")
+    suspend fun getMedicationByName(name: String): MedicationEntity?
 }

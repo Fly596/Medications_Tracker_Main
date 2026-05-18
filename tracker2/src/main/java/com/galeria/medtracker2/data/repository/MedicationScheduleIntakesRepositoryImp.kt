@@ -24,13 +24,20 @@ constructor(
     private val medicationScheduleDao: MedicationScheduleDao,
 ) : MedicationScheduleIntakesRepository {
 
-    override suspend fun addCourse(regiment: MedicationCourseDomain) {
+    override suspend fun addCourse(course: MedicationCourseDomain) {
 
-        medicationCourseDao.insertMedicationCourse(regiment.toEntity())
+        medicationCourseDao.insertMedicationCourse(course.toEntity())
     }
 
-    override suspend fun addPlannedIntake(schedule: PlannedIntakeDomain) {
-        plannedIntakeDao.insertScheduledDateTime(schedule.toEntity())
+    override suspend fun addPlannedIntake(plannedIntake: PlannedIntakeDomain) {
+        plannedIntakeDao.insertPlannedIntake(plannedIntake.toEntity())
+    }
+
+    override suspend fun addAllPlannedIntakes(plannedIntakes: List<PlannedIntakeDomain>) {
+        val entities = plannedIntakes.map { it ->
+            it.toEntity()
+        }
+        plannedIntakeDao.insertAll(entities)
     }
 
     override fun getCourses(): Flow<List<MedicationCourseDomain>> =
@@ -43,7 +50,7 @@ constructor(
     }
 
     // Возвращает совмещенную таблицу с именем и датами начала и конца приема.
-    override fun getRegimentsWithNameDoseDates(): Flow<List<MedicationCourseSummary>> =
+    override fun getCourseSummary(): Flow<List<MedicationCourseSummary>> =
         medicationScheduleDao.getCourseSummaries()
 
     // Возвращает совмещенную таблицу вмсех приемов по времени.

@@ -17,7 +17,7 @@ object DateTimeUtils {
 
     fun formatDatePickerMillis(millis: Long?): String {
         if (millis==null) return "Choose date"
-        return fromDatePickerMillisToLocalDate(millis).format(dateFormatter)
+        return fromLongToLocalDate(millis).format(dateFormatter)
     }
 
     fun formatLocalTime(time: LocalTime): String {
@@ -25,7 +25,7 @@ object DateTimeUtils {
     }
 
     // БЕЗОПАСНАЯ конвертация миллисекунд DatePicker'а (UTC) в LocalDate
-    fun fromDatePickerMillisToLocalDate(millis: Long): LocalDate {
+    fun fromLongToLocalDate(millis: Long): LocalDate {
         return Instant.ofEpochMilli(millis).atZone(ZoneOffset.UTC).toLocalDate()
     }
 
