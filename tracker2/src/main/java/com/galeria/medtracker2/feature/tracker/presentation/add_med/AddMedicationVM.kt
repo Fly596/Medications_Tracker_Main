@@ -1,5 +1,6 @@
 package com.galeria.medtracker2.feature.tracker.presentation.add_med
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.galeria.medtracker2.core.utils.DateTimeUtils
@@ -78,8 +79,19 @@ constructor(
         val end = currentState.endDateMillis
         val intakesTimes = currentState.intakeTimes
 
-        // Базовая валидация (в проде нужно подсвечивать красным поля в UI)
+        val intakeMoment = DateTimeUtils.combineDateAndTime(
+            DateTimeUtils.fromLongToLocalDate(start), intakesTimes[1]
+        )
 
+        Log.i(
+            "DATE_TIME", "Combined datetime: ${
+                DateTimeUtils.formatLongToLocalDateTimeString(
+                    intakeMoment.toEpochMilli()
+                )
+            }"
+        )
+
+        // Базовая валидация (в проде нужно подсвечивать красным поля в UI)
         // region values check
         if (name.isBlank()) {
             _state.update {
@@ -116,6 +128,8 @@ constructor(
             }
             return
         }
+        // endregion
+
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, errorMessage = null) }
 
