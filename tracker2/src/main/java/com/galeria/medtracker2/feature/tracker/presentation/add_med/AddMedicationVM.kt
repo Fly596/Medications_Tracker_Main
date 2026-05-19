@@ -80,7 +80,7 @@ constructor(
         val intakesTimes = currentState.intakeTimes
 
         val intakeMoment = DateTimeUtils.combineDateAndTime(
-            DateTimeUtils.fromLongToLocalDate(start), intakesTimes[1]
+            DateTimeUtils.fromLongToLocalDate(start), intakesTimes[0]
         )
 
         Log.i(
