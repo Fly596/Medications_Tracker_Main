@@ -24,31 +24,31 @@ object DateTimeUtils {
     }
 
     fun formatLongToLocalDateString(millis: Long?): String {
-        if (millis == null) return "Choose date"
+        if (millis==null) return "Choose date"
         return fromLongToLocalDate(millis).format(dateFormatter)
     }
 
     fun formatLongToLocalDateTimeString(millis: Long?): String {
-        if (millis == null) return "Choose date"
+        if (millis==null) return "Choose date"
         return fromLongToLocalDateTime(millis).format(dateTimeFormatter)
     }
 
     // БЕЗОПАСНАЯ конвертация миллисекунд DatePicker'а (UTC) в LocalDate
     fun fromLongToLocalDate(millis: Long): LocalDate {
-        return Instant.ofEpochMilli(millis).atZone(ZoneOffset.UTC).toLocalDate()
+        return Instant.ofEpochMilli(millis).atZone(ZoneOffset.systemDefault()).toLocalDate()
     }
 
     fun fromLongToLocalDateTime(value: Long): LocalDateTime {
-        return Instant.ofEpochMilli(value).atZone(ZoneOffset.UTC).toLocalDateTime()
+        return Instant.ofEpochMilli(value).atZone(ZoneOffset.systemDefault()).toLocalDateTime()
         // return LocalDateTime.ofInstant(Instant.ofEpochMilli(value), ZoneId.systemDefault())
     }
 
     fun fromLocalDateToLong(date: LocalDate): Long {
-        return date.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
+        return date.atStartOfDay(ZoneOffset.systemDefault()).toInstant().toEpochMilli()
     }
 
     // Соединяет LocalDate и LocalTime в Instant текущей временной зоны
     fun combineDateAndTime(date: LocalDate, time: LocalTime): Instant {
-        return date.atTime(time).atZone(ZoneOffset.UTC).toInstant()
+        return date.atTime(time).atZone(ZoneOffset.systemDefault()).toInstant()
     }
 }
