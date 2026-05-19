@@ -9,7 +9,7 @@ import com.galeria.medtracker2.domain.model.MedicationCourseDomain
 import com.galeria.medtracker2.domain.model.MedicationDomain
 import com.galeria.medtracker2.domain.model.PlannedIntakeDomain
 import com.galeria.medtracker2.domain.repository.MedicationRepository
-import com.galeria.medtracker2.domain.repository.MedicationScheduleIntakesRepository
+import com.galeria.medtracker2.domain.repository.MedicationsCourseRepository
 import com.galeria.medtracker2.feature.tracker.domain.CreateMedicationsAndScheduleUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,7 +42,7 @@ class AddMedicationVM
 @Inject
 constructor(
     private val repository: MedicationRepository,
-    private val medRegRepository: MedicationScheduleIntakesRepository,
+    private val medRegRepository: MedicationsCourseRepository,
     private val notificationService: ScheduleNotificationRepoImpl,
     private val createMedicationsAndScheduleUseCase: CreateMedicationsAndScheduleUseCase
 ) : ViewModel() {

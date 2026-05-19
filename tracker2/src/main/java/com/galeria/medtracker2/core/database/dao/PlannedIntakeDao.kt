@@ -14,17 +14,14 @@ import kotlin.uuid.ExperimentalUuidApi
 interface PlannedIntakeDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertPlannedIntake(plannedIntake: PlannedIntakeEntity)
+    suspend fun insertBatch(plannedIntakes: List<PlannedIntakeEntity>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(plannedIntakes: List<PlannedIntakeEntity>)
-
-    @Query("DELETE FROM planned_intakes WHERE id = :id")
-    suspend fun deletePlannedIntakeById(id: UUID)
+    suspend fun upsert(plannedIntake: PlannedIntakeEntity)
 
     @Query("SELECT * FROM planned_intakes")
     fun getAllPlannedIntakes(): Flow<List<PlannedIntakeEntity>>
 
     @Query("SELECT * FROM planned_intakes WHERE id = :id")
-    suspend fun getPlannedIntakeById(id: UUID): PlannedIntakeEntity?
+    suspend fun getById(id: UUID): PlannedIntakeEntity?
 }

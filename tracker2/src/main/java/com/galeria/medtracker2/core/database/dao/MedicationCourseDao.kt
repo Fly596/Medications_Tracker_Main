@@ -14,7 +14,7 @@ import kotlin.uuid.ExperimentalUuidApi
 interface MedicationCourseDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertMedicationCourse(medicationCourse: MedicationCourseEntity)
+    suspend fun upsert(medicationCourse: MedicationCourseEntity)
 
     @Query("DELETE FROM medication_courses WHERE id = :id")
     suspend fun deleteMedicationCourseById(id: UUID)

@@ -17,10 +17,6 @@ interface MedicationRepository {
         medicationId: UUID
     )
 
-    suspend fun getMedicationById(
-        medicationId: UUID
-    ): MedicationDomain
-
     suspend fun getMedicationByName(name: String): MedicationDomain?
     fun getAllMedications(): Flow<List<MedicationDomain>>
 }

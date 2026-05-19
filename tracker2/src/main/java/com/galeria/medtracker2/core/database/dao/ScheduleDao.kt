@@ -7,7 +7,7 @@ import com.galeria.medtracker2.domain.model.ScheduledIntakeDetails
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface MedicationScheduleDao {
+interface ScheduleDao {
 
     @Query(
         """
@@ -21,7 +21,7 @@ interface MedicationScheduleDao {
             JOIN medication_courses AS mr ON m.id = mr.medicationId
             """
     )
-    fun getCourseSummaries(): Flow<List<MedicationCourseSummary>>
+    fun getActiveCoursesStream(): Flow<List<MedicationCourseSummary>>
 
     @Query(
         """
@@ -39,5 +39,5 @@ interface MedicationScheduleDao {
             ORDER BY std.scheduledTimestamp
             """
     )
-    fun getScheduledIntakesWithDetails(): Flow<List<ScheduledIntakeDetails>>
+    fun getFullScheduleStream(): Flow<List<ScheduledIntakeDetails>>
 }

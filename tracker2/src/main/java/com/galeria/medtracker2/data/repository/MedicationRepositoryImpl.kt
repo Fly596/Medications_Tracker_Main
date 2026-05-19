@@ -22,24 +22,20 @@ constructor(
     override suspend fun addMedication(
         medication: MedicationDomain
     ) {
-        medicationDao.insertMedication(medication.toEntity())
+        medicationDao.upsert(medication.toEntity())
     }
 
     override suspend fun removeMedication(medicationId: UUID) {
         try {
-            medicationDao.deleteMedicationById(medicationId)
+            medicationDao.deleteById(medicationId)
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
-    override suspend fun getMedicationById(medicationId: UUID): MedicationDomain {
-        val medicationEntity = medicationDao.getMedicationById(medicationId)
-        return medicationEntity?.toDomain() ?: throw Exception("Medication not found")
-    }
 
     override suspend fun getMedicationByName(name: String): MedicationDomain? {
-        val medicationEntity = medicationDao.getMedicationByName(name)
+        val medicationEntity = medicationDao.getByName(name)
         return medicationEntity?.toDomain()
     }
 

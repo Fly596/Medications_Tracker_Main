@@ -5,7 +5,7 @@ import com.galeria.medtracker2.domain.model.MedicationCourseDomain
 import com.galeria.medtracker2.domain.model.MedicationDomain
 import com.galeria.medtracker2.domain.model.PlannedIntakeDomain
 import com.galeria.medtracker2.domain.repository.MedicationRepository
-import com.galeria.medtracker2.domain.repository.MedicationScheduleIntakesRepository
+import com.galeria.medtracker2.domain.repository.MedicationsCourseRepository
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 class CreateMedicationsAndScheduleUseCase @Inject constructor(
     private val medicationRepository: MedicationRepository,
-    private val medicationScheduleIntakesRepository: MedicationScheduleIntakesRepository
+    private val medicationsCourseRepository: MedicationsCourseRepository
 ) {
 
     suspend operator fun invoke(
@@ -60,7 +60,7 @@ class CreateMedicationsAndScheduleUseCase @Inject constructor(
             startDate = startLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant(),
             endDate = endLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant(),
         )
-        medicationScheduleIntakesRepository.addCourse(medicationCourse)
+        medicationsCourseRepository.addCourse(medicationCourse)
 
         // 5. Генерируем приемы для расписания курса.
         val days = ChronoUnit.DAYS.between(startLocalDate, endLocalDate).toInt()
@@ -82,6 +82,6 @@ class CreateMedicationsAndScheduleUseCase @Inject constructor(
         }
 
         // 6. Сохраняем приемы.
-        medicationScheduleIntakesRepository.addAllPlannedIntakes(intakesList)
+        medicationsCourseRepository.addAllPlannedIntakes(intakesList)
     }
 }

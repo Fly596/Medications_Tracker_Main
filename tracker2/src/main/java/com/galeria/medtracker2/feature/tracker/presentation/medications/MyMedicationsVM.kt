@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.galeria.medtracker2.domain.model.MedicationCourseSummary
 import com.galeria.medtracker2.domain.repository.MedicationRepository
-import com.galeria.medtracker2.domain.repository.MedicationScheduleIntakesRepository
+import com.galeria.medtracker2.domain.repository.MedicationsCourseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -22,14 +22,14 @@ data class MyMedicationsUiState(
 class MyMedicationsVM
 @Inject
 constructor(
-    private val regimentsRepository: MedicationScheduleIntakesRepository,
+    private val regimentsRepository: MedicationsCourseRepository,
     private val medicationRepository: MedicationRepository,
 ) : ViewModel() {
 
     // Получение лекарств в реальном времени.
     val uiState: StateFlow<MyMedicationsUiState> =
         regimentsRepository
-            .getCourseSummary()
+            .getActiveCourses()
             .distinctUntilChanged()
             .map { allMedications ->
                 MyMedicationsUiState(medsList = allMedications, isLoading = false)

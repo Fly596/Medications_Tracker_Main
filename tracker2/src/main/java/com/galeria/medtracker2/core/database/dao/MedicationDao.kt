@@ -12,17 +12,14 @@ import java.util.UUID
 interface MedicationDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertMedication(medication: MedicationEntity)
+    suspend fun upsert(medication: MedicationEntity)
 
     @Query("DELETE FROM medications WHERE id = :id")
-    suspend fun deleteMedicationById(id: UUID)
+    suspend fun deleteById(id: UUID)
 
     @Query("SELECT * FROM medications")
     fun getAllMedications(): Flow<List<MedicationEntity>>
 
-    @Query("SELECT * FROM medications WHERE id = :id")
-    suspend fun getMedicationById(id: UUID): MedicationEntity?
-
     @Query("SELECT * FROM medications WHERE name = :name COLLATE NOCASE LIMIT 1")
-    suspend fun getMedicationByName(name: String): MedicationEntity?
+    suspend fun getByName(name: String): MedicationEntity?
 }

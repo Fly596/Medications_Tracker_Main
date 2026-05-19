@@ -12,10 +12,10 @@ class IntakesRepositoryImpl @Inject constructor(private val intakeDao: IntakeDao
     IntakesRepository {
 
     override suspend fun addIntake(intake: IntakeLogDomain) {
-        if (intakeDao.checkIntakeExist(intake.plannedIntakeId)) {
-            intakeDao.update(intakeStatus = intake.isTaken, id = intake.plannedIntakeId)
+        if (intakeDao.existsByPlannedId(intake.plannedIntakeId)) {
+            intakeDao.updateStatus(status = intake.isTaken, plannedId = intake.plannedIntakeId)
         } else {
-            intakeDao.insertIntake(intake.toEntity())
+            intakeDao.upsert(intake.toEntity())
         }
     }
 
@@ -24,5 +24,5 @@ class IntakesRepositoryImpl @Inject constructor(private val intakeDao: IntakeDao
     }
 
     override suspend fun checkIntakeStatus(plannedIntakeId: UUID): Boolean =
-        intakeDao.checkIntakeStatus(plannedIntakeId)
+        intakeDao.getStatusByPlannedId(plannedIntakeId)
 }

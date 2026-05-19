@@ -7,7 +7,7 @@ import com.galeria.medtracker2.core.utils.DateTimeUtils
 import com.galeria.medtracker2.domain.model.IntakeLogDomain
 import com.galeria.medtracker2.domain.model.ScheduledIntakeDetails
 import com.galeria.medtracker2.domain.repository.IntakesRepository
-import com.galeria.medtracker2.domain.repository.MedicationScheduleIntakesRepository
+import com.galeria.medtracker2.domain.repository.MedicationsCourseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -32,7 +32,7 @@ data class ScheduleUiState(
 class MainIntakesVM
 @Inject
 constructor(
-    private val regimentsRepository: MedicationScheduleIntakesRepository,
+    private val regimentsRepository: MedicationsCourseRepository,
     private val intakesRepository: IntakesRepository,
 ) : ViewModel() {
 

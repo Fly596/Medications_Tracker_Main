@@ -5,8 +5,8 @@ import androidx.room.RoomDatabase
 import com.galeria.medtracker2.core.database.dao.IntakeDao
 import com.galeria.medtracker2.core.database.dao.MedicationCourseDao
 import com.galeria.medtracker2.core.database.dao.MedicationDao
-import com.galeria.medtracker2.core.database.dao.MedicationScheduleDao
 import com.galeria.medtracker2.core.database.dao.PlannedIntakeDao
+import com.galeria.medtracker2.core.database.dao.ScheduleDao
 import com.galeria.medtracker2.core.database.entity.IntakeLogEntity
 import com.galeria.medtracker2.core.database.entity.MedicationCourseEntity
 import com.galeria.medtracker2.core.database.entity.MedicationEntity
@@ -33,5 +33,5 @@ abstract class AppDatabase : RoomDatabase() {
 
     abstract fun intakeDao(): IntakeDao
 
-    abstract fun medicationScheduleDao(): MedicationScheduleDao
+    abstract fun medicationScheduleDao(): ScheduleDao
 }
