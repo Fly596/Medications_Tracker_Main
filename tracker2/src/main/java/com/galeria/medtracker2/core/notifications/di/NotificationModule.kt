@@ -1,5 +1,6 @@
-package com.galeria.medtracker2.core.notifications
+package com.galeria.medtracker2.core.notifications.di
 
+import com.galeria.medtracker2.core.notifications.ScheduleNotificationRepo
 import com.galeria.medtracker2.core.notifications.data.ScheduleNotificationRepoImpl
 import dagger.Binds
 import dagger.Module

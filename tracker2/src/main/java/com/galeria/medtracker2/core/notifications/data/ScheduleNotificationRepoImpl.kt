@@ -4,53 +4,47 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import com.galeria.medtracker2.core.notifications.AlarmItem
 import com.galeria.medtracker2.core.notifications.ReminderReceiver
 import com.galeria.medtracker2.core.notifications.ScheduleNotificationRepo
+import com.galeria.medtracker2.core.utils.DateTimeUtils
 import dagger.hilt.android.qualifiers.ApplicationContext
-import java.util.UUID
 import javax.inject.Inject
 
 class ScheduleNotificationRepoImpl @Inject constructor(
     @ApplicationContext
     private val context: Context
-) : ScheduleNotificationRepo {
+) :
+    ScheduleNotificationRepo {
 
-    private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+    private val alarmManager = context.getSystemService(AlarmManager::class.java)
 
-    override fun schedule(
-        scheduleId: UUID, timeMillis: Long, title: String, dose: String
-    ) {
-        val intent = Intent(context.applicationContext, ReminderReceiver::class.java).apply {
-            putExtra("EXTRA_TITLE", title)
-            putExtra("EXTRA_DOSE", dose)
-        }
+    override fun schedule(item: AlarmItem) {
+        val formatedItemDateTime =
+                DateTimeUtils.formatLocalDateTime(
+                    DateTimeUtils.fromLongToLocalDateTime(item.timeMillis)
+                )
+        val intent =
+                Intent(context, ReminderReceiver::class.java).apply {
+                    putExtra("EXTRA_TITLE", item.title)
+                    putExtra("EXTRA_DOSE", item.dose)
+                    putExtra("EXTRA_TIME", formatedItemDateTime)
+                }
 
-        /**
-         * Важно: requestCode должен быть уникальным!
-         * Мы используем hashCode от UUID записи расписания.
-         * Это гарантирует, что каждый прием — это отдельный аларм в системе.
-         */
         val pendingIntent = PendingIntent.getBroadcast(
             context,
-            scheduleId.hashCode(),
+            item.scheduleId.hashCode(),
             intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
-
-        // Для Android 12+ (API 31) нужно разрешение SCHEDULE_EXACT_ALARM
-
-        if (alarmManager.canScheduleExactAlarms()) {
-            alarmManager.setExactAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP, timeMillis, pendingIntent
-            )
-        } else {
-            // Если нет разрешения, используем обычный сеттер
-            alarmManager.setExactAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP,
-                timeMillis,
-                pendingIntent
-            )
-        }
-
+        /**
+         * Важно: requestCode должен быть уникальным! Мы используем hashCode от UUID записи
+         * расписания. Это гарантирует, что каждый прием — это отдельный аларм в системе.
+         */
+        alarmManager.setExactAndAllowWhileIdle(
+            AlarmManager.RTC_WAKEUP,
+            item.timeMillis,
+            pendingIntent
+        )
     }
 }

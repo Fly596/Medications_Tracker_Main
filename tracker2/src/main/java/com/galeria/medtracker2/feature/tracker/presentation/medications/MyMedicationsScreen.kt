@@ -98,13 +98,11 @@ fun MedicationCard(
 ) {
     val formattedStartDate =
         remember(medication.startDate) {
-            DateTimeUtils.fromTimestampToDate(medication.startDate)
-                .format(DateTimeUtils.dateFormatter)
+            DateTimeUtils.fromLongToLocalDate(medication.startDate)
         }
     val formattedEndDate =
         remember(medication.endDate) {
-            DateTimeUtils.fromTimestampToDate(medication.endDate)
-                .format(DateTimeUtils.dateFormatter)
+            DateTimeUtils.fromLongToLocalDate(medication.endDate)
         }
 
     Card(

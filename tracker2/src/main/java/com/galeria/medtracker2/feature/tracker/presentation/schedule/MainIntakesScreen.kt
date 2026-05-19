@@ -127,16 +127,15 @@ fun IntakeCard(
     // Кешируем отформатированное время, чтобы не перечитывать при каждом рекомпозе.
     val formattedTime =
         remember(intake.scheduledTimestamp) {
-            DateTimeUtils.fromTimestampToLocalDateTime(intake.scheduledTimestamp)
-                .format(DateTimeUtils.dateTimeFormatter)
+            DateTimeUtils.formatLongToLocalDateTimeString(intake.scheduledTimestamp)
         }
 
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         onClick = { isDialogVisible = true },
-        colors = CardDefaults.cardColors(containerColor = MedTrackerTheme.colors.secondaryBackground)
-
+        colors =
+                CardDefaults.cardColors(containerColor = MedTrackerTheme.colors.secondaryBackground),
     ) {
         Row(
             modifier = Modifier

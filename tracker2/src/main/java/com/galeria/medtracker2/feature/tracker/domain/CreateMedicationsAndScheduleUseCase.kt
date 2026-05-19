@@ -1,5 +1,7 @@
 package com.galeria.medtracker2.feature.tracker.domain
 
+import com.galeria.medtracker2.core.notifications.AlarmItem
+import com.galeria.medtracker2.core.notifications.data.ScheduleNotificationRepoImpl
 import com.galeria.medtracker2.core.utils.DateTimeUtils
 import com.galeria.medtracker2.domain.model.MedicationCourseDomain
 import com.galeria.medtracker2.domain.model.MedicationDomain
@@ -16,7 +18,8 @@ import javax.inject.Inject
 
 class CreateMedicationsAndScheduleUseCase @Inject constructor(
     private val medicationRepository: MedicationRepository,
-    private val medicationsCourseRepository: MedicationsCourseRepository
+    private val medicationsCourseRepository: MedicationsCourseRepository,
+    private val notificationService: ScheduleNotificationRepoImpl
 ) {
 
     suspend operator fun invoke(
@@ -71,11 +74,21 @@ class CreateMedicationsAndScheduleUseCase @Inject constructor(
 
             intakeTimes.forEach { it ->
                 val intakeMoment = DateTimeUtils.combineDateAndTime(intakeDate, it)
+                val plannedIntakeId = UUID.randomUUID()
+
                 intakesList.add(
                     PlannedIntakeDomain(
-                        id = UUID.randomUUID(),
+                        id = plannedIntakeId,
                         courseId = medicationCourseId,
                         scheduledTimestamp = intakeMoment
+                    )
+                )
+                notificationService.schedule(
+                    item = AlarmItem(
+                        plannedIntakeId,
+                        intakeMoment.toEpochMilli(),
+                        title = cleanName,
+                        dose = dose.toString()
                     )
                 )
             }

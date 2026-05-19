@@ -46,7 +46,7 @@ constructor(
                     plannedIntakes = allRecords,
                     todaysIntakes =
                         allRecords.filter {
-                            DateTimeUtils.fromTimestampToDate(it.scheduledTimestamp)==now
+                            DateTimeUtils.fromLongToLocalDate(it.scheduledTimestamp) == now
                         },
                     isLoading = false,
                 )
@@ -122,7 +122,7 @@ constructor(
         val temp = mutableListOf<ScheduledIntakeDetails>()
         viewModelScope.launch {
             schedule.forEach {
-                if (DateTimeUtils.fromTimestampToDate(it.scheduledTimestamp)==LocalDate.now()) {
+                if (DateTimeUtils.fromLongToLocalDate(it.scheduledTimestamp) == LocalDate.now()) {
                     temp.add(it)
                 }
             }

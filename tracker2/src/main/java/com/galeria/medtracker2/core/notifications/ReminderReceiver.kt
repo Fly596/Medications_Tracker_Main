@@ -4,9 +4,12 @@ import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.galeria.medtracker2.R
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ReminderReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
@@ -14,13 +17,14 @@ class ReminderReceiver : BroadcastReceiver() {
         context?.let {
             val title = intent?.getStringExtra("EXTRA_TITLE") ?: "Medicine"
             val dose = intent?.getStringExtra("EXTRA_DOSE") ?: ""
-
+            val time = intent?.getStringExtra("EXTRA_TIME") ?: ""
+            Log.i("ReminderReceiver", "title: $title, dose: $dose, time: $time")
             // var2
-            showNotification(it, title, dose)
+            showNotification(context, title, dose, time)
         }
     }
 
-    private fun showNotification(context: Context, title: String, dose: String) {
+    private fun showNotification(context: Context, title: String, dose: String, time: String) {
         val channelId = "medication_reminders"
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -28,8 +32,8 @@ class ReminderReceiver : BroadcastReceiver() {
         val notification =
             NotificationCompat.Builder(context, channelId)
                 .setSmallIcon(R.drawable.ic_launcher_background)
-                .setContentTitle("Пора принять: $title")
-                .setContentText("Дозировка: $dose")
+                .setContentTitle("Time to take: $title")
+                .setContentText("Time: $time\nDosage: $dose")
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true)
                 .build()

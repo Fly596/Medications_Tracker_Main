@@ -100,12 +100,12 @@ fun AddMedicationScreen(
 
             ClickableReadonlyField(
                 label = "Start Date",
-                text = DateTimeUtils.formatDatePickerMillis(state.startDateMillis),
+                text = DateTimeUtils.formatLongToLocalDateString(state.startDateMillis),
                 onClick = { showStartDatePicker = true },
             )
             ClickableReadonlyField(
                 label = "End Date",
-                text = DateTimeUtils.formatDatePickerMillis(state.endDateMillis),
+                text = DateTimeUtils.formatLongToLocalDateString(state.endDateMillis),
                 onClick = { showEndDatePicker = true },
             )
             Button(onClick = { isTimePickerVisible = true }, modifier = Modifier.fillMaxWidth()) {

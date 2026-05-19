@@ -3,7 +3,7 @@ package com.galeria.medtracker2.feature.tracker.presentation.add_med
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.galeria.medtracker2.core.notifications.data.ScheduleNotificationRepoImpl
+import com.galeria.medtracker2.core.notifications.ScheduleNotificationRepo
 import com.galeria.medtracker2.core.utils.DateTimeUtils
 import com.galeria.medtracker2.domain.model.MedicationCourseDomain
 import com.galeria.medtracker2.domain.model.MedicationDomain
@@ -25,10 +25,10 @@ import java.util.UUID
 import javax.inject.Inject
 
 data class AddMedUiState(
-    val name: String = "",
-    val dose: String = "",
-    val startDateMillis: Long = 0,
-    val endDateMillis: Long = 0,
+    val name: String = "Adderall",
+    val dose: String = "50",
+    val startDateMillis: Long = DateTimeUtils.fromLocalDateToLong(LocalDate.now()),
+    val endDateMillis: Long = DateTimeUtils.fromLocalDateToLong(LocalDate.now()),
     val intakeTimes: List<LocalTime> = emptyList(), // Вернули нормальное имя
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
@@ -43,7 +43,7 @@ class AddMedicationVM
 constructor(
     private val repository: MedicationRepository,
     private val medRegRepository: MedicationsCourseRepository,
-    private val notificationService: ScheduleNotificationRepoImpl,
+    private val notificationService: ScheduleNotificationRepo,
     private val createMedicationsAndScheduleUseCase: CreateMedicationsAndScheduleUseCase
 ) : ViewModel() {
 
@@ -191,7 +191,7 @@ constructor(
                 repository.addMedication(
                     MedicationDomain(medicationId, currentState.name, Instant.now())
                 )
-                generateScheduleEntries(medicationId)
+                //generateScheduleEntries(medicationId)
             } catch (e: Exception) {
                 Log.e(TAG, "Error saving medication", e)
             }
@@ -248,14 +248,14 @@ constructor(
                     )
                 )
                 // Планируем уведомление, если время приема еще не наступило
-                if (intakeTimeMoment.isAfter(Instant.now())) {
+                /*if (intakeTimeMoment.isAfter(Instant.now())) {
                     notificationService.schedule(
                         scheduleId = plannedIntakeId,
                         timeMillis = intakeTimeMoment.toEpochMilli(),
                         title = _state.value.name,
                         dose = _state.value.dose,
                     )
-                }
+                }*/
             }
             currentPointerDate = currentPointerDate.plusDays(1)
         }
