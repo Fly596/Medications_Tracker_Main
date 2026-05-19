@@ -40,7 +40,6 @@ object DateTimeUtils {
 
     fun fromLongToLocalDateTime(value: Long): LocalDateTime {
         return Instant.ofEpochMilli(value).atZone(ZoneOffset.systemDefault()).toLocalDateTime()
-        // return LocalDateTime.ofInstant(Instant.ofEpochMilli(value), ZoneId.systemDefault())
     }
 
     fun fromLocalDateToLong(date: LocalDate): Long {

@@ -43,8 +43,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medtracker2.core.ui.components.TimePickerDialogNew
 import com.galeria.medtracker2.core.ui.components.rememberNotificationPermissionHandler
 import com.galeria.medtracker2.core.utils.DateTimeUtils
-import java.time.ZoneId
-import java.time.ZonedDateTime
+import java.time.Instant
 
 @Composable
 fun AddMedicationScreen(
@@ -205,15 +204,9 @@ fun ClickableReadonlyField(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerModal(initialMillis: Long, onDateSelected: (Long?) -> Unit, onDismiss: () -> Unit) {
-    val zonedDateTime = ZonedDateTime.now(ZoneId.systemDefault())
-    val zoneOffset = zonedDateTime.offset
-    /*    val datePickerState =
-            rememberDatePickerState(
-                initialSelectedDateMillis = initialMillis ?: Instant.now().toEpochMilli()
-            )*/
     val datePickerState =
         rememberDatePickerState(
-            initialSelectedDateMillis = initialMillis + zoneOffset.totalSeconds * 1000
+            initialSelectedDateMillis = initialMillis ?: Instant.now().toEpochMilli()
         )
 
     DatePickerDialog(

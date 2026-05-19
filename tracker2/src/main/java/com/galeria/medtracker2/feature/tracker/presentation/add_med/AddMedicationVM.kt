@@ -75,8 +75,8 @@ constructor(
         val currentState = _state.value
         val name = currentState.name.trim()
         val dosage = currentState.dose.toDoubleOrNull()
-        val start = currentState.startDateMillis
-        val end = currentState.endDateMillis
+        val start = currentState.startDateMillis // utc
+        val end = currentState.endDateMillis // utc
         val intakesTimes = currentState.intakeTimes
 
         val intakeMoment = DateTimeUtils.combineDateAndTime(
