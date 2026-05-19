@@ -1,11 +1,11 @@
 package com.galeria.medtracker2.feature.tracker.domain
 
-import com.galeria.medtracker2.core.notifications.AlarmItem
-import com.galeria.medtracker2.core.notifications.data.ScheduleNotificationRepoImpl
 import com.galeria.medtracker2.core.utils.DateTimeUtils
+import com.galeria.medtracker2.domain.model.AlarmItem
 import com.galeria.medtracker2.domain.model.MedicationCourseDomain
 import com.galeria.medtracker2.domain.model.MedicationDomain
 import com.galeria.medtracker2.domain.model.PlannedIntakeDomain
+import com.galeria.medtracker2.domain.repository.AlarmScheduler
 import com.galeria.medtracker2.domain.repository.MedicationRepository
 import com.galeria.medtracker2.domain.repository.MedicationsCourseRepository
 import java.time.Instant
@@ -19,8 +19,10 @@ import javax.inject.Inject
 class CreateMedicationsAndScheduleUseCase @Inject constructor(
     private val medicationRepository: MedicationRepository,
     private val medicationsCourseRepository: MedicationsCourseRepository,
-    private val notificationService: ScheduleNotificationRepoImpl
-) {
+    //private val notificationService: ScheduleNotificationRepoImpl,
+    private val alarmScheduler: AlarmScheduler,
+
+    ) {
 
     suspend operator fun invoke(
         name: String,
@@ -68,6 +70,7 @@ class CreateMedicationsAndScheduleUseCase @Inject constructor(
         // 5. Генерируем приемы для расписания курса.
         val days = ChronoUnit.DAYS.between(startLocalDate, endLocalDate).toInt()
         val intakesList = mutableListOf<PlannedIntakeDomain>()
+        val alarms = mutableListOf<AlarmItem>()
 
         for (i in 0 until days) {
             val intakeDate = startLocalDate.plusDays(i.toLong())
@@ -83,18 +86,21 @@ class CreateMedicationsAndScheduleUseCase @Inject constructor(
                         scheduledTimestamp = intakeMoment
                     )
                 )
-                notificationService.schedule(
-                    item = AlarmItem(
-                        plannedIntakeId,
-                        intakeMoment.toEpochMilli(),
+
+                alarms.add(
+                    AlarmItem(
+                        id = plannedIntakeId,
+                        timeMillis = intakeMoment.toEpochMilli(),
                         title = cleanName,
-                        dose = dose.toString()
+                        message = "Dose: $dose"
+
                     )
                 )
             }
         }
 
-        // 6. Сохраняем приемы.
+        // 6. Сохраняем приемы и будильники.
         medicationsCourseRepository.addAllPlannedIntakes(intakesList)
+        alarmScheduler.scheduleAll(alarms)
     }
 }

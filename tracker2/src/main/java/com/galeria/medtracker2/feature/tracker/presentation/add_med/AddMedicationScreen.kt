@@ -168,8 +168,6 @@ fun AddMedicationScreen(
     }
 }
 
-// ПРАВИЛЬНЫЙ способ сделать TextField кликабельным (без костылей с
-// InteractionSource)
 @Composable
 fun ClickableReadonlyField(
     label: String,

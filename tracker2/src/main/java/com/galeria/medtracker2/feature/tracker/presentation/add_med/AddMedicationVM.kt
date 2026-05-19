@@ -1,13 +1,8 @@
 package com.galeria.medtracker2.feature.tracker.presentation.add_med
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.galeria.medtracker2.core.notifications.ScheduleNotificationRepo
 import com.galeria.medtracker2.core.utils.DateTimeUtils
-import com.galeria.medtracker2.domain.model.MedicationCourseDomain
-import com.galeria.medtracker2.domain.model.MedicationDomain
-import com.galeria.medtracker2.domain.model.PlannedIntakeDomain
 import com.galeria.medtracker2.domain.repository.MedicationRepository
 import com.galeria.medtracker2.domain.repository.MedicationsCourseRepository
 import com.galeria.medtracker2.feature.tracker.domain.CreateMedicationsAndScheduleUseCase
@@ -16,12 +11,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
-import java.time.ZoneId
-import java.time.temporal.ChronoUnit
-import java.util.UUID
 import javax.inject.Inject
 
 data class AddMedUiState(
@@ -43,7 +34,6 @@ class AddMedicationVM
 constructor(
     private val repository: MedicationRepository,
     private val medRegRepository: MedicationsCourseRepository,
-    private val notificationService: ScheduleNotificationRepo,
     private val createMedicationsAndScheduleUseCase: CreateMedicationsAndScheduleUseCase
 ) : ViewModel() {
 
@@ -148,7 +138,9 @@ constructor(
 
     }
 
-    fun OldaddMedication() {
+    // region old
+
+    /*fun OldaddMedication() {
         val currentState = _state.value
         val name = currentState.name.trim()
         val dosage = currentState.dose.toDoubleOrNull()
@@ -196,9 +188,9 @@ constructor(
                 Log.e(TAG, "Error saving medication", e)
             }
         }
-    }
+    }*/
 
-    private suspend fun generateScheduleEntries(
+    /*private suspend fun generateScheduleEntries(
         medicationId: UUID,
     ) {
         val today = LocalDate.now()
@@ -248,16 +240,17 @@ constructor(
                     )
                 )
                 // Планируем уведомление, если время приема еще не наступило
-                /*if (intakeTimeMoment.isAfter(Instant.now())) {
+                *//*if (intakeTimeMoment.isAfter(Instant.now())) {
                     notificationService.schedule(
                         scheduleId = plannedIntakeId,
                         timeMillis = intakeTimeMoment.toEpochMilli(),
                         title = _state.value.name,
                         dose = _state.value.dose,
                     )
-                }*/
+                }*//*
             }
             currentPointerDate = currentPointerDate.plusDays(1)
         }
-    }
+    }*/
+    // endregion
 }
