@@ -43,7 +43,7 @@ object DateTimeUtils {
 
     // БЕЗОПАСНАЯ конвертация миллисекунд DatePicker'а (UTC) в LocalDate
     fun fromLongToLocalDate(millis: Long): LocalDate {
-        return Instant.ofEpochMilli(millis).atZone(ZoneOffset.systemDefault()).toLocalDate()
+        return Instant.ofEpochMilli(millis).atZone(ZoneOffset.UTC).toLocalDate()
     }
 
     fun fromLongToLocalDateTime(value: Long): LocalDateTime {

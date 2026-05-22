@@ -50,7 +50,7 @@ import java.time.Instant
 
 @Composable
 fun AddMedicationScreen(
-    onMainClick: () -> Unit = {},
+    onConfirm: () -> Unit = {},
     viewModel: AddMedicationVM = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -134,7 +134,7 @@ fun AddMedicationScreen(
             ) {
                 Text("Set alarm")
             }
-            Button(onMainClick) { Text("On add med page") }
+            Button(onConfirm) { Text("On add med page") }
         }
     }
     // Рендер диалогов поверх экрана

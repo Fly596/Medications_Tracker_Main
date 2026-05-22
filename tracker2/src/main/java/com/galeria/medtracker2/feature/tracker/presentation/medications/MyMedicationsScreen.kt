@@ -48,7 +48,11 @@ fun MyMedicationsScreen(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text("My medications", style = MedTrackerTheme.typography.display3) },
+                title = {
+                    Text("My medications",
+                        style = MedTrackerTheme.typography.display3Emphasized
+                    )
+                },
             )
         },
     ) { innerPadding ->
@@ -63,7 +67,7 @@ fun MyMedicationsScreen(
                 modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.medium,
             ) {
-                Text("On add med page")
+                Text("Add new medication")
             }
 
             if (state.isLoading) {
