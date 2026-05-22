@@ -47,7 +47,6 @@ import com.galeria.medtracker2.core.utils.DateTimeUtils
 import com.galeria.medtracker2.domain.model.ScheduledIntakeDetails
 import java.time.Instant
 import java.time.LocalTime
-import java.util.UUID
 
 @Composable
 fun MainIntakesScreen(
@@ -107,70 +106,15 @@ fun MainIntakesScreen(
                             intake.plannedIntakeId
                         }
                     ) { intake ->
-                        IntakeCardRew(intake, onCheck = { status, plannedIntakeId, intakeTime ->
+                        /*IntakeCardRew(intake, onCheck = { status, plannedIntakeId, intakeTime ->
                             viewModel.checkIntakeRef(status, plannedIntakeId, intakeTime)
-                        })
+                        })*/
                         IntakeCard(intake, viewModel::checkIntake)
                     }
                 }
             }
 
         }
-    }
-}
-
-@Composable
-fun IntakeCardRew(
-    intake: ScheduledIntakeDetails,
-    onCheck: (status: Boolean, plannedIntakeId: UUID, intakeTime: Instant) -> Unit,
-) {
-    var isDialogVisible by remember { mutableStateOf(false) }
-    // Кешируем отформатированное время, чтобы не перечитывать при каждом рекомпозе.
-    val formattedTime =
-        remember(intake.scheduledTimestamp) {
-            DateTimeUtils.formatLongToLocalDateTimeString(intake.scheduledTimestamp)
-        }
-
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        onClick = { isDialogVisible = true },
-        colors =
-            CardDefaults.cardColors(containerColor = colors.secondaryBackground),
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(text = intake.medicationName, style = MaterialTheme.typography.titleLarge)
-                Text(
-                    text = "$formattedTime • ${intake.doseMg} mg",
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-            }
-
-            // Визуальный индикатор статуса
-            StatusBadge(status = intake.isTaken)
-        }
-    }
-    if (isDialogVisible) {
-        CheckIntakeDialogTemp(
-            medName = intake.medicationName,
-            doseMg = intake.doseMg,
-            onConfirm = { onCheck } // TODO: WTF
-        )
-        /* CheckIntakeDialog(
-             intake = intake,
-             onConfirm = { isTaken, time ->
-                 onCheck(isTaken, intake, time)
-                 isDialogVisible = false
-             },
-             onDismiss = { isDialogVisible = false },
-         )*/
     }
 }
 
