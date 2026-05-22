@@ -17,8 +17,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -35,13 +37,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medtracker2.core.ui.theme.MedTrackerTheme
-import com.galeria.medtracker2.core.ui.theme.SpeechRecognitionAppTheme
+import com.galeria.medtracker2.core.ui.theme.MedTrackerTheme.colors
+import com.galeria.medtracker2.core.ui.theme.MedTrackerTheme.typography
 import com.galeria.medtracker2.core.utils.DateTimeUtils
 import com.galeria.medtracker2.domain.model.ScheduledIntakeDetails
 import java.time.Instant
+import java.time.LocalTime
 import java.util.UUID
 
 @Composable
@@ -56,7 +61,9 @@ fun MainIntakesScreen(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text("Nearest intakes", style = MaterialTheme.typography.displaySmall) }
+                title = {
+                    Text("Nearest intakes", style = MaterialTheme.typography.displaySmall)
+                }
             )
         },
     ) { innerPadding ->
@@ -88,40 +95,34 @@ fun MainIntakesScreen(
             } else if (state.todaysIntakes.isEmpty()) {
                 EmptySchedulePlaceholder()
             } else {
-                IntakeList(intakes = state.todaysIntakes, onCheck = viewModel::checkIntake)
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(bottom = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    items(
+                        items = state.todaysIntakes,
+                        key = { intake
+                            ->
+                            intake.plannedIntakeId
+                        }
+                    ) { intake ->
+                        IntakeCardRew(intake, onCheck = { status, plannedIntakeId, intakeTime ->
+                            viewModel.checkIntakeRef(status, plannedIntakeId, intakeTime)
+                        })
+                        IntakeCard(intake, viewModel::checkIntake)
+                    }
+                }
             }
-            //            if (state.plannedIntakes.isEmpty() && !state.isLoading) {
-            //                EmptySchedulePlaceholder()
-            //            } else {
-            //                IntakeList(state.plannedIntakes, onCheck = viewModel::checkIntake)
-            //            }
-
-            // Полный список приемов.
 
         }
     }
 }
 
 @Composable
-fun IntakeList(
-    intakes: List<ScheduledIntakeDetails>,
-    onCheck: (Boolean, ScheduledIntakeDetails, Instant) -> Unit,
-) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(bottom = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        items(items = intakes, key = { it.plannedIntakeId }) { intake ->
-            IntakeCard(intake, onCheck)
-        }
-    }
-}
-
-@Composable
-fun IntakeCard(
+fun IntakeCardRew(
     intake: ScheduledIntakeDetails,
-    onCheck: (Boolean, ScheduledIntakeDetails, Instant) -> Unit,
+    onCheck: (status: Boolean, plannedIntakeId: UUID, intakeTime: Instant) -> Unit,
 ) {
     var isDialogVisible by remember { mutableStateOf(false) }
     // Кешируем отформатированное время, чтобы не перечитывать при каждом рекомпозе.
@@ -135,7 +136,62 @@ fun IntakeCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         onClick = { isDialogVisible = true },
         colors =
-                CardDefaults.cardColors(containerColor = MedTrackerTheme.colors.secondaryBackground),
+            CardDefaults.cardColors(containerColor = colors.secondaryBackground),
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(text = intake.medicationName, style = MaterialTheme.typography.titleLarge)
+                Text(
+                    text = "$formattedTime • ${intake.doseMg} mg",
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+            }
+
+            // Визуальный индикатор статуса
+            StatusBadge(status = intake.isTaken)
+        }
+    }
+    if (isDialogVisible) {
+        CheckIntakeDialogTemp(
+            medName = intake.medicationName,
+            doseMg = intake.doseMg,
+            onConfirm = { onCheck } // TODO: WTF
+        )
+        /* CheckIntakeDialog(
+             intake = intake,
+             onConfirm = { isTaken, time ->
+                 onCheck(isTaken, intake, time)
+                 isDialogVisible = false
+             },
+             onDismiss = { isDialogVisible = false },
+         )*/
+    }
+}
+
+@Composable
+fun IntakeCard(
+    intake: ScheduledIntakeDetails,
+    onCheck: (status: Boolean, ScheduledIntakeDetails, Instant) -> Unit,
+) {
+    var isDialogVisible by remember { mutableStateOf(false) }
+    // Кешируем отформатированное время, чтобы не перечитывать при каждом рекомпозе.
+    val formattedTime =
+        remember(intake.scheduledTimestamp) {
+            DateTimeUtils.formatLongToLocalDateTimeString(intake.scheduledTimestamp)
+        }
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        onClick = { isDialogVisible = true },
+        colors =
+            CardDefaults.cardColors(containerColor = colors.secondaryBackground),
     ) {
         Row(
             modifier = Modifier
@@ -168,6 +224,22 @@ fun IntakeCard(
     }
 
     // region old
+
+//     @Composable
+// fun IntakeList(
+//     intakes: List<ScheduledIntakeDetails>,
+//     onCheck: (Boolean, ScheduledIntakeDetails, Instant) -> Unit,
+// ) {
+//     LazyColumn(
+//         modifier = Modifier.fillMaxSize(),
+//         contentPadding = PaddingValues(bottom = 16.dp),
+//         verticalArrangement = Arrangement.spacedBy(16.dp),
+//     ) {
+//         items(items = intakes, key = { it.plannedIntakeId }) { intake ->
+//             IntakeCard(intake, onCheck)
+//         }
+//     }
+// }
     //    if (isDialogVisible) {
     //        CheckIntakeDialog(
     //            intake = intake,
@@ -267,59 +339,65 @@ fun CheckIntakeDialog(
         onDismissRequest = onDismiss,
         title = { Text("Check intake") },
         text = { Text("You took ${intake.medicationName} (${intake.doseMg} mg)?") },
-        confirmButton = { Button(onClick = { onConfirm(true, Instant.now()) }) { Text("Taken") } },
+        confirmButton = {
+            Button(onClick = { onConfirm(true, Instant.now()) }) {
+                Text("Taken"
+                )
+            }
+        },
         dismissButton = {
             TextButton(onClick = { onConfirm(false, Instant.now()) }) {
                 Text("Skip", color = MaterialTheme.colorScheme.error)
             }
         },
     )
-
-    //    Dialog(onDismissRequest = { onDismiss() }) {
-    //        Card(
-    //            shape = MaterialTheme.shapes.medium,
-    //            elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-    //        ) {
-    //            Column(modifier = Modifier.padding(16.dp)) {
-    //                Row(
-    //                    modifier = Modifier.fillMaxWidth(),
-    //                    horizontalArrangement = Arrangement.SpaceBetween,
-    //                    verticalAlignment = Alignment.CenterVertically,
-    //                ) {
-    //                    Text(text = intake.medicationName, style =
-    // MaterialTheme.typography.titleLarge)
-    //                    Text(
-    //                        text = "${intake.doseMg} mg",
-    //                        style = MaterialTheme.typography.bodyLarge,
-    //                        color = MaterialTheme.colorScheme.primary,
-    //                    )
-    //                }
-    //                Row(
-    //                    modifier = Modifier.fillMaxWidth(),
-    //                    horizontalArrangement = Arrangement.SpaceEvenly,
-    //                    verticalAlignment = Alignment.Bottom,
-    //                ) {
-    //                    Button(
-    //                        onClick = {
-    //                            // TODO: choose time.
-    //                            onConfirm(true, Instant.now())
-    //                            onDismiss()
-    //                        }
-    //                    ) {
-    //                        Text("Confirm")
-    //                    }
-    //                    Button(
-    //                        onClick = {
-    //                            onCheck(false, intake, Instant.now())
-    //                            onDismiss()
-    //                        }
-    //                    ) {
-    //                        Text("Skip")
-    //                    }
-    //                }
-    //            }
-    //        }
-    //    }
+    /*
+        //    Dialog(onDismissRequest = { onDismiss() }) {
+        //        Card(
+        //            shape = MaterialTheme.shapes.medium,
+        //            elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+        //        ) {
+        //            Column(modifier = Modifier.padding(16.dp)) {
+        //                Row(
+        //                    modifier = Modifier.fillMaxWidth(),
+        //                    horizontalArrangement = Arrangement.SpaceBetween,
+        //                    verticalAlignment = Alignment.CenterVertically,
+        //                ) {
+        //                    Text(text = intake.medicationName, style =
+        // MaterialTheme.typography.titleLarge)
+        //                    Text(
+        //                        text = "${intake.doseMg} mg",
+        //                        style = MaterialTheme.typography.bodyLarge,
+        //                        color = MaterialTheme.colorScheme.primary,
+        //                    )
+        //                }
+        //                Row(
+        //                    modifier = Modifier.fillMaxWidth(),
+        //                    horizontalArrangement = Arrangement.SpaceEvenly,
+        //                    verticalAlignment = Alignment.Bottom,
+        //                ) {
+        //                    Button(
+        //                        onClick = {
+        //                            // TODO: choose time.
+        //                            onConfirm(true, Instant.now())
+        //                            onDismiss()
+        //                        }
+        //                    ) {
+        //                        Text("Confirm")
+        //                    }
+        //                    Button(
+        //                        onClick = {
+        //                            onCheck(false, intake, Instant.now())
+        //                            onDismiss()
+        //                        }
+        //                    ) {
+        //                        Text("Skip")
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        */
 }
 
 @Composable
@@ -329,11 +407,152 @@ private fun EmptySchedulePlaceholder() {
     }
 }
 
-@Preview(showBackground = true)
+@Composable
+fun CheckIntakeDialogTemp(
+    //intake: ScheduledIntakeDetails,
+    medName: String,
+    doseMg: Double,
+    date: Long = Instant.now().toEpochMilli(),
+    time: LocalTime = LocalTime.now(),
+    onConfirm: () -> Unit = {},
+    onDismiss: () -> Unit = {},
+) {
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .padding(16.dp),
+            shape = RoundedCornerShape(16.dp),
+        ) {
+            Column(modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "Check your dose", style = typography.title1Emphasized)
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Card(
+                    modifier = Modifier.fillMaxWidth(), colors = CardColors(
+                        containerColor = colors.secondaryBackgroundGrouped,
+                        contentColor = colors.primaryLabel,
+                        disabledContainerColor = colors.primaryBackground,
+                        disabledContentColor = colors.primaryBackground,
+                    )
+                ) {
+                    Column(modifier = Modifier.padding(12.dp)) {
+                        Column(
+                            modifier = Modifier.height(48.dp),
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = medName,
+                                style = typography.bodyLargeEmphasized
+                            )
+                            Text(text = "$doseMg mg", style = typography.bodyMedium)
+
+                        }
+
+                        HorizontalDivider(
+                            color = colors.separator,
+                            modifier = Modifier.padding(vertical = 4.dp)
+                        )
+
+                        DateTimeRow(
+                            label = "Intake time:",
+                            dateText = DateTimeUtils.formatLongToLocalDateString(date),
+                            timeText = DateTimeUtils.formatLocalTime(time),
+                            onDateClick = {},
+                            onTimeClick = {}
+                        )
+                    }
+
+                }
+
+            }
+        }
+    }
+
+    Surface(color = colors.primaryBackgroundGrouped, modifier = Modifier) {
+
+    }
+}
+
+@Composable
+private fun DateTimeRow(
+    label: String,
+    dateText: String,
+    timeText: String,
+    onDateClick: () -> Unit,
+    onTimeClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(48.dp)
+            .padding(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+
+        Text(
+            text = label,
+            color = colors.primaryLabel,
+            style = typography.bodyLargeEmphasized
+        )
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            PickerPill(text = dateText, onClick = onDateClick)
+            PickerPill(text = timeText, onClick = onTimeClick)
+        }
+    }
+}
+
+@Composable
+private fun PickerPill(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        onClick = onClick,
+        shape = RoundedCornerShape(10.dp),
+        color = colors.primaryFill, // Контрастный серый цвет для кнопок-пилюль
+        contentColor = colors.primaryLabel,
+        modifier = modifier
+    ) {
+        Box(
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = text,
+                style = typography.labelLarge
+            )
+        }
+    }
+}
+
+@Preview(
+    showBackground = true, backgroundColor = 0x00FFFFFF, showSystemUi = false
+)
 @Composable
 fun GreetingPreview() {
-    SpeechRecognitionAppTheme {
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
+
+    MedTrackerTheme {
+        Column(modifier = Modifier.fillMaxSize()) {
+            CheckIntakeDialogTemp(
+                medName = "name",
+                14.0
+            )
+
+        }
+        /*LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(4) {
                 IntakeCard(
                     intake =
@@ -348,6 +567,6 @@ fun GreetingPreview() {
                     onCheck = { _, _, _ -> },
                 )
             }
-        }
+        }*/
     }
 }

@@ -111,7 +111,9 @@ fun MedicationCard(
             .padding(6.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         onClick = { onSelect },
-        colors = CardDefaults.cardColors(containerColor = MedTrackerTheme.colors.secondaryBackground)
+        colors = CardDefaults.cardColors(
+            containerColor = MedTrackerTheme.colors.secondaryBackground
+        )
     ) {
         Row(
             modifier = Modifier

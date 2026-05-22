@@ -23,7 +23,7 @@ import java.util.UUID
 import javax.inject.Inject
 
 data class ScheduleUiState(
-    val plannedIntakes: List<ScheduledIntakeDetails> = emptyList(),
+    //val plannedIntakes: List<ScheduledIntakeDetails> = emptyList(),
     val todaysIntakes: List<ScheduledIntakeDetails> = emptyList(),
     val isLoading: Boolean = true,
 )
@@ -43,10 +43,10 @@ constructor(
             .map { allRecords ->
                 val now = LocalDate.now()
                 ScheduleUiState(
-                    plannedIntakes = allRecords,
+                    //plannedIntakes = allRecords,
                     todaysIntakes =
                         allRecords.filter {
-                            DateTimeUtils.fromLongToLocalDate(it.scheduledTimestamp) == now
+                            DateTimeUtils.fromLongToLocalDate(it.scheduledTimestamp)==now
                         },
                     isLoading = false,
                 )
@@ -59,6 +59,10 @@ constructor(
 
     private val _state = MutableStateFlow(ScheduleUiState())
     val state = _state.asStateFlow()
+
+    fun checkIntakeRef(status: Boolean, plannedIntakeId: UUID, timeStamp: Instant) {
+
+    }
 
     // region old
     //    init {
@@ -122,7 +126,7 @@ constructor(
         val temp = mutableListOf<ScheduledIntakeDetails>()
         viewModelScope.launch {
             schedule.forEach {
-                if (DateTimeUtils.fromLongToLocalDate(it.scheduledTimestamp) == LocalDate.now()) {
+                if (DateTimeUtils.fromLongToLocalDate(it.scheduledTimestamp)==LocalDate.now()) {
                     temp.add(it)
                 }
             }

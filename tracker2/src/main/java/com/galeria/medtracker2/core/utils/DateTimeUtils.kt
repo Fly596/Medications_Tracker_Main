@@ -18,6 +18,9 @@ object DateTimeUtils {
     fun formatLocalDateTime(dateTime: LocalDateTime): String {
         return dateTime.format(dateTimeFormatter)
     }
+    fun formatLocalDate(date: LocalDate): String {
+        return date.format(dateFormatter)
+    }
 
     fun formatLocalTime(time: LocalTime): String {
         return time.format(timeFormatter)
