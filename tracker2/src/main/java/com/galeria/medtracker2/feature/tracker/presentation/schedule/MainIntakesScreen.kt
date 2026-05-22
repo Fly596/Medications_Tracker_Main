@@ -17,10 +17,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -34,10 +32,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medtracker2.core.ui.theme.MedTrackerTheme
@@ -46,7 +42,6 @@ import com.galeria.medtracker2.core.ui.theme.MedTrackerTheme.typography
 import com.galeria.medtracker2.core.utils.DateTimeUtils
 import com.galeria.medtracker2.domain.model.ScheduledIntakeDetails
 import java.time.Instant
-import java.time.LocalTime
 
 @Composable
 fun MainIntakesScreen(
@@ -254,9 +249,9 @@ fun IntakeCard(
 fun StatusBadge(status: Boolean?) {
     val (text, color) =
         when (status) {
-            true -> "Taken" to Color(0xFF4CAF50)
-            false -> "Missed" to MaterialTheme.colorScheme.error
-            null -> "Await" to MaterialTheme.colorScheme.outline
+            true -> "Taken" to colors.sysSuccess
+            false -> "Missed" to MedTrackerTheme.colors.sysError
+            null -> "Await" to MedTrackerTheme.colors.secondaryLabel
         }
 
     Surface(
@@ -285,7 +280,8 @@ fun CheckIntakeDialog(
         text = { Text("You took ${intake.medicationName} (${intake.doseMg} mg)?") },
         confirmButton = {
             Button(onClick = { onConfirm(true, Instant.now()) }) {
-                Text("Taken"
+                Text(
+                    "Taken"
                 )
             }
         },
@@ -351,80 +347,10 @@ private fun EmptySchedulePlaceholder() {
     }
 }
 
-@Composable
-fun CheckIntakeDialogTemp(
-    //intake: ScheduledIntakeDetails,
-    medName: String,
-    doseMg: Double,
-    date: Long = Instant.now().toEpochMilli(),
-    time: LocalTime = LocalTime.now(),
-    onConfirm: () -> Unit = {},
-    onDismiss: () -> Unit = {},
-) {
-    Dialog(onDismissRequest = { onDismiss() }) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp)
-                .padding(16.dp),
-            shape = RoundedCornerShape(16.dp),
-        ) {
-            Column(modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(text = "Check your dose", style = typography.title1Emphasized)
-                Spacer(modifier = Modifier.height(8.dp))
 
-                Card(
-                    modifier = Modifier.fillMaxWidth(), colors = CardColors(
-                        containerColor = colors.secondaryBackgroundGrouped,
-                        contentColor = colors.primaryLabel,
-                        disabledContainerColor = colors.primaryBackground,
-                        disabledContentColor = colors.primaryBackground,
-                    )
-                ) {
-                    Column(modifier = Modifier.padding(12.dp)) {
-                        Column(
-                            modifier = Modifier.height(48.dp),
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = medName,
-                                style = typography.bodyLargeEmphasized
-                            )
-                            Text(text = "$doseMg mg", style = typography.bodyMedium)
-
-                        }
-
-                        HorizontalDivider(
-                            color = colors.separator,
-                            modifier = Modifier.padding(vertical = 4.dp)
-                        )
-
-                        DateTimeRow(
-                            label = "Intake time:",
-                            dateText = DateTimeUtils.formatLongToLocalDateString(date),
-                            timeText = DateTimeUtils.formatLocalTime(time),
-                            onDateClick = {},
-                            onTimeClick = {}
-                        )
-                    }
-
-                }
-
-            }
-        }
-    }
-
-    Surface(color = colors.primaryBackgroundGrouped, modifier = Modifier) {
-
-    }
-}
 
 @Composable
-private fun DateTimeRow(
+fun DateTimeRow(
     label: String,
     dateText: String,
     timeText: String,
@@ -444,7 +370,7 @@ private fun DateTimeRow(
         Text(
             text = label,
             color = colors.primaryLabel,
-            style = typography.bodyLargeEmphasized
+            style = typography.bodyMedium
         )
 
         Row(
@@ -465,18 +391,18 @@ private fun PickerPill(
 ) {
     Surface(
         onClick = onClick,
-        shape = RoundedCornerShape(10.dp),
-        color = colors.primaryFill, // Контрастный серый цвет для кнопок-пилюль
+        shape = RoundedCornerShape(4.dp),
+        color = colors.secondaryBackground, // Контрастный серый цвет для кнопок-пилюль
         contentColor = colors.primaryLabel,
         modifier = modifier
     ) {
         Box(
-            modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
+            modifier = Modifier.padding(horizontal = 7.dp, vertical = 4.dp),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = text,
-                style = typography.labelLarge
+                style = typography.labelSmall
             )
         }
     }
@@ -496,21 +422,5 @@ fun GreetingPreview() {
             )
 
         }
-        /*LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(4) {
-                IntakeCard(
-                    intake =
-                        ScheduledIntakeDetails(
-                            plannedIntakeId = UUID.randomUUID(),
-                            courseId = UUID.randomUUID(),
-                            medicationName = "Name",
-                            doseMg = 56.0,
-                            scheduledTimestamp = 0,
-                            isTaken = null,
-                        ),
-                    onCheck = { _, _, _ -> },
-                )
-            }
-        }*/
     }
 }

@@ -26,6 +26,11 @@ object DateTimeUtils {
         return time.format(timeFormatter)
     }
 
+    fun formatLongToLocalTimeString(millis: Long?): String {
+        if (millis == null) return "Choose time"
+        return fromLongToLocalDateTime(millis).format(timeFormatter)
+    }
+
     fun formatLongToLocalDateString(millis: Long?): String {
         if (millis==null) return "Choose date"
         return fromLongToLocalDate(millis).format(dateFormatter)
