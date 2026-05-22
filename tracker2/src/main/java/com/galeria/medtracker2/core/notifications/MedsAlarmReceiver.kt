@@ -1,4 +1,4 @@
-package com.galeria.medtracker2.core.notifications1
+package com.galeria.medtracker2.core.notifications
 
 import android.content.BroadcastReceiver
 import android.content.Context

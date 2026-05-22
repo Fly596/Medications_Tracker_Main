@@ -1,8 +1,8 @@
 package com.galeria.medtracker2.di
 
-import com.galeria.medtracker2.core.notifications1.MedsAlarmScheduler
-import com.galeria.medtracker2.core.notifications1.MedsNotificationManager
-import com.galeria.medtracker2.core.notifications1.MedsNotificationManagerImpl
+import com.galeria.medtracker2.core.notifications.MedsAlarmScheduler
+import com.galeria.medtracker2.core.notifications.MedsNotificationManager
+import com.galeria.medtracker2.core.notifications.MedsNotificationManagerImpl
 import com.galeria.medtracker2.domain.repository.AlarmScheduler
 import dagger.Binds
 import dagger.Module

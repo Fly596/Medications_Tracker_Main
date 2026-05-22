@@ -9,8 +9,8 @@
 
 ## 🌟 Ключевые возможности (Features)
 
-* 🔐 **Авторизация и профили**: полноценная аутентификация пользователей (регистрация, вход,
-  восстановление пароля) на базе **Firebase Auth**.
+* ~~🔐 **Авторизация и профили**: полноценная аутентификация пользователей (регистрация, вход,
+  восстановление пароля) на базе **Firebase Auth**.~~
 * 📅 **Планирование курсов приема**: добавление лекарств с указанием дозировки (в мг), даты начала,
   даты окончания курса и гибкого времени приема.
 * 🔔 **Умные напоминания**: интеграция с системным планировщиком **AlarmManager** и уведомлениями,
@@ -39,8 +39,8 @@ Android-разработки:
   **: [Dagger Hilt](https://developer.android.com/training/dependency-injection/hilt-android)
 * **Локальная база данных
   **: [Room Database](https://developer.android.com/training/data-storage/room)
-* **Сетевой слой и облако
-  **: [Firebase Auth](https://firebase.google.com/docs/auth) & [Firebase Firestore](https://firebase.google.com/docs/firestore)
+* ~~**Сетевой слой и облако
+  **: [Firebase Auth](https://firebase.google.com/docs/auth) & [Firebase Firestore](https://firebase.google.com/docs/firestore)~~
 * **Дата и время**: [kotlinx-datetime](https://github.com/Kotlin/kotlinx-datetime) (современная
   библиотека для работы со временем в Kotlin)
 * **Системные уведомления
@@ -108,6 +108,7 @@ com.galeria.medtracker2/
 ## 📈 Перспективный план развития (Roadmap)
 
 - [ ] Синхронизация данных с облаком Firestore при наличии сети.
+- [ ] Реализация аутентификации.
 - [ ] Экспорт отчетов о приемах лекарств в PDF/CSV для лечащего врача.
 - [ ] Добавление виджета на рабочий стол для быстрого логирования приемов.
 - [ ] Интеграция с умными часами для отображения напоминаний.
