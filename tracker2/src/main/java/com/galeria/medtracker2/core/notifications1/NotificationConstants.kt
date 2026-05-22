@@ -1,4 +1,4 @@
-package com.galeria.medtracker2.core.notifications
+package com.galeria.medtracker2.core.notifications1
 
 object NotificationConstants {
 

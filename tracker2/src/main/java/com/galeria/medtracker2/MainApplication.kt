@@ -3,10 +3,11 @@ package com.galeria.medtracker2
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.Context
 import android.os.Build
-import com.galeria.medtracker2.core.notifications.NotificationConstants.MED_CHANNEL_DESCRIPTION
-import com.galeria.medtracker2.core.notifications.NotificationConstants.MED_CHANNEL_ID
-import com.galeria.medtracker2.core.notifications.NotificationConstants.MED_CHANNEL_NAME
+import com.galeria.medtracker2.core.notifications1.NotificationConstants.MED_CHANNEL_DESCRIPTION
+import com.galeria.medtracker2.core.notifications1.NotificationConstants.MED_CHANNEL_ID
+import com.galeria.medtracker2.core.notifications1.NotificationConstants.MED_CHANNEL_NAME
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp

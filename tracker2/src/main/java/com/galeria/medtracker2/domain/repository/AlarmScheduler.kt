@@ -6,4 +6,6 @@ interface AlarmScheduler {
 
     fun schedule(item: AlarmItem)
     fun scheduleAll(items: List<AlarmItem>)
+
+    fun cancel(item: AlarmItem)
 }

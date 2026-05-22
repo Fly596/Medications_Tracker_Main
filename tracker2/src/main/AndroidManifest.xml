@@ -27,7 +27,7 @@
             </intent-filter>
         </activity>
         <receiver
-            android:name=".core.notifications.ReminderReceiver"
+            android:name=".core.notifications1.MedsAlarmReceiver"
             android:exported="false"
             android:enabled="true" />
     </application>

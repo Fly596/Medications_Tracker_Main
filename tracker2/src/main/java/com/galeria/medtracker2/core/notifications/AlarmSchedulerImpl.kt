@@ -1,14 +1,6 @@
 package com.galeria.medtracker2.core.notifications
 
-import android.app.AlarmManager
-import android.app.PendingIntent
-import android.content.Context
-import android.content.Intent
-import com.galeria.medtracker2.domain.model.AlarmItem
-import com.galeria.medtracker2.domain.repository.AlarmScheduler
-import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
-
+/*
 class AlarmSchedulerImpl @Inject constructor(
     @ApplicationContext
     private val context: Context
@@ -54,4 +46,4 @@ class AlarmSchedulerImpl @Inject constructor(
         items.forEach { schedule(it) }
     }
 
-}
+}*/
