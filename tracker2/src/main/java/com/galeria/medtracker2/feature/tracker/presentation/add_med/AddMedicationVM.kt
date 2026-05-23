@@ -4,8 +4,6 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.galeria.medtracker2.core.utils.DateTimeUtils
-import com.galeria.medtracker2.domain.repository.MedicationRepository
-import com.galeria.medtracker2.domain.repository.MedicationsCourseRepository
 import com.galeria.medtracker2.feature.tracker.domain.CreateMedicationsAndScheduleUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,8 +31,6 @@ const val DEFAULT_SCHEDULE_DAYS: Long = 7
 class AddMedicationVM
 @Inject
 constructor(
-    private val repository: MedicationRepository,
-    private val medRegRepository: MedicationsCourseRepository,
     private val createMedicationsAndScheduleUseCase: CreateMedicationsAndScheduleUseCase
 ) : ViewModel() {
 
@@ -134,6 +130,8 @@ constructor(
             _state.update { it.copy(isLoading = true, errorMessage = null) }
 
             try {
+                // Добавление новых данных в БД: лекарство, график расписания
+                // и запланированные приемы по часам.
                 createMedicationsAndScheduleUseCase(
                     name = name,
                     dose = dosage,

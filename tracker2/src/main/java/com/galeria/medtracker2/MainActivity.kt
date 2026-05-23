@@ -16,14 +16,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MedTrackerTheme {
-                //TestScreen()
                 AppNavHost()
             }
         }
     }
-
-    /*private fun showNotification() {
-        val remNot = ReminderNotification(this)
-        remNot.showNotification("Notification")
-    }*/
 }

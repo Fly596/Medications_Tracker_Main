@@ -19,7 +19,6 @@ import javax.inject.Inject
 class CreateMedicationsAndScheduleUseCase @Inject constructor(
     private val medicationRepository: MedicationRepository,
     private val medicationsCourseRepository: MedicationsCourseRepository,
-    //private val notificationService: ScheduleNotificationRepoImpl,
     private val alarmScheduler: AlarmScheduler,
 
     ) {

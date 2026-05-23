@@ -1,4 +1,4 @@
-# Medications Tracker 💊
+# Medications Tracker~~~~
 
 Современное мобильное приложение на Android для удобного и надежного отслеживания приема лекарств,
 витаминов и БАДов. Приложение построено на основе современных подходов к разработке под Android с
@@ -9,8 +9,6 @@
 
 ## 🌟 Ключевые возможности (Features)
 
-* ~~🔐 **Авторизация и профили**: полноценная аутентификация пользователей (регистрация, вход,
-  восстановление пароля) на базе **Firebase Auth**.~~
 * 📅 **Планирование курсов приема**: добавление лекарств с указанием дозировки (в мг), даты начала,
   даты окончания курса и гибкого времени приема.
 * 🔔 **Умные напоминания**: интеграция с системным планировщиком **AlarmManager** и уведомлениями,
@@ -39,8 +37,6 @@ Android-разработки:
   **: [Dagger Hilt](https://developer.android.com/training/dependency-injection/hilt-android)
 * **Локальная база данных
   **: [Room Database](https://developer.android.com/training/data-storage/room)
-* ~~**Сетевой слой и облако
-  **: [Firebase Auth](https://firebase.google.com/docs/auth) & [Firebase Firestore](https://firebase.google.com/docs/firestore)~~
 * **Дата и время**: [kotlinx-datetime](https://github.com/Kotlin/kotlinx-datetime) (современная
   библиотека для работы со временем в Kotlin)
 * **Системные уведомления

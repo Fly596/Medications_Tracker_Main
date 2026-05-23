@@ -48,6 +48,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.galeria.medtracker2.core.ui.components.TimePickerDialogNew
 import com.galeria.medtracker2.core.ui.theme.MedTrackerTheme
 import com.galeria.medtracker2.core.ui.theme.MedTrackerTheme.colors
 import com.galeria.medtracker2.core.ui.theme.MedTrackerTheme.shapes
@@ -170,7 +171,6 @@ fun AIntakeCard(
 
 @Composable
 fun CheckIntakeDialogTemp(
-    //intake: ScheduledIntakeDetails,
     medName: String,
     doseMg: Double,
     date: Long = Instant.now().toEpochMilli(),
@@ -211,7 +211,7 @@ fun CheckIntakeDialogTemp(
                             label = "Intake time:",
                             dateText = DateTimeUtils.formatLongToLocalDateString(date),
                             timeText = DateTimeUtils.formatLocalTime(time),
-                            onDateClick = {},
+                            onDateClick = { },
                             onTimeClick = {}
                         )
                         HorizontalDivider(
@@ -224,9 +224,10 @@ fun CheckIntakeDialogTemp(
                             Button(onClick = {
                                 onConfirm(
                                     true,
-                                    DateTimeUtils.combineDateAndTime(DateTimeUtils.fromLongToLocalDate(
-                                        date
-                                    ), time
+                                    DateTimeUtils.combineDateAndTime(
+                                        DateTimeUtils.fromLongToLocalDate(
+                                            date
+                                        ), time
                                     ).toEpochMilli()
                                 )
                             },
@@ -306,12 +307,22 @@ fun DateTimeRow(
     if (isDatePickerVisible) {
         DatePickerModalNew(
             onDateSelected = { selectedDateLong ->
-                if (selectedDateLong != null) {
+                if (selectedDateLong!=null) {
                     onDateClick(selectedDateLong)
                 }
                 isDatePickerVisible = false
             },
             onDismiss = { isDatePickerVisible = false },
+        )
+    }
+
+    if (isTimePickerVisible) {
+        TimePickerDialogNew(
+            onConfirm = { time ->
+                onTimeClick(time)
+                isTimePickerVisible = false
+            },
+            onDismiss = { isTimePickerVisible = false },
         )
     }
 }
@@ -361,6 +372,7 @@ private fun PickerPill(
         }
     }
 }
+
 @Composable
 fun StatusBadge(status: Boolean?) {
     val (text, color) =
@@ -401,24 +413,6 @@ fun GreetingPreviewAMN() {
                      time,
                  )*/
         }
-        /*    LazyColumn(modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                items(5) {
-                    AIntakeCard(
-                        intake = ScheduledIntakeDetails(
-                            plannedIntakeId = UUID.randomUUID(),
-                            courseId = UUID.randomUUID(),
-                            "Name",
-                            13.0,
-                            LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),
-                            true
-                        ),
-                        onCheck = { v1, v2 -> }
-                    )
-                }
-            }*/
+
     }
 }
