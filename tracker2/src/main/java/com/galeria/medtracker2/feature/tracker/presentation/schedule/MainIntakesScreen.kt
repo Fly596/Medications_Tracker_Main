@@ -211,8 +211,8 @@ fun CheckIntakeDialogTemp(
                             label = "Intake time:",
                             dateText = DateTimeUtils.formatLongToLocalDateString(date),
                             timeText = DateTimeUtils.formatLocalTime(time),
-                            onDateClick = { },
-                            onTimeClick = {}
+                            onDateClick = { /*TODO: implement date change */ },
+                            onTimeClick = { /*TODO: implement time change */ }
                         )
                         HorizontalDivider(
                             color = colors.separator,
