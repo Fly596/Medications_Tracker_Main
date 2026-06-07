@@ -20,7 +20,6 @@ val ggreen = Color(0xff05f299)
 val gyellow = Color(0xfff2bf05)
 val gtransparent = Color(0x00ffffff)
 
-
 val primary400 = Color(0xFF0A84FF)
 val primary500 = Color(0xFF0772de)
 val primary600 = Color(0xFF0560be)
@@ -80,3 +79,46 @@ val sysSuccess = Color(0xFF34c759)
 val sysWhite = Color(0xffffffff)
 val sysBlack = Color(0xff000000)
 val sysTransparent = Color(0x00ffffff)
+
+val GColors =
+    GAppColors(
+        primary400,
+        primary500,
+        primary600,
+        primaryLight,
+        primaryTinted,
+        secondary400,
+        secondary500,
+        secondary600,
+        secondaryLight,
+        secondaryTinted,
+        primaryFill,
+        secondaryFill,
+        tertiaryFill,
+        primaryBackground,
+        secondaryBackground,
+        tertiaryBackground,
+        primaryBackgroundGrouped,
+        secondaryBackgroundGrouped,
+        tertiaryBackgroundGrouped,
+        primaryBackgroundDark,
+        secondaryBackgroundDark,
+        tertiaryBackgroundDark,
+        primaryGroupedBackgroundDark,
+        secondaryGroupedBackgroundDark,
+        tertiaryGroupedBackgroundDark,
+        primaryLabel,
+        secondaryLabel,
+        tertiaryLabel,
+        primaryLabelDark,
+        secondaryLabelDark,
+        tertiaryLabelDark,
+        separator,
+        opaqueSeparator,
+        sysError,
+        sysWarning,
+        sysSuccess,
+        sysWhite,
+        sysBlack,
+        sysTransparent,
+    )

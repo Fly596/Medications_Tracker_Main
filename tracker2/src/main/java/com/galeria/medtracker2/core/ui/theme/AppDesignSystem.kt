@@ -11,9 +11,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 
 
-
 @Immutable
-data class MedTrackerColors(
+data class GAppColors(
     val primary400: Color,
     val primary500: Color,
     val primary600: Color,
@@ -90,8 +89,6 @@ data class GAppTypography(
     val labelSmallEmphasized: TextStyle,
 )
 
-
-
 // TODO: shapes
 
 // region G
@@ -137,8 +134,8 @@ val LocalGShapes = staticCompositionLocalOf {
         rectangle = RoundedCornerShape(ZeroCornerSize),
     )
 }
-val LocalMedTrackerColors = staticCompositionLocalOf {
-    MedTrackerColors(
+val LocalGAppColors = staticCompositionLocalOf {
+    GAppColors(
         primary400 = Color.Unspecified,
         primary500 = Color.Unspecified,
         primary600 = Color.Unspecified,
@@ -183,7 +180,6 @@ val LocalMedTrackerColors = staticCompositionLocalOf {
     )
 }
 
-
 // endregion
 @Composable
 fun MedTrackerTheme(
@@ -192,55 +188,14 @@ fun MedTrackerTheme(
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit,
 ) {
-    val medTrackerColors =
-        MedTrackerColors(
-            primary400,
-            primary500,
-            primary600,
-            primaryLight,
-            primaryTinted,
-            secondary400,
-            secondary500,
-            secondary600,
-            secondaryLight,
-            secondaryTinted,
-            primaryFill,
-            secondaryFill,
-            tertiaryFill,
-            primaryBackground,
-            secondaryBackground,
-            tertiaryBackground,
-            primaryBackgroundGrouped,
-            secondaryBackgroundGrouped,
-            tertiaryBackgroundGrouped,
-            primaryBackgroundDark,
-            secondaryBackgroundDark,
-            tertiaryBackgroundDark,
-            primaryGroupedBackgroundDark,
-            secondaryGroupedBackgroundDark,
-            tertiaryGroupedBackgroundDark,
-            primaryLabel,
-            secondaryLabel,
-            tertiaryLabel,
-            primaryLabelDark,
-            secondaryLabelDark,
-            tertiaryLabelDark,
-            separator,
-            opaqueSeparator,
-            sysError,
-            sysWarning,
-            sysSuccess,
-            sysWhite,
-            sysBlack,
-            sysTransparent,
-        )
+    val gAppColors = GColors
     // val medTrackerTypography = AppTypography
     val gAppTypography = GTypography
     val gAppShapes = GShapes
-    
-    
+
+
     CompositionLocalProvider(
-        LocalMedTrackerColors provides medTrackerColors,
+        LocalGAppColors provides gAppColors,
         LocalGAppTypography provides gAppTypography,
         LocalGShapes provides gAppShapes,
         /* LocalMedTrackerTypography provides medTrackerTypography, */
@@ -249,9 +204,9 @@ fun MedTrackerTheme(
 }
 
 object MedTrackerTheme {
-    
-    val colors: MedTrackerColors
-        @Composable get() = LocalMedTrackerColors.current
+
+    val colors: GAppColors
+        @Composable get() = LocalGAppColors.current
     val typography: GAppTypography
         @Composable get() = LocalGAppTypography.current
     val shapes: GShapesImmut
