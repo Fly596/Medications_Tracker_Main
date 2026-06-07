@@ -215,6 +215,7 @@ object MedTrackerTheme {
 
 val ButtonShape = RoundedCornerShape(percent = 50)
 
+// region old
 /*
 val LocalGColors = staticCompositionLocalOf {
     GMedTrackerColors(
@@ -393,3 +394,5 @@ val caption2Emphasized:
 TextStyle, // Smaller caption text, used for additional details or metadata related to an image
 // or graphic.
 )*/
+
+// endregion

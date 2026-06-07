@@ -39,31 +39,38 @@ fun AppNavHost(
         bottomBar = {
             NavigationBar(
                 tonalElevation = 12.dp,
-                containerColor = MedTrackerTheme.colors.secondaryBackground
+                containerColor = MedTrackerTheme.colors.secondaryBackground,
             ) {
                 NavigationBarItem(
-                    selected = currentDestination?.hierarchy?.any { it.hasRoute<AppRoutes.Home>() } == true,
+                    selected =
+                        currentDestination?.hierarchy?.any { it.hasRoute<AppRoutes.Home>() } ==
+                                true,
                     onClick = {
                         navController.navigate(AppRoutes.Home) {
-                            popUpTo(0) { saveState = true }; launchSingleTop = true;
+                            popUpTo(0) { saveState = true }
+                            launchSingleTop = true
                             restoreState = true
                         }
                     },
                     icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
-                    label = { Text("Home") }
+                    label = { Text("Home") },
                 )
 
                 // Второй таб.
                 NavigationBarItem(
-                    selected = currentDestination?.hierarchy?.any { it.hasRoute<AppRoutes.MedicationsListRoute>() } == true,
+                    selected =
+                        currentDestination?.hierarchy?.any {
+                            it.hasRoute<AppRoutes.MedicationsListRoute>()
+                        } == true,
                     onClick = {
                         navController.navigate(AppRoutes.MedicationsListRoute) {
-                            popUpTo(0) { saveState = true }; launchSingleTop = true;
+                            popUpTo(0) { saveState = true }
+                            launchSingleTop = true
                             restoreState = true
                         }
                     },
                     icon = { Icon(Icons.Default.List, contentDescription = "My Medications") },
-                    label = { Text("Medications") }
+                    label = { Text("Medications") },
                 )
             }
         }
@@ -90,7 +97,9 @@ fun AppNavHost(
                     onNavigateToViewMedication = { id ->
                         navController.navigate(AppRoutes.MedicationDetailsRoute(id.toString()))
                     },
-                    onNavigateToAddMedication = { navController.navigate(AppRoutes.AddMedicationRoute) },
+                    onNavigateToAddMedication = {
+                        navController.navigate(AppRoutes.AddMedicationRoute)
+                    },
                 )
             }
 
@@ -98,7 +107,8 @@ fun AppNavHost(
                 val route = backStackEntry.toRoute<AppRoutes.MedicationDetailsRoute>()
                 val medicationId = UUID.fromString(route.medicationId)
 
-                // MyMedicationsScreen(onNavigateToViewMedication = { id -> navController.navigate() })
+                // MyMedicationsScreen(onNavigateToViewMedication = { id -> navController.navigate()
+                // })
             }
         }
     }
