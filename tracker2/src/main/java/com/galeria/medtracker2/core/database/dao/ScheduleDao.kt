@@ -5,6 +5,7 @@ import androidx.room.Query
 import com.galeria.medtracker2.domain.model.MedicationCourseSummary
 import com.galeria.medtracker2.domain.model.ScheduledIntakeDetails
 import kotlinx.coroutines.flow.Flow
+import java.util.UUID
 
 @Dao
 interface ScheduleDao {
@@ -22,6 +23,21 @@ interface ScheduleDao {
             """
     )
     fun getActiveCoursesStream(): Flow<List<MedicationCourseSummary>>
+
+    @Query(
+        """
+            SELECT
+                m.id AS 'medicationId',
+                m.name,
+                mr.doseMg,
+                mr.startDate,
+                mr.endDate
+            FROM medications AS m 
+            JOIN medication_courses AS mr ON m.id = mr.medicationId 
+            WHERE m.id = :courseId  
+            """
+    )
+    suspend fun getActiveCourseById(courseId: UUID): MedicationCourseSummary
 
     @Query(
         """

@@ -5,6 +5,7 @@ import com.galeria.medtracker2.domain.model.MedicationCourseSummary
 import com.galeria.medtracker2.domain.model.PlannedIntakeDomain
 import com.galeria.medtracker2.domain.model.ScheduledIntakeDetails
 import kotlinx.coroutines.flow.Flow
+import java.util.UUID
 
 interface MedicationsCourseRepository {
 
@@ -19,4 +20,6 @@ interface MedicationsCourseRepository {
     fun getActiveCourses(): Flow<List<MedicationCourseSummary>>
 
     fun getFullSchedule(): Flow<List<ScheduledIntakeDetails>>
+
+    suspend fun getCourseById(medId: UUID): MedicationCourseSummary?
 }

@@ -12,6 +12,7 @@ import com.galeria.medtracker2.domain.model.ScheduledIntakeDetails
 import com.galeria.medtracker2.domain.repository.MedicationsCourseRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.util.UUID
 import javax.inject.Inject
 
 class MedicationsCourseRepositoryImpl
@@ -32,9 +33,7 @@ constructor(
     }
 
     override suspend fun addAllPlannedIntakes(plannedIntakes: List<PlannedIntakeDomain>) {
-        val entities = plannedIntakes.map { it ->
-            it.toEntity()
-        }
+        val entities = plannedIntakes.map { it -> it.toEntity() }
         plannedIntakeDao.insertBatch(entities)
     }
 
@@ -50,4 +49,7 @@ constructor(
     // Возвращает совмещенную таблицу вмсех приемов по времени.
     override fun getFullSchedule(): Flow<List<ScheduledIntakeDetails>> =
         scheduleDao.getFullScheduleStream()
+
+    override suspend fun getCourseById(medId: UUID): MedicationCourseSummary? =
+        scheduleDao.getActiveCourseById(medId)
 }

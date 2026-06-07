@@ -1,5 +1,6 @@
 package com.galeria.medtracker2.feature.tracker.presentation.medication
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.galeria.medtracker2.domain.model.MedicationCourseSummary
@@ -26,7 +27,10 @@ sealed interface MedicationUiState {
 @HiltViewModel
 class MedicationVM
 @Inject
-constructor(private val regimentsRepository: MedicationsCourseRepository) : ViewModel() {
+constructor(
+    private val regimentsRepository: MedicationsCourseRepository,
+    savedStateHandle: SavedStateHandle,
+) : ViewModel() {
 
     val uiState: StateFlow<MedicationUiState> =
         regimentsRepository
@@ -41,9 +45,7 @@ constructor(private val regimentsRepository: MedicationsCourseRepository) : View
                     MedicationUiState.Empty
                 }
             }
-            .catch { e ->
-                emit(MedicationUiState.Error(e.localizedMessage ?: "Unknown error"))
-            }
+            .catch { e -> emit(MedicationUiState.Error(e.localizedMessage ?: "Unknown error")) }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),

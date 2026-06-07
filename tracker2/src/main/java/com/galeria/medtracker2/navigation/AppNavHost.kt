@@ -23,6 +23,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.galeria.medtracker2.core.ui.theme.MedTrackerTheme
 import com.galeria.medtracker2.feature.tracker.presentation.add_med.AddMedicationScreen
+import com.galeria.medtracker2.feature.tracker.presentation.medication.MedicationScreen
 import com.galeria.medtracker2.feature.tracker.presentation.medications.MyMedicationsScreen
 import com.galeria.medtracker2.feature.tracker.presentation.schedule.MainIntakesScreen
 import java.util.UUID
@@ -44,7 +45,7 @@ fun AppNavHost(
                 NavigationBarItem(
                     selected =
                         currentDestination?.hierarchy?.any { it.hasRoute<AppRoutes.Home>() } ==
-                                true,
+                            true,
                     onClick = {
                         navController.navigate(AppRoutes.Home) {
                             popUpTo(0) { saveState = true }
@@ -80,16 +81,10 @@ fun AppNavHost(
             navController = navController,
             startDestination = AppRoutes.Home,
         ) {
-            composable<AppRoutes.Home> {
-                MainIntakesScreen()
-            }
+            composable<AppRoutes.Home> { MainIntakesScreen() }
 
             composable<AppRoutes.AddMedicationRoute> {
-                AddMedicationScreen(
-                    onConfirm = {
-                        navController.navigate(AppRoutes.Home)
-                    }
-                )
+                AddMedicationScreen(onConfirm = { navController.navigate(AppRoutes.Home) })
             }
 
             composable<AppRoutes.MedicationsListRoute> {
@@ -107,8 +102,7 @@ fun AppNavHost(
                 val route = backStackEntry.toRoute<AppRoutes.MedicationDetailsRoute>()
                 val medicationId = UUID.fromString(route.medicationId)
 
-                // MyMedicationsScreen(onNavigateToViewMedication = { id -> navController.navigate()
-                // })
+                MedicationScreen(onNavigateBack = { navController.navigateUp() })
             }
         }
     }

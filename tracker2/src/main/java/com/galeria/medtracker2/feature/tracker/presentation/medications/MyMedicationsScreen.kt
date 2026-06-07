@@ -63,13 +63,15 @@ fun MyMedicationsScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(stringResource(R.string.my_medications),
-                        style = MedTrackerTheme.typography.display3Emphasized
+                    Text(
+                        stringResource(R.string.my_medications),
+                        style = MedTrackerTheme.typography.display3Emphasized,
                     )
                 },
-                colors = TopAppBarDefaults.largeTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
-                )
+                colors =
+                    TopAppBarDefaults.largeTopAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.background
+                    ),
             )
         },
         floatingActionButton = {
@@ -79,27 +81,23 @@ fun MyMedicationsScreen(
                 icon = { Icon(Icons.Default.Add, contentDescription = "Add medication icon") },
                 text = { Text("Add Medication") },
                 containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
+                contentColor = MaterialTheme.colorScheme.onPrimary,
             )
-        }
+        },
     ) { innerPadding ->
-
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .padding(innerPadding)
-        ) {
+        Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
             when {
                 state.isLoading -> {
                     CircularProgressIndicator(
                         modifier = Modifier.align(Alignment.Center),
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.primary,
                     )
                 }
 
                 state.medsList.isEmpty() -> {
                     EmptyMedicationsPlaceholder(
                         onAddClick = onNavigateToAddMedication,
-                        modifier = Modifier.align(Alignment.Center)
+                        modifier = Modifier.align(Alignment.Center),
                     )
                 }
 
@@ -107,40 +105,43 @@ fun MyMedicationsScreen(
                     MedsList(
                         medications = state.medsList,
                         onMedicationSelect = onNavigateToViewMedication,
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
                     )
                 }
             }
         }
         /*  Column(
-              modifier = Modifier
-                  .fillMaxSize()
-                  .padding(innerPadding)
-          ) {
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
 
-              if (state.isLoading) {
-                  CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
-              } else if (state.medsList.isEmpty()) {
-                  EmptyMedicationsPlaceholder()
-              } else {
-                  MedsList(medications = state.medsList, onNavigateToViewMedication)
-              }
-          }*/
+            if (state.isLoading) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+            } else if (state.medsList.isEmpty()) {
+                EmptyMedicationsPlaceholder()
+            } else {
+                MedsList(medications = state.medsList, onNavigateToViewMedication)
+            }
+        }*/
     }
 }
 
 @Composable
-fun MedsList(medications: List<MedicationCourseSummary>, onMedicationSelect: (UUID) -> Unit,
-             modifier: Modifier = Modifier
+fun MedsList(
+    medications: List<MedicationCourseSummary>,
+    onMedicationSelect: (UUID) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     LazyColumn(
         modifier = modifier,
-        contentPadding = PaddingValues(
-            start = 16.dp,
-            end = 16.dp,
-            top = 8.dp,
-            bottom = 88.dp // Отступ снизу, чтобы FAB не перекрывал последнюю карточку в списке
-        ),
+        contentPadding =
+            PaddingValues(
+                start = 16.dp,
+                end = 16.dp,
+                top = 8.dp,
+                bottom = 88.dp, // Отступ снизу, чтобы FAB не перекрывал последнюю карточку в списке
+            ),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         items(items = medications, key = { it.medicationId }) { med ->
@@ -153,29 +154,23 @@ fun MedsList(medications: List<MedicationCourseSummary>, onMedicationSelect: (UU
 fun MedicationCard(
     medication: MedicationCourseSummary,
     onSelect: (UUID) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-    val formattedStartDate = remember(medication.startDate) {
-        DateTimeUtils.fromLongToLocalDate(medication.startDate)
-    }
-    val formattedEndDate = remember(medication.endDate) {
-        DateTimeUtils.fromLongToLocalDate(medication.endDate)
-    }
+    val formattedStartDate =
+        remember(medication.startDate) { DateTimeUtils.fromLongToLocalDate(medication.startDate) }
+    val formattedEndDate =
+        remember(medication.endDate) { DateTimeUtils.fromLongToLocalDate(medication.endDate) }
 
     Card(
         onClick = { onSelect(medication.medicationId) },
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         // elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         shape = MedTrackerTheme.shapes.large,
-        colors = CardDefaults.cardColors(
-            containerColor = MedTrackerTheme.colors.secondaryBackground
-        )
+        colors =
+            CardDefaults.cardColors(containerColor = MedTrackerTheme.colors.secondaryBackground),
     ) {
         Row(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
+            modifier = Modifier.padding(16.dp).fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -183,14 +178,14 @@ fun MedicationCard(
             Surface(
                 shape = MedTrackerTheme.shapes.medium,
                 color = MaterialTheme.colorScheme.primaryContainer,
-                modifier = Modifier.size(48.dp)
+                modifier = Modifier.size(48.dp),
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
                         imageVector = Icons.Default.Healing,
                         contentDescription = "Medication Icon",
                         tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(24.dp),
                     )
                 }
             }
@@ -209,12 +204,11 @@ fun MedicationCard(
                     style = MaterialTheme.typography.titleMedium,
                 )
             }
-            IconButton(
-                onClick = {},
-            ) {
-                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight,
+            IconButton(onClick = {}) {
+                Icon(
+                    Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.outline
+                    tint = MaterialTheme.colorScheme.outline,
                 )
             }
         }
@@ -222,36 +216,32 @@ fun MedicationCard(
 }
 
 @Composable
-private fun EmptyMedicationsPlaceholder(
-    onAddClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun EmptyMedicationsPlaceholder(onAddClick: () -> Unit, modifier: Modifier = Modifier) {
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(32.dp),
+        modifier = modifier.fillMaxWidth().padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
     ) {
         Icon(
             imageVector = Icons.Default.Inbox,
             contentDescription = "No medications",
             tint = MaterialTheme.colorScheme.outline.copy(alpha = 0.6f),
-            modifier = Modifier.size(64.dp)
+            modifier = Modifier.size(64.dp),
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = "No medications scheduled",
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onBackground
+            color = MaterialTheme.colorScheme.onBackground,
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Your medication list is currently empty. Tap the button below to add your first medicine.",
+            text =
+                "Your medication list is currently empty. Tap the button below to add your first medicine.",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.outline,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
         Spacer(modifier = Modifier.height(24.dp))
         Button(onClick = onAddClick) {
@@ -261,8 +251,8 @@ private fun EmptyMedicationsPlaceholder(
         }
     }
     /* Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-         Text("There's pretty empty.", style = MaterialTheme.typography.bodyLarge)
-     }*/
+        Text("There's pretty empty.", style = MaterialTheme.typography.bodyLarge)
+    }*/
 }
 
 @Preview(showBackground = true)
