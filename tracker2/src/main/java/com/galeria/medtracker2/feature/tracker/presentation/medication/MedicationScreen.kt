@@ -30,11 +30,8 @@ import com.galeria.medtracker2.core.ui.theme.MedTrackerTheme
 import com.galeria.medtracker2.domain.model.MedicationCourseSummary
 
 @Composable
-fun MedicationScreen(
-    onNavigateBack: () -> Unit = {},
-    viewModel: MedicationVM = hiltViewModel(),
-) {
-    val state by viewModel.uiState.collectAsStateWithLifecycle()
+fun MedicationScreen(onNavigateBack: () -> Unit = {}, viewModel: MedicationVM = hiltViewModel()) {
+    val state by viewModel.uiSt.collectAsStateWithLifecycle()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -61,9 +58,7 @@ fun MedicationScreen(
             )
         },
     ) { innerPadding ->
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .padding(innerPadding)) {
+        Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
             when (val currentState = state) {
                 is MedicationUiState.Loading -> {
                     CircularProgressIndicator(
@@ -110,10 +105,7 @@ fun EmptyMedicationPlaceholder(onNavigateBack: () -> Unit, modifier: Modifier) {
 }
 
 @Composable
-fun MedicationView(
-    medicationCourse: MedicationCourseSummary,
-    modifier: Modifier = Modifier,
-) {
+fun MedicationView(medicationCourse: MedicationCourseSummary, modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
         // TODO add next UI elements:
         // 1. Name of medication
