@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -46,7 +46,7 @@ fun MedicationScreen(onNavigateBack: () -> Unit = {}, viewModel: MedicationVM = 
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                             contentDescription = "Back to list",
                         )
                     }
@@ -58,7 +58,9 @@ fun MedicationScreen(onNavigateBack: () -> Unit = {}, viewModel: MedicationVM = 
             )
         },
     ) { innerPadding ->
-        Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .padding(innerPadding)) {
             when (val currentState = state) {
                 is MedicationUiState.Loading -> {
                     CircularProgressIndicator(

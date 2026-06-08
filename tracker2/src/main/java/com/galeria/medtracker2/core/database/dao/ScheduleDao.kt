@@ -57,22 +57,22 @@ interface ScheduleDao {
     )
     fun getFullScheduleStream(): Flow<List<ScheduledIntakeDetails>>
 
-    @Query(
-        """
-            SELECT 
-                m.name AS 'medicationName',
-                mr.id AS 'courseId',
-                mr.doseMg,
-                mr.startDate,
-                mr.endDate,
-                COUNT(std.id) AS 'plannedCount',
-                COUNT(CASE WHEN i.isTaken = 1 THEN 1 END) AS 'takenCount'
-            FROM medications AS m
-            JOIN medication_courses AS mr ON m.id = mr.medicationId
-            LEFT JOIN planned_intakes AS std ON mr.id = std.courseId
-            LEFT JOIN intake_logs AS i ON std.id = i.plannedIntakeId
-            GROUP BY m.id, mr.id, mr.doseMg, mr.startDate, mr.endDate
-        """
-    )
-    fun getScheduleStatsStream(): Flow<List<MedicationScheduleStats>>
+    /*    @Query(
+            """
+                SELECT
+                    m.name AS 'medicationName',
+                    mr.id AS 'courseId',
+                    mr.doseMg,
+                    mr.startDate,
+                    mr.endDate,
+                    COUNT(std.id) AS 'plannedCount',
+                    COUNT(CASE WHEN i.isTaken = 1 THEN 1 END) AS 'takenCount'
+                FROM medications AS m
+                JOIN medication_courses AS mr ON m.id = mr.medicationId
+                LEFT JOIN planned_intakes AS std ON mr.id = std.courseId
+                LEFT JOIN intake_logs AS i ON std.id = i.plannedIntakeId
+                GROUP BY m.id, mr.id, mr.doseMg, mr.startDate, mr.endDate
+            """
+        )
+        fun getScheduleStatsStream(): Flow<List<MedicationScheduleStats>>*/
 }
