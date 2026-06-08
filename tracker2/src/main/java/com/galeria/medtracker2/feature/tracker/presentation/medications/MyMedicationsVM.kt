@@ -6,13 +6,12 @@ import com.galeria.medtracker2.domain.model.MedicationCourseSummary
 import com.galeria.medtracker2.domain.repository.MedicationRepository
 import com.galeria.medtracker2.domain.repository.MedicationsCourseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import javax.inject.Inject
 
 sealed interface MedicationsUiState {
     data object Loading : MedicationsUiState
@@ -49,24 +48,5 @@ constructor(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
                 initialValue = MyMedicationsUiState(isLoading = true),
-            )
-
-    val uuiState: StateFlow<MedicationsUiState> =
-        regimentsRepository
-            .getActiveCourses()
-            .distinctUntilChanged()
-            .map { allMedications ->
-                val med = allMedications.firstOrNull()
-                if (med != null) {
-                    MedicationsUiState.Success(allMedications)
-                } else {
-                    MedicationsUiState.Empty
-                }
-            }
-            .catch { e -> emit(MedicationsUiState.Error(e.localizedMessage ?: "Uncnown error")) }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000),
-                initialValue = MedicationsUiState.Loading,
             )
 }

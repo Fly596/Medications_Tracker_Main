@@ -24,7 +24,6 @@ constructor(
 ) : MedicationsCourseRepository {
 
     override suspend fun addCourse(course: MedicationCourseDomain) {
-
         medicationCourseDao.upsert(course.toEntity())
     }
 
@@ -50,6 +49,6 @@ constructor(
     override fun getFullSchedule(): Flow<List<ScheduledIntakeDetails>> =
         scheduleDao.getFullScheduleStream()
 
-    override suspend fun getCourseById(medId: UUID): MedicationCourseSummary? =
+    override suspend fun getCourseById(medId: UUID): MedicationCourseSummary =
         scheduleDao.getActiveCourseById(medId)
 }

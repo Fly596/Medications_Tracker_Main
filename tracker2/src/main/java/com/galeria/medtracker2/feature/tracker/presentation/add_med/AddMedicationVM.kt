@@ -1,6 +1,5 @@
 package com.galeria.medtracker2.feature.tracker.presentation.add_med
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.galeria.medtracker2.core.utils.DateTimeUtils
@@ -30,9 +29,8 @@ const val DEFAULT_SCHEDULE_DAYS: Long = 7
 @HiltViewModel
 class AddMedicationVM
 @Inject
-constructor(
-    private val createMedicationsAndScheduleUseCase: CreateMedicationsAndScheduleUseCase
-) : ViewModel() {
+constructor(private val createMedicationsAndScheduleUseCase: CreateMedicationsAndScheduleUseCase) :
+    ViewModel() {
 
     private val _state = MutableStateFlow(AddMedUiState())
     val state = _state.asStateFlow()
@@ -41,13 +39,8 @@ constructor(
 
     fun updateDose(input: String) {
         // digits only.
-        if (input.all { char ->
-                char.isDigit()
-            }
-        ) {
-            _state.update {
-                it.copy(dose = input)
-            }
+        if (input.all { char -> char.isDigit() }) {
+            _state.update { it.copy(dose = input) }
         }
     }
 
@@ -75,53 +68,25 @@ constructor(
         val end = currentState.endDateMillis // utc
         val intakesTimes = currentState.intakeTimes
 
-        val intakeMoment = DateTimeUtils.combineDateAndTime(
-            DateTimeUtils.fromLongToLocalDate(start), intakesTimes[0]
-        )
-
-        Log.i(
-            "DATE_TIME", "Combined datetime: ${
-                DateTimeUtils.formatLongToLocalDateTimeString(
-                    intakeMoment.toEpochMilli()
-                )
-            }"
-        )
-
         // Базовая валидация (в проде нужно подсвечивать красным поля в UI)
         // region values check
         if (name.isBlank()) {
-            _state.update {
-                it.copy(
-                    errorMessage = "Name cannot be empty!"
-                )
-            }
+            _state.update { it.copy(errorMessage = "Name cannot be empty!") }
             return
         }
 
-        if (dosage==null) {
-            _state.update {
-                it.copy(
-                    errorMessage = "Dosage cannot be empty!"
-                )
-            }
+        if (dosage == null) {
+            _state.update { it.copy(errorMessage = "Dosage cannot be empty!") }
             return
         }
 
         if (dosage <= 0) {
-            _state.update {
-                it.copy(
-                    errorMessage = "Dosage should be more than 0!"
-                )
-            }
+            _state.update { it.copy(errorMessage = "Dosage should be more than 0!") }
             return
         }
 
         if (intakesTimes.isEmpty()) {
-            _state.update {
-                it.copy(
-                    errorMessage = "Select intakes times!"
-                )
-            }
+            _state.update { it.copy(errorMessage = "Select intakes times!") }
             return
         }
         // endregion
@@ -137,7 +102,7 @@ constructor(
                     dose = dosage,
                     startDate = start,
                     endDate = end,
-                    intakeTimes = intakesTimes
+                    intakeTimes = intakesTimes,
                 )
                 // TODO: ui ивент для навигации назад.
             } catch (e: Exception) {
@@ -147,6 +112,5 @@ constructor(
                 _state.update { it.copy(isLoading = false) }
             }
         }
-
     }
 }
