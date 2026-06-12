@@ -77,7 +77,7 @@ fun AppNavHost(
         }
     ) { innerPadding ->
         NavHost(
-            modifier = Modifier.padding(innerPadding),
+            modifier = modifier.padding(innerPadding),
             navController = navController,
             startDestination = AppRoutes.Home,
         ) {
