@@ -83,10 +83,9 @@ fun MedicationScreen(onNavigateBack: () -> Unit = {}, viewModel: MedicationVM = 
     ) { innerPadding ->
         Box(
             modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding)
-                        .background(MaterialTheme.colorScheme.background)
+                Modifier.fillMaxSize()
+                    .padding(innerPadding)
+                    .background(MaterialTheme.colorScheme.background)
         ) {
             when (val currentState = state) {
                 is MedicationUiState.Loading -> {
@@ -139,9 +138,7 @@ fun MedicationScreen(onNavigateBack: () -> Unit = {}, viewModel: MedicationVM = 
 @Composable
 fun EmptyMedicationPlaceholder(onNavigateBack: () -> Unit, modifier: Modifier) {
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(24.dp),
+        modifier = modifier.fillMaxWidth().padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
@@ -181,23 +178,19 @@ fun MedicationView(
     val scrollState = rememberScrollState()
 
     Column(
-        modifier = modifier
-            .verticalScroll(scrollState)
-            .padding(16.dp),
+        modifier = modifier.verticalScroll(scrollState).padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         // 1 & 2. Название препарата и Дозировка
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors =
-                    CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainer
-                    ),
+                CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                ),
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -218,18 +211,18 @@ fun MedicationView(
                         )
                     },
                     colors =
-                            SuggestionChipDefaults.suggestionChipColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                labelColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                            ),
+                        SuggestionChipDefaults.suggestionChipColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            labelColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        ),
                 )
             }
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors =
-                        CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
-                        ),
+                    CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+                    ),
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Row(
@@ -244,9 +237,9 @@ fun MedicationView(
                             )
                             Text(
                                 text =
-                                        DateTimeUtils.formatLongToLocalDateString(
-                                            medicationCourse.startDate
-                                        ),
+                                    DateTimeUtils.formatLongToLocalDateString(
+                                        medicationCourse.startDate
+                                    ),
                                 style = MaterialTheme.typography.bodyLarge,
                                 fontWeight = FontWeight.Medium,
                             )
@@ -259,9 +252,9 @@ fun MedicationView(
                             )
                             Text(
                                 text =
-                                        DateTimeUtils.formatLongToLocalDateString(
-                                            medicationCourse.endDate
-                                        ),
+                                    DateTimeUtils.formatLongToLocalDateString(
+                                        medicationCourse.endDate
+                                    ),
                                 style = MaterialTheme.typography.bodyLarge,
                                 fontWeight = FontWeight.Medium,
                             )
@@ -276,22 +269,31 @@ fun MedicationView(
         Button(
             onClick = onDeleteClick,
             colors =
-                    ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.errorContainer,
-                        contentColor = MaterialTheme.colorScheme.onErrorContainer,
-                    ),
+                ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.errorContainer,
+                    contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                ),
             modifier = Modifier.fillMaxWidth(),
         ) {
             Icon(imageVector = Icons.Default.Delete, contentDescription = null)
             Spacer(modifier = Modifier.width(8.dp))
             Text("Delete Medication Course", fontWeight = FontWeight.SemiBold)
         }
-        /*  Text(text = medicationCourse.name)
-        Text(text = medicationCourse.doseMg.toString())
-        Row() {
-            Text(text = "Start Date: " + medicationCourse.startDate.toString())
-            Text(text = "End Date: " + medicationCourse.endDate.toString())
-        }*/
+
+        // Кнопка редактирования.
+        Button(
+            onClick = {},
+            colors =
+                ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                ),
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Icon(imageVector = Icons.Default.Info, contentDescription = null)
+            Spacer(modifier = Modifier.width(8.dp))
+            Text("Edit Medication Course", fontWeight = FontWeight.SemiBold)
+        }
     }
 }
 
@@ -306,14 +308,14 @@ fun DeleteConfirmationDialog(
         text = {
             Text(
                 text =
-                        "Are you sure you want to delete this medication course? This action cannot be undone."
+                    "Are you sure you want to delete this medication course? This action cannot be undone."
             )
         },
         confirmButton = {
             TextButton(
                 onClick = onConfirm,
                 colors =
-                        ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error),
+                    ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error),
             ) {
                 Text("Delete")
             }
