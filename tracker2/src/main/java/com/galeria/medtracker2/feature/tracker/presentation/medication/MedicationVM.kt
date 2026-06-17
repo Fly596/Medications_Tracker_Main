@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.galeria.medtracker2.domain.model.MedicationCourseSummary
+import com.galeria.medtracker2.domain.repository.MedicationRepository
 import com.galeria.medtracker2.domain.repository.MedicationsCourseRepository
 import com.galeria.medtracker2.navigation.AppRoutes
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,6 +31,7 @@ class MedicationVM
 @Inject
 constructor(
     private val regimentsRepository: MedicationsCourseRepository,
+    private val medicationRepository: MedicationRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -59,6 +61,16 @@ constructor(
                 } else {
                     _uiSt.value = MedicationUiState.Success(med)
                 }
+            } catch (e: Exception) {
+                _uiSt.value = MedicationUiState.Error("${e.localizedMessage}")
+            }
+        }
+    }
+
+    fun deleteMedication(id: UUID) {
+        viewModelScope.launch {
+            try {
+                medicationRepository.removeMedication(id)
             } catch (e: Exception) {
                 _uiSt.value = MedicationUiState.Error("${e.localizedMessage}")
             }

@@ -28,6 +28,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medtracker2.core.ui.theme.MedTrackerTheme
 import com.galeria.medtracker2.domain.model.MedicationCourseSummary
+import java.util.UUID
 
 @Composable
 fun MedicationScreen(onNavigateBack: () -> Unit = {}, viewModel: MedicationVM = hiltViewModel()) {
@@ -58,9 +59,7 @@ fun MedicationScreen(onNavigateBack: () -> Unit = {}, viewModel: MedicationVM = 
             )
         },
     ) { innerPadding ->
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .padding(innerPadding)) {
+        Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
             when (val currentState = state) {
                 is MedicationUiState.Loading -> {
                     CircularProgressIndicator(
@@ -79,7 +78,10 @@ fun MedicationScreen(onNavigateBack: () -> Unit = {}, viewModel: MedicationVM = 
                 is MedicationUiState.Success -> {
                     // currentState автоматически скастован к Success, medication гарантированно не
                     // null!
-                    MedicationView(medicationCourse = currentState.medication)
+                    MedicationView(
+                        medicationCourse = currentState.medication,
+                        onDelete = viewModel::deleteMedication,
+                    )
                 }
 
                 is MedicationUiState.Error -> {
@@ -107,7 +109,11 @@ fun EmptyMedicationPlaceholder(onNavigateBack: () -> Unit, modifier: Modifier) {
 }
 
 @Composable
-fun MedicationView(medicationCourse: MedicationCourseSummary, modifier: Modifier = Modifier) {
+fun MedicationView(
+    medicationCourse: MedicationCourseSummary,
+    onDelete: (UUID) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Column(modifier = modifier) {
         // TODO add next UI elements:
         // 1. Name of medication
@@ -125,8 +131,8 @@ fun MedicationView(medicationCourse: MedicationCourseSummary, modifier: Modifier
             Text(text = "Start Date: " + medicationCourse.startDate.toString())
             Text(text = "End Date: " + medicationCourse.endDate.toString())
         }
-        // Text(text = "Remaining Doses: " + medicationCourse.remainingDoses.toString())
-        // Text(text = "Schedule: " + medicationCourse.schedule.toString())
-        // Text(text = medicationCourse.history.toString())
+        Button(onClick = { onDelete(medicationCourse.medicationId) }) {
+            Text(text = "Delete")
+        }
     }
 }

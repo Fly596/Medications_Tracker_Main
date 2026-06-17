@@ -14,11 +14,11 @@ interface MedicationDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(medication: MedicationEntity)
 
-    @Query("DELETE FROM medications WHERE id = :id")
-    suspend fun deleteById(id: UUID)
+    @Query("DELETE FROM medications WHERE id = :id") suspend fun deleteById(id: UUID)
 
-    @Query("SELECT * FROM medications")
-    fun getAllMedications(): Flow<List<MedicationEntity>>
+    @Query("DELETE FROM medications WHERE name = :name") suspend fun deleteByName(name: String)
+
+    @Query("SELECT * FROM medications") fun getAllMedications(): Flow<List<MedicationEntity>>
 
     @Query("SELECT * FROM medications WHERE name = :name COLLATE NOCASE LIMIT 1")
     suspend fun getByName(name: String): MedicationEntity?
