@@ -21,5 +21,9 @@ interface MedicationsCourseRepository {
 
     fun getFullSchedule(): Flow<List<ScheduledIntakeDetails>>
 
-    suspend fun getCourseById(medId: UUID): MedicationCourseSummary?
+    suspend fun getCourseSummaryByMedId(medId: UUID): MedicationCourseSummary?
+
+    suspend fun getPlanedIntakesByCourseId(courseId: UUID): List<PlannedIntakeDomain>
+
+    suspend fun getCourseByMedId(medId: UUID): MedicationCourseDomain?
 }

@@ -55,7 +55,7 @@ constructor(
     fun getMedication(id: UUID) {
         viewModelScope.launch {
             try {
-                val med = regimentsRepository.getCourseById(id)
+                val med = regimentsRepository.getCourseSummaryByMedId(id)
                 if (med == null) {
                     _uiSt.value = MedicationUiState.Empty
                 } else {

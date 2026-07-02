@@ -16,19 +16,20 @@ import java.time.temporal.ChronoUnit
 import java.util.UUID
 import javax.inject.Inject
 
-class CreateMedicationsAndScheduleUseCase @Inject constructor(
+class CreateMedicationsAndScheduleUseCase
+@Inject
+constructor(
     private val medicationRepository: MedicationRepository,
     private val medicationsCourseRepository: MedicationsCourseRepository,
     private val alarmScheduler: AlarmScheduler,
-
-    ) {
+) {
 
     suspend operator fun invoke(
         name: String,
         dose: Double,
         startDate: Long,
         endDate: Long,
-        intakeTimes: List<LocalTime>
+        intakeTimes: List<LocalTime>,
     ) {
         val today = LocalDate.now()
         val cleanName = name.trim()
@@ -46,24 +47,28 @@ class CreateMedicationsAndScheduleUseCase @Inject constructor(
         val exitingMedication = medicationRepository.getMedicationByName(cleanName)
 
         // 3. Определение UUID, которое будем юзать.
-        val medicationId: UUID = if (exitingMedication!=null) {
-            exitingMedication.id
-        } else {
-            val newId = UUID.randomUUID()
-            // Создаем лекарство.
-            medicationRepository.addMedication(MedicationDomain(newId, cleanName, Instant.now()))
-            newId
-        }
+        val medicationId: UUID =
+            if (exitingMedication != null) {
+                exitingMedication.id
+            } else {
+                val newId = UUID.randomUUID()
+                // Создаем лекарство.
+                medicationRepository.addMedication(
+                    MedicationDomain(newId, cleanName, Instant.now())
+                )
+                newId
+            }
 
         // 4. Создаем и добавляем курс.
         val medicationCourseId = UUID.randomUUID()
-        val medicationCourse = MedicationCourseDomain(
-            medicationCourseId,
-            medicationId,
-            doseMg = dose,
-            startDate = startLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant(),
-            endDate = endLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant(),
-        )
+        val medicationCourse =
+            MedicationCourseDomain(
+                medicationCourseId,
+                medicationId,
+                doseMg = dose,
+                startDate = startLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant(),
+                endDate = endLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant(),
+            )
         medicationsCourseRepository.addCourse(medicationCourse)
 
         // 5. Генерируем приемы для расписания курса.
@@ -82,7 +87,7 @@ class CreateMedicationsAndScheduleUseCase @Inject constructor(
                     PlannedIntakeDomain(
                         id = plannedIntakeId,
                         courseId = medicationCourseId,
-                        scheduledTimestamp = intakeMoment
+                        scheduledTimestamp = intakeMoment,
                     )
                 )
 
@@ -91,8 +96,7 @@ class CreateMedicationsAndScheduleUseCase @Inject constructor(
                         id = plannedIntakeId,
                         timeMillis = intakeMoment.toEpochMilli(),
                         title = cleanName,
-                        message = "Dose: $dose"
-
+                        message = "Dose: $dose",
                     )
                 )
             }

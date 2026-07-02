@@ -24,4 +24,8 @@ interface MedicationCourseDao {
 
     @Query("SELECT * FROM medication_courses WHERE id = :id")
     suspend fun getMedicationCourseById(id: UUID): MedicationCourseEntity?
+
+    // TODO: проверить.
+    @Query("SELECT * FROM medication_courses WHERE medicationId = :medId")
+    suspend fun getMedicationCourseByMedId(medId: UUID): MedicationCourseEntity
 }

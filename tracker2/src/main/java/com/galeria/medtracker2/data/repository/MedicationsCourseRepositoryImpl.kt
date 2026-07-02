@@ -49,6 +49,12 @@ constructor(
     override fun getFullSchedule(): Flow<List<ScheduledIntakeDetails>> =
         scheduleDao.getFullScheduleStream()
 
-    override suspend fun getCourseById(medId: UUID): MedicationCourseSummary =
+    override suspend fun getCourseSummaryByMedId(medId: UUID): MedicationCourseSummary =
         scheduleDao.getActiveCourseById(medId)
+
+    override suspend fun getPlanedIntakesByCourseId(courseId: UUID): List<PlannedIntakeDomain> =
+        plannedIntakeDao.getByCourseId(courseId).map { it.toDomain() }
+
+    override suspend fun getCourseByMedId(medId: UUID): MedicationCourseDomain =
+        medicationCourseDao.getMedicationCourseByMedId(medId).toDomain()
 }

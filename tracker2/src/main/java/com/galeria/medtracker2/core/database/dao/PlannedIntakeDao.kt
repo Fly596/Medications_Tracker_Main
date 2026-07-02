@@ -24,4 +24,7 @@ interface PlannedIntakeDao {
 
     @Query("SELECT * FROM planned_intakes WHERE id = :id")
     suspend fun getById(id: UUID): PlannedIntakeEntity?
+
+    @Query("SELECT * FROM planned_intakes WHERE courseId = :courseId")
+    suspend fun getByCourseId(courseId: UUID): List<PlannedIntakeEntity>
 }
