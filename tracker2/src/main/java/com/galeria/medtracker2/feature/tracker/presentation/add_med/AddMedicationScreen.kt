@@ -8,15 +8,12 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -28,9 +25,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Healing
 import androidx.compose.material.icons.filled.MonitorWeight
 import androidx.compose.material3.Button
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.InputChip
@@ -45,7 +39,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -61,6 +54,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.galeria.medtracker2.core.ui.components.DatePickerModal
 import com.galeria.medtracker2.core.ui.components.TimePickerDialogNew
 import com.galeria.medtracker2.core.ui.components.rememberNotificationPermissionHandler
 import com.galeria.medtracker2.core.ui.theme.MedTrackerTheme
@@ -90,22 +84,22 @@ fun AddMedicationScreen(
         topBar = {
             TopAppBar(
                 title = { Text("New medication", style = MaterialTheme.typography.displaySmall) },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
-                )
+              colors =
+                      TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.background
+                      ),
             )
         },
     ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        ) {
+      Box(modifier = Modifier
+        .fillMaxSize()
+        .padding(innerPadding)) {
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
+              modifier =
+                      Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp),
             ) {
                 // region Поля ввода основной информации.
@@ -116,7 +110,7 @@ fun AddMedicationScreen(
                     leadingIcon = { Icon(Icons.Default.Healing, contentDescription = null) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+                  keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                 )
                 TextField(
                     value = state.dose,
@@ -124,10 +118,11 @@ fun AddMedicationScreen(
                     label = { Text("Medication dose") },
                     leadingIcon = { Icon(Icons.Default.MonitorWeight, contentDescription = null) },
                     modifier = Modifier.fillMaxWidth(),
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Decimal,
-                        imeAction = ImeAction.Done
-                    ),
+                  keyboardOptions =
+                          KeyboardOptions(
+                            keyboardType = KeyboardType.Decimal,
+                            imeAction = ImeAction.Done,
+                          ),
                     singleLine = true,
                 )
                 // endregion
@@ -135,43 +130,45 @@ fun AddMedicationScreen(
                 // Даты в красивом горизонтальном ряду
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                  horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     ClickableReadonlyField(
                         label = "Start Date",
                         text = DateTimeUtils.formatLongToLocalDateString(state.startDateMillis),
                         onClick = { showStartDatePicker = true },
-                        modifier = Modifier.weight(1f)
+                      modifier = Modifier.weight(1f),
                     )
                     ClickableReadonlyField(
                         label = "End Date",
                         text = DateTimeUtils.formatLongToLocalDateString(state.endDateMillis),
                         onClick = { showEndDatePicker = true },
-                        modifier = Modifier.weight(1f)
+                      modifier = Modifier.weight(1f),
                     )
                 }
-                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+              HorizontalDivider(
+                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+              )
 
                 // Секция выбора времени
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                  verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         text = "Intake Times",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onBackground
+                      color = MaterialTheme.colorScheme.onBackground,
                     )
                     TextButton(
                         onClick = { isTimePickerVisible = true },
-                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp)
+                      contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
                     ) {
                         Icon(
                             Icons.Default.AccessTime,
                             contentDescription = null,
-                            modifier = Modifier.size(18.dp)
+                          modifier = Modifier.size(18.dp),
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text("Add Time")
@@ -183,7 +180,7 @@ fun AddMedicationScreen(
                     FlowRow(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                      verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         state.intakeTimes.forEach { time ->
                             InputChip(
@@ -194,9 +191,9 @@ fun AddMedicationScreen(
                                     Icon(
                                         imageVector = Icons.Default.Close,
                                         contentDescription = "Remove time",
-                                        modifier = Modifier.size(16.dp)
+                                      modifier = Modifier.size(16.dp),
                                     )
-                                }
+                                },
                             )
                         }
                     }
@@ -205,63 +202,57 @@ fun AddMedicationScreen(
                         text = "No intake times added yet.",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.outline,
-                        modifier = Modifier.padding(vertical = 8.dp)
+                      modifier = Modifier.padding(vertical = 8.dp),
                     )
                 }
                 Spacer(modifier = Modifier.height(130.dp))
 
                 /*     Button(
-                         onClick = { requestPermission() },
-                         modifier = Modifier
-                             .fillMaxWidth()
-                             .height(56.dp),
-                     ) {
-                         Text("Set alarm")
-                     }
-                     Button(onConfirm) { Text("On add med page") }*/
+                    onClick = { requestPermission() },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                ) {
+                    Text("Set alarm")
+                }
+                Button(onConfirm) { Text("On add med page") }*/
             }
             // Фиксированная панель кнопок внизу экрана с размытием или фоном
             Surface(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth(),
+              modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth(),
                 color = MaterialTheme.colorScheme.background,
-                tonalElevation = 3.dp
+              tonalElevation = 3.dp,
             ) {
                 Column(
-                    modifier = Modifier
-                        .windowInsetsPadding(WindowInsets.safeDrawing)
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                  modifier =
+                          Modifier/*.windowInsetsPadding(WindowInsets.safeContent)*/.padding(16.dp),
+                  verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Button(
                         onClick = { requestPermission() },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(50.dp),
+                      modifier = Modifier.fillMaxWidth(),
                     ) {
                         Text("Set alarm", fontWeight = FontWeight.Bold)
                     }
 
                     OutlinedButton(
                         onClick = onConfirm,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(50.dp),
+                      modifier = Modifier.fillMaxWidth(),
                     ) {
                         Text("On add med page", fontWeight = FontWeight.Medium)
                     }
                 }
             }
         }
-
     }
     // Рендер диалогов поверх экрана
     if (showStartDatePicker) {
         DatePickerModal(
             initialMillis = state.startDateMillis,
             onDateSelected = { millis ->
-                if (millis!=null) viewModel.updateStartDate(millis)
+              if (millis != null) viewModel.updateStartDate(millis)
                 showStartDatePicker = false
             },
             onDismiss = { showStartDatePicker = false },
@@ -272,7 +263,7 @@ fun AddMedicationScreen(
         DatePickerModal(
             initialMillis = state.endDateMillis,
             onDateSelected = { millis ->
-                if (millis!=null) viewModel.updateEndDate(millis)
+              if (millis != null) viewModel.updateEndDate(millis)
                 showEndDatePicker = false
             },
             onDismiss = { showEndDatePicker = false },
@@ -307,7 +298,7 @@ fun ClickableReadonlyField(
                 Icon(
                     Icons.Default.CalendarToday,
                     contentDescription = null,
-                    modifier = Modifier.size(18.dp)
+                  modifier = Modifier.size(18.dp),
                 )
             },
             modifier = Modifier.fillMaxWidth(),
@@ -317,37 +308,17 @@ fun ClickableReadonlyField(
                     disabledTextColor = MaterialTheme.colorScheme.onSurface,
                     disabledBorderColor = MaterialTheme.colorScheme.outline,
                     disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    disabledTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant
+                  disabledTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 ),
             enabled = false, // Важно: отключает фокус и клавиатуру!
         )
         // Невидимый слой поверх поля, который перехватывает клики
         Surface(
-            modifier = Modifier
-                .matchParentSize()
-                .clickable { onClick() },
+          modifier = Modifier
+            .matchParentSize()
+            .clickable { onClick() },
             color = Color.Transparent,
         ) {}
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun DatePickerModal(initialMillis: Long, onDateSelected: (Long?) -> Unit, onDismiss: () -> Unit) {
-    val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = if (initialMillis > 0) initialMillis else System.currentTimeMillis()
-    )
-
-    DatePickerDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            TextButton(onClick = { onDateSelected(datePickerState.selectedDateMillis) }) {
-                Text("OK", fontWeight = FontWeight.Bold)
-            }
-        },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
-    ) {
-        DatePicker(state = datePickerState)
     }
 }
 
@@ -360,7 +331,7 @@ fun AddMedsScreenPreview() {
                 ClickableReadonlyField(
                     label = "Label",
                     text = "text",
-                    {}
+                  {},
                 )
             }
         }

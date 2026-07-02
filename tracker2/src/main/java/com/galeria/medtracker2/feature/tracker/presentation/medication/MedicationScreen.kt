@@ -52,7 +52,11 @@ import com.galeria.medtracker2.domain.model.MedicationCourseSummary
 import java.util.UUID
 
 @Composable
-fun MedicationScreen(onNavigateBack: () -> Unit = {}, viewModel: MedicationVM = hiltViewModel()) {
+fun MedicationScreen(
+  onNavigateBack: () -> Unit = {},
+  onEditMedication: (UUID) -> Unit = {},
+  viewModel: MedicationVM = hiltViewModel(),
+) {
     val state by viewModel.uiSt.collectAsStateWithLifecycle()
     var showDeleteDialog by remember { mutableStateOf<UUID?>(null) }
 
@@ -83,9 +87,10 @@ fun MedicationScreen(onNavigateBack: () -> Unit = {}, viewModel: MedicationVM = 
     ) { innerPadding ->
         Box(
             modifier =
-                Modifier.fillMaxSize()
-                    .padding(innerPadding)
-                    .background(MaterialTheme.colorScheme.background)
+                    Modifier
+                      .fillMaxSize()
+                      .padding(innerPadding)
+                      .background(MaterialTheme.colorScheme.background)
         ) {
             when (val currentState = state) {
                 is MedicationUiState.Loading -> {
@@ -108,6 +113,7 @@ fun MedicationScreen(onNavigateBack: () -> Unit = {}, viewModel: MedicationVM = 
                     MedicationView(
                         medicationCourse = currentState.medication,
                         onDeleteClick = { showDeleteDialog = currentState.medication.medicationId },
+                      onEditClick = { onEditMedication(currentState.medication.medicationId) },
                         modifier = Modifier.fillMaxSize(),
                     )
                 }
@@ -138,7 +144,9 @@ fun MedicationScreen(onNavigateBack: () -> Unit = {}, viewModel: MedicationVM = 
 @Composable
 fun EmptyMedicationPlaceholder(onNavigateBack: () -> Unit, modifier: Modifier) {
     Column(
-        modifier = modifier.fillMaxWidth().padding(24.dp),
+      modifier = modifier
+        .fillMaxWidth()
+        .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
@@ -173,12 +181,15 @@ fun EmptyMedicationPlaceholder(onNavigateBack: () -> Unit, modifier: Modifier) {
 fun MedicationView(
     medicationCourse: MedicationCourseSummary,
     onDeleteClick: () -> Unit,
+    onEditClick: (UUID) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
 
     Column(
-        modifier = modifier.verticalScroll(scrollState).padding(16.dp),
+      modifier = modifier
+        .verticalScroll(scrollState)
+        .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         // 1 & 2. Название препарата и Дозировка
@@ -190,7 +201,9 @@ fun MedicationView(
                 ),
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(16.dp),
+              modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -282,7 +295,7 @@ fun MedicationView(
 
         // Кнопка редактирования.
         Button(
-            onClick = {},
+          onClick = { onEditClick(medicationCourse.medicationId) },
             colors =
                 ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.surfaceVariant,

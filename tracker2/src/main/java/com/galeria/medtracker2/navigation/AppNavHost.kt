@@ -22,6 +22,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.galeria.medtracker2.core.ui.theme.MedTrackerTheme
 import com.galeria.medtracker2.feature.tracker.presentation.add_med.AddMedicationScreen
+import com.galeria.medtracker2.feature.tracker.presentation.edit_medication.EditMedicationScreen
 import com.galeria.medtracker2.feature.tracker.presentation.medication.MedicationScreen
 import com.galeria.medtracker2.feature.tracker.presentation.medications.MyMedicationsScreen
 import com.galeria.medtracker2.feature.tracker.presentation.schedule.MainIntakesScreen
@@ -100,8 +101,20 @@ fun AppNavHost(
                 // val route = backStackEntry.toRoute<AppRoutes.MedicationDetails>()
                 // val medicationId = UUID.fromString(route.medicationId)
 
-                MedicationScreen(onNavigateBack = { navController.navigateUp() })
+              MedicationScreen(
+                onNavigateBack = { navController.navigateUp() },
+                onEditMedication = { id ->
+                  navController.navigate(AppRoutes.EditMedication(id.toString()))
+                },
+              )
             }
+
+          composable<AppRoutes.EditMedication> { backStackEntry ->
+            //val route = backStackEntry.toRoute<AppRoutes.EditMedication>()
+            //val medicationId = UUID.fromString(route.medicationId)
+
+            EditMedicationScreen(onNavigateBack = { navController.navigateUp() })
+          }
         }
     }
 }

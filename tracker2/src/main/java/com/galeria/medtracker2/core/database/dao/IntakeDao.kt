@@ -13,14 +13,14 @@ import kotlin.uuid.ExperimentalUuidApi
 @Dao
 interface IntakeDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsert(intake: IntakeLogEntity)
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
+  suspend fun upsert(intake: IntakeLogEntity)
 
     @Query("UPDATE intake_logs SET isTaken = :status WHERE plannedIntakeId =:plannedId")
     suspend fun updateStatus(status: Boolean, plannedId: UUID)
 
-    @Query("DELETE FROM intake_logs WHERE id = :id")
-    suspend fun deleteById(id: UUID)
+  @Query("DELETE FROM intake_logs WHERE id = :id")
+  suspend fun deleteById(id: UUID)
 
     // для проверки статуса приема.
     @Query("SELECT isTaken FROM intake_logs WHERE plannedIntakeId = :plannedId")
@@ -30,7 +30,6 @@ interface IntakeDao {
     @Query("SELECT EXISTS(SELECT 1 FROM intake_logs WHERE plannedIntakeId = :plannedId)")
     suspend fun existsByPlannedId(plannedId: UUID): Boolean
 
-    @Query("SELECT * FROM intake_logs")
-    fun getAllIntakes(): Flow<List<IntakeLogEntity>>
-
+  @Query("SELECT * FROM intake_logs")
+  fun getAllIntakes(): Flow<List<IntakeLogEntity>>
 }

@@ -12,4 +12,7 @@ sealed interface AppRoutes {
     @Serializable data object MedicationsList : AppRoutes // Мои приемы
 
     @Serializable data class MedicationDetails(val medicationId: String) : AppRoutes
+
+  @Serializable
+  data class EditMedication(val medicationId: String) : AppRoutes
 }

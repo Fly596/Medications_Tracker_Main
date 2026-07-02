@@ -70,7 +70,10 @@ fun MainIntakesScreen(viewModel: MainIntakesVM = hiltViewModel()) {
         },
     ) { innerPadding ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(innerPadding).padding(horizontal = 16.dp)
+            modifier = Modifier
+              .fillMaxSize()
+              .padding(innerPadding)
+              .padding(horizontal = 16.dp)
         ) {
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -119,7 +122,9 @@ fun AIntakeCard(
         colors = CardDefaults.cardColors(containerColor = colors.secondaryBackground),
     ) {
         Row(
-            modifier = Modifier.padding(16.dp).fillMaxWidth(),
+            modifier = Modifier
+              .padding(16.dp)
+              .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -139,11 +144,15 @@ fun AIntakeCard(
         CheckIntakeDialogTemp(
             medName = intake.medicationName,
             doseMg = intake.doseMg,
-            onDismiss = { isDialogVisible = false },
             onConfirm = { status, timestamp ->
                 onCheck(status, timestamp)
                 isDialogVisible = false
             },
+          onSkip = { status, timestamp ->
+            onCheck(status, timestamp)
+            isDialogVisible = false
+          },
+          onDismiss = { isDialogVisible = false },
         )
     }
 }
@@ -155,15 +164,20 @@ fun CheckIntakeDialogTemp(
     date: Long = Instant.now().toEpochMilli(),
     time: LocalTime = LocalTime.now(),
     onConfirm: (Boolean, Long) -> Unit,
+    onSkip: (Boolean, Long) -> Unit,
     onDismiss: () -> Unit,
 ) {
     Dialog(
         onDismissRequest = { onDismiss() },
         properties = DialogProperties(usePlatformDefaultWidth = false),
     ) {
-        Card(modifier = Modifier.fillMaxWidth().padding(16.dp), shape = RoundedCornerShape(16.dp)) {
+        Card(modifier = Modifier
+          .fillMaxWidth()
+          .padding(16.dp), shape = RoundedCornerShape(16.dp)) {
             Column(
-                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                modifier = Modifier
+                  .fillMaxWidth()
+                  .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(text = "$medName $doseMg mg", style = typography.title1Emphasized)
@@ -218,7 +232,16 @@ fun CheckIntakeDialogTemp(
                             }
                             Spacer(modifier = Modifier.width(8.dp))
                             FilledTonalButton(
-                                onClick = { onDismiss() },
+                              onClick = {
+                                onSkip(
+                                  false,
+                                  DateTimeUtils.combineDateAndTime(
+                                    DateTimeUtils.fromLongToLocalDate(date),
+                                    time,
+                                  )
+                                    .toEpochMilli(),
+                                )
+                              },
                                 shape = shapes.small,
                                 modifier = Modifier.weight(0.7f),
                                 colors =
@@ -257,7 +280,10 @@ fun DateTimeRow(
     var isDatePickerVisible by rememberSaveable { mutableStateOf(false) }
 
     Row(
-        modifier = modifier.fillMaxWidth().height(48.dp).padding(),
+        modifier = modifier
+          .fillMaxWidth()
+          .height(48.dp)
+          .padding(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
