@@ -42,7 +42,7 @@ constructor(
         viewModelScope.launch {
             _uiSt.value = MedicationUiState.Loading
             try {
-                val args = savedStateHandle.toRoute<AppRoutes.MedicationDetailsRoute>()
+                val args = savedStateHandle.toRoute<AppRoutes.MedicationDetails>()
                 val medId = UUID.fromString(args.medicationId)
                 getMedication(medId)
             } catch (e: Exception) {

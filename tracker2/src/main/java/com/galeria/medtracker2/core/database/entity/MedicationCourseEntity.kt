@@ -19,11 +19,10 @@ import kotlin.uuid.ExperimentalUuidApi
                 onDelete = ForeignKey.CASCADE,
             )
         ],
-    indices = [Index("medicationId")],
+    indices = [Index("medicationId"), Index("startDate"), Index("endDate")],
 )
 data class MedicationCourseEntity(
-    @PrimaryKey
-    val id: UUID = UUID.randomUUID(),
+    @PrimaryKey val id: UUID = UUID.randomUUID(),
     val medicationId: UUID,
     val doseMg: Double,
     val startDate: Long,

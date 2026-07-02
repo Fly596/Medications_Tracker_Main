@@ -10,10 +10,10 @@ import com.galeria.medtracker2.navigation.AppRoutes
 enum class BottomNavItem(
     val route: AppRoutes,
     val label: String,
-    val icon: ImageVector
+    val icon: ImageVector,
 ) {
 
     HOME(AppRoutes.Home, "Home", Icons.Filled.Home),
-    MEDICATIONS(AppRoutes.MedicationsListRoute, "Medications", Icons.AutoMirrored.Filled.List),
-    ADD_MEDICATION(AppRoutes.AddMedicationRoute, "Add Medication", Icons.Filled.Add)
+    MEDICATIONS(AppRoutes.MedicationsList, "Medications", Icons.AutoMirrored.Filled.List),
+    ADD_MEDICATION(AppRoutes.AddMedication, "Add Medication", Icons.Filled.Add),
 }

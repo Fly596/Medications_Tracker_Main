@@ -3,15 +3,18 @@
 package com.galeria.medtracker2.core.database.entity
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import java.time.Instant
 import java.util.UUID
 import kotlin.uuid.ExperimentalUuidApi
 
-@Entity(tableName = "medications")
+@Entity(
+    tableName = "medications",
+    indices = [Index("name")],
+)
 data class MedicationEntity(
-    @PrimaryKey
-    val id: UUID = UUID.randomUUID(),
+    @PrimaryKey val id: UUID = UUID.randomUUID(),
     val name: String,
     val creationTimestamp: Long = Instant.now().toEpochMilli(),
 )

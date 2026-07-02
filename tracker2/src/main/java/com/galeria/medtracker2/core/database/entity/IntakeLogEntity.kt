@@ -16,14 +16,13 @@ import kotlin.uuid.ExperimentalUuidApi
                 entity = PlannedIntakeEntity::class,
                 parentColumns = ["id"],
                 childColumns = ["plannedIntakeId"],
-                onDelete = ForeignKey.Companion.CASCADE,
+                onDelete = ForeignKey.CASCADE,
             )
         ],
     indices = [Index("plannedIntakeId")],
 )
 data class IntakeLogEntity(
-    @PrimaryKey
-    val id: UUID = UUID.randomUUID(),
+    @PrimaryKey val id: UUID = UUID.randomUUID(),
     val plannedIntakeId: UUID,
     val actualTimestamp: Long,
     val isTaken: Boolean = false,

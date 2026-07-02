@@ -22,7 +22,7 @@ import com.galeria.medtracker2.core.database.entity.PlannedIntakeEntity
         ],
     version = 1,
     exportSchema = false,
-)
+) // @TypeConverters(Converters::class, DateConverters::class)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun medicationDao(): MedicationDao
