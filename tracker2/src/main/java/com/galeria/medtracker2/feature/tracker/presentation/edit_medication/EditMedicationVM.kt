@@ -7,7 +7,6 @@ import androidx.navigation.toRoute
 import com.galeria.medtracker2.core.utils.DateTimeUtils
 import com.galeria.medtracker2.domain.repository.MedicationRepository
 import com.galeria.medtracker2.domain.repository.MedicationsCourseRepository
-import com.galeria.medtracker2.feature.tracker.presentation.medication.MedicationUiState
 import com.galeria.medtracker2.navigation.AppRoutes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -72,7 +71,7 @@ constructor(
             try {
                 medicationRepository.removeMedication(id)
             } catch (e: Exception) {
-                _state.value = MedicationUiState.Error("${e.localizedMessage}")
+              _state.update { it.copy(errorMessage = e.localizedMessage) }
             }
         }
     }
