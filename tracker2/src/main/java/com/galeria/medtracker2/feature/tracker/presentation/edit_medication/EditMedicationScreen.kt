@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -69,7 +70,10 @@ fun EditMedicationScreen(
             )
         }
     ) { innerPadding ->
-        EditMedicationView()
+      EditMedicationView(
+        modifier = Modifier.padding(innerPadding),
+        medicationCourse = state.medication,
+        onDeleteClick = {})
     }
 }
 
@@ -82,13 +86,17 @@ fun EditMedicationView(
     val scrollState = rememberScrollState()
 
     Column(
-        modifier = modifier.verticalScroll(scrollState).padding(16.dp),
+        modifier = modifier
+          .verticalScroll(scrollState)
+          .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         // 1 & 2. Название препарата и Дозировка
         Card(modifier = Modifier.fillMaxWidth()) {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                modifier = Modifier
+                  .fillMaxWidth()
+                  .padding(16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -180,7 +188,7 @@ fun EditMedicationView(
 
         // Кнопка редактирования.
         Button(
-            onClick = { onEditClick(medicationCourse.medicationId) },
+          onClick = { },
             colors =
                 ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.surfaceVariant,
