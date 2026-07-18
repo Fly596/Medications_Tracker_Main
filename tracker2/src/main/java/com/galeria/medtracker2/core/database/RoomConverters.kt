@@ -3,14 +3,18 @@
 package com.galeria.medtracker2.core.database
 
 import androidx.room.TypeConverter
+import java.time.Instant
 import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
 
 class RoomConverters {
 
-    @TypeConverter
-    fun fromStringToUuid(value: String?): Uuid? = value?.let { Uuid.parse(it) }
+  @TypeConverter
+  fun fromInstant(value: Instant?): Long? {
+    return value?.toEpochMilli()
+  }
 
-    @TypeConverter
-    fun fromUuidToString(uuid: Uuid?): String? = uuid?.toString()
+  @TypeConverter
+  fun toInstant(value: Long?): Instant? {
+    return value?.let { Instant.ofEpochMilli(it) }
+  }
 }
