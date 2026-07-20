@@ -18,22 +18,21 @@ interface AuthRepository {
     suspend fun resetPassword(email: String): Result<Unit>
 
     suspend fun getUserId(): Result<String?>
-    
+
     suspend fun getUserEmail(): Result<String?>
 }
 
 @Singleton
-class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) :
-    AuthRepository {
+class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : AuthRepository {
 
     override suspend fun getUserId(): Result<String?> {
         return runCatching { auth.currentUser?.uid }
     }
-    
+
     override suspend fun getUserEmail(): Result<String?> {
         return runCatching { auth.currentUser?.email }
     }
-    
+
     override suspend fun signIn(email: String, password: String): Result<Unit> {
         return try {
             auth.signInWithEmailAndPassword(email, password).await()
@@ -46,7 +45,7 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) :
             Result.failure(Exception("Auth failed: ${e.message}"))
         }
     }
-    
+
     override suspend fun signUp(email: String, password: String): Result<Unit> {
         return try {
             auth.createUserWithEmailAndPassword(email, password).await()
@@ -55,7 +54,7 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) :
             Result.failure(Exception("Auth failed: ${e.message}"))
         }
     }
-    
+
     override suspend fun resetPassword(email: String): Result<Unit> {
         return suspendCoroutine { continuation ->
             auth
@@ -66,8 +65,7 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) :
                     } else {
                         continuation.resume(
                             Result.failure(
-                                task.exception
-                                    ?: RuntimeException("Password reset failed")
+                                task.exception ?: RuntimeException("Password reset failed")
                             )
                         )
                     }

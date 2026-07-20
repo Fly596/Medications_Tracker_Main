@@ -1,6 +1,7 @@
 package com.galeria.medicationstracker
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -83,6 +84,7 @@ class HeadActivity : ComponentActivity() {
                     }
                 }
                 val items = bottomNavItems()
+                Log.d("Routes: ", items.toString())
 
                 Scaffold(
                     snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -91,6 +93,7 @@ class HeadActivity : ComponentActivity() {
                     bottomBar = {
                         val navBackStackEntry by navController.currentBackStackEntryAsState()
                         val currentDestination = navBackStackEntry?.destination?.route
+                        Log.d("currentDestination", currentDestination.toString())
                         val routesOldWithoutBottomBar =
                             listOf(
                                 AuthScreen.Login.route,
@@ -99,6 +102,7 @@ class HeadActivity : ComponentActivity() {
                             )
 
                         if (currentDestination !in routesOldWithoutBottomBar) {
+                            Log.d("currentDestination", currentDestination.toString())
                             BottomNavBar(items, navController, headViewModel)
                         }
                     },

@@ -1,6 +1,5 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     id("com.google.gms.google-services")
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.compose.compiler)
@@ -10,8 +9,12 @@ plugins {
 
 android {
     namespace = "com.galeria.medicationstracker"
-    compileSdkVersion(rootProject.extra["compileSdkVersion"] as Int)
-    
+    compileSdk {
+        version =
+                release(36) {
+                    minorApiLevel = 1
+                }
+    }
     defaultConfig {
         applicationId = "com.galeria.medicationstracker"
         minSdk = 31
@@ -23,25 +26,25 @@ android {
     }
     
     buildTypes {
+        debug { isMinifyEnabled = false }
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_19
+        sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_19
     }
     buildFeatures { compose = true }
-    composeOptions { kotlinCompilerExtensionVersion = "1.5.14" }
-    kotlinOptions { jvmTarget = "19" }
 }
 
 dependencies {
-    implementation(libs.androidx.core.ktx)
+    implementation(libs.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))

@@ -1,15 +1,15 @@
 [versions]
-agp = "8.12.0"
+agp = "9.0.1"
 firebaseBom = "33.9.0"
-hiltAndroid = "2.57"
-kotlin = "2.1.0"
+hiltAndroid = "2.59.2"
+kotlin = "2.3.10"
 coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
 androidxHiltNavigationCompose = "1.2.0"
-ksp = "2.1.0-1.0.29"
+ksp = "2.3.10"
 activityCompose = "1.10.1"
 composeBom = "2025.07.00"
 comGoogleGmsGoogleServicesGradlePlugin = "4.4.3"
@@ -25,9 +25,9 @@ playServicesLocation = "21.3.0"
 appcompat = "1.7.1"
 materialIconsExtendedAndroid = "1.7.8"
 comGoogleDaggerHiltAndroidGradlePlugin = "2.57"
+coreKtxVersion = "1.17.0"
 
 [libraries]
-androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroid" }
@@ -60,10 +60,11 @@ play-services-location = { group = "com.google.android.gms", name = "play-servic
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 androidx-material-icons-extended-android = { group = "androidx.compose.material", name = "material-icons-extended-android", version.ref = "materialIconsExtendedAndroid" }
 com-google-dagger-hilt-android-gradle-plugin = { group = "com.google.dagger.hilt.android", name = "com.google.dagger.hilt.android.gradle.plugin", version.ref = "comGoogleDaggerHiltAndroidGradlePlugin" }
+core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtxVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version = "2.4.10" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "agp" }

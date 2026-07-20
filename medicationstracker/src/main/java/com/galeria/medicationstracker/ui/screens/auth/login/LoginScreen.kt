@@ -39,7 +39,7 @@ fun LoginScreen(
     viewModel: LoginScreenViewModel = hiltViewModel(),
 ) {
 
-    val state = viewModel.loginScreenState.collectAsStateWithLifecycle()
+    val state = viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(key1 = Unit) {
         viewModel.loginSuccessEvent.collect { onLoginSuccessNavigation() }

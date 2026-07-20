@@ -7,11 +7,13 @@ import com.galeria.medicationstracker.data.NewUser
 import com.galeria.medicationstracker.data.NewUserRepository
 import com.galeria.medicationstracker.utils.toTimestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -42,13 +44,19 @@ constructor(private val repository: AuthRepository, private val userRepo: NewUse
     fun onRegisterClick() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, generalError = null) }
-            val result = repository.signUp(_uiState.value.email, _uiState.value.password)
+            //val result = repository.signUp(_uiState.value.email, _uiState.value.password)
+            val result = withContext(Dispatchers.IO) {
+                repository.signUp(
+                    _uiState.value.email,
+                    _uiState.value.password
+                )
+            }
 
             result.fold(
                 onSuccess = {
                     val newUserId = repository.getUserId()
                     val birthDateTimestamp = _uiState.value.selectedBirthDate.toTimestamp()
-                    
+
                     _uiState.update { it.copy(isLoading = false) }
                     val user: NewUser =
                         NewUser(
