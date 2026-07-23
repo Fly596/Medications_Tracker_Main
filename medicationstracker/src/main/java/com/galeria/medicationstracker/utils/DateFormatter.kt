@@ -44,6 +44,9 @@ fun Long.toLocalDate(): LocalDate {
         .toLocalDate()
 }
 
+fun Instant.toTimestamp(): Timestamp {
+  return Timestamp(atZone(ZoneId.systemDefault()).toEpochSecond(), 0)
+}
 // region bad
 fun formatDateStringToTimestampMMMMddyyyy(
     dateText: String,
