@@ -3,7 +3,7 @@ package com.galeria.medicationstracker.data
 import com.galeria.medicationstracker.core.database.entity.UserEntity
 import com.galeria.medicationstracker.core.domain.model.User
 import com.galeria.medicationstracker.core.firebase.model.UserDocument
-import com.galeria.medicationstracker.utils.toTimestamp
+import com.galeria.medicationstracker.utils.DateTimeUtils
 
 // DTO -> Entity
 fun UserDocument.toEntity(): UserEntity = UserEntity(
@@ -12,7 +12,7 @@ fun UserDocument.toEntity(): UserEntity = UserEntity(
   name = name,
   weight = weight,
   height = height,
-  dateOfBirth = dateOfBirth?.toInstant()
+  dateOfBirth = DateTimeUtils.timestampToLocalDate(dateOfBirth)
 )
 
 // Domain -> DTO
@@ -22,7 +22,7 @@ fun User.toDocument(): UserDocument = UserDocument(
   name = name,
   weight = weight,
   height = height,
-  dateOfBirth = dateOfBirth?.toTimestamp()
+  dateOfBirth = DateTimeUtils.fromDateToTimestamp(dateOfBirth)
 )
 
 // Entity -> Domain

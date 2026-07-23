@@ -2,7 +2,7 @@ package com.galeria.medicationstracker.core.database.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.time.Instant
+import java.time.LocalDate
 
 @Entity(tableName = "users")
 data class UserEntity(
@@ -12,5 +12,5 @@ data class UserEntity(
   val name: String,
   val weight: Float?,
   val height: Float?,
-  val dateOfBirth: Instant?,
+  val dateOfBirth: LocalDate?,
 )

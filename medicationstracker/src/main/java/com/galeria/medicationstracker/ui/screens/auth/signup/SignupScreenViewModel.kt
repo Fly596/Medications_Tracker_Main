@@ -2,6 +2,7 @@ package com.galeria.medicationstracker.ui.screens.auth.signup
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.galeria.medicationstracker.core.domain.repository._AuthRepository
 import com.galeria.medicationstracker.data.AuthRepository
 import com.galeria.medicationstracker.data.NewUser
 import com.galeria.medicationstracker.data.NewUserRepository
@@ -18,88 +19,107 @@ import java.time.LocalDate
 import javax.inject.Inject
 
 data class SignupScreenState(
-    val name: String = "",
-    val email: String = "",
-    val emailErrorMessage: String? = null,
-    val password: String = "",
-    val passwordErrorMessage: String? = null,
-    val showPassword: Boolean = false,
-    val isLoading: Boolean = false,
-    val generalError: String? = null,
-    val selectedBirthDate: LocalDate = LocalDate.now(),
-    val showDatePicker: Boolean = false,
+  val name: String = "",
+  val email: String = "",
+  val emailErrorMessage: String? = null,
+  val password: String = "",
+  val passwordErrorMessage: String? = null,
+  val showPassword: Boolean = false,
+  val isLoading: Boolean = false,
+  val generalError: String? = null,
+  val selectedBirthDate: LocalDate = LocalDate.now(),
+  val showDatePicker: Boolean = false,
 )
 
 @HiltViewModel
 class SignupScreenViewModel
 @Inject
-constructor(private val repository: AuthRepository, private val userRepo: NewUserRepository) :
-    ViewModel() {
+constructor(
+  private val repository: AuthRepository,
+  private val authRepository: _AuthRepository,
+  private val userRepo: NewUserRepository,
+) :
+  ViewModel() {
 
-    // val auth = FirebaseAuth.getInstance()
-    private val _uiState = MutableStateFlow(SignupScreenState())
-    val uiState = _uiState.asStateFlow()
-    private val _signupSuccessEvent = MutableSharedFlow<Unit>()
+  // val auth = FirebaseAuth.getInstance()
+  private val _uiState = MutableStateFlow(SignupScreenState())
+  val uiState = _uiState.asStateFlow()
+  private val _signupSuccessEvent = MutableSharedFlow<Unit>()
 
-    fun onRegisterClick() {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, generalError = null) }
-            //val result = repository.signUp(_uiState.value.email, _uiState.value.password)
-            val result = withContext(Dispatchers.IO) {
-                repository.signUp(
-                    _uiState.value.email,
-                    _uiState.value.password
-                )
-            }
+  fun onRegister() {
+    viewModelScope.launch {
+      _uiState.update { it.copy(isLoading = true) }
 
-            result.fold(
-                onSuccess = {
-                    val newUserId = repository.getUserId()
-                    val birthDateTimestamp = _uiState.value.selectedBirthDate.toTimestamp()
+      authRepository.signUp(
+        _uiState.value.email,
+        _uiState.value.password,
+        _uiState.value.name,
+        _uiState.value.selectedBirthDate
+      )
+      _uiState.update { it.copy(isLoading = false) }
+    }
+  }
 
-                    _uiState.update { it.copy(isLoading = false) }
-                    val user: NewUser =
-                        NewUser(
-                            id = newUserId.getOrNull().toString(),
-                            name = _uiState.value.name,
-                            email = _uiState.value.email,
-                            dateOfBirth = birthDateTimestamp,
-                        )
-                    userRepo.addUser(user)
-                },
-                onFailure = { exception ->
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            generalError = exception.message ?: "Signup failed.",
-                        )
-                    }
-                },
+  fun onRegisterClick() {
+    viewModelScope.launch {
+      _uiState.update { it.copy(isLoading = true, generalError = null) }
+
+      // 1. Вызов репозитория с передачей введенных данных.
+      val result = withContext(Dispatchers.IO) {
+        repository.signUp(
+          _uiState.value.email,
+          _uiState.value.password
+        )
+      }
+
+      result.fold(
+        onSuccess = {
+          val newUserId = repository.getUserId()
+          val birthDateTimestamp = _uiState.value.selectedBirthDate.toTimestamp()
+
+          _uiState.update { it.copy(isLoading = false) }
+          val user: NewUser =
+              NewUser(
+                id = newUserId.getOrNull().toString(),
+                name = _uiState.value.name,
+                email = _uiState.value.email,
+                dateOfBirth = birthDateTimestamp,
+              )
+          userRepo.addUser(user)
+        },
+        onFailure = { exception ->
+          _uiState.update {
+            it.copy(
+              isLoading = false,
+              generalError = exception.message ?: "Signup failed.",
             )
-        }
+          }
+        },
+      )
     }
+  }
 
-    fun updateUserName(input: String) {
-        _uiState.value = _uiState.value.copy(name = input)
-    }
+  fun updateUserName(input: String) {
+    _uiState.value = _uiState.value.copy(name = input)
+  }
 
-    fun updateEmail(input: String) {
-        _uiState.value = _uiState.value.copy(email = input)
-    }
+  fun updateEmail(input: String) {
+    _uiState.value = _uiState.value.copy(email = input)
+  }
 
-    fun updatePassword(input: String) {
-        _uiState.value = _uiState.value.copy(password = input)
-    }
+  fun updatePassword(input: String) {
+    _uiState.value = _uiState.value.copy(password = input)
+  }
 
-    fun isShowPasswordChecked(input: Boolean) {
-        _uiState.value = _uiState.value.copy(showPassword = !input)
-    }
+  fun isShowPasswordChecked(input: Boolean) {
+    _uiState.value = _uiState.value.copy(showPassword = !input)
+  }
 
-    fun showDatePicker() {
-        _uiState.update { it.copy(showDatePicker = true) }
-    }
+  fun showDatePicker() {
+    _uiState.update { it.copy(showDatePicker = true) }
+  }
 
-    fun dismissDatePicker() {
-        _uiState.update { it.copy(showDatePicker = false) }
-    }
+  fun dismissDatePicker() {
+    _uiState.update { it.copy(showDatePicker = false) }
+  }
 }

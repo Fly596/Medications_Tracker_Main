@@ -82,7 +82,9 @@ fun SignupScreen(
     }
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+        modifier = Modifier
+          .fillMaxSize()
+          .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.Top,
     ) {
         Spacer(modifier = Modifier.height(16.dp))
@@ -152,7 +154,7 @@ fun SignupScreen(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            FlyButton(onClick = { viewModel.onRegisterClick() }) {
+          FlyButton(onClick = { viewModel.onRegister() }) {
                 Text(text = stringResource(R.string.create_account))
             }
         }

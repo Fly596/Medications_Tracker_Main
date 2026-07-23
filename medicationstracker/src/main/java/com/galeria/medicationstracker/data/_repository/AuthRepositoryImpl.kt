@@ -2,21 +2,23 @@ package com.galeria.medicationstracker.data._repository
 
 import com.galeria.medicationstracker.core.database.dao.UserDao
 import com.galeria.medicationstracker.core.domain.model.User
-import com.galeria.medicationstracker.core.domain.repository.AuthRepository
+import com.galeria.medicationstracker.core.domain.repository._AuthRepository
 import com.galeria.medicationstracker.core.firebase.datasource.AuthDatasource
 import com.galeria.medicationstracker.core.firebase.datasource.UserDatasource
 import com.galeria.medicationstracker.core.firebase.model.UserDocument
 import com.galeria.medicationstracker.data.toDomain
 import com.galeria.medicationstracker.data.toEntity
+import com.google.firebase.Timestamp
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.time.LocalDate
 import javax.inject.Inject
 
 class _AuthRepositoryImpl @Inject constructor(
   private val authRemote: AuthDatasource,
   private val userRemote: UserDatasource,
   private val userDao: UserDao
-) : AuthRepository {
+) : _AuthRepository {
 
   // Следим за состоянием сессии
   override val authStateFlow: Flow<User?> = authRemote.authStateFlow
@@ -45,7 +47,12 @@ class _AuthRepositoryImpl @Inject constructor(
     userEntity.toDomain()
   }
 
-  override suspend fun signUp(email: String, pass: String, name: String): Result<User> =
+  override suspend fun signUp(
+    email: String,
+    pass: String,
+    name: String,
+    birthDate: LocalDate
+  ): Result<User> =
       runCatching {
         // 1. Регистрируем пользователя в Firebase Auth
         val firebaseUser = authRemote.signUp(email, pass)
@@ -54,7 +61,8 @@ class _AuthRepositoryImpl @Inject constructor(
         val userDoc = UserDocument(
           id = firebaseUser.uid,
           email = email,
-          name = name
+          name = name,
+          dateOfBirth = Timestamp(birthDate.toEpochDay(), 0)
         )
 
         // 3. Сохраняем профиль в Firestore

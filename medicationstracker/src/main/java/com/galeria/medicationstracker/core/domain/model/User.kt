@@ -1,6 +1,6 @@
 package com.galeria.medicationstracker.core.domain.model
 
-import java.time.Instant
+import java.time.LocalDate
 
 data class User(
   val id: String,
@@ -8,5 +8,5 @@ data class User(
   val email: String,
   val weight: Float?,
   val height: Float?,
-  val dateOfBirth: Instant?,
+  val dateOfBirth: LocalDate?,
 )
