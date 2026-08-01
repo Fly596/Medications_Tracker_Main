@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
-interface AuthDatasource {
+interface AuthDataSource {
 
   val authStateFlow: Flow<FirebaseUser?>
 
@@ -19,8 +19,8 @@ interface AuthDatasource {
   suspend fun resetPassword(email: String)
 }
 
-class AuthDatasourceImpl
-@Inject constructor(private val auth: FirebaseAuth) : AuthDatasource {
+class AuthDataSourceImpl
+@Inject constructor(private val auth: FirebaseAuth) : AuthDataSource {
 
   override val authStateFlow: Flow<FirebaseUser?> = callbackFlow {
     val listener = FirebaseAuth.AuthStateListener { auth ->

@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
-interface UserDatasource {
+interface UserDataSource {
 
   suspend fun addUser(user: UserDocument)
 
@@ -21,7 +21,7 @@ interface UserDatasource {
 
 class UserDataSourceImpl @Inject constructor(
   private val firestore: FirebaseFirestore
-) : UserDatasource {
+) : UserDataSource {
 
   override suspend fun addUser(user: UserDocument) {
     firestore.collection("User")

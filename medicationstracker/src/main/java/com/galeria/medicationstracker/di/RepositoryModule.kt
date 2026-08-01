@@ -2,6 +2,10 @@ package com.galeria.medicationstracker.di
 
 import com.galeria.medicationstracker.core.domain.repository._AuthRepository
 import com.galeria.medicationstracker.core.domain.repository._UserRepository
+import com.galeria.medicationstracker.core.firebase.datasource.AuthDataSource
+import com.galeria.medicationstracker.core.firebase.datasource.AuthDataSourceImpl
+import com.galeria.medicationstracker.core.firebase.datasource.UserDataSource
+import com.galeria.medicationstracker.core.firebase.datasource.UserDataSourceImpl
 import com.galeria.medicationstracker.data.AuthRepository
 import com.galeria.medicationstracker.data.AuthRepositoryImpl
 import com.galeria.medicationstracker.data.NewIntakeRepository
@@ -20,27 +24,40 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class NewRepositoryModule {
 
-    @Binds abstract fun bindNewAuthRepository(impl: AuthRepositoryImpl): AuthRepository
+  @Binds
+  abstract fun bindNewAuthRepository(impl: AuthRepositoryImpl): AuthRepository
 
-    @Binds abstract fun bindNewIntakeRepository(impl: NewIntakeRepositoryImpl): NewIntakeRepository
+  @Binds
+  abstract fun bindNewIntakeRepository(impl: NewIntakeRepositoryImpl): NewIntakeRepository
 
-    @Binds
-    abstract fun bindNewMedicationRepository(
-        impl: NewMedicationRepositoryImpl
-    ): NewMedicationRepository
+  @Binds
+  abstract fun bindNewMedicationRepository(
+    impl: NewMedicationRepositoryImpl
+  ): NewMedicationRepository
 
-    @Binds abstract fun bindNewUserRepository(impl: NewUserRepositoryImpl): NewUserRepository
+  @Binds
+  abstract fun bindNewUserRepository(impl: NewUserRepositoryImpl): NewUserRepository
 
-    @Binds abstract fun bindNewMoodRepository(impl: NewMoodRepositoryImpl): NewMoodRepository
+  @Binds
+  abstract fun bindNewMoodRepository(impl: NewMoodRepositoryImpl): NewMoodRepository
 
-    @Binds abstract fun bindNewNoteRepository(impl: NewNoteRepositoryImpl): NewNoteRepository
+  @Binds
+  abstract fun bindNewNoteRepository(impl: NewNoteRepositoryImpl): NewNoteRepository
   @Binds
   abstract fun bindAuthRepository(impl: _AuthRepositoryImpl): _AuthRepository
   @Binds
   abstract fun bindUserRepository(impl: _UserRepositoryImpl): _UserRepository
+
+  @Binds
+  @Singleton
+  abstract fun bindAuthDatasource(impl: AuthDataSourceImpl): AuthDataSource
+  @Binds
+  @Singleton
+  abstract fun bindUserDatasource(impl: UserDataSourceImpl): UserDataSource
 }

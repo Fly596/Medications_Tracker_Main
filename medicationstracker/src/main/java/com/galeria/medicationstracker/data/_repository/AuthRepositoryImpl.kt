@@ -3,8 +3,8 @@ package com.galeria.medicationstracker.data._repository
 import com.galeria.medicationstracker.core.database.dao.UserDao
 import com.galeria.medicationstracker.core.domain.model.User
 import com.galeria.medicationstracker.core.domain.repository._AuthRepository
-import com.galeria.medicationstracker.core.firebase.datasource.AuthDatasource
-import com.galeria.medicationstracker.core.firebase.datasource.UserDatasource
+import com.galeria.medicationstracker.core.firebase.datasource.AuthDataSource
+import com.galeria.medicationstracker.core.firebase.datasource.UserDataSource
 import com.galeria.medicationstracker.core.firebase.model.UserDocument
 import com.galeria.medicationstracker.data.toDomain
 import com.galeria.medicationstracker.data.toEntity
@@ -15,8 +15,8 @@ import java.time.LocalDate
 import javax.inject.Inject
 
 class _AuthRepositoryImpl @Inject constructor(
-  private val authRemote: AuthDatasource,
-  private val userRemote: UserDatasource,
+  private val authRemote: AuthDataSource,
+  private val userRemote: UserDataSource,
   private val userDao: UserDao
 ) : _AuthRepository {
 
