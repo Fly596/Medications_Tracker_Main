@@ -1,9 +1,12 @@
 package com.galeria.medicationstracker.di
 
 import com.galeria.medicationstracker.core.domain.repository._AuthRepository
+import com.galeria.medicationstracker.core.domain.repository._MedicationRepository
 import com.galeria.medicationstracker.core.domain.repository._UserRepository
 import com.galeria.medicationstracker.core.firebase.datasource.AuthDataSource
 import com.galeria.medicationstracker.core.firebase.datasource.AuthDataSourceImpl
+import com.galeria.medicationstracker.core.firebase.datasource.MedicationDataSource
+import com.galeria.medicationstracker.core.firebase.datasource.MedicationDataSourceImpl
 import com.galeria.medicationstracker.core.firebase.datasource.UserDataSource
 import com.galeria.medicationstracker.core.firebase.datasource.UserDataSourceImpl
 import com.galeria.medicationstracker.data.AuthRepository
@@ -19,6 +22,7 @@ import com.galeria.medicationstracker.data.NewNoteRepositoryImpl
 import com.galeria.medicationstracker.data.NewUserRepository
 import com.galeria.medicationstracker.data.NewUserRepositoryImpl
 import com.galeria.medicationstracker.data._repository._AuthRepositoryImpl
+import com.galeria.medicationstracker.data._repository._MedicationRepositoryImpl
 import com.galeria.medicationstracker.data._repository._UserRepositoryImpl
 import dagger.Binds
 import dagger.Module
@@ -49,15 +53,25 @@ abstract class NewRepositoryModule {
 
   @Binds
   abstract fun bindNewNoteRepository(impl: NewNoteRepositoryImpl): NewNoteRepository
+
+  @Binds
+  @Singleton
+  abstract fun bindAuthDatasource(impl: AuthDataSourceImpl): AuthDataSource
+
   @Binds
   abstract fun bindAuthRepository(impl: _AuthRepositoryImpl): _AuthRepository
+
+  @Binds
+  @Singleton
+  abstract fun bindUserDatasource(impl: UserDataSourceImpl): UserDataSource
   @Binds
   abstract fun bindUserRepository(impl: _UserRepositoryImpl): _UserRepository
 
   @Binds
   @Singleton
-  abstract fun bindAuthDatasource(impl: AuthDataSourceImpl): AuthDataSource
+  abstract fun bindMedicationDatasource(impl: MedicationDataSourceImpl): MedicationDataSource
+
   @Binds
   @Singleton
-  abstract fun bindUserDatasource(impl: UserDataSourceImpl): UserDataSource
+  abstract fun bindMedicationRepository(impl: _MedicationRepositoryImpl): _MedicationRepository
 }

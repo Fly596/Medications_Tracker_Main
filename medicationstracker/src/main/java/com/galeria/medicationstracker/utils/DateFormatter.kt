@@ -7,6 +7,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
@@ -31,6 +32,18 @@ object DateTimeUtils {
     return ts?.let {
       ts.toInstant().atZone(zoneId).toLocalDate()
     } ?: LocalDateTime.now().toLocalDate()
+  }
+
+  fun timestampToInstant(ts: Timestamp?): Instant {
+    return ts?.let {
+      ts.toInstant()
+    } ?: LocalDateTime.now().toInstant(ZoneOffset.UTC)
+  }
+
+  fun instantToTimestamp(instant: Instant?): Timestamp {
+    return instant?.let {
+      Timestamp(it.epochSecond, 0)
+    } ?: Timestamp.now()
   }
 }
 
