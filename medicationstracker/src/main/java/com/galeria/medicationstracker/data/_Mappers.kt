@@ -1,17 +1,19 @@
 package com.galeria.medicationstracker.data
 
-import com.galeria.medicationstracker.core.database.entity.DayOfWeek
-import com.galeria.medicationstracker.core.database.entity.MedicationDayEntity
 import com.galeria.medicationstracker.core.database.entity.MedicationEntity
-import com.galeria.medicationstracker.core.database.entity.MedicationWithDays
 import com.galeria.medicationstracker.core.database.entity.UserEntity
 import com.galeria.medicationstracker.core.domain.model.Medication
 import com.galeria.medicationstracker.core.domain.model.User
 import com.galeria.medicationstracker.core.firebase.model.MedicationDocument
 import com.galeria.medicationstracker.core.firebase.model.UserDocument
 import com.galeria.medicationstracker.utils.DateTimeUtils
-import java.util.Locale.getDefault
-import java.util.UUID
+import com.google.firebase.Timestamp
+import java.time.DayOfWeek
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.ZoneId
+import java.util.Date
 
 // DTO -> Entity
 fun UserDocument.toEntity(): UserEntity = UserEntity(
@@ -43,52 +45,75 @@ fun UserEntity.toDomain(): User = User(
   dateOfBirth = dateOfBirth
 )
 
-fun MedicationDocument.toRoomEntities(): Pair<MedicationEntity, List<MedicationDayEntity>> {
-  val medicationEntity = MedicationEntity(
+// --- Domain -> Room Entity ---
+fun Medication.toEntity() = MedicationEntity(
+  id = id,
+  userId = userId,
+  name = name,
+  dosage = dosage,
+  form = form.name,
+  startDate = startDate,
+  endDate = endDate,
+  daysOfWeek = daysOfWeek,
+  intakeTime = intakeTime
+)
+
+// --- Room Entity -> Domain ---
+fun MedicationEntity.toDomain() = Medication(
+  id = id,
+  userId = userId,
+  name = name,
+  dosage = dosage,
+  form = runCatching { MedicationForm.valueOf(form) }.getOrDefault(MedicationForm.UNKNOWN),
+  startDate = startDate,
+  endDate = endDate,
+  daysOfWeek = daysOfWeek,
+  intakeTime = intakeTime
+)
+
+// --- Firebase Document -> Domain ---
+fun MedicationDocument.toDomain(): Medication {
+  val zone = ZoneId.systemDefault()
+  val startLocalDate = startDate?.let {
+    Instant.ofEpochMilli(it.seconds * 1000).atZone(zone).toLocalDate()
+  } ?: LocalDate.now()
+
+  val endLocalDate = endDate?.let {
+    Instant.ofEpochMilli(it.seconds * 1000).atZone(zone).toLocalDate()
+  } ?: LocalDate.now()
+
+  return Medication(
     id = id,
     userId = userId,
     name = name,
     dosage = dosage,
-    form = form,
-    startDate = DateTimeUtils.timestampToInstant(startDate),
-    endDate = DateTimeUtils.timestampToInstant(endDate),
-    intakeTime = intakeTime
+    form = runCatching { MedicationForm.valueOf(form) }.getOrDefault(MedicationForm.UNKNOWN),
+    startDate = startLocalDate,
+    endDate = endLocalDate,
+    daysOfWeek = daysOfWeek.mapNotNull { runCatching { DayOfWeek.valueOf(it) }.getOrNull() },
+    intakeTime = LocalTime.ofSecondOfDay(intakeTimeInSeconds.toLong())
   )
-
-  val dayEntities = daysOfWeek.map { day ->
-    MedicationDayEntity(
-      id = UUID.randomUUID(),
-      medicationId = id,
-      dayOfWeek = DayOfWeek.valueOf(day.uppercase(getDefault()))
-    )
-  }
-
-  return Pair(medicationEntity, dayEntities)
 }
 
-fun Medication.toDocument(): MedicationDocument = MedicationDocument(
-  id = id,
-  userId = userId,
-  dosage = dosage,
-  name = name,
-  form = form,
-  startDate = DateTimeUtils.instantToTimestamp(startDate),
-  endDate = DateTimeUtils.instantToTimestamp(endDate),
-  daysOfWeek = daysOfWeek.map { it.name },
-  intakeTime = intakeTime
-)
+// --- Domain -> Firebase Document ---
+fun Medication.toDocument(): MedicationDocument {
+  val zone = ZoneId.systemDefault()
+  val startTimestamp = Timestamp(Date.from(startDate.atStartOfDay(zone).toInstant()))
+  val endTimestamp = Timestamp(java.util.Date.from(endDate.atStartOfDay(zone).toInstant()))
 
-fun MedicationWithDays.toDomain(): Medication = Medication(
-  id = medication.id,
-  userId = medication.userId,
-  dosage = medication.dosage,
-  name = medication.name,
-  form = medication.form,
-  startDate = medication.startDate,
-  endDate = medication.endDate,
-  daysOfWeek = days.map { it.dayOfWeek },
-  intakeTime = medication.intakeTime
-)
+  return MedicationDocument(
+    id = id,
+    userId = userId,
+    name = name,
+    dosage = dosage,
+    form = form.name,
+    startDate = startTimestamp,
+    endDate = endTimestamp,
+    daysOfWeek = daysOfWeek.map { it.name },
+    intakeTimeInSeconds = intakeTime.toSecondOfDay()
+  )
+}
+
 
 /*
 fun MedicationEntity.toDomain(): Medication = Medication(

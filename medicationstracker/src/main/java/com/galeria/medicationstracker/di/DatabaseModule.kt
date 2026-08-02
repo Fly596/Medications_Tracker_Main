@@ -3,6 +3,7 @@ package com.galeria.medicationstracker.di
 import android.content.Context
 import androidx.room.Room
 import com.galeria.medicationstracker.core.database.AppDatabase
+import com.galeria.medicationstracker.core.database.dao.MedicationDao
 import com.galeria.medicationstracker.core.database.dao.UserDao
 import dagger.Module
 import dagger.Provides
@@ -29,7 +30,13 @@ object DatabaseModule {
         .build()
 
   @Provides
-  fun providesLoginDao(
+  fun providesUserDao(
     database: AppDatabase,
   ): UserDao = database.userDao()
+
+  @Provides
+  fun providesMedicationDao(
+    database: AppDatabase,
+  ): MedicationDao = database.medicationDao()
+
 }

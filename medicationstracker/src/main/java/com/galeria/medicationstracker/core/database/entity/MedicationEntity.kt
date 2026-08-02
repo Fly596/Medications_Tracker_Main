@@ -2,15 +2,9 @@ package com.galeria.medicationstracker.core.database.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.galeria.medicationstracker.data.MedicationForm
-import kotlinx.serialization.Serializable
-import java.time.Instant
-
-@Serializable
-enum class DayOfWeek {
-
-  MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY
-}
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.LocalTime
 
 @Entity(tableName = "medications")
 data class MedicationEntity(
@@ -19,9 +13,10 @@ data class MedicationEntity(
   val userId: String,
   val name: String,
   val dosage: String,
-  val form: String = MedicationForm.UNKNOWN.name,
-  val startDate: Instant,
-  val endDate: Instant,
-  val intakeTime: String,
+  val form: String,
+  val startDate: LocalDate,
+  val endDate: LocalDate,
+  val daysOfWeek: List<DayOfWeek>,
+  val intakeTime: LocalTime, // Колво секунд с начала дня.
 )
 

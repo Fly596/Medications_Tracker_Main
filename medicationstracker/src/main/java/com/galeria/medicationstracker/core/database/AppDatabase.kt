@@ -5,7 +5,6 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.galeria.medicationstracker.core.database.dao.MedicationDao
 import com.galeria.medicationstracker.core.database.dao.UserDao
-import com.galeria.medicationstracker.core.database.entity.MedicationDayEntity
 import com.galeria.medicationstracker.core.database.entity.MedicationEntity
 import com.galeria.medicationstracker.core.database.entity.UserEntity
 
@@ -14,7 +13,6 @@ import com.galeria.medicationstracker.core.database.entity.UserEntity
       [
         UserEntity::class,
         MedicationEntity::class,
-        MedicationDayEntity::class
       ],
   version = 1,
   exportSchema = false,

@@ -4,12 +4,9 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Transaction
-import com.galeria.medicationstracker.core.database.entity.DayOfWeek
-import com.galeria.medicationstracker.core.database.entity.MedicationDayEntity
 import com.galeria.medicationstracker.core.database.entity.MedicationEntity
-import com.galeria.medicationstracker.core.database.entity.MedicationWithDays
 import kotlinx.coroutines.flow.Flow
+import java.time.LocalDate
 
 @Dao
 interface MedicationDao {
@@ -17,56 +14,30 @@ interface MedicationDao {
   @Insert(onConflict = OnConflictStrategy.IGNORE)
   suspend fun insertMedication(medication: MedicationEntity)
 
-  @Insert
-  suspend fun insertDays(days: List<MedicationDayEntity>)
-
-  /**
-   * ТРАНЗАКЦИЯ: Выполняет запись в обе таблицы как единую неразделимую операцию.
-   * Если запись дней упадет с ошибкой, запись самого лекарства отменится (Rollback).
-   */
-  @Transaction
-  suspend fun insertMedicationWithDays(
-    medication: MedicationEntity,
-    days: List<MedicationDayEntity>
-  ) {
-    insertMedication(medication)
-    insertDays(days)
-  }
-
   /**
    * Запрос 1: Получить ВСЕ лекарства со всеми днями приема.
-   * Аннотация @Transaction обязательна для @Relation, чтобы Room сделал 2 запроса атомарно.
    */
-  @Transaction
   @Query("SELECT * FROM medications")
-  fun getAllMedicationsWithDays(): Flow<List<MedicationWithDays>>
+  fun getAllMedicationsWithDays(): Flow<List<MedicationEntity>>
 
   /**
-   * Запрос 2: Найти только те лекарства, которые нужно пить в конкретный день (например, в ПОНЕДЕЛЬНИК).
-   * Благодаря индексу на `dayOfWeek` запрос выполняется мгновенно.
+   * Запрос 2: Получить конкретное лекарство по его ID.
    */
-  @Transaction
+  @Query("SELECT * FROM medications WHERE id = :medicationId")
+  fun getMedicationWithDays(medicationId: String): Flow<MedicationEntity>
+
+  /**
+   * Запрос 3: Получить лекарства, которые нужно принимать сегодня.
+   */
   @Query(
     """
         SELECT * FROM medications 
-        WHERE id IN (
-            SELECT medicationId FROM medication_days WHERE dayOfWeek = :day
-        )
+        WHERE :date BETWEEN startDate AND endDate 
+          AND daysOfWeek LIKE '%' || :dayOfWeek || '%'
     """
   )
-  fun getMedicationsForDay(day: DayOfWeek): Flow<List<MedicationWithDays>>
-
-  /**
-   * Запрос 3: Посчитать количество лекарств, назначенных на конкретный день.
-   */
-  @Query("SELECT COUNT(DISTINCT medicationId) FROM medication_days WHERE dayOfWeek = :day")
-  fun getMedicationCountForDay(day: DayOfWeek): Flow<Int>
-
-  /**
-   * Запрос 4: Получить конкретное лекарство по его ID.
-   * Аннотация @Transaction обязательна для @Relation, чтобы Room сделал 2 запроса атомарно.
-   */
-  @Transaction
-  @Query("SELECT * FROM medications WHERE id = :medicationId")
-  fun getMedicationWithDays(medicationId: String): Flow<MedicationWithDays>
+  fun getMedicationsForDate(
+    date: LocalDate,
+    dayOfWeek: String // Сюда передаем dayOfWeek.name (например, "MONDAY")
+  ): Flow<List<MedicationEntity>>
 }

@@ -5,7 +5,7 @@ import com.google.firebase.firestore.DocumentId
 
 data class UserDocument(
   @DocumentId
-  val id: String,
+  val id: String = "",
   var name: String = "",
   var email: String = "",
   var weight: Float? = null,

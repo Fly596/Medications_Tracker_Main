@@ -1,32 +1,48 @@
 package com.galeria.medicationstracker.core.database
 
 import androidx.room.TypeConverter
-import com.galeria.medicationstracker.core.database.entity.DayOfWeek
 import kotlinx.serialization.json.Json
-import java.time.Instant
+import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 class RoomConverters {
 
+  /*  @TypeConverter
+    fun fromLocalDate(value: LocalDate?): Long? {
+      return value?.toEpochDay()
+    }
+
+    @TypeConverter
+    fun toLocalDate(value: Long?): LocalDate? {
+      return value?.let { LocalDate.ofEpochDay(it) }
+    }
+
+    @TypeConverter
+    fun fromInstant(value: Instant?): Long? {
+      return value?.toEpochMilli()
+    }
+
+    @TypeConverter
+    fun toInstant(value: Long?): Instant? {
+      return value?.let { Instant.ofEpochMilli(it) }
+    }*/
+
   @TypeConverter
-  fun fromLocalDate(value: LocalDate?): Long? {
-    return value?.toEpochDay()
+  fun localDateToString(date: LocalDate?): String? =
+      date?.format(DateTimeFormatter.ofPattern("mm-dd-yyyy"))
+
+  @TypeConverter
+  fun stringToLocalDate(dateString: String?): LocalDate? = dateString?.let {
+    LocalDate.parse(it, DateTimeFormatter.ofPattern("mm-dd-yyyy"))
   }
 
   @TypeConverter
-  fun toLocalDate(value: Long?): LocalDate? {
-    return value?.let { LocalDate.ofEpochDay(it) }
-  }
+  fun fromLocalTime(time: LocalTime?): Int? = time?.toSecondOfDay()
 
   @TypeConverter
-  fun fromInstant(value: Instant?): Long? {
-    return value?.toEpochMilli()
-  }
-
-  @TypeConverter
-  fun toInstant(value: Long?): Instant? {
-    return value?.let { Instant.ofEpochMilli(it) }
-  }
+  fun toLocalTime(seconds: Int?): LocalTime? = seconds?.let { LocalTime.ofSecondOfDay(it.toLong()) }
 
   @TypeConverter
   fun fromDayOfWeekList(value: List<DayOfWeek>): String {
