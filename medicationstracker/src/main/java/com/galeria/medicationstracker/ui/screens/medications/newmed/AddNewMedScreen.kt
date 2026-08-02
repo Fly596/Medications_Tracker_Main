@@ -70,420 +70,418 @@ import java.util.Calendar
 
 @Composable
 fun NewMedicationDataScreen(
-    modifier: Modifier = Modifier,
-    navigateBack: () -> Unit,
-    viewModel: AddNewMedViewModel = hiltViewModel(),
-    viewModelOld: AddNewMedViewModel = hiltViewModel(),
+  modifier: Modifier = Modifier,
+  navigateBack: () -> Unit,
+  viewModel: AddNewMedViewModel = hiltViewModel(),
+  newViewModel: NewMedViewModelNew = hiltViewModel()
 ) {
-    val state = viewModel.uiState.collectAsStateWithLifecycle()
+  val state = viewModel.uiState.collectAsStateWithLifecycle()
 
-    MedTrackerTheme {
-        Scaffold(
-            containerColor = MedTrackerTheme.colors.secondaryBackground,
-            topBar = {
-                Row(modifier = Modifier.padding(vertical = 24.dp)) {
-                    IconButton(onClick = navigateBack) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBackIosNew,
-                            contentDescription = "Back",
-                            tint = MedTrackerTheme.colors.primaryLabel,
-                            modifier = Modifier.size(28.dp),
-                        )
-                    }
-                    Text(
-                        text = (stringResource(R.string.new_medication)),
-                        style = typography.display3Emphasized,
-                    )
-                }
-            },
-        ) { innerPadding ->
-            Column(
-                modifier =
-                    modifier
-                        .fillMaxWidth()
-                        .padding(innerPadding)
-                        .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp),
-                    horizontalAlignment = Alignment.Start,
-                ) {
-                    // Name input.
-                    item {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            modifier = Modifier.fillMaxWidth(),
-                        ) {
-                            GTextField(
-                                value = state.value.medName,
-                                onValueChange = { viewModel.updateMedName(it) },
-                                label = "Name",
-                                isPrimaryColor = true,
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                                modifier = Modifier.weight(1f),
-                            )
-                            val optionsArray: Array<MedicationForm> =
-                                MedicationForm.entries.toTypedArray()
-                            val opList: List<String> =
-                                optionsArray.map { it.toString() }
-                            GDropdownList(items = opList) { selected ->
-                                viewModel.updateMedForm(selected)
-                            }
-                        }
-                    }
-                    // Strength.
-                    item {
-                        var selectedUnit by remember { mutableStateOf(state.value.medUnit) }
-                        val unitOptions = MedicationUnit.entries.toTypedArray()
-
-                        FlySimpleCard(
-                            isPrimaryBackground = true,
-                            modifier = Modifier.fillMaxWidth(),
-                            content = {
-                                // Spacer(modifier = Modifier.padding(8.dp))
-                                GTextField(
-                                    value = state.value.medStrength.toString(),
-                                    onValueChange = {
-                                        viewModel.updateMedStrength(
-                                            it.toFloat()
-                                        )
-                                    },
-                                    label = stringResource(R.string.medication_strength),
-                                    isPrimaryColor = true,
-                                    keyboardOptions =
-                                        KeyboardOptions(keyboardType = KeyboardType.Number),
-                                    modifier = Modifier.fillMaxWidth(),
-                                )
-                                // Units.
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                ) {
-                                    unitOptions.forEach { unit ->
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
-                                            Text(
-                                                text = unit.toString()
-                                                    .lowercase()
-                                            )
-                                            GRadioButton(
-                                                selected = selectedUnit == unit,
-                                                onClick = {
-                                                    viewModel.updateMedUnit(
-                                                        selectedUnit
-                                                    )
-                                                    selectedUnit = unit
-                                                },
-                                            )
-                                        }
-                                    }
-                                }
-                            },
-                        )
-                        Spacer(modifier = Modifier.padding(16.dp))
-                    }
-                    // Start and end dates + time.
-                    item {
-                        // Выбор начала и конца периода приема.
-                        Text(
-                            text = stringResource(R.string.intake_period),
-                            style = typography.title2Emphasized,
-                        )
-
-                        Spacer(modifier = Modifier.padding(8.dp))
-                        // состояние ввода даты.
-                        var showDatePicker by rememberSaveable {
-                            mutableStateOf(
-                                false
-                            )
-                        }
-                        
-                        Button(onClick = {
-                            showDatePicker = !showDatePicker
-                        }) { Text("set dates") }
-                        TextField(
-                            value =
-                                "Start: ${state.value.medStartDate.toString()}.\nEnd: ${state.value.medEndDate.toString()}.",
-                            onValueChange = {},
-                            readOnly = true,
-                            maxLines = 2,
-                        )
-
-                        if (showDatePicker) {
-                            DateRangePickerModalOld(
-                                onDateRangeSelected = {
-                                    viewModel.updateStartDate(
-                                        formatDateStringToTimestampMMMMddyyyy(
-                                            convertMillisToDate(it.first)
-                                        )
-                                    )
-                                    viewModel.updateEndDate(
-                                        formatDateStringToTimestampMMMMddyyyy(
-                                            convertMillisToDate(it.second)
-                                        )
-                                    )
-                                },
-                                onDismiss = {
-                                    showDatePicker = !showDatePicker
-                                },
-                            )
-                        }
-                        // состояние ввода времени.
-                        var showTimePicker by rememberSaveable {
-                            mutableStateOf(
-                                false
-                            )
-                        }
-                        Spacer(modifier = Modifier.padding(4.dp))
-
-                        GSecondaryButton(
-                            shape = MedTrackerTheme.shapes.extraLarge,
-                            onClick = { showTimePicker = !showTimePicker },
-                        ) {
-                            Text(stringResource(R.string.set_time))
-                        }
-                        // Время приема.
-                        if (showTimePicker) {
-                            IntakeTimePicker(
-                                onConfirm = { showTimePicker = false },
-                                onDismiss = { showTimePicker = false },
-                                onSelectTime = { viewModel.updateIntakeTime(it) },
-                            )
-                        }
-                    }
-                    // Дни недели.
-                    item {
-                        FlySimpleCard(
-                            isPrimaryBackground = false,
-                            content = {
-                                Column(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    verticalArrangement = Arrangement.spacedBy(
-                                        12.dp
-                                    ),
-                                ) {
-                                    Text(
-                                        text = stringResource(R.string.choose_days),
-                                        style = typography.title2Emphasized,
-                                    )
-                                    DayOfWeekSelector(viewModel = viewModelOld)
-                                }
-                            },
-                        )
-                    }
-                    // button to add medication.
-                    item {
-                        val context = LocalContext.current
-                        GPrimaryButton(
-                            modifier = Modifier.fillMaxWidth(),
-                            onClick = {
-                                viewModel.addMedication(context)
-                                navigateBack.invoke()
-                            },
-                            content = { Text(text = stringResource(R.string.add_medication)) },
-                        )
-                    }
-                }
-            }
+  Scaffold(
+    containerColor = MedTrackerTheme.colors.secondaryBackground,
+    topBar = {
+      Row(modifier = Modifier.padding(vertical = 24.dp)) {
+        IconButton(onClick = navigateBack) {
+          Icon(
+            imageVector = Icons.Default.ArrowBackIosNew,
+            contentDescription = "Back",
+            tint = MedTrackerTheme.colors.primaryLabel,
+            modifier = Modifier.size(28.dp),
+          )
         }
+        Text(
+          text = (stringResource(R.string.new_medication)),
+          style = typography.display3Emphasized,
+        )
+      }
+    },
+  ) { innerPadding ->
+    Column(
+      modifier =
+          modifier
+            .fillMaxWidth()
+            .padding(innerPadding)
+            .padding(horizontal = 16.dp),
+      verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+      LazyColumn(
+        modifier = Modifier
+          .fillMaxWidth()
+          .padding(top = 16.dp),
+        horizontalAlignment = Alignment.Start,
+      ) {
+        // Name input.
+        item {
+          Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.fillMaxWidth(),
+          ) {
+            GTextField(
+              value = state.value.medName,
+              onValueChange = { viewModel.updateMedName(it) },
+              label = "Name",
+              isPrimaryColor = true,
+              keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+              modifier = Modifier.weight(1f),
+            )
+
+            // Выбор формы лекарства.
+            val medFormOptionsList =
+                MedicationForm.entries.toTypedArray().map { it.toString() }
+            GDropdownList(items = medFormOptionsList) { selected ->
+              viewModel.updateMedForm(selected)
+            }
+          }
+        }
+        // Strength.
+        item {
+          var selectedUnit by remember { mutableStateOf(state.value.medUnit) }
+          val unitOptions = MedicationUnit.entries.toTypedArray()
+
+          FlySimpleCard(
+            isPrimaryBackground = true,
+            modifier = Modifier.fillMaxWidth(),
+            content = {
+              // Spacer(modifier = Modifier.padding(8.dp))
+              GTextField(
+                value = state.value.medStrength.toString(),
+                onValueChange = {
+                  viewModel.updateMedStrength(
+                    it.toFloat()
+                  )
+                },
+                label = stringResource(R.string.medication_strength),
+                isPrimaryColor = true,
+                keyboardOptions =
+                    KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier.fillMaxWidth(),
+              )
+              // Units.
+              Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+              ) {
+                unitOptions.forEach { unit ->
+                  Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                      text = unit.toString()
+                        .lowercase()
+                    )
+                    GRadioButton(
+                      selected = selectedUnit == unit,
+                      onClick = {
+                        viewModel.updateMedUnit(
+                          selectedUnit
+                        )
+                        selectedUnit = unit
+                      },
+                    )
+                  }
+                }
+              }
+            },
+          )
+          Spacer(modifier = Modifier.padding(16.dp))
+        }
+        // Start and end dates + time.
+        item {
+          // Выбор начала и конца периода приема.
+          Text(
+            text = stringResource(R.string.intake_period),
+            style = typography.title2Emphasized,
+          )
+
+          Spacer(modifier = Modifier.padding(8.dp))
+          // состояние ввода даты.
+          var showDatePicker by rememberSaveable {
+            mutableStateOf(
+              false
+            )
+          }
+
+          Button(onClick = {
+            showDatePicker = !showDatePicker
+          }) { Text("set dates") }
+          TextField(
+            value =
+                "Start: ${state.value.medStartDate.toString()}.\nEnd: ${state.value.medEndDate.toString()}.",
+            onValueChange = {},
+            readOnly = true,
+            maxLines = 2,
+          )
+
+          if (showDatePicker) {
+            DateRangePickerModalOld(
+              onDateRangeSelected = {
+                viewModel.updateStartDate(
+                  formatDateStringToTimestampMMMMddyyyy(
+                    convertMillisToDate(it.first)
+                  )
+                )
+                viewModel.updateEndDate(
+                  formatDateStringToTimestampMMMMddyyyy(
+                    convertMillisToDate(it.second)
+                  )
+                )
+              },
+              onDismiss = {
+                showDatePicker = !showDatePicker
+              },
+            )
+          }
+          // состояние ввода времени.
+          var showTimePicker by rememberSaveable {
+            mutableStateOf(
+              false
+            )
+          }
+          Spacer(modifier = Modifier.padding(4.dp))
+
+          GSecondaryButton(
+            shape = MedTrackerTheme.shapes.extraLarge,
+            onClick = { showTimePicker = !showTimePicker },
+          ) {
+            Text(stringResource(R.string.set_time))
+          }
+          // Время приема.
+          if (showTimePicker) {
+            IntakeTimePicker(
+              onConfirm = { showTimePicker = false },
+              onDismiss = { showTimePicker = false },
+              onSelectTime = { viewModel.updateIntakeTime(it) },
+            )
+          }
+        }
+        // Дни недели.
+        item {
+          FlySimpleCard(
+            isPrimaryBackground = false,
+            content = {
+              Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(
+                  12.dp
+                ),
+              ) {
+                Text(
+                  text = stringResource(R.string.choose_days),
+                  style = typography.title2Emphasized,
+                )
+                DayOfWeekSelector(viewModel = viewModel)
+              }
+            },
+          )
+        }
+        // button to add medication.
+        item {
+          val context = LocalContext.current
+          GPrimaryButton(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = {
+              viewModel.addMedication(context)
+              navigateBack.invoke()
+            },
+            content = { Text(text = stringResource(R.string.add_medication)) },
+          )
+        }
+      }
     }
+  }
 }
 
 @Composable
 fun ModalDatePickerOld(viewModel: AddNewMedViewModel) {
-    val state = viewModel.uiState.collectAsStateWithLifecycle()
-    var showPicker by remember { mutableStateOf(false) }
-    val label =
-        when {
-            state.value.medStartDate != null && state.value.medEndDate != null ->
-                "Start: ${
-                    formatTimestampTillTheDayMMMMddyyyy(
-                        state.value.medStartDate!!
-                    )
-                }\nEnd: ${formatTimestampTillTheDayMMMMddyyyy(state.value.medEndDate!!)}"
-
-            state.value.medStartDate != null ->
-                "Start: ${
-                    formatTimestampTillTheDayMMMMddyyyy(
-                        state.value.medStartDate!!
-                    )
-                }"
-
-            state.value.medEndDate != null ->
-                "End: ${
-                    formatTimestampTillTheDayMMMMddyyyy(
-                        state.value.medEndDate!!
-                    )
-                }"
-
-            else -> ""
-        }
-    Column {
-        GTextField(
-            modifier = Modifier.fillMaxWidth(),
-            minLines = 2,
-            value = "",
-            label = label,
-            onValueChange = {},
-            singleLine = false,
-            readOnly = true,
-            isPrimaryColor = true,
-        )
-        GOutlinedButton(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = { showPicker = !showPicker },
-        ) {
-            Text(text = stringResource(R.string.select_start_and_end_dates))
-        }
-        
-        if (showPicker) {
-            DateRangePickerModalOld(
-                onDateRangeSelected = {
-                    viewModel.updateStartDate(
-                        it.first?.toLocalDate()?.toTimestamp()
-                        // formatDateStringToTimestampMMMMddyyyy(convertMillisToDate(it.first))
-                    )
-                    viewModel.updateEndDate(
-                        it.second?.toLocalDate()?.toTimestamp()
-                    )
-
-                    showPicker = !showPicker
-                },
-                onDismiss = { showPicker = !showPicker },
+  val state = viewModel.uiState.collectAsStateWithLifecycle()
+  var showPicker by remember { mutableStateOf(false) }
+  val label =
+      when {
+        state.value.medStartDate != null && state.value.medEndDate != null ->
+          "Start: ${
+            formatTimestampTillTheDayMMMMddyyyy(
+              state.value.medStartDate!!
             )
-        }
+          }\nEnd: ${formatTimestampTillTheDayMMMMddyyyy(state.value.medEndDate!!)}"
+
+        state.value.medStartDate != null ->
+          "Start: ${
+            formatTimestampTillTheDayMMMMddyyyy(
+              state.value.medStartDate!!
+            )
+          }"
+
+        state.value.medEndDate != null ->
+          "End: ${
+            formatTimestampTillTheDayMMMMddyyyy(
+              state.value.medEndDate!!
+            )
+          }"
+
+        else -> ""
+      }
+  Column {
+    GTextField(
+      modifier = Modifier.fillMaxWidth(),
+      minLines = 2,
+      value = "",
+      label = label,
+      onValueChange = {},
+      singleLine = false,
+      readOnly = true,
+      isPrimaryColor = true,
+    )
+    GOutlinedButton(
+      modifier = Modifier.fillMaxWidth(),
+      onClick = { showPicker = !showPicker },
+    ) {
+      Text(text = stringResource(R.string.select_start_and_end_dates))
     }
+
+    if (showPicker) {
+      DateRangePickerModalOld(
+        onDateRangeSelected = {
+          viewModel.updateStartDate(
+            it.first?.toLocalDate()?.toTimestamp()
+            // formatDateStringToTimestampMMMMddyyyy(convertMillisToDate(it.first))
+          )
+          viewModel.updateEndDate(
+            it.second?.toLocalDate()?.toTimestamp()
+          )
+
+          showPicker = !showPicker
+        },
+        onDismiss = { showPicker = !showPicker },
+      )
+    }
+  }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DateRangePickerModalOld(
-    onDateRangeSelected: (Pair<Long?, Long?>) -> Unit,
-    onDismiss: () -> Unit,
+  onDateRangeSelected: (Pair<Long?, Long?>) -> Unit,
+  onDismiss: () -> Unit,
 ) {
-    val dateRangePickerState = rememberDateRangePickerState()
-    
-    DatePickerDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onDateRangeSelected(
-                        Pair(
-                            dateRangePickerState.selectedStartDateMillis,
-                            dateRangePickerState.selectedEndDateMillis,
-                        )
-                    )
-                    onDismiss.invoke()
-                }
-            ) {
-                Text("OK")
-            }
-        },
-        dismissButton = { TextButton(onClick = { onDismiss.invoke() }) { Text("Cancel") } },
-    ) {
-        DateRangePicker(
-            state = dateRangePickerState,
-            title = { Text(text = "Select date range") },
-            showModeToggle = false,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(500.dp)
-                .padding(16.dp),
-        )
-    }
+  val dateRangePickerState = rememberDateRangePickerState()
+
+  DatePickerDialog(
+    onDismissRequest = onDismiss,
+    confirmButton = {
+      TextButton(
+        onClick = {
+          onDateRangeSelected(
+            Pair(
+              dateRangePickerState.selectedStartDateMillis,
+              dateRangePickerState.selectedEndDateMillis,
+            )
+          )
+          onDismiss.invoke()
+        }
+      ) {
+        Text("OK")
+      }
+    },
+    dismissButton = { TextButton(onClick = { onDismiss.invoke() }) { Text("Cancel") } },
+  ) {
+    DateRangePicker(
+      state = dateRangePickerState,
+      title = { Text(text = "Select date range") },
+      showModeToggle = false,
+      modifier = Modifier
+        .fillMaxWidth()
+        .height(500.dp)
+        .padding(16.dp),
+    )
+  }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IntakeTimePicker(
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit,
-    onSelectTime: (String) -> Unit,
-    // viewModel: AddNewMedViewModel
+  onConfirm: () -> Unit,
+  onDismiss: () -> Unit,
+  onSelectTime: (String) -> Unit,
+  // viewModel: AddNewMedViewModel
 ) {
-    Dialog(onDismissRequest = onDismiss) {
-        androidx.compose.material3.Surface(
-            shape = RoundedCornerShape(16.dp),
-            color = MaterialTheme.colorScheme.surface,
+  Dialog(onDismissRequest = onDismiss) {
+    androidx.compose.material3.Surface(
+      shape = RoundedCornerShape(16.dp),
+      color = MaterialTheme.colorScheme.surface,
+    ) {
+      Column(
+        modifier = Modifier
+          .padding(24.dp)
+          .width(IntrinsicSize.Max),
+        horizontalAlignment = Alignment.CenterHorizontally,
+      ) {
+        Text(
+          text = "Select Intake Time",
+          style = MaterialTheme.typography.titleLarge,
+          modifier = Modifier.padding(bottom = 16.dp),
+        )
+        val currentTime = Calendar.getInstance()
+        val timePickerState =
+            rememberTimePickerState(
+              initialHour = currentTime.get(Calendar.HOUR_OF_DAY),
+              initialMinute = currentTime.get(Calendar.MINUTE),
+              is24Hour = false,
+            )
+        val time =
+            LocalTime.of(timePickerState.hour, timePickerState.minute)
+        val dtf = DateTimeFormatter.ofPattern("HH:mm")
+
+        TimePicker(
+          state = timePickerState,
+          colors =
+              TimePickerDefaults.colors(
+                clockDialColor = MaterialTheme.colorScheme.surfaceVariant,
+                clockDialSelectedContentColor = MaterialTheme.colorScheme.onSurface,
+                clockDialUnselectedContentColor =
+                    MaterialTheme.colorScheme.onSurfaceVariant,
+                selectorColor = MaterialTheme.colorScheme.primary,
+                periodSelectorBorderColor = MaterialTheme.colorScheme.outline,
+                periodSelectorSelectedContentColor =
+                    MaterialTheme.colorScheme.onSurface,
+                periodSelectorUnselectedContentColor =
+                    MaterialTheme.colorScheme.onSurfaceVariant,
+                periodSelectorSelectedContainerColor =
+                    MaterialTheme.colorScheme.primaryContainer,
+                timeSelectorSelectedContainerColor =
+                    MaterialTheme.colorScheme.primaryContainer,
+                timeSelectorUnselectedContainerColor =
+                    MaterialTheme.colorScheme.surfaceVariant,
+              ),
+        )
+
+        Row(
+          modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 24.dp),
+          horizontalArrangement = Arrangement.SpaceEvenly,
         ) {
-            Column(
-                modifier = Modifier
-                    .padding(24.dp)
-                    .width(IntrinsicSize.Max),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Text(
-                    text = "Select Intake Time",
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(bottom = 16.dp),
-                )
-                val currentTime = Calendar.getInstance()
-                val timePickerState =
-                    rememberTimePickerState(
-                        initialHour = currentTime.get(Calendar.HOUR_OF_DAY),
-                        initialMinute = currentTime.get(Calendar.MINUTE),
-                        is24Hour = false,
-                    )
-                val time =
-                    LocalTime.of(timePickerState.hour, timePickerState.minute)
-                val dtf = DateTimeFormatter.ofPattern("HH:mm")
-                
-                TimePicker(
-                    state = timePickerState,
-                    colors =
-                        TimePickerDefaults.colors(
-                            clockDialColor = MaterialTheme.colorScheme.surfaceVariant,
-                            clockDialSelectedContentColor = MaterialTheme.colorScheme.onSurface,
-                            clockDialUnselectedContentColor =
-                                MaterialTheme.colorScheme.onSurfaceVariant,
-                            selectorColor = MaterialTheme.colorScheme.primary,
-                            periodSelectorBorderColor = MaterialTheme.colorScheme.outline,
-                            periodSelectorSelectedContentColor =
-                                MaterialTheme.colorScheme.onSurface,
-                            periodSelectorUnselectedContentColor =
-                                MaterialTheme.colorScheme.onSurfaceVariant,
-                            periodSelectorSelectedContainerColor =
-                                MaterialTheme.colorScheme.primaryContainer,
-                            timeSelectorSelectedContainerColor =
-                                MaterialTheme.colorScheme.primaryContainer,
-                            timeSelectorUnselectedContainerColor =
-                                MaterialTheme.colorScheme.surfaceVariant,
-                        ),
-                )
-                
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 24.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                ) {
-                    TextButton(
-                        onClick = onDismiss,
-                        colors =
-                            ButtonDefaults.textButtonColors(
-                                contentColor = MaterialTheme.colorScheme.error
-                            ),
-                    ) {
-                        Text("Cancel")
-                    }
-                    
-                    GPrimaryButton(
-                        onClick = {
-                            onSelectTime(time.format(dtf))
-                            onConfirm()
-                        }
-                    ) {
-                        Text(
-                            stringResource(R.string.confirm),
-                            color = MedTrackerTheme.colors.sysWhite,
-                        )
-                    }
-                }
+          TextButton(
+            onClick = onDismiss,
+            colors =
+                ButtonDefaults.textButtonColors(
+                  contentColor = MaterialTheme.colorScheme.error
+                ),
+          ) {
+            Text("Cancel")
+          }
+
+          GPrimaryButton(
+            onClick = {
+              onSelectTime(time.format(dtf))
+              onConfirm()
             }
+          ) {
+            Text(
+              stringResource(R.string.confirm),
+              color = MedTrackerTheme.colors.sysWhite,
+            )
+          }
         }
+      }
     }
+  }
 }

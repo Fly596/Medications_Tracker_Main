@@ -17,11 +17,6 @@ class _MedicationRepositoryImpl @Inject constructor(
   private val medicationDao: MedicationDao
 ) : _MedicationRepository {
 
-  companion object {
-
-    private const val USERS_COLLECTION = "User"
-    private const val MEDICATIONS_SUBCOLLECTION = "medications"
-  }
 
   override suspend fun addMedication(userId: String, medication: Medication): Result<String> {
     return try {
