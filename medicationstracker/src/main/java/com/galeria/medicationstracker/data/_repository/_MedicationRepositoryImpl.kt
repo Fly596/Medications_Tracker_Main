@@ -1,13 +1,13 @@
 package com.galeria.medicationstracker.data._repository
 
 import com.galeria.medicationstracker.core.database.dao.MedicationDao
-import com.galeria.medicationstracker.core.database.entity.MedicationWithDays
+import com.galeria.medicationstracker.core.database.entity.MedicationEntity
 import com.galeria.medicationstracker.core.domain.model.Medication
 import com.galeria.medicationstracker.core.domain.repository._MedicationRepository
 import com.galeria.medicationstracker.core.firebase.datasource.MedicationDataSource
 import com.galeria.medicationstracker.data.toDocument
 import com.galeria.medicationstracker.data.toDomain
-import com.galeria.medicationstracker.data.toRoomEntities
+import com.galeria.medicationstracker.data.toEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -17,16 +17,15 @@ class _MedicationRepositoryImpl @Inject constructor(
   private val medicationDao: MedicationDao
 ) : _MedicationRepository {
 
-
   override suspend fun addMedication(userId: String, medication: Medication): Result<String> {
     return try {
       // 1. Добавляем в Firestore и получаем DocumentId.
       val documentId = medicationRemote.addMedication(userId, medication.toDocument())
-      val identifiedMedication = medication.copy(id = documentId).toDocument()
+      val identifiedMedication = medication.copy(id = documentId)
 
       // 2. Добавляем в БД.
-      val medDaysPair = identifiedMedication.toRoomEntities()
-      medicationDao.insertMedicationWithDays(medDaysPair.first, medDaysPair.second)
+      val medDaysPair = identifiedMedication.toEntity()
+      medicationDao.insertMedication(medDaysPair)
 
       Result.success(documentId)
     } catch (e: Exception) {
@@ -39,7 +38,7 @@ class _MedicationRepositoryImpl @Inject constructor(
 
   override fun getMedicationsFlow(userId: String): Flow<List<Medication>> =
       medicationDao.getAllMedicationsWithDays().map {
-        it.map(MedicationWithDays::toDomain)
+        it.map(MedicationEntity::toDomain)
       }
 
   override suspend fun getMedications(userId: String): List<Medication> {

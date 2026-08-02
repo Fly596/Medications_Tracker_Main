@@ -41,7 +41,7 @@ fun GTextField(
     placeholder: String? = null,
     singleLine: Boolean = false,
     enabled: Boolean = true,
-    textStyle: TextStyle = typography.bodySmall,
+    textStyle: TextStyle = typography.bodyMedium,
     isError: Boolean = false,
     errorMessage: String? = null,
     readOnly: Boolean = false,

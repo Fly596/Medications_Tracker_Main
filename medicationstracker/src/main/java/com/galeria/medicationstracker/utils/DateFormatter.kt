@@ -15,7 +15,7 @@ import java.util.Locale
 object DateTimeUtils {
 
   private val zoneId: ZoneId = ZoneId.of("UTC")
-  val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("mm-dd-yyyy")
+  val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("MM-dd-yyyy")
   val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
   fun fromDateToTimestamp(date: LocalDate?): Timestamp {
