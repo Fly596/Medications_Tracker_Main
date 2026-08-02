@@ -75,4 +75,8 @@ class _AuthRepositoryImpl @Inject constructor(
         // 5. Возвращаем Domain-модель
         userEntity.toDomain()
       }
+
+  override suspend fun resetPassword(email: String) {
+    authRemote.resetPassword(email)
+  }
 }

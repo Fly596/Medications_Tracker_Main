@@ -14,4 +14,6 @@ interface _AuthRepository {
 
   // Регистрация с сохранением имени пользователя
   suspend fun signUp(email: String, pass: String, name: String, birthDate: LocalDate): Result<User>
+
+  suspend fun resetPassword(email: String)
 }

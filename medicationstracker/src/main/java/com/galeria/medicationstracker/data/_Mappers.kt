@@ -48,7 +48,6 @@ fun UserEntity.toDomain(): User = User(
 // --- Domain -> Room Entity ---
 fun Medication.toEntity() = MedicationEntity(
   id = id,
-  userId = userId,
   name = name,
   dosage = dosage,
   form = form.name,
@@ -61,7 +60,6 @@ fun Medication.toEntity() = MedicationEntity(
 // --- Room Entity -> Domain ---
 fun MedicationEntity.toDomain() = Medication(
   id = id,
-  userId = userId,
   name = name,
   dosage = dosage,
   form = runCatching { MedicationForm.valueOf(form) }.getOrDefault(MedicationForm.UNKNOWN),
@@ -84,7 +82,6 @@ fun MedicationDocument.toDomain(): Medication {
 
   return Medication(
     id = id,
-    userId = userId,
     name = name,
     dosage = dosage,
     form = runCatching { MedicationForm.valueOf(form) }.getOrDefault(MedicationForm.UNKNOWN),
@@ -103,7 +100,6 @@ fun Medication.toDocument(): MedicationDocument {
 
   return MedicationDocument(
     id = id,
-    userId = userId,
     name = name,
     dosage = dosage,
     form = form.name,

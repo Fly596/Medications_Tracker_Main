@@ -10,7 +10,6 @@ import java.time.LocalTime
 data class MedicationEntity(
   @PrimaryKey()
   val id: String,
-  val userId: String,
   val name: String,
   val dosage: String,
   val form: String,

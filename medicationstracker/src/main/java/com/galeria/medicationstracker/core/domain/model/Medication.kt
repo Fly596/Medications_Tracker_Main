@@ -7,7 +7,6 @@ import java.time.LocalTime
 
 data class Medication(
   val id: String,
-  val userId: String,
   val name: String,
   val dosage: String,
   val form: MedicationForm,
