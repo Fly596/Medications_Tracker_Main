@@ -11,7 +11,7 @@ import java.time.LocalDate
 @Dao
 interface MedicationDao {
 
-  @Insert(onConflict = OnConflictStrategy.IGNORE)
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
   suspend fun insertMedication(medication: MedicationEntity)
 
   /**

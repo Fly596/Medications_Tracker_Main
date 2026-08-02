@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.Button
@@ -43,13 +44,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medicationstracker.R
+import com.galeria.medicationstracker.data.MedicationForm
+import com.galeria.medicationstracker.data.old.MedicationUnit
+import com.galeria.medicationstracker.ui.components.GDropdownList
 import com.galeria.medicationstracker.ui.components.GOutlinedButton
 import com.galeria.medicationstracker.ui.components.GPrimaryButton
+import com.galeria.medicationstracker.ui.components.GRadioButton
 import com.galeria.medicationstracker.ui.components.GSecondaryButton
 import com.galeria.medicationstracker.ui.components.GTextField
 import com.galeria.medicationstracker.ui.componentsOld.DayOfWeekSelector
@@ -120,7 +126,80 @@ fun NewMedicationDataScreen(
           .padding(top = 16.dp),
         horizontalAlignment = Alignment.Start,
       ) {
+        // Name input.
+        item {
+          Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.fillMaxWidth(),
+          ) {
+            GTextField(
+              value = state.value.medName,
+              onValueChange = { viewModel.updateMedName(it) },
+              label = "Name",
+              isPrimaryColor = true,
+              keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+              modifier = Modifier.weight(1f),
+            )
 
+            // Выбор формы лекарства.
+            val medFormOptionsList =
+                MedicationForm.entries.toTypedArray().map { it.toString() }
+            GDropdownList(items = medFormOptionsList) { selected ->
+              viewModel.updateMedForm(selected)
+            }
+          }
+        }
+        // Strength.
+        item {
+          var selectedUnit by remember { mutableStateOf(state.value.medUnit) }
+          val unitOptions = MedicationUnit.entries.toTypedArray()
+
+          FlySimpleCard(
+            isPrimaryBackground = true,
+            modifier = Modifier.fillMaxWidth(),
+            content = {
+              // Spacer(modifier = Modifier.padding(8.dp))
+              GTextField(
+                value = state.value.medStrength.toString(),
+                onValueChange = {
+                  viewModel.updateMedStrength(
+                    it.toFloat()
+                  )
+                },
+                label = stringResource(R.string.medication_strength),
+                isPrimaryColor = true,
+                keyboardOptions =
+                    KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier.fillMaxWidth(),
+              )
+              // Units.
+              Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+              ) {
+                unitOptions.forEach { unit ->
+                  Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                      text = unit.toString()
+                        .lowercase()
+                    )
+                    GRadioButton(
+                      selected = selectedUnit == unit,
+                      onClick = {
+                        viewModel.updateMedUnit(
+                          selectedUnit
+                        )
+                        selectedUnit = unit
+                      },
+                    )
+                  }
+                }
+              }
+            },
+          )
+          Spacer(modifier = Modifier.padding(16.dp))
+        }
         // Start and end dates + time.
         item {
           // Выбор начала и конца периода приема.
@@ -338,7 +417,7 @@ fun IntakeTimePicker(
 
           GPrimaryButton(
             onClick = {
-              onSelectTime(time.format(dtf))
+              onSelectTime(time.format(DateTimeUtils.timeFormatter))
               onConfirm()
             }
           ) {

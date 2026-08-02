@@ -3,6 +3,7 @@ package com.galeria.medicationstracker.ui.screens.medications
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.galeria.medicationstracker.core.database.dao.MedicationDao
 import com.galeria.medicationstracker.data.AuthRepository
 import com.galeria.medicationstracker.data.NewMedicationRepository
 import com.galeria.medicationstracker.data.NewUserMedication
@@ -14,53 +15,54 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class MedicationsUiState(
-    val userMedications: List<NewUserMedication> = emptyList()
-    // val medication: Medication = Medication()
+  val userMedications: List<NewUserMedication> = emptyList()
+  // val medication: Medication = Medication()
 )
 
 @HiltViewModel
 class MedicationsViewModel
 @Inject
 constructor(
-    private val medicationRepository: NewMedicationRepository,
-    private val authRepository: AuthRepository,
+  private val medicationRepository: NewMedicationRepository,
+  private val authRepository: AuthRepository,
+  val medicationDao: MedicationDao
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(MedicationsUiState())
-    val uiState = _uiState.asStateFlow()
-    // private lateinit var currentUserId: String
-    // private lateinit var currentUserEmail: String
+  private val _uiState = MutableStateFlow(MedicationsUiState())
+  val uiState = _uiState.asStateFlow()
+  // private lateinit var currentUserId: String
+  // private lateinit var currentUserEmail: String
 
-    init {
-        viewModelScope.launch {
-            try {
-                val uid = authRepository.getUserId().getOrThrow()
-                fetchMedications(uid.toString())
-            } catch (e: Exception) {
-                Log.e("checkIntake", "Error fetching intake data", e)
-            }
+  init {
+    viewModelScope.launch {
+      try {
+        val uid = authRepository.getUserId().getOrThrow()
+        fetchMedications(uid.toString())
+      } catch (e: Exception) {
+        Log.e("checkIntake", "Error fetching intake data", e)
+      }
+    }
+  }
+
+  private fun fetchMedications(uid: String) {
+    viewModelScope.launch {
+      medicationRepository.observeUserMedications(uid)
+        .collect { medications ->
+          _uiState.update { it.copy(userMedications = medications) }
         }
     }
+  }
 
-    private fun fetchMedications(uid: String) {
-        viewModelScope.launch {
-            medicationRepository.observeUserMedications(uid)
-                .collect { medications ->
-                _uiState.update { it.copy(userMedications = medications) }
-            }
-        }
+  // Удаление лекарства из Firestore.
+  // TODO:
+  fun deleteMedicationFromFirestore(medId: String) {
+    viewModelScope.launch {
+      try {
+        val uid = authRepository.getUserId().getOrThrow()
+        medicationRepository.deleteMedication(uid.toString(), medId)
+      } catch (e: Exception) {
+        Log.e("ERROR REMOVE", "Error deleting medication", e)
+      }
     }
-
-    // Удаление лекарства из Firestore.
-    // TODO:
-    fun deleteMedicationFromFirestore(medId: String) {
-        viewModelScope.launch {
-            try {
-                val uid = authRepository.getUserId().getOrThrow()
-                medicationRepository.deleteMedication(uid.toString(), medId)
-            } catch (e: Exception) {
-                Log.e("ERROR REMOVE", "Error deleting medication", e)
-            }
-        }
-    }
+  }
 }

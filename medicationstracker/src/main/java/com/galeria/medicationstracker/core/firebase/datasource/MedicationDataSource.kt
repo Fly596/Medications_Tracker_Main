@@ -36,9 +36,12 @@ class MedicationDataSourceImpl @Inject constructor(
   }
 
   override suspend fun addMedication(userId: String, medication: MedicationDocument): String {
+    val dataToSave = medication.copy(userId = userId, id = "")
+
     return try {
-      firestore.collection(USERS_COLLECTION).document(userId).collection(MEDICATIONS_SUBCOLLECTION)
-        .add(medication)
+      firestore.collection(USERS_COLLECTION).document(userId)
+        .collection(MEDICATIONS_SUBCOLLECTION)
+        .add(dataToSave)
         .await().id
     } catch (e: Exception) {
       throw e

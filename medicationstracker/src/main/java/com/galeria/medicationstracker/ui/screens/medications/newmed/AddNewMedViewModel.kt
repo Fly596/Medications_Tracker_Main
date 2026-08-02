@@ -5,158 +5,184 @@ import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.galeria.medicationstracker.core.domain.model.Medication
+import com.galeria.medicationstracker.core.domain.repository._MedicationRepository
 import com.galeria.medicationstracker.data.MedicationForm
-import com.galeria.medicationstracker.data.NewUserMedication
 import com.galeria.medicationstracker.data.old.MedicationUnit
+import com.galeria.medicationstracker.utils.DateTimeUtils
 import com.galeria.medicationstracker.utils.FirestoreFunctions.FirestoreService
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
+import java.time.DayOfWeek
+import java.time.LocalTime
+import javax.inject.Inject
 
 data class NewMedUiState(
-    val uid: String = "",
-    val medName: String = "",
-    var medForm: String = MedicationForm.TABLET.toString(), // f
-    val medStrength: Float = 0.0f,
-    val chosenStrengths: List<Float> = emptyList(),
-    val medUnit: MedicationUnit = MedicationUnit.MG, // f
-    val medStartDate: Timestamp? = Timestamp.now(), // f
-    val medEndDate: Timestamp? = Timestamp.now(), // f
-    val medIntakeTime: String = "", // f
-    val medNotes: String = "",
-    val showDatePicker: Boolean = false,
-    val showTimePicker: Boolean = false,
-    val intakeDays: List<String> = emptyList(),
-    val medicationForm: List<String> =
-        MedicationForm.entries.map { it.name.lowercase().replaceFirstChar { it.uppercase() } },
+  val uid: String = "",
+  val medName: String = "Test",
+  var medForm: String = MedicationForm.TABLET.toString(), // f
+  val medStrength: Float = 4.0f,
+  val chosenStrengths: List<Float> = emptyList(),
+  val medUnit: MedicationUnit = MedicationUnit.MG, // f
+  val medStartDate: Timestamp? = Timestamp.now(), // f
+  val medEndDate: Timestamp? = Timestamp.now(), // f
+  val medIntakeTime: String = "", // f
+  val medNotes: String = "",
+  val showDatePicker: Boolean = false,
+  val showTimePicker: Boolean = false,
+  val intakeDays: List<String> = emptyList(),
+  val medicationForm: List<String> =
+      MedicationForm.entries.map { it.name.lowercase().replaceFirstChar { it.uppercase() } },
 )
 
-class AddNewMedViewModel : ViewModel() {
+@HiltViewModel
+class AddNewMedViewModel @Inject constructor(
+  private val repository: _MedicationRepository
+) : ViewModel() {
 
-    var uiState = MutableStateFlow(NewMedUiState())
-        private set
+  var uiState = MutableStateFlow(NewMedUiState())
+    private set
 
-    val db = FirestoreService.db
-    val auth = FirebaseAuth.getInstance()
-    val userId = auth.currentUser?.uid
-    val userLogin = auth.currentUser?.email
+  val db = FirestoreService.db
+  val auth = FirebaseAuth.getInstance()
+  val userId = auth.currentUser?.uid
+  val userLogin = auth.currentUser?.email
 
-    // Добавление нового лекарства в Firestore.
-    fun addMedication(context: Context) {
-        // Проверка на пустые значения текстовых полей и нулевое значение medStrength
-        //? в репо
-        if (
-                    uiState.value.medName.isBlank() ||
-                        uiState.value.medForm.toString().isBlank() ||
-                        uiState.value.medUnit.toString().isBlank() ||
-                        uiState.value.medStrength <= 0 ||
-                        uiState.value.medStartDate.toString().isBlank() ||
-                        uiState.value.medEndDate.toString().isBlank() ||
-                        uiState.value.medIntakeTime.isBlank() ||
-                        uiState.value.intakeDays.isEmpty()
-                ) {
-                    Toast.makeText(
-                            context,
-                            "Please fill in all required fields correctly!",
-                            Toast.LENGTH_SHORT,
-                        )
-                        .show()
-                    Log.w(TAG, "Validation failed: Missing or incorrect input fields.")
-                    return
-                }
-        val medsCollectionRef =
-            db.collection("User").document(userId.toString())
-                .collection("medications")
-        // val documentId = "${userLogin}_${uiState.value.medName}_${uiState.value.medStrength}"
-                // Проверка на дубликаты
-        // medsCollectionRef.document(documentId).get().addOnSuccessListener { documentSnapshot ->
-        /*  if (documentSnapshot.exists()) {
-             // Документ уже существует
-             Toast.makeText(context, "Medication already exists!", Toast.LENGTH_SHORT).show()
-
-             Log.d(TAG, "Medication already exists with ID: $documentId")
-         } else { */
-                        // Документ не существует, добавляем новый
-                        val newUserMedication =
-                            NewUserMedication(
-                                userId = userId.toString(),
-                                name = uiState.value.medName,
-                                dosage = uiState.value.medStrength.toString() + uiState.value.medUnit,
-                                form = uiState.value.medForm,
-                                startDate = uiState.value.medStartDate,
-                                endDate = uiState.value.medEndDate,
-                                daysOfWeek = uiState.value.intakeDays,
-                                intakeTime = uiState.value.medIntakeTime
-                            )
-        
-        medsCollectionRef
-            .add(newUserMedication)
-                            .addOnSuccessListener {
-                                Toast.makeText(
-                                        context,
-                                        "DocumentSnapshot added successfully!",
-                                        Toast.LENGTH_SHORT,
-                                    )
-                                    .show()
-                                
-                                Log.d(TAG, "DocumentSnapshot added")
-                            }
-                            .addOnFailureListener { e ->
-                                Toast.makeText(context, "Error adding medication", Toast.LENGTH_SHORT)
-                                    .show()
-                                Log.w(TAG, "Error adding document", e)
-                            }
-        //}
-        //}
+  // Добавление нового лекарства в Firestore.
+  fun addMedication(context: Context) {
+    // Проверка на пустые значения текстовых полей и нулевое значение medStrength
+    //? в репо
+    if (
+      uiState.value.medName.isBlank() ||
+      uiState.value.medForm.toString().isBlank() ||
+      uiState.value.medUnit.toString().isBlank() ||
+      uiState.value.medStrength <= 0 ||
+      uiState.value.medStartDate.toString().isBlank() ||
+      uiState.value.medEndDate.toString().isBlank() ||
+      uiState.value.medIntakeTime.isBlank() ||
+      uiState.value.intakeDays.isEmpty()
+    ) {
+      Toast.makeText(
+        context,
+        "Please fill in all required fields correctly!",
+        Toast.LENGTH_SHORT,
+      )
+        .show()
+      Log.w(TAG, "Validation failed: Missing or incorrect input fields.")
+      return
     }
-    
-    
-    fun updateStartDate(input: Timestamp?) {
-        uiState.value = uiState.value.copy(medStartDate = input ?: Timestamp.now())
-    }
+    val medsCollectionRef =
+        db.collection("User").document(userId.toString())
+          .collection("medications")
+    // val documentId = "${userLogin}_${uiState.value.medName}_${uiState.value.medStrength}"
+    // Проверка на дубликаты
+    // medsCollectionRef.document(documentId).get().addOnSuccessListener { documentSnapshot ->
+    /*  if (documentSnapshot.exists()) {
+         // Документ уже существует
+         Toast.makeText(context, "Medication already exists!", Toast.LENGTH_SHORT).show()
 
-    fun updateEndDate(input: Timestamp?) {
-        uiState.value = uiState.value.copy(medEndDate = input ?: Timestamp.now())
-    }
+         Log.d(TAG, "Medication already exists with ID: $documentId")
+     } else { */
+    // Документ не существует, добавляем новый
+    /*  val newUserMedication =
+          NewUserMedication(
+            userId = userId.toString(),
+            name = uiState.value.medName,
+            dosage = uiState.value.medStrength.toString() + uiState.value.medUnit,
+            form = uiState.value.medForm,
+            startDate = uiState.value.medStartDate,
+            endDate = uiState.value.medEndDate,
+            daysOfWeek = uiState.value.intakeDays,
+            intakeTime = uiState.value.medIntakeTime
+          )*/
 
-    fun updateMedName(newName: String) {
-        uiState.value = uiState.value.copy(medName = newName)
-    }
+    /*    medsCollectionRef
+          .add(newUserMedication)
+          .addOnSuccessListener {
+            Toast.makeText(
+              context,
+              "DocumentSnapshot added successfully!",
+              Toast.LENGTH_SHORT,
+            )
+              .show()
 
-    fun updateMedForm(newForm: String) {
-        uiState.value = uiState.value.copy(medForm = newForm)
-    }
+            Log.d(TAG, "DocumentSnapshot added")
+          }
+          .addOnFailureListener { e ->
+            Toast.makeText(context, "Error adding medication", Toast.LENGTH_SHORT)
+              .show()
+            Log.w(TAG, "Error adding document", e)
+          }*/
 
-    fun updateMedStrength(newStrength: Float) {
-        uiState.value = uiState.value.copy(medStrength = newStrength /* .toFloat() */)
+    viewModelScope.launch {
+      val dbMedication: Medication = Medication(
+        id = "",
+        userId = userId.toString(),
+        name = uiState.value.medName,
+        dosage = uiState.value.medStrength.toString() + uiState.value.medUnit,
+        form = MedicationForm.valueOf(uiState.value.medForm),
+        startDate = DateTimeUtils.timestampToLocalDate(uiState.value.medStartDate),
+        endDate = DateTimeUtils.timestampToLocalDate(uiState.value.medEndDate),
+        daysOfWeek = uiState.value.intakeDays.mapNotNull { runCatching { DayOfWeek.valueOf(it) }.getOrNull() },
+        intakeTime = LocalTime.parse(uiState.value.medIntakeTime, DateTimeUtils.timeFormatter),
+      )
+      repository.addMedication(
+        medication = dbMedication,
+        userId = userId.toString()
+      )
     }
+  }
 
-    fun addStrength(newStrength: Float) {
-        uiState.value =
-            uiState.value.copy(chosenStrengths = uiState.value.chosenStrengths + newStrength)
-    }
+  fun updateStartDate(input: Timestamp?) {
+    uiState.value = uiState.value.copy(medStartDate = input ?: Timestamp.now())
+  }
 
-    fun updateMedUnit(newUnit: MedicationUnit) {
-        uiState.value = uiState.value.copy(medUnit = newUnit)
-    }
+  fun updateEndDate(input: Timestamp?) {
+    uiState.value = uiState.value.copy(medEndDate = input ?: Timestamp.now())
+  }
 
-    fun updateIntakeTime(newTime: String) {
-        uiState.value = uiState.value.copy(medIntakeTime = newTime)
-    }
+  fun updateMedName(newName: String) {
+    uiState.value = uiState.value.copy(medName = newName)
+  }
 
-    fun updateMedNotes(newNotes: String) {
-        uiState.value = uiState.value.copy(medNotes = newNotes)
-    }
+  fun updateMedForm(newForm: String) {
+    uiState.value = uiState.value.copy(medForm = newForm)
+  }
 
-    fun isShowDateChecked(input: Boolean) {
-        uiState.value = uiState.value.copy(showDatePicker = !input)
-    }
+  fun updateMedStrength(newStrength: Float) {
+    uiState.value = uiState.value.copy(medStrength = newStrength /* .toFloat() */)
+  }
 
-    fun isShowTimeChecked(input: Boolean) {
-        uiState.value = uiState.value.copy(showTimePicker = !input)
-    }
+  fun addStrength(newStrength: Float) {
+    uiState.value =
+        uiState.value.copy(chosenStrengths = uiState.value.chosenStrengths + newStrength)
+  }
 
-    fun updateSelectedDays(input: List<String>) {
-        uiState.value = uiState.value.copy(intakeDays = uiState.value.intakeDays + input)
-    }
+  fun updateMedUnit(newUnit: MedicationUnit) {
+    uiState.value = uiState.value.copy(medUnit = newUnit)
+  }
+
+  fun updateIntakeTime(newTime: String) {
+    uiState.value = uiState.value.copy(medIntakeTime = newTime)
+  }
+
+  fun updateMedNotes(newNotes: String) {
+    uiState.value = uiState.value.copy(medNotes = newNotes)
+  }
+
+  fun isShowDateChecked(input: Boolean) {
+    uiState.value = uiState.value.copy(showDatePicker = !input)
+  }
+
+  fun isShowTimeChecked(input: Boolean) {
+    uiState.value = uiState.value.copy(showTimePicker = !input)
+  }
+
+  fun updateSelectedDays(input: List<String>) {
+    uiState.value = uiState.value.copy(intakeDays = uiState.value.intakeDays + input)
+  }
 }
