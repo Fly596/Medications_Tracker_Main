@@ -20,7 +20,7 @@ class _MedicationRepositoryImpl @Inject constructor(
   override suspend fun addMedication(userId: String, medication: Medication): Result<String> {
     return try {
       // 1. Добавляем в Firestore и получаем DocumentId.
-      val documentId = medicationRemote.addMedication(userId, medication.toDocument())
+      val documentId = medicationRemote.addMedication(medication.toDocument())
       val identifiedMedication = medication.copy(id = documentId)
 
       // 2. Добавляем в БД.

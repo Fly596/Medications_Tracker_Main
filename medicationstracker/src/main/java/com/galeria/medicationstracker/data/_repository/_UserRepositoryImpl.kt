@@ -33,7 +33,7 @@ class _UserRepositoryImpl @Inject constructor(
     scope.launch {
       // Подписка на изменения документа профиля
       launch {
-        userRemote.getUserFlow(userId).collect { doc ->
+        userRemote.getUserFlow().collect { doc ->
           doc?.let { userDao.upsertUser(it.toEntity()) }
         }
       }

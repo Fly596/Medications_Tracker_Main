@@ -9,26 +9,6 @@ import java.time.format.DateTimeFormatter
 
 class RoomConverters {
 
-  /*  @TypeConverter
-    fun fromLocalDate(value: LocalDate?): Long? {
-      return value?.toEpochDay()
-    }
-
-    @TypeConverter
-    fun toLocalDate(value: Long?): LocalDate? {
-      return value?.let { LocalDate.ofEpochDay(it) }
-    }
-
-    @TypeConverter
-    fun fromInstant(value: Instant?): Long? {
-      return value?.toEpochMilli()
-    }
-
-    @TypeConverter
-    fun toInstant(value: Long?): Instant? {
-      return value?.let { Instant.ofEpochMilli(it) }
-    }*/
-
   @TypeConverter
   fun localDateToString(date: LocalDate?): String? =
       date?.format(DateTimeFormatter.ofPattern("mm-dd-yyyy"))

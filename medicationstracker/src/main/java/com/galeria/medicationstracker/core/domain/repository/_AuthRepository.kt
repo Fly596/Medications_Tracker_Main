@@ -9,11 +9,16 @@ interface _AuthRepository {
   // Наблюдение за состоянием аутентификации (null — не залогинен)
   val authStateFlow: Flow<User?>
 
-  // Вход по логину и паролю
+  // Вход по логину и паролю.
   suspend fun signIn(email: String, pass: String): Result<User>
 
-  // Регистрация с сохранением имени пользователя
-  suspend fun signUp(email: String, pass: String, name: String, birthDate: LocalDate): Result<User>
+  // Регистрация с сохранением имени пользователя.
+  suspend fun signUp(
+    email: String,
+    password: String,
+    name: String,
+    birthDate: LocalDate? = null
+  ): Result<User>
 
   suspend fun resetPassword(email: String)
 }

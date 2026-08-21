@@ -10,9 +10,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -32,100 +36,127 @@ import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 
 @Composable
 fun LoginScreen(
-    modifier: Modifier = Modifier,
-    onLoginSuccessNavigation: () -> Unit = {},
-    onRegistration: () -> Unit = {},
-    onResetPassword: () -> Unit = {},
-    viewModel: LoginScreenViewModel = hiltViewModel(),
+  modifier: Modifier = Modifier,
+  onLoginSuccessNavigation: () -> Unit = {},
+  onRegistration: () -> Unit = {},
+  onResetPassword: () -> Unit = {},
+  viewModel: LoginScreenViewModel = hiltViewModel(),
 ) {
 
-    val state = viewModel.uiState.collectAsStateWithLifecycle()
+  val state = viewModel.uiState.collectAsStateWithLifecycle()
+  val snackbarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(key1 = Unit) {
-        viewModel.loginSuccessEvent.collect { onLoginSuccessNavigation() }
+  LaunchedEffect(key1 = Unit) {
+    viewModel.effectFlow.collect { effect ->
+      when (effect) {
+        is LoginUiEffect.NavigateToHome -> {
+          onLoginSuccessNavigation()
+        }
+
+        is LoginUiEffect.NavigateToRegistration -> {
+          onRegistration()
+        }
+
+        is LoginUiEffect.NavigateToResetPassword -> {
+          onResetPassword()
+        }
+
+        is LoginUiEffect.ShowSnackbar -> {
+          snackbarHostState.showSnackbar(message = effect.message, withDismissAction = true)
+        }
+      }
     }
+  }
 
+  Scaffold(
+    snackbarHost = {
+      SnackbarHost(snackbarHostState)
+    }
+  ) { innerPadding ->
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.Top,
+      modifier = Modifier
+        .fillMaxSize()
+        .padding(innerPadding)
+        .padding(horizontal = 16.dp),
+      verticalArrangement = Arrangement.Top,
     ) {
-        Spacer(modifier = Modifier.height(16.dp))
+      Text(
+        stringResource(R.string.sign_in_screen_title),
+        style = MedTrackerTheme.typography.display2Emphasized,
+      )
 
-        Text(
-            stringResource(R.string.sign_in_screen_title),
-            style = MedTrackerTheme.typography.display2Emphasized,
+      Spacer(modifier = Modifier.weight(1f))
+
+      Column(verticalArrangement = Arrangement.spacedBy(2.dp), modifier = Modifier) {
+        MyTextField(
+          value = state.value.email,
+          onValueChange = { viewModel.updateEmail(it) },
+          isPrimaryColor = true,
+          isError = state.value.emailError?.isNotEmpty() ?: false,
+          errorMessage = state.value.emailError,
+          label = "Email",
+          placeholder = "",
+          modifier = Modifier.fillMaxWidth(),
+          keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
         )
 
-        Spacer(modifier = Modifier.weight(1f))
-
-        Column(verticalArrangement = Arrangement.spacedBy(2.dp), modifier = Modifier) {
-            MyTextField(
-                value = state.value.email,
-                onValueChange = { viewModel.updateEmail(it) },
-                isPrimaryColor = true,
-                isError = state.value.emailError?.isNotEmpty() ?: false,
-                errorMessage = state.value.emailError,
-                label = "Email",
-                placeholder = "",
-                modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            )
-
-            MyTextField(
-                value = state.value.password,
-                onValueChange = { viewModel.updatePassword(it) },
-                isPrimaryColor = true,
-                isError = state.value.passwordError?.isNotEmpty() ?: false,
-                errorMessage = state.value.passwordError,
-                label = "Password",
-                placeholder = stringResource(R.string._6_or_more_characters),
-                // supportingText = "6 or more characters",
-                modifier = Modifier.fillMaxWidth(),
-                visualTransformation =
-                    if (state.value.showPassword) VisualTransformation.None
-                    else PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            )
-        }
-        // Show password switch.
-        RememberMeSwitch(
-            checked = state.value.showPassword,
-            onCheckedChange = { viewModel.isShowPasswordChecked(state.value.showPassword) },
+        MyTextField(
+          value = state.value.password,
+          onValueChange = { viewModel.updatePassword(it) },
+          isPrimaryColor = true,
+          isError = state.value.passwordError?.isNotEmpty() ?: false,
+          errorMessage = state.value.passwordError,
+          label = "Password",
+          placeholder = stringResource(R.string._6_or_more_characters),
+          // supportingText = "6 or more characters",
+          modifier = Modifier.fillMaxWidth(),
+          visualTransformation =
+              if (state.value.showPassword) VisualTransformation.None
+              else PasswordVisualTransformation(),
+          keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         )
+      }
+      // Show password switch.
+      RememberMeSwitch(
+        checked = state.value.showPassword,
+        onCheckedChange = { viewModel.isShowPasswordChecked(state.value.showPassword) },
+      )
 
-        Spacer(modifier = Modifier.height(16.dp))
+      Spacer(modifier = Modifier.height(16.dp))
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            FlyButton(
-                onClick = { viewModel.onSignInClick { onLoginSuccessNavigation() } },
-                enabled = true,
-            ) {
-                Text(text = stringResource(R.string.sign_in))
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            FlyTonalButton(onClick = { onRegistration() }, enabled = true) {
-                Text(text = stringResource(R.string.create_account))
-            }
+      Row(verticalAlignment = Alignment.CenterVertically) {
+        FlyButton(
+          onClick = {
+            viewModel.onSignIn()
+          },
+          enabled = !state.value.isLoading,
+        ) {
+          Text(text = stringResource(R.string.sign_in))
         }
 
         Spacer(modifier = Modifier.weight(1f))
 
-        FlyTextButton(onClick = { onResetPassword() }, enabled = true) {
-            Text(text = stringResource(R.string.forgot_password))
+        FlyTonalButton(onClick = { onRegistration() }, enabled = true) {
+          Text(text = stringResource(R.string.create_account))
         }
+      }
+
+      Spacer(modifier = Modifier.weight(1f))
+
+      FlyTextButton(onClick = { onResetPassword() }, enabled = true) {
+        Text(text = stringResource(R.string.forgot_password))
+      }
     }
+
+  }
 }
 
 @Composable
 fun RememberMeSwitch(checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(stringResource(R.string.show_password), style = MedTrackerTheme.typography.bodyMedium)
-        Spacer(modifier = Modifier.width(12.dp))
+  Row(verticalAlignment = Alignment.CenterVertically) {
+    Text(stringResource(R.string.show_password), style = MedTrackerTheme.typography.bodyMedium)
+    Spacer(modifier = Modifier.width(12.dp))
 
-        MySwitch(checked = checked, onCheckedChange = onCheckedChange)
-    }
+    MySwitch(checked = checked, onCheckedChange = onCheckedChange)
+  }
 }

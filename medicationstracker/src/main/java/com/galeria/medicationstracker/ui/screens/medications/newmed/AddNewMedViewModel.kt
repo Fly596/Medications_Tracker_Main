@@ -121,7 +121,6 @@ class AddNewMedViewModel @Inject constructor(
     viewModelScope.launch {
       val dbMedication: Medication = Medication(
         id = "",
-        userId = userId.toString(),
         name = uiState.value.medName,
         dosage = uiState.value.medStrength.toString() + uiState.value.medUnit,
         form = MedicationForm.valueOf(uiState.value.medForm),

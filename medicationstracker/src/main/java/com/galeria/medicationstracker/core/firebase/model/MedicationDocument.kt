@@ -3,6 +3,7 @@ package com.galeria.medicationstracker.core.firebase.model
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentId
 
+// Firestore model.
 data class MedicationDocument(
   @DocumentId
   val id: String = "",

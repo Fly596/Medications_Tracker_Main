@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -108,7 +109,12 @@ fun NewMedicationDataScreen(
         },
         colors = TopAppBarDefaults.topAppBarColors(
           containerColor = MedTrackerTheme.colors.secondaryBackground
-        )
+        ),
+        windowInsets =
+            WindowInsets(
+              top = 0,
+              bottom = 0,
+            ),
       )
     },
   ) { innerPadding ->
@@ -141,10 +147,10 @@ fun NewMedicationDataScreen(
               keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
               modifier = Modifier.weight(1f),
             )
-
             // Выбор формы лекарства.
             val medFormOptionsList =
-                MedicationForm.entries.toTypedArray().map { it.toString() }
+                MedicationForm.entries.toTypedArray()
+                  .map { it.toString() }
             GDropdownList(items = medFormOptionsList) { selected ->
               viewModel.updateMedForm(selected)
             }
@@ -236,7 +242,6 @@ fun NewMedicationDataScreen(
           ) {
             Text(stringResource(R.string.set_time))
           }
-
         }
         // Дни недели.
         item {

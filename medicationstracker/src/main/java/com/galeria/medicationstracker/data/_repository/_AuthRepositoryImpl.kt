@@ -45,24 +45,25 @@ class _AuthRepositoryImpl @Inject constructor(
 
     // 4. Возвращаем готовую Domain-модель
     userEntity.toDomain()
+
   }
 
   override suspend fun signUp(
     email: String,
-    pass: String,
+    password: String,
     name: String,
-    birthDate: LocalDate
+    birthDate: LocalDate?
   ): Result<User> =
       runCatching {
         // 1. Регистрируем пользователя в Firebase Auth
-        val firebaseUser = authRemote.signUp(email, pass)
+        val firebaseUser = authRemote.signUp(email, password)
 
         // 2. Формируем DTO для Firestore
         val userDoc = UserDocument(
           id = firebaseUser.uid,
           email = email,
           name = name,
-          dateOfBirth = Timestamp(birthDate.toEpochDay(), 0)
+          dateOfBirth = if (birthDate == null) null else Timestamp(birthDate.toEpochDay(), 0)
         )
 
         // 3. Сохраняем профиль в Firestore
