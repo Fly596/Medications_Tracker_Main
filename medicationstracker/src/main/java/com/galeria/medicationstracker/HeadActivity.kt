@@ -6,31 +6,18 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.displayCutout
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Modifier
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.galeria.medicationstracker.navigation.MainNavHost
 import com.galeria.medicationstracker.ui.HeadViewModel
-import com.galeria.medicationstracker.ui.componentsOld.BottomNavBar
 import com.galeria.medicationstracker.ui.componentsOld.bottomNavItems
 import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
-import com.galeria.medicationstracker.utils.navigation.ApplicationNavHost
-import com.galeria.medicationstracker.utils.navigation.AuthScreen
 import com.galeria.medicationstracker.utils.navigation.GraphRoutes
 import com.google.android.gms.common.util.CollectionUtils.listOf
 import com.google.firebase.auth.FirebaseAuth
@@ -87,45 +74,45 @@ class HeadActivity : ComponentActivity() {
         }
         val items = bottomNavItems()
         Log.d("Routes: ", items.toString())
+        MainNavHost()
+        /*     Scaffold(
+               snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+               modifier = Modifier.windowInsetsPadding(WindowInsets.displayCutout),
+               containerColor = MedTrackerTheme.colors.secondaryBackground,
+               bottomBar = {
+                 val navBackStackEntry by navController.currentBackStackEntryAsState()
+                 val currentDestination = navBackStackEntry?.destination?.route
+                 Log.d("currentDestination", currentDestination.toString())
+                 val routesOldWithoutBottomBar =
+                     listOf(
+                       AuthScreen.Login.route,
+                       AuthScreen.Registration.route,
+                       AuthScreen.PasswordRecovery.route,
+                     )
 
-        Scaffold(
-          snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-          modifier = Modifier.windowInsetsPadding(WindowInsets.displayCutout),
-          containerColor = MedTrackerTheme.colors.secondaryBackground,
-          bottomBar = {
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
-            val currentDestination = navBackStackEntry?.destination?.route
-            Log.d("currentDestination", currentDestination.toString())
-            val routesOldWithoutBottomBar =
-                listOf(
-                  AuthScreen.Login.route,
-                  AuthScreen.Registration.route,
-                  AuthScreen.PasswordRecovery.route,
-                )
-
-            if (currentDestination !in routesOldWithoutBottomBar) {
-              // Индекс текущего пункта меню.
-              val vmIndex = headViewModel.selectedItemIndex.collectAsState().value
-              Log.d("currentDestination", currentDestination.toString())
-              BottomNavBar(
-                items,
-                navController,
-                //headViewModel,
-                currentIndex = vmIndex,
-                onBottomNavItemClick = headViewModel::updateSelectedItemIndex
-              )
-            }
-          },
-        ) {
-          ApplicationNavHost(
-            modifier = Modifier
-              .fillMaxSize()
-              .padding(it),
-            /* .padding(start = 16.dp, end = 16.dp, top = 16.dp) */
-            navController = navController,
-            startDestination = currentDestination,
-          )
-        }
+                 if (currentDestination !in routesOldWithoutBottomBar) {
+                   // Индекс текущего пункта меню.
+                   val vmIndex = headViewModel.selectedItemIndex.collectAsState().value
+                   Log.d("currentDestination", currentDestination.toString())
+                   BottomNavBar(
+                     items,
+                     navController,
+                     //headViewModel,
+                     currentIndex = vmIndex,
+                     onBottomNavItemClick = headViewModel::updateSelectedItemIndex
+                   )
+                 }
+               },
+             ) {
+               MainNavHost(modifier = Modifier.padding(it))
+               *//*   ApplicationNavHost(
+               modifier = Modifier
+                 .fillMaxSize()
+                 .padding(it),
+               navController = navController,
+               startDestination = currentDestination,
+             )*//*
+        }*/
       }
     }
   }

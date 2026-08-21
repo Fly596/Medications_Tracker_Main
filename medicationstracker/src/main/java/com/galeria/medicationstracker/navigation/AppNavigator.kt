@@ -2,6 +2,7 @@ package com.galeria.medicationstracker.navigation
 
 import android.util.Log
 import androidx.navigation3.runtime.NavKey
+import com.galeria.medicationstracker.R
 
 class AppNavigator(val state: NavigationState) {
 
@@ -35,4 +36,19 @@ class AppNavigator(val state: NavigationState) {
       "Items: ${state.stacksInUse.forEach { Log.d("AppNavigator", "Item: $it") }}"
     )
   }
+}
+
+enum class TopLevelTab(
+  val route: NavRoute,
+  val title: String,
+  val icon: Int
+) {
+
+  HOME(NavRoute.TodayMedications, "Главная", R.drawable.home_fill),
+  MEDICATIONS(
+    NavRoute.MedicationsList,
+    "Поиск",
+    R.drawable.lab_profile_fill
+  ),
+  PROFILE(NavRoute.Profile, "Профиль", R.drawable.profile_fill)
 }

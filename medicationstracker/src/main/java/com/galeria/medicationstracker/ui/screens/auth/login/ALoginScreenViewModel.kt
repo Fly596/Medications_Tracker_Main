@@ -101,4 +101,18 @@ class ALoginScreenViewModel
 
     return isValid
   }
+
+  fun updateEmail(input: String) {
+    _uiState.update { it.copy(email = input, emailError = null, generalError = null) }
+  }
+
+  fun updatePassword(input: String) {
+    _uiState.update {
+      it.copy(password = input, passwordError = null, generalError = null)
+    }
+  }
+
+  fun isShowPasswordChecked(input: Boolean) {
+    _uiState.update { it.copy(showPassword = !input) }
+  }
 }

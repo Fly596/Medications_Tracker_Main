@@ -11,14 +11,14 @@ android {
   namespace = "com.galeria.medicationstracker"
   compileSdk {
     version =
-        release(36) {
+        release(37) {
           minorApiLevel = 1
         }
   }
   defaultConfig {
     applicationId = "com.galeria.medicationstracker"
     minSdk = 31
-    targetSdk = 36
+    targetSdk = 37
     versionCode = 1
     versionName = "1.0"
 
