@@ -61,9 +61,9 @@ import com.galeria.medtracker2.core.ui.theme.MedTrackerTheme
 import com.galeria.medtracker2.core.utils.DateTimeUtils
 
 @Composable
-fun AddMedicationScreen(
+fun AddMedicationScheduleScreen(
     onConfirm: () -> Unit = {},
-    viewModel: AddMedicationVM = hiltViewModel(),
+    viewModel: AddMedicationScheduleVM = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -84,22 +84,24 @@ fun AddMedicationScreen(
         topBar = {
             TopAppBar(
                 title = { Text("New medication", style = MaterialTheme.typography.displaySmall) },
-              colors =
-                      TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.background
-                      ),
+                colors =
+                        TopAppBarDefaults.topAppBarColors(
+                            containerColor = MaterialTheme.colorScheme.background
+                        ),
             )
         },
     ) { innerPadding ->
-      Box(modifier = Modifier
-        .fillMaxSize()
-        .padding(innerPadding)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
             Column(
-              modifier =
-                      Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp),
             ) {
                 // region Поля ввода основной информации.
@@ -110,7 +112,7 @@ fun AddMedicationScreen(
                     leadingIcon = { Icon(Icons.Default.Healing, contentDescription = null) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
-                  keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                 )
                 TextField(
                     value = state.dose,
@@ -118,11 +120,11 @@ fun AddMedicationScreen(
                     label = { Text("Medication dose") },
                     leadingIcon = { Icon(Icons.Default.MonitorWeight, contentDescription = null) },
                     modifier = Modifier.fillMaxWidth(),
-                  keyboardOptions =
-                          KeyboardOptions(
-                            keyboardType = KeyboardType.Decimal,
-                            imeAction = ImeAction.Done,
-                          ),
+                    keyboardOptions =
+                            KeyboardOptions(
+                                keyboardType = KeyboardType.Decimal,
+                                imeAction = ImeAction.Done,
+                            ),
                     singleLine = true,
                 )
                 // endregion
@@ -130,45 +132,45 @@ fun AddMedicationScreen(
                 // Даты в красивом горизонтальном ряду
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                  horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     ClickableReadonlyField(
                         label = "Start Date",
                         text = DateTimeUtils.formatLongToLocalDateString(state.startDateMillis),
                         onClick = { showStartDatePicker = true },
-                      modifier = Modifier.weight(1f),
+                        modifier = Modifier.weight(1f),
                     )
                     ClickableReadonlyField(
                         label = "End Date",
                         text = DateTimeUtils.formatLongToLocalDateString(state.endDateMillis),
                         onClick = { showEndDatePicker = true },
-                      modifier = Modifier.weight(1f),
+                        modifier = Modifier.weight(1f),
                     )
                 }
-              HorizontalDivider(
-                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-              )
+                HorizontalDivider(
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                )
 
                 // Секция выбора времени
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                  verticalAlignment = Alignment.CenterVertically,
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         text = "Intake Times",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold,
-                      color = MaterialTheme.colorScheme.onBackground,
+                        color = MaterialTheme.colorScheme.onBackground,
                     )
                     TextButton(
                         onClick = { isTimePickerVisible = true },
-                      contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
                     ) {
                         Icon(
                             Icons.Default.AccessTime,
                             contentDescription = null,
-                          modifier = Modifier.size(18.dp),
+                            modifier = Modifier.size(18.dp),
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text("Add Time")
@@ -180,7 +182,7 @@ fun AddMedicationScreen(
                     FlowRow(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
-                      verticalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         state.intakeTimes.forEach { time ->
                             InputChip(
@@ -191,7 +193,7 @@ fun AddMedicationScreen(
                                     Icon(
                                         imageVector = Icons.Default.Close,
                                         contentDescription = "Remove time",
-                                      modifier = Modifier.size(16.dp),
+                                        modifier = Modifier.size(16.dp),
                                     )
                                 },
                             )
@@ -202,7 +204,7 @@ fun AddMedicationScreen(
                         text = "No intake times added yet.",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.outline,
-                      modifier = Modifier.padding(vertical = 8.dp),
+                        modifier = Modifier.padding(vertical = 8.dp),
                     )
                 }
                 Spacer(modifier = Modifier.height(130.dp))
@@ -219,27 +221,27 @@ fun AddMedicationScreen(
             }
             // Фиксированная панель кнопок внизу экрана с размытием или фоном
             Surface(
-              modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth(),
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth(),
                 color = MaterialTheme.colorScheme.background,
-              tonalElevation = 3.dp,
+                tonalElevation = 3.dp,
             ) {
                 Column(
-                  modifier =
-                          Modifier/*.windowInsetsPadding(WindowInsets.safeContent)*/.padding(16.dp),
-                  verticalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier =
+                            Modifier/*.windowInsetsPadding(WindowInsets.safeContent)*/.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Button(
                         onClick = { requestPermission() },
-                      modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth(),
                     ) {
                         Text("Set alarm", fontWeight = FontWeight.Bold)
                     }
 
                     OutlinedButton(
                         onClick = onConfirm,
-                      modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth(),
                     ) {
                         Text("On add med page", fontWeight = FontWeight.Medium)
                     }
@@ -252,7 +254,7 @@ fun AddMedicationScreen(
         DatePickerModal(
             initialMillis = state.startDateMillis,
             onDateSelected = { millis ->
-              if (millis != null) viewModel.updateStartDate(millis)
+                if (millis != null) viewModel.updateStartDate(millis)
                 showStartDatePicker = false
             },
             onDismiss = { showStartDatePicker = false },
@@ -263,7 +265,7 @@ fun AddMedicationScreen(
         DatePickerModal(
             initialMillis = state.endDateMillis,
             onDateSelected = { millis ->
-              if (millis != null) viewModel.updateEndDate(millis)
+                if (millis != null) viewModel.updateEndDate(millis)
                 showEndDatePicker = false
             },
             onDismiss = { showEndDatePicker = false },
@@ -298,25 +300,25 @@ fun ClickableReadonlyField(
                 Icon(
                     Icons.Default.CalendarToday,
                     contentDescription = null,
-                  modifier = Modifier.size(18.dp),
+                    modifier = Modifier.size(18.dp),
                 )
             },
             modifier = Modifier.fillMaxWidth(),
             // Делаем цвета как у активного поля, чтобы оно не выглядело "выключенным"
             colors =
-                OutlinedTextFieldDefaults.colors(
-                    disabledTextColor = MaterialTheme.colorScheme.onSurface,
-                    disabledBorderColor = MaterialTheme.colorScheme.outline,
-                    disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                  disabledTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                ),
+                    OutlinedTextFieldDefaults.colors(
+                        disabledTextColor = MaterialTheme.colorScheme.onSurface,
+                        disabledBorderColor = MaterialTheme.colorScheme.outline,
+                        disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        disabledTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    ),
             enabled = false, // Важно: отключает фокус и клавиатуру!
         )
         // Невидимый слой поверх поля, который перехватывает клики
         Surface(
-          modifier = Modifier
-            .matchParentSize()
-            .clickable { onClick() },
+            modifier = Modifier
+                .matchParentSize()
+                .clickable { onClick() },
             color = Color.Transparent,
         ) {}
     }
@@ -331,7 +333,7 @@ fun AddMedsScreenPreview() {
                 ClickableReadonlyField(
                     label = "Label",
                     text = "text",
-                  {},
+                    {},
                 )
             }
         }

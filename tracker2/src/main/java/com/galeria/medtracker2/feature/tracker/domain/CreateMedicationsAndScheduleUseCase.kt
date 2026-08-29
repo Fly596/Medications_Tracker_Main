@@ -1,19 +1,9 @@
 package com.galeria.medtracker2.feature.tracker.domain
 
-import com.galeria.medtracker2.core.utils.DateTimeUtils
-import com.galeria.medtracker2.domain.model.AlarmItem
-import com.galeria.medtracker2.domain.model.MedicationCourseDomain
-import com.galeria.medtracker2.domain.model.MedicationDomain
-import com.galeria.medtracker2.domain.model.PlannedIntakeDomain
 import com.galeria.medtracker2.domain.repository.AlarmScheduler
 import com.galeria.medtracker2.domain.repository.MedicationRepository
 import com.galeria.medtracker2.domain.repository.MedicationsCourseRepository
-import java.time.Instant
-import java.time.LocalDate
 import java.time.LocalTime
-import java.time.ZoneId
-import java.time.temporal.ChronoUnit
-import java.util.UUID
 import javax.inject.Inject
 
 class CreateMedicationsAndScheduleUseCase
@@ -31,7 +21,7 @@ constructor(
         endDate: Long,
         intakeTimes: List<LocalTime>,
     ) {
-        val today = LocalDate.now()
+        /*val today = LocalDate.now()
         val cleanName = name.trim()
         val startLocalDate = DateTimeUtils.fromLongToLocalDate(startDate)
         val endLocalDate = DateTimeUtils.fromLongToLocalDate(endDate)
@@ -104,6 +94,6 @@ constructor(
 
         // 6. Сохраняем приемы и будильники.
         medicationsCourseRepository.addAllPlannedIntakes(intakesList)
-        alarmScheduler.scheduleAll(alarms)
+        alarmScheduler.scheduleAll(alarms)*/
     }
 }

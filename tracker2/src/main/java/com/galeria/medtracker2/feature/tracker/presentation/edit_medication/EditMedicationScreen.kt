@@ -64,16 +64,30 @@ fun EditMedicationScreen(
                     }
                 },
                 colors =
-                    TopAppBarDefaults.largeTopAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.background
-                    ),
+                        TopAppBarDefaults.largeTopAppBarColors(
+                            containerColor = MaterialTheme.colorScheme.background
+                        ),
             )
         }
     ) { innerPadding ->
-      EditMedicationView(
-        modifier = Modifier.padding(innerPadding),
-        medicationCourse = state.medication,
-        onDeleteClick = {})
+        Column(
+            modifier = Modifier.padding(innerPadding),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+        }
+        /*EditMedicationView(
+          modifier = Modifier.padding(innerPadding),
+          medicationCourse = MedicationCourseSummary(
+              medicationId = state.medId,
+              name = state.name
+              ,
+              doseMg = state.dose.toDouble()
+              ,
+              startDate = state.startDateMillis
+              ,
+              endDate = state.endDateMillis
+              ,),
+          onDeleteClick = {})*/
     }
 }
 
@@ -87,16 +101,16 @@ fun EditMedicationView(
 
     Column(
         modifier = modifier
-          .verticalScroll(scrollState)
-          .padding(16.dp),
+            .verticalScroll(scrollState)
+            .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         // 1 & 2. Название препарата и Дозировка
         Card(modifier = Modifier.fillMaxWidth()) {
             Row(
                 modifier = Modifier
-                  .fillMaxWidth()
-                  .padding(16.dp),
+                    .fillMaxWidth()
+                    .padding(16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -117,18 +131,18 @@ fun EditMedicationView(
                         )
                     },
                     colors =
-                        SuggestionChipDefaults.suggestionChipColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer,
-                            labelColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        ),
+                            SuggestionChipDefaults.suggestionChipColors(
+                                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                labelColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                            ),
                 )
             }
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors =
-                    CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow
-                    ),
+                        CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+                        ),
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Row(
@@ -143,9 +157,9 @@ fun EditMedicationView(
                             )
                             Text(
                                 text =
-                                    DateTimeUtils.formatLongToLocalDateString(
-                                        medicationCourse.startDate
-                                    ),
+                                        DateTimeUtils.formatLongToLocalDateString(
+                                            medicationCourse.startDate
+                                        ),
                                 style = MaterialTheme.typography.bodyLarge,
                                 fontWeight = FontWeight.Medium,
                             )
@@ -158,9 +172,9 @@ fun EditMedicationView(
                             )
                             Text(
                                 text =
-                                    DateTimeUtils.formatLongToLocalDateString(
-                                        medicationCourse.endDate
-                                    ),
+                                        DateTimeUtils.formatLongToLocalDateString(
+                                            medicationCourse.endDate
+                                        ),
                                 style = MaterialTheme.typography.bodyLarge,
                                 fontWeight = FontWeight.Medium,
                             )
@@ -175,10 +189,10 @@ fun EditMedicationView(
         Button(
             onClick = onDeleteClick,
             colors =
-                ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.errorContainer,
-                    contentColor = MaterialTheme.colorScheme.onErrorContainer,
-                ),
+                    ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.errorContainer,
+                        contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                    ),
             modifier = Modifier.fillMaxWidth(),
         ) {
             Icon(imageVector = Icons.Default.Delete, contentDescription = null)
@@ -188,12 +202,12 @@ fun EditMedicationView(
 
         // Кнопка редактирования.
         Button(
-          onClick = { },
+            onClick = { },
             colors =
-                ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                ),
+                    ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    ),
             modifier = Modifier.fillMaxWidth(),
         ) {
             Icon(imageVector = Icons.Default.Info, contentDescription = null)

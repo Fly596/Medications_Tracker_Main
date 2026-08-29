@@ -6,5 +6,7 @@ import java.util.UUID
 data class MedicationDomain(
     val id: UUID,
     val name: String,
+    val pricing: Int,
+    val unit: String,
     val creationTimestamp: Instant
 )

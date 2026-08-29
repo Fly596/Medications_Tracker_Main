@@ -15,5 +15,5 @@ enum class BottomNavItem(
 
     HOME(AppRoutes.Home, "Home", Icons.Filled.Home),
     MEDICATIONS(AppRoutes.MedicationsList, "Medications", Icons.AutoMirrored.Filled.List),
-    ADD_MEDICATION(AppRoutes.AddMedication, "Add Medication", Icons.Filled.Add),
+    ADD_MEDICATION(AppRoutes.AddMedicationSchedule, "Add Medication", Icons.Filled.Add),
 }

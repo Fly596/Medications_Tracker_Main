@@ -60,6 +60,7 @@ import java.util.UUID
 @Composable
 fun MyMedicationsScreen(
     onNavigateToViewMedication: (UUID) -> Unit = {},
+    onNavigateToAddMedicationSchedule: () -> Unit = {},
     onNavigateToAddMedication: () -> Unit = {},
     viewModel: MyMedicationsVM = hiltViewModel(),
 ) {
@@ -92,17 +93,17 @@ fun MyMedicationsScreen(
                 },
                 scrollBehavior = scrollBehavior,
                 colors =
-                    TopAppBarDefaults.largeTopAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.background,
-                        scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                    ),
+                        TopAppBarDefaults.largeTopAppBarColors(
+                            containerColor = MaterialTheme.colorScheme.background,
+                            scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                        ),
             )
         },
         floatingActionButton = {
             // Показываем FAB только если на экране есть список лекарств
             if (state.medsList.isNotEmpty() && !state.isLoading) {
                 ExtendedFloatingActionButton(
-                    onClick = onNavigateToAddMedication,
+                    onClick = onNavigateToAddMedicationSchedule,
                     expanded = isFabExpanded,
                     icon = { Icon(Icons.Default.Add, contentDescription = "Add medication icon") },
                     text = { Text("Add Medication") },
@@ -112,9 +113,11 @@ fun MyMedicationsScreen(
             }
         },
     ) { innerPadding ->
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .padding(innerPadding)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
             when {
                 state.isLoading -> {
                     CircularProgressIndicator(
@@ -125,7 +128,8 @@ fun MyMedicationsScreen(
 
                 state.medsList.isEmpty() -> {
                     EmptyMedicationsPlaceholder(
-                        onAddClick = onNavigateToAddMedication,
+                        onAddScheduleClick = onNavigateToAddMedicationSchedule,
+                        onAddMedClick = onNavigateToAddMedication,
                         modifier = Modifier.align(Alignment.Center),
                     )
                 }
@@ -168,12 +172,12 @@ fun MedsList(
         state = lazyListState,
         modifier = modifier,
         contentPadding =
-            PaddingValues(
-                start = 16.dp,
-                end = 16.dp,
-                top = 8.dp,
-                bottom = 96.dp, // Отступ снизу, чтобы FAB не перекрывал последнюю карточку в списке
-            ),
+                PaddingValues(
+                    start = 16.dp,
+                    end = 16.dp,
+                    top = 8.dp,
+                    bottom = 96.dp, // Отступ снизу, чтобы FAB не перекрывал последнюю карточку в списке
+                ),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         items(items = medications, key = { it.medicationId }) { med ->
@@ -193,9 +197,9 @@ fun MedicationCard(
     modifier: Modifier = Modifier,
 ) {
     val formattedStartDate =
-        remember(medication.startDate) { DateTimeUtils.fromLongToLocalDate(medication.startDate) }
+            remember(medication.startDate) { DateTimeUtils.fromLongToLocalDate(medication.startDate) }
     val formattedEndDate =
-        remember(medication.endDate) { DateTimeUtils.fromLongToLocalDate(medication.endDate) }
+            remember(medication.endDate) { DateTimeUtils.fromLongToLocalDate(medication.endDate) }
 
     Card(
         onClick = { onSelect(medication.medicationId) },
@@ -203,7 +207,7 @@ fun MedicationCard(
         // elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         shape = MedTrackerTheme.shapes.large,
         colors =
-            CardDefaults.cardColors(containerColor = MedTrackerTheme.colors.secondaryBackground),
+                CardDefaults.cardColors(containerColor = MedTrackerTheme.colors.secondaryBackground),
     ) {
         Row(
             modifier = Modifier
@@ -278,7 +282,8 @@ fun MedicationCard(
 
 @Composable
 private fun EmptyMedicationsPlaceholder(
-    onAddClick: () -> Unit,
+    onAddScheduleClick: () -> Unit,
+    onAddMedClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -310,7 +315,15 @@ private fun EmptyMedicationsPlaceholder(
         )
         Spacer(modifier = Modifier.height(24.dp))
         Button(
-            onClick = onAddClick,
+            onClick = onAddScheduleClick,
+            contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp)
+        ) {
+            Icon(Icons.Default.Add, contentDescription = null)
+            Spacer(modifier = Modifier.width(8.dp))
+            Text("Add Medication Schedule", fontWeight = FontWeight.SemiBold)
+        }
+        Button(
+            onClick = onAddMedClick,
             contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp)
         ) {
             Icon(Icons.Default.Add, contentDescription = null)
@@ -328,13 +341,13 @@ fun MedsScreenPreview() {
             items(4) {
                 MedicationCard(
                     medication =
-                        MedicationCourseSummary(
-                            medicationId = UUID.randomUUID(),
-                            name = "Name",
-                            doseMg = 50.0,
-                            startDate = 0,
-                            endDate = 0,
-                        ),
+                            MedicationCourseSummary(
+                                medicationId = UUID.randomUUID(),
+                                name = "Name",
+                                doseMg = 50.0,
+                                startDate = 0,
+                                endDate = 0,
+                            ),
                     onSelect = {},
                 )
             }

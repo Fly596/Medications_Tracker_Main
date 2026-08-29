@@ -3,7 +3,6 @@ package com.galeria.medtracker2.feature.tracker.presentation.add_med
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.galeria.medtracker2.core.utils.DateTimeUtils
-import com.galeria.medtracker2.feature.tracker.domain.CreateMedicationsAndScheduleUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,7 +12,7 @@ import java.time.LocalDate
 import java.time.LocalTime
 import javax.inject.Inject
 
-data class AddMedUiState(
+data class AddMedScheduleUiState(
     val name: String = "Adderall",
     val dose: String = "50",
     val startDateMillis: Long = DateTimeUtils.fromLocalDateToLong(LocalDate.now()),
@@ -27,12 +26,12 @@ const val TAG: String = "MyActivity"
 const val DEFAULT_SCHEDULE_DAYS: Long = 7
 
 @HiltViewModel
-class AddMedicationVM
+class AddMedicationScheduleVM
 @Inject
-constructor(private val createMedicationsAndScheduleUseCase: CreateMedicationsAndScheduleUseCase) :
+constructor(/*private val createMedicationsAndScheduleUseCase: CreateMedicationsAndScheduleUseCase*/) :
     ViewModel() {
 
-    private val _state = MutableStateFlow(AddMedUiState())
+    private val _state = MutableStateFlow(AddMedScheduleUiState())
     val state = _state.asStateFlow()
 
     fun updateName(input: String) = _state.update { it.copy(name = input) }
@@ -97,13 +96,13 @@ constructor(private val createMedicationsAndScheduleUseCase: CreateMedicationsAn
             try {
                 // Добавление новых данных в БД: лекарство, график расписания
                 // и запланированные приемы по часам.
-                createMedicationsAndScheduleUseCase(
+                /*createMedicationsAndScheduleUseCase(
                     name = name,
                     dose = dosage,
                     startDate = start,
                     endDate = end,
                     intakeTimes = intakesTimes,
-                )
+                )*/
                 // TODO: ui ивент для навигации назад.
             } catch (e: Exception) {
                 // Ловим ошибки.

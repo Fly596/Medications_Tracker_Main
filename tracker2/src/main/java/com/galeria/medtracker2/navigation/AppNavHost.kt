@@ -21,7 +21,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.galeria.medtracker2.core.ui.theme.MedTrackerTheme
-import com.galeria.medtracker2.feature.tracker.presentation.add_med.AddMedicationScreen
+import com.galeria.medtracker2.feature.tracker.presentation.add_med.AddMedScreen
+import com.galeria.medtracker2.feature.tracker.presentation.add_med.AddMedicationScheduleScreen
 import com.galeria.medtracker2.feature.tracker.presentation.edit_medication.EditMedicationScreen
 import com.galeria.medtracker2.feature.tracker.presentation.medication.MedicationScreen
 import com.galeria.medtracker2.feature.tracker.presentation.medications.MyMedicationsScreen
@@ -43,8 +44,8 @@ fun AppNavHost(
             ) {
                 NavigationBarItem(
                     selected =
-                        currentDestination?.hierarchy?.any { it.hasRoute<AppRoutes.Home>() } ==
-                            true,
+                            currentDestination?.hierarchy?.any { it.hasRoute<AppRoutes.Home>() } ==
+                                    true,
                     onClick = {
                         navController.navigate(AppRoutes.Home) {
                             popUpTo(0) { saveState = true }
@@ -55,13 +56,12 @@ fun AppNavHost(
                     icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
                     label = { Text("Home") },
                 )
-
                 // Второй таб.
                 NavigationBarItem(
                     selected =
-                        currentDestination?.hierarchy?.any {
-                            it.hasRoute<AppRoutes.MedicationsList>()
-                        } == true,
+                            currentDestination?.hierarchy?.any {
+                                it.hasRoute<AppRoutes.MedicationsList>()
+                            } == true,
                     onClick = {
                         navController.navigate(AppRoutes.MedicationsList) {
                             popUpTo(0) { saveState = true }
@@ -82,14 +82,20 @@ fun AppNavHost(
         ) {
             composable<AppRoutes.Home> { MainIntakesScreen() }
 
+            composable<AppRoutes.AddMedicationSchedule> {
+                AddMedicationScheduleScreen(onConfirm = { navController.navigate(AppRoutes.Home) })
+            }
             composable<AppRoutes.AddMedication> {
-                AddMedicationScreen(onConfirm = { navController.navigate(AppRoutes.Home) })
+                AddMedScreen(onConfirm = { navController.navigate(AppRoutes.Home) })
             }
 
             composable<AppRoutes.MedicationsList> {
                 MyMedicationsScreen(
                     onNavigateToViewMedication = { id ->
                         navController.navigate(AppRoutes.MedicationDetails(id.toString()))
+                    },
+                    onNavigateToAddMedicationSchedule = {
+                        navController.navigate(AppRoutes.AddMedicationSchedule)
                     },
                     onNavigateToAddMedication = {
                         navController.navigate(AppRoutes.AddMedication)
@@ -100,21 +106,19 @@ fun AppNavHost(
             composable<AppRoutes.MedicationDetails> { backStackEntry ->
                 // val route = backStackEntry.toRoute<AppRoutes.MedicationDetails>()
                 // val medicationId = UUID.fromString(route.medicationId)
-
-              MedicationScreen(
-                onNavigateBack = { navController.navigateUp() },
-                onEditMedication = { id ->
-                  navController.navigate(AppRoutes.EditMedication(id.toString()))
-                },
-              )
+                MedicationScreen(
+                    onNavigateBack = { navController.navigateUp() },
+                    onEditMedication = { id ->
+                        navController.navigate(AppRoutes.EditMedication(id.toString()))
+                    },
+                )
             }
 
-          composable<AppRoutes.EditMedication> { backStackEntry ->
-            //val route = backStackEntry.toRoute<AppRoutes.EditMedication>()
-            //val medicationId = UUID.fromString(route.medicationId)
-
-            EditMedicationScreen(onNavigateBack = { navController.navigateUp() })
-          }
+            composable<AppRoutes.EditMedication> { backStackEntry ->
+                //val route = backStackEntry.toRoute<AppRoutes.EditMedication>()
+                //val medicationId = UUID.fromString(route.medicationId)
+                EditMedicationScreen(onNavigateBack = { navController.navigateUp() })
+            }
         }
     }
 }
