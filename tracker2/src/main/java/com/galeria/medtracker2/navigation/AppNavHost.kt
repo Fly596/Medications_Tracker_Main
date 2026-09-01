@@ -2,7 +2,6 @@ package com.galeria.medtracker2.navigation
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -12,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -20,6 +20,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.galeria.medtracker2.R
 import com.galeria.medtracker2.core.ui.theme.MedTrackerTheme
 import com.galeria.medtracker2.feature.tracker.presentation.add_med.AddMedScreen
 import com.galeria.medtracker2.feature.tracker.presentation.add_med.AddMedicationScheduleScreen
@@ -53,7 +54,12 @@ fun AppNavHost(
                             restoreState = true
                         }
                     },
-                    icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.home),
+                            contentDescription = "Home"
+                        )
+                    },
                     label = { Text("Home") },
                 )
                 // Второй таб.
@@ -83,10 +89,14 @@ fun AppNavHost(
             composable<AppRoutes.Home> { MainIntakesScreen() }
 
             composable<AppRoutes.AddMedicationSchedule> {
-                AddMedicationScheduleScreen(onConfirm = { navController.navigate(AppRoutes.Home) })
+                AddMedicationScheduleScreen(
+                    onConfirm = { navController.navigate(AppRoutes.Home) },
+                    onBack = { navController.navigateUp() })
             }
             composable<AppRoutes.AddMedication> {
-                AddMedScreen(onConfirm = { navController.navigate(AppRoutes.Home) })
+                AddMedScreen(
+                    onConfirm = { navController.navigate(AppRoutes.Home) },
+                    onBack = { navController.navigateUp() })
             }
 
             composable<AppRoutes.MedicationsList> {

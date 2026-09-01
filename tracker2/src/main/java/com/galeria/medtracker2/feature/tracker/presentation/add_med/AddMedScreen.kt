@@ -13,10 +13,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Healing
 import androidx.compose.material.icons.filled.MonitorWeight
+import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -33,61 +35,12 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import javax.inject.Inject
-
-data class AddMedUiState(
-    val name: String = "Adderall",
-    val dose: String = "50",
-    val unit: String = "mg",
-    val price: String = "10",
-    val isLoading: Boolean = false,
-    val errorMessage: String? = null,
-)
-
-@HiltViewModel
-class AddMedVM
-@Inject
-constructor() : ViewModel() {
-
-    val units = listOf("mg", "g")
-    private val _state = MutableStateFlow(AddMedUiState())
-    val state = _state.asStateFlow()
-
-    fun updateName(input: String) {
-        _state.update { it.copy(name = input) }
-    }
-
-    fun updateDose(input: String) {
-        // digits only.
-        if (input.all { char -> char.isDigit() }) {
-            _state.update { it.copy(dose = input) }
-        }
-    }
-
-    fun updateUnit(input: String) {
-        if (input in units) {
-            _state.update { it.copy(unit = input) }
-        }
-    }
-
-    fun updatePrice(input: String) {
-        // digits only.
-        if (input.all { char -> char.isDigit() }) {
-            _state.update { it.copy(price = input) }
-        }
-    }
-}
 
 @Composable
 fun AddMedScreen(
     onConfirm: () -> Unit = {},
-    onDismiss: () -> Unit = {},
+    onBack: () -> Unit = {},
     viewModel: AddMedVM = hiltViewModel(),
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
@@ -96,9 +49,14 @@ fun AddMedScreen(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text(text = "New Medication") },
+                title = {
+                    Text(
+                        text = "New Medication",
+                        style = MaterialTheme.typography.displaySmall
+                    )
+                },
                 navigationIcon = {
-                    IconButton(onClick = onDismiss) {
+                    IconButton(onClick = onBack) {
                         Icon(
                             imageVector = Icons.Default.ArrowBackIosNew, contentDescription = null
                         )
@@ -117,7 +75,7 @@ fun AddMedScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(16.dp),
-            verticalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             TextField(
@@ -155,6 +113,9 @@ fun AddMedScreen(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.fillMaxWidth(),
             )
+            Button(onClick = onConfirm) {
+                Text("Add Medication")
+            }
         }
     }
 }

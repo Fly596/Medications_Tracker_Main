@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,6 +21,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Healing
@@ -27,6 +29,7 @@ import androidx.compose.material.icons.filled.MonitorWeight
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -63,17 +66,16 @@ import com.galeria.medtracker2.core.utils.DateTimeUtils
 @Composable
 fun AddMedicationScheduleScreen(
     onConfirm: () -> Unit = {},
+    onBack: () -> Unit = {},
     viewModel: AddMedicationScheduleVM = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-
     // Получаем функцию-триггер.
     val requestPermission = rememberNotificationPermissionHandler { isGranted ->
         if (isGranted) {
             viewModel.addMedication()
         }
     }
-
     // Управление видимостью диалогов на уровне экрана
     var isTimePickerVisible by rememberSaveable { mutableStateOf(false) }
     var showStartDatePicker by rememberSaveable { mutableStateOf(false) }
@@ -83,10 +85,23 @@ fun AddMedicationScheduleScreen(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBackIosNew,
+                            contentDescription = null,
+                        )
+                    }
+                },
                 title = { Text("New medication", style = MaterialTheme.typography.displaySmall) },
                 colors =
                         TopAppBarDefaults.topAppBarColors(
                             containerColor = MaterialTheme.colorScheme.background
+                        ),
+                windowInsets =
+                        WindowInsets(
+                            top = 0,
+                            bottom = 0,
                         ),
             )
         },
@@ -128,7 +143,6 @@ fun AddMedicationScheduleScreen(
                     singleLine = true,
                 )
                 // endregion
-
                 // Даты в красивом горизонтальном ряду
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -150,7 +164,6 @@ fun AddMedicationScheduleScreen(
                 HorizontalDivider(
                     color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
                 )
-
                 // Секция выбора времени
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -176,7 +189,6 @@ fun AddMedicationScheduleScreen(
                         Text("Add Time")
                     }
                 }
-
                 // Элегантная сетка чипсов на FlowRow (не ломает скролл и переносится сама)
                 if (state.intakeTimes.isNotEmpty()) {
                     FlowRow(
@@ -208,7 +220,6 @@ fun AddMedicationScheduleScreen(
                     )
                 }
                 Spacer(modifier = Modifier.height(130.dp))
-
                 /*     Button(
                     onClick = { requestPermission() },
                     modifier = Modifier
