@@ -55,6 +55,7 @@ import com.galeria.medtracker2.R
 import com.galeria.medtracker2.core.ui.theme.MedTrackerTheme
 import com.galeria.medtracker2.core.utils.DateTimeUtils
 import com.galeria.medtracker2.domain.model.MedicationCourseSummary
+import com.galeria.medtracker2.domain.model.MedicationDomain
 import java.util.UUID
 
 @Composable
@@ -65,12 +66,10 @@ fun MyMedicationsScreen(
     viewModel: MyMedicationsVM = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-
     // Подключаем скролл-поведение для сворачивания TopAppBar
     val scrollBehavior =
             TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     val lazyListState = rememberLazyListState()
-
     // FAB сворачивается, когда пользователь начинает листать список вниз
     val isFabExpanded by remember {
         derivedStateOf {
@@ -101,9 +100,9 @@ fun MyMedicationsScreen(
         },
         floatingActionButton = {
             // Показываем FAB только если на экране есть список лекарств
-            if (state.medsList.isNotEmpty() && !state.isLoading) {
+            if (!state.isLoading) {
                 ExtendedFloatingActionButton(
-                    onClick = onNavigateToAddMedicationSchedule,
+                    onClick = onNavigateToAddMedication,
                     expanded = isFabExpanded,
                     icon = { Icon(Icons.Default.Add, contentDescription = "Add medication icon") },
                     text = { Text("Add Medication") },
@@ -126,7 +125,7 @@ fun MyMedicationsScreen(
                     )
                 }
 
-                state.medsList.isEmpty() -> {
+                state.medications.isEmpty() -> {
                     EmptyMedicationsPlaceholder(
                         onAddScheduleClick = onNavigateToAddMedicationSchedule,
                         onAddMedClick = onNavigateToAddMedication,
@@ -136,7 +135,8 @@ fun MyMedicationsScreen(
 
                 else -> {
                     MedsList(
-                        medications = state.medsList,
+                        medicationCourseSummaries = state.medsList,
+                        medications = state.medications,
                         onMedicationSelect = onNavigateToViewMedication,
                         lazyListState = lazyListState,
                         modifier = Modifier.fillMaxSize(),
@@ -144,26 +144,13 @@ fun MyMedicationsScreen(
                 }
             }
         }
-        /*  Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        ) {
-
-            if (state.isLoading) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
-            } else if (state.medsList.isEmpty()) {
-                EmptyMedicationsPlaceholder()
-            } else {
-                MedsList(medications = state.medsList, onNavigateToViewMedication)
-            }
-        }*/
     }
 }
 
 @Composable
 fun MedsList(
-    medications: List<MedicationCourseSummary>,
+    medicationCourseSummaries: List<MedicationCourseSummary>,
+    medications: List<MedicationDomain>,
     onMedicationSelect: (UUID) -> Unit,
     lazyListState: LazyListState,
     modifier: Modifier = Modifier,
@@ -180,7 +167,7 @@ fun MedsList(
                 ),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        items(items = medications, key = { it.medicationId }) { med ->
+        items(items = medications, key = { it.id }) { med ->
             MedicationCard(
                 med,
                 onMedicationSelect,
@@ -192,6 +179,74 @@ fun MedsList(
 
 @Composable
 fun MedicationCard(
+    medication: MedicationDomain,
+    onSelect: (UUID) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Card(
+        onClick = { onSelect(medication.id) },
+        modifier = modifier.fillMaxWidth(),
+        // elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        shape = MedTrackerTheme.shapes.large,
+        colors =
+                CardDefaults.cardColors(containerColor = MedTrackerTheme.colors.secondaryBackground),
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            // Иконка-индикатор медицинского препарата для визуального разделения
+            Surface(
+                shape = MedTrackerTheme.shapes.medium,
+                color = MaterialTheme.colorScheme.primaryContainer,
+                modifier = Modifier.size(56.dp),
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(
+                        imageVector = Icons.Default.Healing,
+                        contentDescription = "Medication Icon",
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                        modifier = Modifier.size(24.dp),
+                    )
+                }
+            }
+            Column(
+                modifier = Modifier
+                    .weight(1f),
+            ) {
+                Text(text = medication.name, style = MaterialTheme.typography.titleLarge)
+                Spacer(modifier = Modifier.height(4.dp))
+                // Компактный бейдж дозировки вместо простого текста
+                Surface(
+                    shape = CircleShape,
+                    color = MaterialTheme.colorScheme.surfaceVariant,
+                    modifier = Modifier.wrapContentSize()
+                ) {
+                    Text(
+                        text = "${medication.pricing} RUB",
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                    )
+                }
+            }
+            // Навигационная стрелка (просто иконка, без лишнего touch-таргета)
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.outline.copy(alpha = 0.7f),
+                modifier = Modifier.size(24.dp)
+            )
+        }
+    }
+}
+
+@Composable
+fun MedicationSummaryCard(
     medication: MedicationCourseSummary,
     onSelect: (UUID) -> Unit,
     modifier: Modifier = Modifier,
@@ -234,7 +289,6 @@ fun MedicationCard(
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = medication.name, style = MaterialTheme.typography.titleLarge)
                 Spacer(modifier = Modifier.height(2.dp))
-
                 // Компактный бейдж дозировки вместо простого текста
                 Surface(
                     shape = CircleShape,
@@ -250,7 +304,6 @@ fun MedicationCard(
                     )
                 }
                 Spacer(modifier = Modifier.height(8.dp))
-
                 // Даты приема с иконкой календаря
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -339,7 +392,7 @@ fun MedsScreenPreview() {
     MedTrackerTheme {
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(4) {
-                MedicationCard(
+                MedicationSummaryCard(
                     medication =
                             MedicationCourseSummary(
                                 medicationId = UUID.randomUUID(),

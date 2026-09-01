@@ -116,10 +116,10 @@ fun AddMedScreen(
                 suffix = { Text("₽") },
                 onValueChange = viewModel::updatePrice,
                 label = { Text("Price per g") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                //keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 modifier = Modifier.fillMaxWidth(),
             )
-            Button(onClick = onConfirm) {
+            Button(onClick = viewModel::addMedication) {
                 Text("Add Medication")
             }
         }
