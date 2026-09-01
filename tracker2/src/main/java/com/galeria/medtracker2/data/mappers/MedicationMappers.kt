@@ -2,7 +2,6 @@ package com.galeria.medtracker2.data.mappers
 
 import com.galeria.medtracker2.core.database.entity.MedicationEntity
 import com.galeria.medtracker2.domain.model.MedicationDomain
-import java.time.Instant
 
 fun MedicationDomain.toEntity(): MedicationEntity {
     return MedicationEntity(
@@ -10,7 +9,7 @@ fun MedicationDomain.toEntity(): MedicationEntity {
         name = this.name,
         pricing = this.pricing,
         unit = this.unit,
-        creationTimestamp = this.creationTimestamp.toEpochMilli(),
+        creationTimestamp = this.creationTimestamp,
     )
 }
 
@@ -20,6 +19,6 @@ fun MedicationEntity.toDomain(): MedicationDomain {
         name = this.name,
         pricing = this.pricing,
         unit = this.unit,
-        creationTimestamp = Instant.ofEpochMilli(this.creationTimestamp),
+        creationTimestamp = this.creationTimestamp,
     )
 }

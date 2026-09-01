@@ -2,6 +2,7 @@ package com.galeria.medtracker2.core.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.galeria.medtracker2.core.database.dao.IntakeDao
 import com.galeria.medtracker2.core.database.dao.MedicationCourseDao
 import com.galeria.medtracker2.core.database.dao.MedicationDao
@@ -14,15 +15,16 @@ import com.galeria.medtracker2.core.database.entity.PlannedIntakeEntity
 
 @Database(
     entities =
-        [
-            MedicationEntity::class,
-            IntakeLogEntity::class,
-            MedicationCourseEntity::class,
-            PlannedIntakeEntity::class,
-        ],
+            [
+                MedicationEntity::class,
+                IntakeLogEntity::class,
+                MedicationCourseEntity::class,
+                PlannedIntakeEntity::class,
+            ],
     version = 1,
     exportSchema = false,
 ) // @TypeConverters(Converters::class, DateConverters::class)
+@TypeConverters(RoomConverters::class)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun medicationDao(): MedicationDao

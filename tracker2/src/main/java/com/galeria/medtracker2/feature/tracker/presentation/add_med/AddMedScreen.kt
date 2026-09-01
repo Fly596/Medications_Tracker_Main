@@ -31,11 +31,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.galeria.medtracker2.core.ui.WeightUnits
 
 @Composable
 fun AddMedScreen(
@@ -103,7 +105,11 @@ fun AddMedScreen(
                             ),
                     singleLine = true,
                 )
-                DropDownDemo(items = viewModel.units, onItemSelected = viewModel::updateUnit)
+                DropDownDemo(
+                    items = WeightUnits.entries,
+                    selectedItem = uiState.selectedUnit,
+                    onItemSelected = viewModel::onUnitSelected,
+                )
             }
             TextField(
                 value = uiState.price,
@@ -122,8 +128,9 @@ fun AddMedScreen(
 
 @Composable
 fun DropDownDemo(
-    items: List<String>,
-    onItemSelected: (String) -> Unit
+    items: List<WeightUnits>,
+    selectedItem: WeightUnits,
+    onItemSelected: (WeightUnits) -> Unit,
 ) {
     val isDropDownExpanded = remember {
         mutableStateOf(false)
@@ -151,7 +158,7 @@ fun DropDownDemo(
                     modifier = Modifier
                         .padding(16.dp)
                 ) {
-                    Text(text = items[itemPosition.value])
+                    Text(text = stringResource(selectedItem.label))
                 }
             }
 
@@ -160,15 +167,15 @@ fun DropDownDemo(
                 onDismissRequest = {
                     isDropDownExpanded.value = false
                 }) {
-                items.forEachIndexed { index, username ->
+                items.forEachIndexed { index, units ->
                     DropdownMenuItem(
                         text = {
-                            Text(text = username)
+                            Text(stringResource(units.label))
                         },
                         onClick = {
                             isDropDownExpanded.value = false
-                            itemPosition.value = index
-                            onItemSelected(username)
+                            itemPosition.intValue = index
+                            onItemSelected(units)
                         })
                 }
             }

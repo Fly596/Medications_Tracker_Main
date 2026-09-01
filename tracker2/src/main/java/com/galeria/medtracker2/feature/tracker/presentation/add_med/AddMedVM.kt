@@ -1,6 +1,8 @@
 package com.galeria.medtracker2.feature.tracker.presentation.add_med
 
 import androidx.lifecycle.ViewModel
+import com.galeria.medtracker2.core.ui.WeightUnits
+import com.galeria.medtracker2.domain.repository.MedicationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -9,19 +11,21 @@ import javax.inject.Inject
 
 data class AddMedUiState(
     val name: String = "Adderall",
+    val selectedUnit: WeightUnits = WeightUnits.MILLIGRAM,
     val dose: String = "50",
-    val unit: String = "mg",
     val price: String = "10",
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
+    val isDropDownExpanded: Boolean = false
 )
 
 @HiltViewModel
 class AddMedVM
 @Inject
-constructor() : ViewModel() {
+constructor(
+    val medicationRepository: MedicationRepository
+) : ViewModel() {
 
-    val units = listOf("mg", "g")
     private val _state = MutableStateFlow(AddMedUiState())
     val state = _state.asStateFlow()
 
@@ -36,10 +40,12 @@ constructor() : ViewModel() {
         }
     }
 
-    fun updateUnit(input: String) {
-        if (input in units) {
-            _state.update { it.copy(unit = input) }
-        }
+    fun onUnitSelected(units: WeightUnits) {
+        _state.update { it.copy(selectedUnit = units, isDropDownExpanded = false) }
+    }
+
+    fun toggleDropDown() {
+        _state.update { it.copy(isDropDownExpanded = !it.isDropDownExpanded) }
     }
 
     fun updatePrice(input: String) {

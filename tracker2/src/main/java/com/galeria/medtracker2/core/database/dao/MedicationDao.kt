@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.galeria.medtracker2.core.database.entity.MedicationEntity
 import kotlinx.coroutines.flow.Flow
 import java.util.UUID
@@ -11,14 +12,20 @@ import java.util.UUID
 @Dao
 interface MedicationDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsert(medication: MedicationEntity)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insert(medication: MedicationEntity)
 
-    @Query("DELETE FROM medications WHERE id = :id") suspend fun deleteById(id: UUID)
+    @Update()
+    suspend fun update(medication: MedicationEntity)
 
-    @Query("DELETE FROM medications WHERE name = :name") suspend fun deleteByName(name: String)
+    @Query("SELECT * FROM medications WHERE id = :id")
+    suspend fun getById(id: UUID): MedicationEntity?
 
-    @Query("SELECT * FROM medications") fun getAllMedications(): Flow<List<MedicationEntity>>
+    @Query("DELETE FROM medications WHERE id = :id")
+    suspend fun deleteById(id: UUID)
+
+    @Query("SELECT * FROM medications")
+    fun getAllMedications(): Flow<List<MedicationEntity>>
 
     @Query("SELECT * FROM medications WHERE name = :name COLLATE NOCASE LIMIT 1")
     suspend fun getByName(name: String): MedicationEntity?

@@ -3,6 +3,7 @@ package com.galeria.medtracker2.di
 import android.content.Context
 import androidx.room.Room
 import com.galeria.medtracker2.core.database.AppDatabase
+import com.galeria.medtracker2.core.database.dao.MedicationDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,10 +21,10 @@ object DatabaseModule {
         @ApplicationContext
         context: Context
     ): AppDatabase =
-        Room.databaseBuilder(context, AppDatabase::class.java, "app_database").build()
+            Room.databaseBuilder(context, AppDatabase::class.java, "app_database").build()
 
     @Provides
-    fun provideMedicationDao(database: AppDatabase) = database.medicationDao()
+    fun provideMedicationDao(database: AppDatabase): MedicationDao = database.medicationDao()
 
     @Provides
     fun providePlannedIntakeDao(database: AppDatabase) = database.plannedIntakeDao()

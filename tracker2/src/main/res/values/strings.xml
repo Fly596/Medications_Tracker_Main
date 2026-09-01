@@ -60,4 +60,14 @@
     <string name="how_are_you_feeling_today">How are you feeling today?</string>
     <string name="title_activity_test">TestActivity</string>
     <string name="my_medications">My medications</string>
+
+    <!--TRACKER 2-->
+    <string name="unit_grams">g</string>
+    <string name="unit_milligrams">mg</string>
+    <string name="unit_micrograms">μg</string>
+    <string name="unit_kilograms">kg</string>
+    <string name="unit_milliliters">ml</string>
+    <string name="unit_liters">l</string>
+    <string name="unit_default">x</string>
+
 </resources>

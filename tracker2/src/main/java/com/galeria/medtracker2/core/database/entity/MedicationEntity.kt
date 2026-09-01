@@ -11,9 +11,9 @@ import kotlin.uuid.ExperimentalUuidApi
 @Entity(tableName = "medications")
 data class MedicationEntity(
     @PrimaryKey
-    val id: UUID = UUID.randomUUID(),
+    val id: UUID,
     val name: String,
-    val pricing: Int,
+    val pricing: Int, // цена в 0.01 у.е.
     val unit: String,
-    val creationTimestamp: Long = Instant.now().toEpochMilli(),
+    val creationTimestamp: Instant,
 )

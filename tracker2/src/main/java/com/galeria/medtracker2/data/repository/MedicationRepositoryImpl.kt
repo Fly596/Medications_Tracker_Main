@@ -22,7 +22,14 @@ constructor(
     override suspend fun addMedication(
         medication: MedicationDomain
     ) {
-        medicationDao.upsert(medication.toEntity())
+        medicationDao.insert(medication.toEntity())
+    }
+
+    override suspend fun getMedicationById(medicationId: UUID): MedicationDomain? {
+        medicationDao.getById(medicationId)?.let { entity ->
+            return entity.toDomain()
+        }
+        return null
     }
 
     override suspend fun removeMedication(medicationId: UUID) {
@@ -32,7 +39,6 @@ constructor(
             e.printStackTrace()
         }
     }
-
 
     override suspend fun getMedicationByName(name: String): MedicationDomain? {
         val medicationEntity = medicationDao.getByName(name)
