@@ -4,10 +4,12 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.galeria.medtracker2.core.database.dao.IntakeDao
+import com.galeria.medtracker2.core.database.dao.MainIntakeDao
 import com.galeria.medtracker2.core.database.dao.MedicationCourseDao
 import com.galeria.medtracker2.core.database.dao.MedicationDao
 import com.galeria.medtracker2.core.database.dao.PlannedIntakeDao
 import com.galeria.medtracker2.core.database.dao.ScheduleDao
+import com.galeria.medtracker2.core.database.entity.IntakeEntity
 import com.galeria.medtracker2.core.database.entity.IntakeLogEntity
 import com.galeria.medtracker2.core.database.entity.MedicationCourseEntity
 import com.galeria.medtracker2.core.database.entity.MedicationEntity
@@ -20,6 +22,7 @@ import com.galeria.medtracker2.core.database.entity.PlannedIntakeEntity
                 IntakeLogEntity::class,
                 MedicationCourseEntity::class,
                 PlannedIntakeEntity::class,
+                IntakeEntity::class,
             ],
     version = 1,
     exportSchema = false,
@@ -28,6 +31,8 @@ import com.galeria.medtracker2.core.database.entity.PlannedIntakeEntity
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun medicationDao(): MedicationDao
+
+    abstract fun intakeEntityDao(): MainIntakeDao
 
     abstract fun medicationCourseDao(): MedicationCourseDao
 

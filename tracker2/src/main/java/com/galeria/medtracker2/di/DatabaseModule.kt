@@ -37,4 +37,7 @@ object DatabaseModule {
 
     @Provides
     fun provideCombinedDao(database: AppDatabase) = database.medicationScheduleDao()
+
+    @Provides
+    fun provideMainIntakeDao(database: AppDatabase) = database.intakeEntityDao()
 }

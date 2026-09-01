@@ -4,6 +4,8 @@ import com.galeria.medtracker2.data.repository.IntakesRepositoryImpl
 import com.galeria.medtracker2.data.repository.MedicationRepositoryImpl
 import com.galeria.medtracker2.data.repository.MedicationsCourseRepositoryImpl
 import com.galeria.medtracker2.domain.repository.IntakesRepository
+import com.galeria.medtracker2.domain.repository.MainIntakesRepository
+import com.galeria.medtracker2.domain.repository.MainIntakesRepositoryImpl
 import com.galeria.medtracker2.domain.repository.MedicationRepository
 import com.galeria.medtracker2.domain.repository.MedicationsCourseRepository
 import dagger.Binds
@@ -30,4 +32,9 @@ abstract class RepositoryModule {
     abstract fun bindMedicationCourseRepository(
         impl: MedicationsCourseRepositoryImpl
     ): MedicationsCourseRepository
+
+    @Binds
+    abstract fun bindMainIntakesRepository(
+        impl: MainIntakesRepositoryImpl
+    ): MainIntakesRepository
 }
