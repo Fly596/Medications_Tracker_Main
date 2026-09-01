@@ -1,8 +1,7 @@
 package com.galeria.medtracker2.navigation
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.List
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -56,8 +55,9 @@ fun AppNavHost(
                     },
                     icon = {
                         Icon(
-                            painter = painterResource(id = R.drawable.home),
-                            contentDescription = "Home"
+                            painter = painterResource(id = R.drawable.home_1),
+                            contentDescription = "Home",
+                            modifier = Modifier.size(24.dp),
                         )
                     },
                     label = { Text("Home") },
@@ -75,7 +75,13 @@ fun AppNavHost(
                             restoreState = true
                         }
                     },
-                    icon = { Icon(Icons.Default.List, contentDescription = "My Medications") },
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.list),
+                            contentDescription = "My Medications",
+                            modifier = Modifier.size(24.dp),
+                        )
+                    },
                     label = { Text("Medications") },
                 )
             }
