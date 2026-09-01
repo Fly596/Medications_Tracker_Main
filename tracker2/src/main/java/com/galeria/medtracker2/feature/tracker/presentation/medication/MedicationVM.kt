@@ -35,18 +35,18 @@ constructor(
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private val _uiSt = MutableStateFlow<MedicationUiState>(MedicationUiState.Empty)
-    val uiSt = _uiSt.asStateFlow()
+    private val _uiState = MutableStateFlow<MedicationUiState>(MedicationUiState.Empty)
+    val uiState = _uiState.asStateFlow()
 
     init {
         viewModelScope.launch {
-            _uiSt.value = MedicationUiState.Loading
+            _uiState.value = MedicationUiState.Loading
             try {
                 val args = savedStateHandle.toRoute<AppRoutes.MedicationDetails>()
                 val medId = UUID.fromString(args.medicationId)
                 getMedication(medId)
             } catch (e: Exception) {
-                _uiSt.value = MedicationUiState.Error("${e.localizedMessage}")
+                _uiState.value = MedicationUiState.Error("${e.localizedMessage}")
                 Log.e("medication", "Error fetching medication data", e)
             }
         }
@@ -57,12 +57,12 @@ constructor(
             try {
                 val med = regimentsRepository.getCourseSummaryByMedId(id)
                 if (med == null) {
-                    _uiSt.value = MedicationUiState.Empty
+                    _uiState.value = MedicationUiState.Empty
                 } else {
-                    _uiSt.value = MedicationUiState.Success(med)
+                    _uiState.value = MedicationUiState.Success(med)
                 }
             } catch (e: Exception) {
-                _uiSt.value = MedicationUiState.Error("${e.localizedMessage}")
+                _uiState.value = MedicationUiState.Error("${e.localizedMessage}")
             }
         }
     }
@@ -72,12 +72,11 @@ constructor(
             try {
                 medicationRepository.removeMedication(id)
             } catch (e: Exception) {
-                _uiSt.value = MedicationUiState.Error("${e.localizedMessage}")
+                _uiState.value = MedicationUiState.Error("${e.localizedMessage}")
             }
         }
     }
 }
-
 /*
 data class MedicationUiState(
     val medication: MedicationCourseSummary? = null,

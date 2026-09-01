@@ -226,7 +226,7 @@ fun MedicationCard(
                     modifier = Modifier.wrapContentSize()
                 ) {
                     Text(
-                        text = "${medication.pricing} RUB",
+                        text = "Last consumed: `work in progress`",
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
