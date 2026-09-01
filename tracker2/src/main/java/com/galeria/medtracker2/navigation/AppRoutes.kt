@@ -9,9 +9,6 @@ sealed interface AppRoutes {
     data object Home : AppRoutes // расписание приемов на сегодня.
 
     @Serializable
-    data object AddMedicationSchedule : AppRoutes
-
-    @Serializable
     data object AddMedication : AppRoutes
 
     @Serializable

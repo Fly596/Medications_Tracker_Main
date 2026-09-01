@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.galeria.medtracker2.domain.model.MedicationDomain
 import com.galeria.medtracker2.domain.repository.MedicationRepository
-import com.galeria.medtracker2.domain.repository.MedicationsCourseRepository
 import com.galeria.medtracker2.navigation.AppRoutes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,7 +29,6 @@ sealed interface MedicationUiState {
 class MedicationVM
 @Inject
 constructor(
-    private val regimentsRepository: MedicationsCourseRepository,
     private val medicationRepository: MedicationRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {

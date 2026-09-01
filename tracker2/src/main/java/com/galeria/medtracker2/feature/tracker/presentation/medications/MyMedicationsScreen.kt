@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,7 +22,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Healing
 import androidx.compose.material.icons.filled.Inbox
 import androidx.compose.material3.Button
@@ -47,21 +47,17 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medtracker2.R
 import com.galeria.medtracker2.core.ui.theme.MedTrackerTheme
-import com.galeria.medtracker2.core.utils.DateTimeUtils
-import com.galeria.medtracker2.domain.model.MedicationCourseSummary
 import com.galeria.medtracker2.domain.model.MedicationDomain
 import java.util.UUID
 
 @Composable
 fun MyMedicationsScreen(
     onNavigateToViewMedication: (UUID) -> Unit = {},
-    onNavigateToAddMedicationSchedule: () -> Unit = {},
     onNavigateToAddMedication: () -> Unit = {},
     viewModel: MyMedicationsVM = hiltViewModel(),
 ) {
@@ -96,6 +92,11 @@ fun MyMedicationsScreen(
                             containerColor = MaterialTheme.colorScheme.background,
                             scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
                         ),
+                windowInsets =
+                        WindowInsets(
+                            top = 0,
+                            bottom = 0,
+                        ),
             )
         },
         floatingActionButton = {
@@ -127,7 +128,6 @@ fun MyMedicationsScreen(
 
                 state.medications.isEmpty() -> {
                     EmptyMedicationsPlaceholder(
-                        onAddScheduleClick = onNavigateToAddMedicationSchedule,
                         onAddMedClick = onNavigateToAddMedication,
                         modifier = Modifier.align(Alignment.Center),
                     )
@@ -135,7 +135,6 @@ fun MyMedicationsScreen(
 
                 else -> {
                     MedsList(
-                        medicationCourseSummaries = state.medsList,
                         medications = state.medications,
                         onMedicationSelect = onNavigateToViewMedication,
                         lazyListState = lazyListState,
@@ -149,7 +148,6 @@ fun MyMedicationsScreen(
 
 @Composable
 fun MedsList(
-    medicationCourseSummaries: List<MedicationCourseSummary>,
     medications: List<MedicationDomain>,
     onMedicationSelect: (UUID) -> Unit,
     lazyListState: LazyListState,
@@ -246,96 +244,7 @@ fun MedicationCard(
 }
 
 @Composable
-fun MedicationSummaryCard(
-    medication: MedicationCourseSummary,
-    onSelect: (UUID) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val formattedStartDate =
-            remember(medication.startDate) { DateTimeUtils.fromLongToLocalDate(medication.startDate) }
-    val formattedEndDate =
-            remember(medication.endDate) { DateTimeUtils.fromLongToLocalDate(medication.endDate) }
-
-    Card(
-        onClick = { onSelect(medication.medicationId) },
-        modifier = modifier.fillMaxWidth(),
-        // elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        shape = MedTrackerTheme.shapes.large,
-        colors =
-                CardDefaults.cardColors(containerColor = MedTrackerTheme.colors.secondaryBackground),
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            // Иконка-индикатор медицинского препарата для визуального разделения
-            Surface(
-                shape = MedTrackerTheme.shapes.medium,
-                color = MaterialTheme.colorScheme.primaryContainer,
-                modifier = Modifier.size(56.dp),
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        imageVector = Icons.Default.Healing,
-                        contentDescription = "Medication Icon",
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                        modifier = Modifier.size(28.dp),
-                    )
-                }
-            }
-            Column(modifier = Modifier.weight(1f)) {
-                Text(text = medication.name, style = MaterialTheme.typography.titleLarge)
-                Spacer(modifier = Modifier.height(2.dp))
-                // Компактный бейдж дозировки вместо простого текста
-                Surface(
-                    shape = CircleShape,
-                    color = MaterialTheme.colorScheme.surfaceVariant,
-                    modifier = Modifier.wrapContentSize()
-                ) {
-                    Text(
-                        text = "${medication.doseMg} mg",
-                        style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
-                    )
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-                // Даты приема с иконкой календаря
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.CalendarToday,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.outline,
-                        modifier = Modifier.size(14.dp)
-                    )
-                    Text(
-                        text = "$formattedStartDate - $formattedEndDate",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.outline,
-                    )
-                }
-            }
-            // Навигационная стрелка (просто иконка, без лишнего touch-таргета)
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.outline.copy(alpha = 0.7f),
-                modifier = Modifier.size(24.dp)
-            )
-        }
-    }
-}
-
-@Composable
 private fun EmptyMedicationsPlaceholder(
-    onAddScheduleClick: () -> Unit,
     onAddMedClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -367,14 +276,7 @@ private fun EmptyMedicationsPlaceholder(
             textAlign = TextAlign.Center,
         )
         Spacer(modifier = Modifier.height(24.dp))
-        Button(
-            onClick = onAddScheduleClick,
-            contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp)
-        ) {
-            Icon(Icons.Default.Add, contentDescription = null)
-            Spacer(modifier = Modifier.width(8.dp))
-            Text("Add Medication Schedule", fontWeight = FontWeight.SemiBold)
-        }
+
         Button(
             onClick = onAddMedClick,
             contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp)
@@ -382,28 +284,6 @@ private fun EmptyMedicationsPlaceholder(
             Icon(Icons.Default.Add, contentDescription = null)
             Spacer(modifier = Modifier.width(8.dp))
             Text("Add Medication", fontWeight = FontWeight.SemiBold)
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun MedsScreenPreview() {
-    MedTrackerTheme {
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(4) {
-                MedicationSummaryCard(
-                    medication =
-                            MedicationCourseSummary(
-                                medicationId = UUID.randomUUID(),
-                                name = "Name",
-                                doseMg = 50.0,
-                                startDate = 0,
-                                endDate = 0,
-                            ),
-                    onSelect = {},
-                )
-            }
         }
     }
 }

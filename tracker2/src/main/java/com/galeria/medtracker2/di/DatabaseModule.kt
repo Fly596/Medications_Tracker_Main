@@ -27,17 +27,5 @@ object DatabaseModule {
     fun provideMedicationDao(database: AppDatabase): MedicationDao = database.medicationDao()
 
     @Provides
-    fun providePlannedIntakeDao(database: AppDatabase) = database.plannedIntakeDao()
-
-    @Provides
-    fun provideIntakeDao(database: AppDatabase) = database.intakeDao()
-
-    @Provides
-    fun provideMedicationCourseDao(database: AppDatabase) = database.medicationCourseDao()
-
-    @Provides
-    fun provideCombinedDao(database: AppDatabase) = database.medicationScheduleDao()
-
-    @Provides
     fun provideMainIntakeDao(database: AppDatabase) = database.intakeEntityDao()
 }

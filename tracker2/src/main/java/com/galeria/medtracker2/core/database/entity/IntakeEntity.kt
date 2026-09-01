@@ -14,7 +14,8 @@ import java.util.UUID
             childColumns = ["medicationId"],
             onDelete = androidx.room.ForeignKey.CASCADE
         )
-    ]
+    ],
+    indices = [androidx.room.Index("medicationId")]
 )
 data class IntakeEntity(
     @PrimaryKey(autoGenerate = true)

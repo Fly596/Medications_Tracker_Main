@@ -2,10 +2,8 @@ package com.galeria.medtracker2.feature.tracker.presentation.medications
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.galeria.medtracker2.domain.model.MedicationCourseSummary
 import com.galeria.medtracker2.domain.model.MedicationDomain
 import com.galeria.medtracker2.domain.repository.MedicationRepository
-import com.galeria.medtracker2.domain.repository.MedicationsCourseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -19,13 +17,12 @@ sealed interface MedicationsUiState {
 
     data object Empty : MedicationsUiState
 
-    data class Success(val medsList: List<MedicationCourseSummary>) : MedicationsUiState
+    data class Success(val medsList: List<MedicationDomain>) : MedicationsUiState
 
     data class Error(val message: String) : MedicationsUiState
 }
 
 data class MyMedicationsUiState(
-    val medsList: List<MedicationCourseSummary> = emptyList(),
     val medications: List<MedicationDomain> = emptyList(),
     val isLoading: Boolean = true,
 )
@@ -34,7 +31,6 @@ data class MyMedicationsUiState(
 class MyMedicationsVM
 @Inject
 constructor(
-    private val regimentsRepository: MedicationsCourseRepository,
     private val medicationRepository: MedicationRepository,
 ) : ViewModel() {
 
