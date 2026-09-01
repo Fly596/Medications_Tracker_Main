@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -36,9 +37,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -58,7 +56,6 @@ fun MedicationScreen(
     viewModel: MedicationVM = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    var showDeleteDialog by remember { mutableStateOf<UUID?>(null) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -109,13 +106,7 @@ fun MedicationScreen(
 
                 is MedicationUiState.Success -> {
                     // currentState автоматически скастован к Success, medication гарантированно не
-                    // null!
-                    MedicationView(
-                        medicationCourse = currentState.medication,
-                        onDeleteClick = { showDeleteDialog = currentState.medication.medicationId },
-                        onEditClick = { onEditMedication(currentState.medication.medicationId) },
-                        modifier = Modifier.fillMaxSize(),
-                    )
+                    MedicationOverview()
                 }
 
                 is MedicationUiState.Error -> {
@@ -128,16 +119,80 @@ fun MedicationScreen(
             }
         }
     }
-    // Диалог подтверждения удаления
-    showDeleteDialog?.let { medicationId ->
-        DeleteConfirmationDialog(
-            onConfirm = {
-                viewModel.deleteMedication(medicationId)
-                showDeleteDialog = null
-                onNavigateBack()
-            },
-            onDismiss = { showDeleteDialog = null },
-        )
+}
+
+@Composable
+fun MedicationOverview(
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize(),
+    ) {
+        MedicationSummary()
+        MedicationIntakesList()
+    }
+}
+
+@Composable
+fun MedicationIntakesList(
+    modifier: Modifier = Modifier,
+    onItemClick: (UUID) -> Unit = {}
+    // TODO: intakes
+) {
+    Text(text = "Recent Activity", style = MaterialTheme.typography.titleMedium)
+    LazyColumn(modifier = modifier.fillMaxSize()) {
+        items(10) {
+            Card(onClick = { onItemClick }, modifier = Modifier.fillMaxWidth()) {
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    Column() {
+                        Text(text = "NUM x DOSAGE_NAME", style = MaterialTheme.typography.bodyLarge)
+                        Text(text = "DOSAGE_SIZE", style = MaterialTheme.typography.bodySmall)
+                    }
+                    Text(text = "TIME", style = MaterialTheme.typography.bodySmall)
+                }
+            }
+        }
+    }
+}
+
+// Верхняя часть страницы с краткой сводкой (объем сумма кол-во...)
+@Composable
+fun MedicationSummary(
+    modifier: Modifier = Modifier,
+    consumedMg: Int = 1000,
+    timesUsed: Int = 12,
+    totalSpent: Int = 5000,
+    lastUsed: String = "12/12/2023"
+) {
+    Column(modifier = modifier.fillMaxWidth()) {
+        Row(
+            modifier = modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Card(modifier = Modifier.weight(1f)) {
+                Text("Consumed", style = MaterialTheme.typography.bodyLarge)
+                Text("$consumedMg", style = MaterialTheme.typography.bodySmall)
+            }
+            Card(modifier = Modifier.weight(1f)) {
+                Text("Times Used", style = MaterialTheme.typography.bodyLarge)
+                Text("$timesUsed", style = MaterialTheme.typography.bodySmall)
+            }
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Row(
+            modifier = modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Card(modifier = Modifier.weight(1f)) {
+                Text("Total Spent", style = MaterialTheme.typography.bodyLarge)
+                Text("$totalSpent", style = MaterialTheme.typography.bodySmall)
+            }
+            Card(modifier = Modifier.weight(1f)) {
+                Text("Last Used", style = MaterialTheme.typography.bodyLarge)
+                Text(lastUsed, style = MaterialTheme.typography.bodySmall)
+            }
+        }
     }
 }
 
@@ -178,7 +233,7 @@ fun EmptyMedicationPlaceholder(onNavigateBack: () -> Unit, modifier: Modifier) {
 }
 
 @Composable
-fun MedicationView(
+fun MedicationCourseView(
     medicationCourse: MedicationCourseSummary,
     onDeleteClick: () -> Unit,
     onEditClick: (UUID) -> Unit,

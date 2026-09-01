@@ -5,7 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.galeria.medtracker2.domain.model.MedicationCourseSummary
+import com.galeria.medtracker2.domain.model.MedicationDomain
 import com.galeria.medtracker2.domain.repository.MedicationRepository
 import com.galeria.medtracker2.domain.repository.MedicationsCourseRepository
 import com.galeria.medtracker2.navigation.AppRoutes
@@ -21,7 +21,7 @@ sealed interface MedicationUiState {
 
     data object Empty : MedicationUiState
 
-    data class Success(val medication: MedicationCourseSummary) : MedicationUiState
+    data class Success(val medication: MedicationDomain) : MedicationUiState
 
     data class Error(val message: String) : MedicationUiState
 }
@@ -55,11 +55,11 @@ constructor(
     fun getMedication(id: UUID) {
         viewModelScope.launch {
             try {
-                val med = regimentsRepository.getCourseSummaryByMedId(id)
-                if (med == null) {
+                val medication = medicationRepository.getMedicationById(id)
+                if (medication == null) {
                     _uiState.value = MedicationUiState.Empty
                 } else {
-                    _uiState.value = MedicationUiState.Success(med)
+                    _uiState.value = MedicationUiState.Success(medication)
                 }
             } catch (e: Exception) {
                 _uiState.value = MedicationUiState.Error("${e.localizedMessage}")
