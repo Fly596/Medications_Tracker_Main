@@ -67,6 +67,7 @@ fun MyMedsScreen(
     modifier: Modifier = Modifier,
     onNavigateToViewMedication: (UUID) -> Unit = {},
     onNavigateToAddMedication: () -> Unit = {},
+    onAddIntake: () -> Unit = {},
     viewModel: MyMedsVM = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -75,6 +76,7 @@ fun MyMedsScreen(
         state = state,
         onNavigateToViewMedication = onNavigateToViewMedication,
         onNavigateToAddMedication = onNavigateToAddMedication,
+        onAddIntake = onAddIntake,
         modifier = modifier,
     )
 }
@@ -90,6 +92,7 @@ fun MyMedsContent(
     modifier: Modifier = Modifier,
     onNavigateToViewMedication: (UUID) -> Unit = {},
     onNavigateToAddMedication: () -> Unit = {},
+    onAddIntake: () -> Unit = {},
 ) {
     // Scroll behavior for top app bar elevation / hiding on scroll
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
@@ -129,7 +132,7 @@ fun MyMedsContent(
                     modifier = Modifier.width(250.dp),
                 ) {
                     FloatingActionButton(
-                        onClick = onNavigateToAddMedication,
+                        onClick = onAddIntake,
                         modifier = Modifier.weight(1f),
                         containerColor = MedTrackerTheme.colors.secondary400,
                         contentColor = MedTrackerTheme.colors.primaryLabelDark,

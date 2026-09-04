@@ -100,6 +100,9 @@ fun AppNavHost(
                     onNavigateToAddMedication = {
                         navController.navigate(AppRoutes.AddMedication)
                     },
+                    onAddIntake = {
+                        navController.navigate(AppRoutes.AddIntake)
+                    },
                 )
             }
 
@@ -129,6 +132,9 @@ fun AppNavHost(
                     onEditMedication = { id ->
                         navController.navigate(AppRoutes.EditMedication(id.toString()))
                     },
+                    onAddIntake = { id ->
+                        navController.navigate(AppRoutes.AddIntake(id.toString()))
+                    }
                 )
             }
 
@@ -146,6 +152,16 @@ fun AppNavHost(
                     )
                 }
                 //ProfileOverviewScreen()
+            }
+
+            composable<AppRoutes.AddIntake> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(
+                        text = "Work in progress",
+                        style = MedTrackerTheme.typography.display3Emphasized
+                    )
+                }
+                //AddIntakeScreen()
             }
         }
     }

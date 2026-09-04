@@ -23,6 +23,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -59,6 +60,7 @@ fun ViewMedScreen(
     onNavigateBack: () -> Unit = {},
     onEditMedication: (UUID) -> Unit = {},
     viewModel: ViewMedVM = hiltViewModel(),
+    onAddIntake: (UUID) -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -69,7 +71,8 @@ fun ViewMedScreen(
         onDeleteMedication = { id ->
             viewModel.deleteMedication(id)
             onNavigateBack()
-        }
+        },
+        onAddIntake = onAddIntake
     )
 }
 
@@ -84,6 +87,7 @@ fun ViewMedContent(
     onEditMedication: (UUID) -> Unit,
     modifier: Modifier = Modifier,
     onDeleteMedication: (UUID) -> Unit = {},
+    onAddIntake: (UUID) -> Unit = {}
 ) {
     val topBarTitle = when (state) {
         is ViewMedUiState.Success -> state.medication.name
@@ -132,6 +136,17 @@ fun ViewMedContent(
                 )
             )
         },
+        floatingActionButton = {
+            if (state is ViewMedUiState.Success) {
+                FloatingActionButton(
+                    onClick = { onAddIntake(state.medication.id) },
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.padding(16.dp)
+                ) { }
+            }
+
+        }
     ) { innerPadding ->
         Box(
             modifier = Modifier
@@ -193,7 +208,7 @@ fun MedicationOverview(
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         // Summary Cards Section
         item(key = "summary_section") {

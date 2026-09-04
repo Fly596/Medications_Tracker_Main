@@ -22,4 +22,7 @@ sealed interface AppRoutes {
 
     @Serializable
     data object ProfileOverview : AppRoutes // стата по расходам и потреблению.
+
+    @Serializable
+    data class AddIntake(val medicationId: String) : AppRoutes
 }
