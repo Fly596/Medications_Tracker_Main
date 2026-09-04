@@ -1,5 +1,7 @@
 package com.galeria.medtracker2.navigation
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -9,6 +11,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -63,10 +66,10 @@ fun AppNavHost(
                 NavigationBarItem(
                     selected =
                             currentDestination?.hierarchy?.any {
-                                it.hasRoute<AppRoutes.MedicationsList>()
+                                it.hasRoute<AppRoutes.ProfileOverview>()
                             } == true,
                     onClick = {
-                        navController.navigate(AppRoutes.MedicationsList) {
+                        navController.navigate(AppRoutes.ProfileOverview) {
                             popUpTo(0) { saveState = true }
                             launchSingleTop = true
                             restoreState = true
@@ -79,7 +82,7 @@ fun AppNavHost(
                             modifier = Modifier.size(24.dp),
                         )
                     },
-                    label = { Text("Medications") },
+                    label = { Text("Overview") },
                 )
             }
         }
@@ -133,6 +136,16 @@ fun AppNavHost(
                 //val route = backStackEntry.toRoute<AppRoutes.EditMedication>()
                 //val medicationId = UUID.fromString(route.medicationId)
                 //EditMedicationScreen(onNavigateBack = { navController.navigateUp() })
+            }
+
+            composable<AppRoutes.ProfileOverview> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(
+                        text = "Work in progress",
+                        style = MedTrackerTheme.typography.display3Emphasized
+                    )
+                }
+                //ProfileOverviewScreen()
             }
         }
     }

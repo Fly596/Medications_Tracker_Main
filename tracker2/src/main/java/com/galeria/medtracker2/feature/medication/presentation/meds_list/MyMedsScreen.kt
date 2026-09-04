@@ -27,7 +27,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -123,19 +123,54 @@ fun MyMedsContent(
         floatingActionButton = {
             // Show FAB only when medications exist to avoid duplicating the empty screen's primary CTA
             if (!state.isLoading && state.medications.isNotEmpty()) {
-                ExtendedFloatingActionButton(
-                    onClick = onNavigateToAddMedication,
-                    expanded = isFabExpanded,
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = null, // Set null as text handles accessibility
-                        )
-                    },
-                    text = { Text(stringResource(R.string.add_medication)) },
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                )
+                Row(
+                    modifier = Modifier.width(250.dp),
+                ) {
+                    FloatingActionButton(
+                        onClick = onNavigateToAddMedication,
+                        modifier = Modifier.weight(1f),
+                        containerColor = MedTrackerTheme.colors.secondary400,
+                        contentColor = MedTrackerTheme.colors.primaryLabelDark,
+                    ) {
+                        Text(stringResource(R.string.add_intake))
+                    }
+                    FloatingActionButton(
+                        onClick = onNavigateToAddMedication,
+                        modifier = Modifier.weight(1f),
+                        containerColor = MedTrackerTheme.colors.primary400,
+                        contentColor = MedTrackerTheme.colors.primaryLabelDark,
+                    ) {
+                        Text(stringResource(R.string.add_medication))
+                    }
+                    /*   ExtendedFloatingActionButton(
+                           onClick = onNavigateToAddMedication,
+                           expanded = isFabExpanded,
+                           icon = {
+                               Icon(
+                                   imageVector = Icons.Default.Add,
+                                   contentDescription = null, // Set null as text handles accessibility
+                               )
+                           },
+                           text = { Text(stringResource(R.string.add_intake)) },
+                           containerColor = MaterialTheme.colorScheme.primary,
+                           contentColor = MaterialTheme.colorScheme.onPrimary,
+                           modifier = Modifier.weight(1f)
+                       )*/
+                    /*ExtendedFloatingActionButton(
+                        onClick = onNavigateToAddMedication,
+                        expanded = isFabExpanded,
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = null, // Set null as text handles accessibility
+                            )
+                        },
+                        text = { Text(stringResource(R.string.add_medication)) },
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.weight(1f)
+                    )*/
+                }
             }
         },
     ) { innerPadding ->

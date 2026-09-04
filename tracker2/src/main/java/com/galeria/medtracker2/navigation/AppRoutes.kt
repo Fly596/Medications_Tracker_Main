@@ -21,5 +21,5 @@ sealed interface AppRoutes {
     data class EditMedication(val medicationId: String) : AppRoutes
 
     @Serializable
-    data object Statistics : AppRoutes // стата по расходам и потреблению.
+    data object ProfileOverview : AppRoutes // стата по расходам и потреблению.
 }
