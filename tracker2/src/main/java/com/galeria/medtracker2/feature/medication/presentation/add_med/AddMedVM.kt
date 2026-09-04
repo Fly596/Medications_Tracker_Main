@@ -14,7 +14,7 @@ import java.time.Instant
 import java.util.UUID
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
-import kotlin.math.round
+import kotlin.math.roundToInt
 
 data class AddMedUiState(
     val name: String = "Adderall",
@@ -63,32 +63,63 @@ constructor(
     }
 
     fun addMedication() {
+        if (_state.value.isLoading) return
+        val currentState = _state.value
+        val name = currentState.name.trim()
+
+        // 2. Validate user input
+        if (name.isBlank()) {
+            _state.update { it.copy(errorMessage = "Medication name cannot be empty") }
+            return
+        }
+
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, errorMessage = null) }
-            try {
-                val currentState = _state.value
-                val name = currentState.name.trim()
-                val p = currentState.price.trim().toDouble()
-                val price = if (currentState.price.isEmpty()) 0.0 else (
-                        round(currentState.price.toDouble() * 100))
-                val med =
-                        MedicationDomain(
-                            UUID.randomUUID(),
-                            name,
-                            price.toInt(),
-                            unit = currentState.selectedUnit.name,
-                            creationTimestamp = Instant.now()
-                        )
+
+            val parsedPrice = currentState.price.replace(',', '.').toDoubleOrNull() ?: 0.0
+            val med = MedicationDomain(
+                id = UUID.randomUUID(),
+                name = name,
+                pricing = (parsedPrice * 100).roundToInt(),
+                unit = currentState.selectedUnit.name,
+                creationTimestamp = Instant.now()
+            )
+
+            runCatching {
                 medicationRepository.addMedication(med)
-                _state.update { it.copy(isLoading = false) }
-            } catch (e: CancellationException) {
-                // ВАЖНО: Никогда не глуши CancellationException, иначе сломаешь отмену корутин!
-                throw e
-            } catch (e: Exception) {
-                _state.update { it.copy(isLoading = false, errorMessage = e.message) }
-            } finally {
-                _state.update { it.copy(isLoading = false) }
+            }.onFailure { e ->
+                if (e is CancellationException) throw e
+                _state.update {
+                    it.copy(
+                        errorMessage = e.message ?: "An unexpected error occurred"
+                    )
+                }
             }
+            _state.update { it.copy(isLoading = false) }
+            /*            _state.update { it.copy(isLoading = true, errorMessage = null) }
+
+                        try {
+                            val parsedPrice = currentState.price.replace(',', '.').toDoubleOrNull() ?: 0.0
+                            val priceInCents = (parsedPrice * 100).roundToInt()
+
+                            val med =
+                                    MedicationDomain(
+                                        UUID.randomUUID(),
+                                        name = name,
+                                        pricing = priceInCents,
+                                        unit = currentState.selectedUnit.name,
+                                        creationTimestamp = Instant.now()
+                                    )
+                            medicationRepository.addMedication(med)
+                            _state.update { it.copy(isLoading = false) }
+                        } catch (e: CancellationException) {
+                            // ВАЖНО: Никогда не глуши CancellationException, иначе сломаешь отмену корутин!
+                            throw e
+                        } catch (e: Exception) {
+                            _state.update { it.copy(isLoading = false, errorMessage = e.message) }
+                        } finally {
+                            _state.update { it.copy(isLoading = false) }
+                        }*/
         }
     }
 }
