@@ -11,7 +11,7 @@ plugins {
 
 android {
     namespace = "com.galeria.medtracker2"
-    compileSdk = 36 // Не используй extra[""], просто пиши напрямую
+    compileSdk = 37 // Не используй extra[""], просто пиши напрямую
 
     defaultConfig {
         applicationId = "com.galeria.medtracker2"

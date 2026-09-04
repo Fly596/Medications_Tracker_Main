@@ -69,5 +69,9 @@
     <string name="unit_milliliters">ml</string>
     <string name="unit_liters">l</string>
     <string name="unit_default">x</string>
+    <string name="no_medications_scheduled">No medications scheduled</string>
+    <string name="empty_medications_description">Your medication list is currently empty. Tap the button below to add your first medicine.</string>
+    <string name="last_consumed_placeholder">Last consumed: Work in progress</string>
+    <string name="cd_no_medications">No medications icon</string>
 
 </resources>

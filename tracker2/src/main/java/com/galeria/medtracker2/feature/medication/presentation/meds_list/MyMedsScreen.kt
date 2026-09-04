@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -22,12 +21,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Healing
 import androidx.compose.material.icons.filled.Inbox
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -47,26 +46,54 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medtracker2.R
 import com.galeria.medtracker2.core.ui.theme.MedTrackerTheme
 import com.galeria.medtracker2.domain.model.MedicationDomain
+import java.time.Instant
 import java.util.UUID
 
+/**
+ * Stateful entry point (Route) for the "My Medications" screen.
+ * Handles ViewModel injection, State Flow collection with lifecycle awareness, and event delegation.
+ */
 @Composable
 fun MyMedsScreen(
+    modifier: Modifier = Modifier,
     onNavigateToViewMedication: (UUID) -> Unit = {},
     onNavigateToAddMedication: () -> Unit = {},
     viewModel: MyMedsVM = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    // Подключаем скролл-поведение для сворачивания TopAppBar
-    val scrollBehavior =
-            TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+
+    MyMedsContent(
+        state = state,
+        onNavigateToViewMedication = onNavigateToViewMedication,
+        onNavigateToAddMedication = onNavigateToAddMedication,
+        modifier = modifier,
+    )
+}
+
+/**
+ * Stateless UI container for the "My Medications" screen.
+ * Separated from ViewModel for easy previewing, unit testing, and UI reuse.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MyMedsContent(
+    state: MyMedsUiState,
+    modifier: Modifier = Modifier,
+    onNavigateToViewMedication: (UUID) -> Unit = {},
+    onNavigateToAddMedication: () -> Unit = {},
+) {
+    // Scroll behavior for top app bar elevation / hiding on scroll
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     val lazyListState = rememberLazyListState()
-    // FAB сворачивается, когда пользователь начинает листать список вниз
+
+    // Collapse FAB when scrolling down the list to optimize screen real estate
     val isFabExpanded by remember {
         derivedStateOf {
             lazyListState.firstVisibleItemIndex == 0 &&
@@ -75,38 +102,37 @@ fun MyMedsScreen(
     }
 
     Scaffold(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
                 title = {
                     Text(
-                        stringResource(R.string.my_medications),
-                        style = MedTrackerTheme.typography.display3Emphasized,
+                        text = stringResource(R.string.my_medications),
+                        style = MedTrackerTheme.typography.title1Emphasized,
                     )
                 },
                 scrollBehavior = scrollBehavior,
-                colors =
-                        TopAppBarDefaults.largeTopAppBarColors(
-                            containerColor = MaterialTheme.colorScheme.background,
-                            scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                        ),
-                windowInsets =
-                        WindowInsets(
-                            top = 0,
-                            bottom = 0,
-                        ),
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background,
+                    scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                ),
             )
         },
         floatingActionButton = {
-            // Показываем FAB только если на экране есть список лекарств
-            if (!state.isLoading) {
+            // Show FAB only when medications exist to avoid duplicating the empty screen's primary CTA
+            if (!state.isLoading && state.medications.isNotEmpty()) {
                 ExtendedFloatingActionButton(
                     onClick = onNavigateToAddMedication,
                     expanded = isFabExpanded,
-                    icon = { Icon(Icons.Default.Add, contentDescription = "Add medication icon") },
-                    text = { Text("Add Medication") },
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = null, // Set null as text handles accessibility
+                        )
+                    },
+                    text = { Text(stringResource(R.string.add_medication)) },
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary,
                 )
@@ -146,48 +172,56 @@ fun MyMedsScreen(
     }
 }
 
+/**
+ * Lazy list component displaying medication cards with item animations and keying.
+ */
 @Composable
 fun MedsList(
     medications: List<MedicationDomain>,
-    onMedicationSelect: (UUID) -> Unit,
-    lazyListState: LazyListState,
     modifier: Modifier = Modifier,
+    lazyListState: LazyListState = rememberLazyListState(),
+    onMedicationSelect: (UUID) -> Unit = {},
 ) {
     LazyColumn(
         state = lazyListState,
         modifier = modifier,
-        contentPadding =
-                PaddingValues(
-                    start = 16.dp,
-                    end = 16.dp,
-                    top = 8.dp,
-                    bottom = 96.dp, // Отступ снизу, чтобы FAB не перекрывал последнюю карточку в списке
-                ),
+        contentPadding = PaddingValues(
+            start = 16.dp,
+            end = 16.dp,
+            top = 8.dp,
+            bottom = 96.dp, // Extra padding at bottom so FAB doesn't obscure the last card
+        ),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        items(items = medications, key = { it.id }) { med ->
+        items(
+            items = medications,
+            key = { it.id },
+        ) { med ->
             MedicationCard(
-                med,
-                onMedicationSelect,
-                modifier = Modifier.animateItem(), // Плавная анимация добавления/удаления
+                medication = med,
+                onSelect = onMedicationSelect,
+                modifier = Modifier.animateItem(), // Smooth insertion/deletion animation
             )
         }
     }
 }
 
+/**
+ * Individual medication card displaying medication name and dosage info.
+ */
 @Composable
 fun MedicationCard(
     medication: MedicationDomain,
-    onSelect: (UUID) -> Unit,
     modifier: Modifier = Modifier,
+    onSelect: (UUID) -> Unit = {},
 ) {
     Card(
         onClick = { onSelect(medication.id) },
         modifier = modifier.fillMaxWidth(),
-        // elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         shape = MedTrackerTheme.shapes.large,
-        colors =
-                CardDefaults.cardColors(containerColor = MedTrackerTheme.colors.secondaryBackground),
+        colors = CardDefaults.cardColors(
+            containerColor = MedTrackerTheme.colors.secondaryBackground
+        ),
     ) {
         Row(
             modifier = Modifier
@@ -196,57 +230,47 @@ fun MedicationCard(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            // Иконка-индикатор медицинского препарата для визуального разделения
-            Surface(
-                shape = MedTrackerTheme.shapes.medium,
-                color = MaterialTheme.colorScheme.primaryContainer,
-                modifier = Modifier.size(56.dp),
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        imageVector = Icons.Default.Healing,
-                        contentDescription = "Medication Icon",
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                        modifier = Modifier.size(24.dp),
-                    )
-                }
-            }
             Column(
-                modifier = Modifier
-                    .weight(1f),
+                modifier = Modifier.weight(1f),
             ) {
-                Text(text = medication.name, style = MaterialTheme.typography.titleLarge)
+                Text(
+                    text = medication.name,
+                    style = MaterialTheme.typography.titleLarge,
+                )
                 Spacer(modifier = Modifier.height(4.dp))
-                // Компактный бейдж дозировки вместо простого текста
+                // Dosage / last consumed badge
                 Surface(
                     shape = CircleShape,
                     color = MaterialTheme.colorScheme.surfaceVariant,
-                    modifier = Modifier.wrapContentSize()
+                    modifier = Modifier.wrapContentSize(),
                 ) {
                     Text(
-                        text = "Last consumed: `work in progress`",
+                        text = stringResource(R.string.last_consumed_placeholder),
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
                     )
                 }
             }
-            // Навигационная стрелка (просто иконка, без лишнего touch-таргета)
+            // Navigation indicator arrow
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                contentDescription = null,
+                contentDescription = null, // Decorative icon for card navigation
                 tint = MaterialTheme.colorScheme.outline.copy(alpha = 0.7f),
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(24.dp),
             )
         }
     }
 }
 
+/**
+ * Placeholder layout displayed when no medications have been added yet.
+ */
 @Composable
 private fun EmptyMedicationsPlaceholder(
-    onAddMedClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onAddMedClick: () -> Unit = {},
 ) {
     Column(
         modifier = modifier
@@ -257,20 +281,20 @@ private fun EmptyMedicationsPlaceholder(
     ) {
         Icon(
             imageVector = Icons.Default.Inbox,
-            contentDescription = "No medications",
+            contentDescription = stringResource(R.string.cd_no_medications),
             tint = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f),
             modifier = Modifier.size(72.dp),
         )
         Spacer(modifier = Modifier.height(20.dp))
         Text(
-            text = "No medications scheduled",
+            text = stringResource(R.string.no_medications_scheduled),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground,
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Your medication list is currently empty. Tap the button below to add your first medicine.",
+            text = stringResource(R.string.empty_medications_description),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.outline,
             textAlign = TextAlign.Center,
@@ -279,11 +303,81 @@ private fun EmptyMedicationsPlaceholder(
 
         Button(
             onClick = onAddMedClick,
-            contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp)
+            contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp),
         ) {
-            Icon(Icons.Default.Add, contentDescription = null)
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = null,
+            )
             Spacer(modifier = Modifier.width(8.dp))
-            Text("Add Medication", fontWeight = FontWeight.SemiBold)
+            Text(
+                text = stringResource(R.string.add_medication),
+                fontWeight = FontWeight.SemiBold,
+            )
         }
     }
 }
+
+// region Previews
+
+@Preview(showBackground = true)
+@Composable
+private fun MyMedsScreenContentPreview() {
+    MedTrackerTheme {
+        MyMedsContent(
+            state = MyMedsUiState(
+                isLoading = false,
+                medications = listOf(
+                    MedicationDomain(
+                        id = UUID.randomUUID(),
+                        name = "Aspirin 100mg",
+                        pricing = 10,
+                        unit = "mg",
+                        creationTimestamp = Instant.now(),
+                    ),
+                    MedicationDomain(
+                        id = UUID.randomUUID(),
+                        name = "Ibuprofen 200mg",
+                        pricing = 15,
+                        unit = "mg",
+                        creationTimestamp = Instant.now(),
+                    ),
+                ),
+            ),
+            onNavigateToViewMedication = {},
+            onNavigateToAddMedication = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun MyMedsScreenEmptyPreview() {
+    MedTrackerTheme {
+        MyMedsContent(
+            state = MyMedsUiState(
+                isLoading = false,
+                medications = emptyList(),
+            ),
+            onNavigateToViewMedication = {},
+            onNavigateToAddMedication = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun MyMedsScreenLoadingPreview() {
+    MedTrackerTheme {
+        MyMedsContent(
+            state = MyMedsUiState(
+                isLoading = true,
+                medications = emptyList(),
+            ),
+            onNavigateToViewMedication = {},
+            onNavigateToAddMedication = {},
+        )
+    }
+}
+
+// endregion
