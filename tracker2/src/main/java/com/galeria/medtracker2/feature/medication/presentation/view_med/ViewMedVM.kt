@@ -1,4 +1,4 @@
-package com.galeria.medtracker2.feature.tracker.presentation.medication
+package com.galeria.medtracker2.feature.medication.presentation.view_med
 
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
@@ -15,36 +15,36 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
 
-sealed interface MedicationUiState {
-    data object Loading : MedicationUiState
+sealed interface ViewMedUiState {
+    data object Loading : ViewMedUiState
 
-    data object Empty : MedicationUiState
+    data object Empty : ViewMedUiState
 
-    data class Success(val medication: MedicationDomain) : MedicationUiState
+    data class Success(val medication: MedicationDomain) : ViewMedUiState
 
-    data class Error(val message: String) : MedicationUiState
+    data class Error(val message: String) : ViewMedUiState
 }
 
 @HiltViewModel
-class MedicationVM
+class ViewMedVM
 @Inject
 constructor(
     private val medicationRepository: MedicationRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<MedicationUiState>(MedicationUiState.Empty)
+    private val _uiState = MutableStateFlow<ViewMedUiState>(ViewMedUiState.Empty)
     val uiState = _uiState.asStateFlow()
 
     init {
         viewModelScope.launch {
-            _uiState.value = MedicationUiState.Loading
+            _uiState.value = ViewMedUiState.Loading
             try {
                 val args = savedStateHandle.toRoute<AppRoutes.MedicationDetails>()
                 val medId = UUID.fromString(args.medicationId)
                 getMedication(medId)
             } catch (e: Exception) {
-                _uiState.value = MedicationUiState.Error("${e.localizedMessage}")
+                _uiState.value = ViewMedUiState.Error("${e.localizedMessage}")
                 Log.e("medication", "Error fetching medication data", e)
             }
         }
@@ -55,12 +55,12 @@ constructor(
             try {
                 val medication = medicationRepository.getMedicationById(id)
                 if (medication == null) {
-                    _uiState.value = MedicationUiState.Empty
+                    _uiState.value = ViewMedUiState.Empty
                 } else {
-                    _uiState.value = MedicationUiState.Success(medication)
+                    _uiState.value = ViewMedUiState.Success(medication)
                 }
             } catch (e: Exception) {
-                _uiState.value = MedicationUiState.Error("${e.localizedMessage}")
+                _uiState.value = ViewMedUiState.Error("${e.localizedMessage}")
             }
         }
     }
@@ -70,7 +70,7 @@ constructor(
             try {
                 medicationRepository.removeMedication(id)
             } catch (e: Exception) {
-                _uiState.value = MedicationUiState.Error("${e.localizedMessage}")
+                _uiState.value = ViewMedUiState.Error("${e.localizedMessage}")
             }
         }
     }

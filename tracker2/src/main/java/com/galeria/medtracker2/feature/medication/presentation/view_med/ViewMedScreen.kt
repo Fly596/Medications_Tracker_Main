@@ -1,4 +1,4 @@
-package com.galeria.medtracker2.feature.tracker.presentation.medication
+package com.galeria.medtracker2.feature.medication.presentation.view_med
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -42,10 +42,10 @@ import com.galeria.medtracker2.core.ui.theme.MedTrackerTheme
 import java.util.UUID
 
 @Composable
-fun MedicationScreen(
+fun ViewMedScreen(
     onNavigateBack: () -> Unit = {},
     onEditMedication: (UUID) -> Unit = {},
-    viewModel: MedicationVM = hiltViewModel(),
+    viewModel: ViewMedVM = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -88,26 +88,26 @@ fun MedicationScreen(
                         .background(MaterialTheme.colorScheme.background)
         ) {
             when (val currentState = state) {
-                is MedicationUiState.Loading -> {
+                is ViewMedUiState.Loading -> {
                     CircularProgressIndicator(
                         modifier = Modifier.align(Alignment.Center),
                         color = MaterialTheme.colorScheme.primary,
                     )
                 }
 
-                is MedicationUiState.Empty -> {
+                is ViewMedUiState.Empty -> {
                     EmptyMedicationPlaceholder(
                         onNavigateBack = onNavigateBack,
                         modifier = Modifier.align(Alignment.Center),
                     )
                 }
 
-                is MedicationUiState.Success -> {
+                is ViewMedUiState.Success -> {
                     // currentState автоматически скастован к Success, medication гарантированно не
                     MedicationOverview()
                 }
 
-                is MedicationUiState.Error -> {
+                is ViewMedUiState.Error -> {
                     Text(
                         text = currentState.message,
                         color = MaterialTheme.colorScheme.error,

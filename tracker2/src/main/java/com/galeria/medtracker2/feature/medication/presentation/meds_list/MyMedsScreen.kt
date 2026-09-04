@@ -1,4 +1,4 @@
-package com.galeria.medtracker2.feature.tracker.presentation.medications
+package com.galeria.medtracker2.feature.medication.presentation.meds_list
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -56,10 +56,10 @@ import com.galeria.medtracker2.domain.model.MedicationDomain
 import java.util.UUID
 
 @Composable
-fun MyMedicationsScreen(
+fun MyMedsScreen(
     onNavigateToViewMedication: (UUID) -> Unit = {},
     onNavigateToAddMedication: () -> Unit = {},
-    viewModel: MyMedicationsVM = hiltViewModel(),
+    viewModel: MyMedsVM = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     // Подключаем скролл-поведение для сворачивания TopAppBar

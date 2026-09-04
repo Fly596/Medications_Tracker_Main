@@ -1,4 +1,4 @@
-package com.galeria.medtracker2.feature.tracker.presentation.medications
+package com.galeria.medtracker2.feature.medication.presentation.meds_list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,40 +12,40 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
-sealed interface MedicationsUiState {
-    data object Loading : MedicationsUiState
+sealed interface MedsUiState {
+    data object Loading : MedsUiState
 
-    data object Empty : MedicationsUiState
+    data object Empty : MedsUiState
 
-    data class Success(val medsList: List<MedicationDomain>) : MedicationsUiState
+    data class Success(val medsList: List<MedicationDomain>) : MedsUiState
 
-    data class Error(val message: String) : MedicationsUiState
+    data class Error(val message: String) : MedsUiState
 }
 
-data class MyMedicationsUiState(
+data class MyMedsUiState(
     val medications: List<MedicationDomain> = emptyList(),
     val isLoading: Boolean = true,
 )
 
 @HiltViewModel
-class MyMedicationsVM
+class MyMedsVM
 @Inject
 constructor(
     private val medicationRepository: MedicationRepository,
 ) : ViewModel() {
 
     // Получение лекарств в реальном времени.
-    val uiState: StateFlow<MyMedicationsUiState> =
+    val uiState: StateFlow<MyMedsUiState> =
             medicationRepository
                 .getAllMedications()
                 .distinctUntilChanged()
                 .map { allMedications ->
-                    MyMedicationsUiState(medications = allMedications, isLoading = false)
+                    MyMedsUiState(medications = allMedications, isLoading = false)
                 }
                 .stateIn(
                     scope = viewModelScope,
                     started = SharingStarted.WhileSubscribed(5000),
-                    initialValue = MyMedicationsUiState(isLoading = true),
+                    initialValue = MyMedsUiState(isLoading = true),
                 )
     /*    val uiState: StateFlow<MyMedicationsUiState> =
                 regimentsRepository

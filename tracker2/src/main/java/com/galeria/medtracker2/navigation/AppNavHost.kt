@@ -21,9 +21,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.galeria.medtracker2.R
 import com.galeria.medtracker2.core.ui.theme.MedTrackerTheme
-import com.galeria.medtracker2.feature.tracker.presentation.add_med.AddMedScreen
-import com.galeria.medtracker2.feature.tracker.presentation.medication.MedicationScreen
-import com.galeria.medtracker2.feature.tracker.presentation.medications.MyMedicationsScreen
+import com.galeria.medtracker2.feature.medication.presentation.add_med.AddMedScreen
+import com.galeria.medtracker2.feature.medication.presentation.meds_list.MyMedsScreen
+import com.galeria.medtracker2.feature.medication.presentation.view_med.ViewMedScreen
 
 @Composable
 fun AppNavHost(
@@ -90,7 +90,7 @@ fun AppNavHost(
             startDestination = AppRoutes.Home,
         ) {
             composable<AppRoutes.Home> {
-                MyMedicationsScreen(
+                MyMedsScreen(
                     onNavigateToViewMedication = { id ->
                         navController.navigate(AppRoutes.MedicationDetails(id.toString()))
                     },
@@ -108,7 +108,7 @@ fun AppNavHost(
             }
 
             composable<AppRoutes.MedicationsList> {
-                MyMedicationsScreen(
+                MyMedsScreen(
                     onNavigateToViewMedication = { id ->
                         navController.navigate(AppRoutes.MedicationDetails(id.toString()))
                     },
@@ -121,7 +121,7 @@ fun AppNavHost(
             composable<AppRoutes.MedicationDetails> { backStackEntry ->
                 // val route = backStackEntry.toRoute<AppRoutes.MedicationDetails>()
                 // val medicationId = UUID.fromString(route.medicationId)
-                MedicationScreen(
+                ViewMedScreen(
                     onNavigateBack = { navController.navigateUp() },
                     onEditMedication = { id ->
                         navController.navigate(AppRoutes.EditMedication(id.toString()))

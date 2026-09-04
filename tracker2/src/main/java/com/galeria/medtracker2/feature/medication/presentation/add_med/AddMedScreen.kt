@@ -1,4 +1,4 @@
-package com.galeria.medtracker2.feature.tracker.presentation.add_med
+package com.galeria.medtracker2.feature.medication.presentation.add_med
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
