@@ -7,13 +7,14 @@ import java.util.UUID
 /** Отвечает только за медикаменты, без расписаний. */
 interface MedicationRepository {
 
+    fun observeMedications(): Flow<List<MedicationDomain>>
+
     suspend fun addMedication(medication: MedicationDomain)
 
     suspend fun removeMedication(medicationId: UUID)
 
-    suspend fun getMedicationById(medicationId: UUID): MedicationDomain?
+    suspend fun getMedication(medicationId: UUID): MedicationDomain?
 
-    suspend fun getMedicationByName(name: String): MedicationDomain?
+    suspend fun updateMedication(medication: MedicationDomain)
 
-    fun getAllMedications(): Flow<List<MedicationDomain>>
 }

@@ -4,11 +4,10 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import java.time.Instant
 import java.util.UUID
 
 @Entity(
-    tableName = "intakes",
+    tableName = "dosage_presets",
     foreignKeys = [
         ForeignKey(
             entity = MedicationEntity::class,
@@ -17,15 +16,15 @@ import java.util.UUID
             onDelete = ForeignKey.CASCADE
         )
     ],
-    indices = [Index("medicationId")]
+    indices = [
+        Index("medicationId")
+    ]
 )
-data class IntakeEntity(
+data class DosagePresetEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val medicationId: UUID,
     val amount: Double,
     val unit: String,
-    val priceCents: Long?,
-    val currencyCode: String?,
-    val timestamp: Instant,
+    val name: String?
 )

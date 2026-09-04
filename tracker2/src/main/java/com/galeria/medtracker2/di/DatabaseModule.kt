@@ -27,5 +27,8 @@ object DatabaseModule {
     fun provideMedicationDao(database: AppDatabase): MedicationDao = database.medicationDao()
 
     @Provides
-    fun provideMainIntakeDao(database: AppDatabase) = database.intakeEntityDao()
+    fun provideIntakeDao(database: AppDatabase) = database.intakeDao()
+
+    @Provides
+    fun provideDosagePresetDao(database: AppDatabase) = database.dosagePresetDao()
 }

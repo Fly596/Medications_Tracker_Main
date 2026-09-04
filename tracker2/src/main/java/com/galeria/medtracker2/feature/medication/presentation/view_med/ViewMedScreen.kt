@@ -42,6 +42,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.galeria.medtracker2.core.ui.WeightUnits
 import com.galeria.medtracker2.core.ui.theme.MedTrackerTheme
 import com.galeria.medtracker2.core.utils.DateTimeUtils
 import com.galeria.medtracker2.domain.model.MedicationDomain
@@ -197,8 +198,8 @@ fun MedicationOverview(
         // Summary Cards Section
         item(key = "summary_section") {
             MedicationSummary(
-                unit = medication.unit,
-                pricing = medication.pricing,
+                unit = medication.unit.name,
+                pricing = medication.defaultPricePerUnit?.cents ?: 0,
                 createdDate = formattedDate
             )
         }
@@ -220,7 +221,7 @@ fun MedicationOverview(
             key = { index -> "intake_item_$index" }
         ) { index ->
             IntakeCard(
-                unit = medication.unit,
+                unit = medication.unit.name,
                 index = index
             )
         }
@@ -233,7 +234,7 @@ fun MedicationOverview(
 @Composable
 fun MedicationSummary(
     unit: String,
-    pricing: Int,
+    pricing: Long,
     createdDate: String,
     modifier: Modifier = Modifier
 ) {
@@ -413,8 +414,8 @@ private fun ViewMedContentSuccessPreview() {
                 medication = MedicationDomain(
                     id = UUID.randomUUID(),
                     name = "Aspirin 500mg",
-                    pricing = 12,
-                    unit = "mg",
+                    unit = WeightUnits.DEFAULT,
+                    defaultPricePerUnit = null,
                     creationTimestamp = Instant.now()
                 )
             ),

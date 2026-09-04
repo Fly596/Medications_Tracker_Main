@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.galeria.medtracker2.core.ui.WeightUnits
 import com.galeria.medtracker2.domain.model.MedicationDomain
+import com.galeria.medtracker2.domain.model.Money
 import com.galeria.medtracker2.domain.repository.MedicationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +15,7 @@ import java.time.Instant
 import java.util.UUID
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
-import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 
 data class AddMedUiState(
     val name: String = "Adderall",
@@ -80,8 +81,10 @@ constructor(
             val med = MedicationDomain(
                 id = UUID.randomUUID(),
                 name = name,
-                pricing = (parsedPrice * 100).roundToInt(),
-                unit = currentState.selectedUnit.name,
+                unit = WeightUnits.valueOf(currentState.selectedUnit.name),
+                defaultPricePerUnit = Money(
+                    cents = (parsedPrice * 100).roundToLong(),
+                ),
                 creationTimestamp = Instant.now()
             )
 

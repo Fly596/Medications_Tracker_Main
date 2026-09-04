@@ -37,7 +37,7 @@ constructor(
     // Получение лекарств в реальном времени.
     val uiState: StateFlow<MyMedsUiState> =
             medicationRepository
-                .getAllMedications()
+                .observeMedications()
                 .distinctUntilChanged()
                 .map { allMedications ->
                     MyMedsUiState(medications = allMedications, isLoading = false)

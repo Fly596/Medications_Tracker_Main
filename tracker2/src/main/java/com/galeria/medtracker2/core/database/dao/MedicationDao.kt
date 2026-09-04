@@ -24,9 +24,6 @@ interface MedicationDao {
     @Query("DELETE FROM medications WHERE id = :id")
     suspend fun deleteById(id: UUID)
 
-    @Query("SELECT * FROM medications")
+    @Query("SELECT * FROM medications ORDER BY name ASC")
     fun getAllMedications(): Flow<List<MedicationEntity>>
-
-    @Query("SELECT * FROM medications WHERE name = :name COLLATE NOCASE LIMIT 1")
-    suspend fun getByName(name: String): MedicationEntity?
 }

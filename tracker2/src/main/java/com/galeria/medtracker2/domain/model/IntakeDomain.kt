@@ -4,10 +4,9 @@ import java.time.Instant
 import java.util.UUID
 
 data class IntakeDomain(
-    val id: Int = 0,
+    val id: Long,
     val medicationId: UUID,
-    val amount: Int,
-    val unit: String,
-    val cost: Double,
+    val dose: Dose,
+    val cost: Money?,
     val intakeDateTime: Instant,
 )

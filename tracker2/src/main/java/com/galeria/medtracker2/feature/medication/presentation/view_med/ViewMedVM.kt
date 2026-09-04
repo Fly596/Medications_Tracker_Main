@@ -53,7 +53,7 @@ constructor(
     fun getMedication(id: UUID) {
         viewModelScope.launch {
             try {
-                val medication = medicationRepository.getMedicationById(id)
+                val medication = medicationRepository.getMedication(id)
                 if (medication == null) {
                     _uiState.value = ViewMedUiState.Empty
                 } else {

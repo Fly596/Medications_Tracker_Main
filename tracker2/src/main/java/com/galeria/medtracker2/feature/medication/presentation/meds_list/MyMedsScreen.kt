@@ -51,8 +51,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medtracker2.R
+import com.galeria.medtracker2.core.ui.WeightUnits
 import com.galeria.medtracker2.core.ui.theme.MedTrackerTheme
 import com.galeria.medtracker2.domain.model.MedicationDomain
+import com.galeria.medtracker2.domain.model.Money
 import java.time.Instant
 import java.util.UUID
 
@@ -366,15 +368,15 @@ private fun MyMedsScreenContentPreview() {
                     MedicationDomain(
                         id = UUID.randomUUID(),
                         name = "Aspirin 100mg",
-                        pricing = 10,
-                        unit = "mg",
+                        unit = WeightUnits.DEFAULT,
+                        defaultPricePerUnit = Money(10, "USD"),
                         creationTimestamp = Instant.now(),
                     ),
                     MedicationDomain(
                         id = UUID.randomUUID(),
                         name = "Ibuprofen 200mg",
-                        pricing = 15,
-                        unit = "mg",
+                        unit = WeightUnits.DEFAULT,
+                        defaultPricePerUnit = Money(15, "USD"),
                         creationTimestamp = Instant.now(),
                     ),
                 ),

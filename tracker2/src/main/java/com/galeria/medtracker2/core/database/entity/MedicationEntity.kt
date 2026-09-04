@@ -13,7 +13,8 @@ data class MedicationEntity(
     @PrimaryKey
     val id: UUID,
     val name: String,
-    val pricing: Int, // цена в 0.01 у.е.
     val unit: String,
+    val defaultPriceCents: Long?, // цена в 0.01 у.е.
+    val currencyCode: String?,
     val creationTimestamp: Instant,
 )

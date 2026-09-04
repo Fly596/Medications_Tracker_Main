@@ -12,7 +12,6 @@ enum class WeightUnits(
     GRAM(label = R.string.unit_grams),
     MILLIGRAM(label = R.string.unit_milligrams),
     MICROGRAM(label = R.string.unit_micrograms),
-    KILOGRAM(label = R.string.unit_kilograms),
     MILLILITER(label = R.string.unit_milliliters),
     LITER(label = R.string.unit_liters),
     DEFAULT(label = R.string.unit_default)
