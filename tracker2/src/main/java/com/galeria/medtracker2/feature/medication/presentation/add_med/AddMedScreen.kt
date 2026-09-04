@@ -12,7 +12,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Healing
-import androidx.compose.material.icons.filled.MonitorWeight
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -31,9 +30,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -91,8 +90,10 @@ fun AddMedScreen(
             )
             Row(
                 modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                TextField(
+                /*TextField(
                     value = uiState.dose,
                     onValueChange = viewModel::updateDose,
                     label = { Text("Medication dose") },
@@ -104,21 +105,23 @@ fun AddMedScreen(
                                 imeAction = ImeAction.Done,
                             ),
                     singleLine = true,
-                )
+                )*/
+                Text("Unit: ", style = MaterialTheme.typography.titleLarge)
                 DropDownDemo(
                     items = WeightUnits.entries,
                     selectedItem = uiState.selectedUnit,
                     onItemSelected = viewModel::onUnitSelected,
                 )
+                TextField(
+                    value = uiState.price,
+                    suffix = { Text("₽") },
+                    onValueChange = viewModel::updatePrice,
+                    label = { Text("Price per Unit") },
+                    //keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    modifier = Modifier.fillMaxWidth(),
+                )
             }
-            TextField(
-                value = uiState.price,
-                suffix = { Text("₽") },
-                onValueChange = viewModel::updatePrice,
-                label = { Text("Price per g") },
-                //keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                modifier = Modifier.fillMaxWidth(),
-            )
+
             Button(onClick = viewModel::addMedication) {
                 Text("Add Medication")
             }
@@ -148,6 +151,7 @@ fun DropDownDemo(
         Box {
             OutlinedCard(
                 modifier = Modifier,
+                shape = RectangleShape,
                 onClick = {
                     isDropDownExpanded.value = true
                 }
