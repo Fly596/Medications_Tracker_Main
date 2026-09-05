@@ -17,12 +17,16 @@ data class IntakeTimestampState(
 )
 
 data class AddIntakeUiState(
-    val isLoading: Boolean = false,
-    val errorMessage: String? = null,
     val dosage: String = "",
     val time: String = "",
     val date: String = "",
-)
+    val isShowingDatePicker: Boolean = false,
+    val isShowingTimePicker: Boolean = false,
+    val intakeTimestampState: IntakeTimestampState = IntakeTimestampState(),
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null,
+
+    )
 
 @HiltViewModel
 class AddIntakeVM @Inject
@@ -42,15 +46,35 @@ constructor(
 
     fun updateTime(input: LocalTime) {
         val timeString = DateTimeUtils.formatLocalTime(input)
+
         _uiState.update {
-            it.copy(time = timeString)
+            it.copy(time = timeString, intakeTimestampState = IntakeTimestampState(time = input))
         }
     }
 
-    fun updateDate(input: Long) {
+    fun updateDate(input: Long?) {
+
         val dateString = DateTimeUtils.formatLongToLocalDateString(input)
+        if (input != null) {
+            _uiState.update {
+
+                it.copy(
+                    date = dateString,
+                    intakeTimestampState = IntakeTimestampState(date = input)
+                )
+            }
+        }
+    }
+
+    fun updateDatePicker() {
         _uiState.update {
-            it.copy(date = dateString)
+            it.copy(isShowingDatePicker = !it.isShowingDatePicker)
+        }
+    }
+
+    fun updateTimePicker() {
+        _uiState.update {
+            it.copy(isShowingTimePicker = !it.isShowingTimePicker)
         }
     }
 }

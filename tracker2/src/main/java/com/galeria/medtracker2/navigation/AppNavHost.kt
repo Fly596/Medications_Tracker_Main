@@ -24,6 +24,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.galeria.medtracker2.R
 import com.galeria.medtracker2.core.ui.theme.MedTrackerTheme
+import com.galeria.medtracker2.feature.intakes.presentation.add_intake.AddIntakeScreen
 import com.galeria.medtracker2.feature.medication.presentation.add_med.AddMedScreen
 import com.galeria.medtracker2.feature.medication.presentation.meds_list.MyMedsScreen
 import com.galeria.medtracker2.feature.medication.presentation.view_med.ViewMedScreen
@@ -155,12 +156,7 @@ fun AppNavHost(
             }
 
             composable<AppRoutes.AddIntake> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(
-                        text = "Work in progress",
-                        style = MedTrackerTheme.typography.display3Emphasized
-                    )
-                }
+                AddIntakeScreen(onNavigateBack = { navController.navigateUp() })
                 //AddIntakeScreen()
             }
         }

@@ -21,6 +21,6 @@ abstract class RepositoryModule {
         impl: IntakesRepositoryImpl
     ): IntakesRepository
 
-    @Binds
-    abstract fun bingIntakeRepository(impl: IntakesRepositoryImpl): IntakesRepository
+    /*@Binds
+    abstract fun bingIntakeRepository(impl: IntakesRepositoryImpl): IntakesRepository*/
 }
