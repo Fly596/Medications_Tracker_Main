@@ -52,219 +52,227 @@ import java.time.LocalTime
 
 @Composable
 fun AddIntakeScreen(
-  onNavigateBack: () -> Unit = {},
-  onAddIntake: () -> Unit = {},
-  viewModel: AddIntakeVM = hiltViewModel(),
+    onNavigateBack: () -> Unit = {},
+    onAddIntake: () -> Unit = {},
+    viewModel: AddIntakeVM = hiltViewModel(),
 ) {
-  val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-  val snackbarHostState = remember { SnackbarHostState() }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
 
-  LaunchedEffect(uiState.isSavedSuccess, uiState.errorMessage) {
-    if (uiState.isSavedSuccess) {
-      snackbarHostState.showSnackbar("Успешно сохранено!")
-      onAddIntake()
-      onNavigateBack()
-    }
-    uiState.errorMessage?.let { errorMsg ->
-      snackbarHostState.showSnackbar(errorMsg)
-      viewModel.onEvent(AddIntakeUiEvent.ClearError)
-    }
-  }
-
-  Scaffold(
-    snackbarHost = { SnackbarHost(snackbarHostState) },
-    modifier = Modifier.fillMaxSize(),
-    topBar = {
-      TopAppBar(
-        title = {
-          Text(
-            "New Intake",
-            style = MedTrackerTheme.typography.headlineEmphasized
-          )
-        },
-        colors =
-            TopAppBarDefaults.topAppBarColors(
-              containerColor = MaterialTheme.colorScheme.background
-            ),
-        windowInsets =
-            WindowInsets(
-              top = 0,
-              bottom = 0,
-            ),
-      )
-
-    },
-  ) { innerPadding ->
-    Column(
-      modifier = Modifier
-        .fillMaxSize()
-        .padding(innerPadding)
-        .padding(16.dp),
-      verticalArrangement = Arrangement.spacedBy(16.dp),
-      horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-      TextField(
-        value = uiState.dosage,
-        onValueChange = { viewModel.onEvent(AddIntakeUiEvent.OnDosageChanged(it)) },
-        label = { Text("Dosage") },
-        isError = uiState.errorMessage != null,
-        singleLine = true,
-        modifier = Modifier.fillMaxWidth(),
-      )
-      // Карточка Выбора Даты (месяц-день-год)
-      DateTimeCard(
-        text = DateTimeUtils.formatDate(uiState.selectedDate),
-        icon = Icons.Default.DateRange,
-        contentDescription = "Select Date",
-        onClick = { viewModel.onEvent(AddIntakeUiEvent.OpenDatePicker) }
-      )
-
-      // Карточка Выбора Времени (12h format)
-      DateTimeCard(
-        text = DateTimeUtils.formatTime(uiState.selectedTime),
-        icon = Icons.Default.Schedule,
-        contentDescription = "Select Time",
-        onClick = { viewModel.onEvent(AddIntakeUiEvent.OpenTimePicker) }
-      )
-      Spacer(modifier = Modifier.height(16.dp))
-
-      WeightUnitDropdown(
-        selectedUnit = uiState.unit,
-        onUnitSelected = { viewModel.onEvent(AddIntakeUiEvent.OnUnitChanged(it)) }
-      )
-
-      Button(
-        onClick = { viewModel.onEvent(AddIntakeUiEvent.ConfirmAndSave) },
-        enabled = !uiState.isLoading,
-        modifier = Modifier.fillMaxWidth()
-      ) {
-        if (uiState.isLoading) {
-          CircularProgressIndicator(color = MaterialTheme.colorScheme.onPrimary)
-        } else {
-          Text(text = "Подтвердить и Сохранить")
+    LaunchedEffect(uiState.isSavedSuccess, uiState.errorMessage) {
+        if (uiState.isSavedSuccess) {
+            snackbarHostState.showSnackbar("Успешно сохранено!")
+            onAddIntake()
+            onNavigateBack()
         }
-      }
-
+        uiState.errorMessage?.let { errorMsg ->
+            snackbarHostState.showSnackbar(errorMsg)
+            viewModel.onEvent(AddIntakeUiEvent.ClearError)
+        }
     }
-  }
-  if (uiState.isDatePickerOpen) {
-    ScheduleDatePickerDialog(
-      onDateSelected = { viewModel.onEvent(AddIntakeUiEvent.OnDateSelected(it)) },
-      onDismiss = { viewModel.onEvent(AddIntakeUiEvent.DismissDatePicker) },
-    )
-  }
 
-  if (uiState.isTimePickerOpen) {
-    ScheduleTimePickerDialog(
-      initialTime = uiState.selectedTime,
-      onTimeSelected = { viewModel.onEvent(AddIntakeUiEvent.OnTimeSelected(it)) },
-      onDismiss = { viewModel.onEvent(AddIntakeUiEvent.DismissTimePicker) }
-    )
-  }
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        "New Intake",
+                        style = MedTrackerTheme.typography.headlineEmphasized
+                    )
+                },
+                colors =
+                        TopAppBarDefaults.topAppBarColors(
+                            containerColor = MaterialTheme.colorScheme.background
+                        ),
+                windowInsets =
+                        WindowInsets(
+                            top = 0,
+                            bottom = 0,
+                        ),
+            )
+
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            TextField(
+                value = uiState.dosage,
+                onValueChange = { viewModel.onEvent(AddIntakeUiEvent.OnDosageChanged(it)) },
+                label = { Text("Dosage") },
+                isError = uiState.errorMessage != null,
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            // Карточка Выбора Даты (месяц-день-год)
+            DateTimeCard(
+                text = DateTimeUtils.formatDate(uiState.selectedDate),
+                icon = Icons.Default.DateRange,
+                contentDescription = "Select Date",
+                onClick = { viewModel.onEvent(AddIntakeUiEvent.OpenDatePicker) }
+            )
+
+            // Карточка Выбора Времени (12h format)
+            DateTimeCard(
+                text = DateTimeUtils.formatTime(uiState.selectedTime),
+                icon = Icons.Default.Schedule,
+                contentDescription = "Select Time",
+                onClick = { viewModel.onEvent(AddIntakeUiEvent.OpenTimePicker) }
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            WeightUnitDropdown(
+                selectedUnit = uiState.unit,
+                onUnitSelected = { viewModel.onEvent(AddIntakeUiEvent.OnUnitChanged(it)) }
+            )
+            TextField(
+                value = uiState.price,
+                onValueChange = { viewModel.onEvent(AddIntakeUiEvent.OnPriceChanged(it)) },
+                label = { Text("Price") },
+                isError = uiState.errorMessage != null,
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth(),
+            )
+
+            Button(
+                onClick = { viewModel.onEvent(AddIntakeUiEvent.ConfirmAndSave) },
+                enabled = !uiState.isLoading,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                if (uiState.isLoading) {
+                    CircularProgressIndicator(color = MaterialTheme.colorScheme.onPrimary)
+                } else {
+                    Text(text = "Подтвердить и Сохранить")
+                }
+            }
+
+        }
+    }
+    if (uiState.isDatePickerOpen) {
+        ScheduleDatePickerDialog(
+            onDateSelected = { viewModel.onEvent(AddIntakeUiEvent.OnDateSelected(it)) },
+            onDismiss = { viewModel.onEvent(AddIntakeUiEvent.DismissDatePicker) },
+        )
+    }
+
+    if (uiState.isTimePickerOpen) {
+        ScheduleTimePickerDialog(
+            initialTime = uiState.selectedTime,
+            onTimeSelected = { viewModel.onEvent(AddIntakeUiEvent.OnTimeSelected(it)) },
+            onDismiss = { viewModel.onEvent(AddIntakeUiEvent.DismissTimePicker) }
+        )
+    }
 }
 
 @Composable
 private fun DateTimeCard(
-  text: String,
-  icon: ImageVector,
-  contentDescription: String,
-  onClick: () -> Unit,
-  modifier: Modifier = Modifier
+    text: String,
+    icon: ImageVector,
+    contentDescription: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-  Card(
-    onClick = onClick,
-    modifier = modifier.fillMaxWidth(),
-    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
-  ) {
-    Row(
-      modifier = Modifier
-        .fillMaxWidth()
-        .padding(horizontal = 20.dp, vertical = 18.dp),
-      verticalAlignment = Alignment.CenterVertically,
-      horizontalArrangement = Arrangement.Start
+    Card(
+        onClick = onClick,
+        modifier = modifier.fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     ) {
-      Icon(
-        imageVector = icon,
-        contentDescription = contentDescription,
-        tint = MaterialTheme.colorScheme.primary
-      )
-      Spacer(modifier = Modifier.width(16.dp))
-      Text(
-        text = text,
-        style = MaterialTheme.typography.titleMedium,
-        color = MaterialTheme.colorScheme.onSurfaceVariant
-      )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 18.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = contentDescription,
+                tint = MaterialTheme.colorScheme.primary
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                text = text,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
     }
-  }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ScheduleDatePickerDialog(
-  onDateSelected: (LocalDate) -> Unit,
-  onDismiss: () -> Unit
+    onDateSelected: (LocalDate) -> Unit,
+    onDismiss: () -> Unit
 ) {
-  val datePickerState = rememberDatePickerState()
+    val datePickerState = rememberDatePickerState()
 
-  DatePickerDialog(
-    onDismissRequest = onDismiss,
-    confirmButton = {
-      TextButton(
-        onClick = {
-          datePickerState.selectedDateMillis?.let { millis ->
-            onDateSelected(DateTimeUtils.parseUtcMillisToLocalDate(millis))
-          }
+    DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    datePickerState.selectedDateMillis?.let { millis ->
+                        onDateSelected(DateTimeUtils.parseUtcMillisToLocalDate(millis))
+                    }
+                }
+            ) {
+                Text("ОК")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Отмена")
+            }
         }
-      ) {
-        Text("ОК")
-      }
-    },
-    dismissButton = {
-      TextButton(onClick = onDismiss) {
-        Text("Отмена")
-      }
+    ) {
+        DatePicker(state = datePickerState)
     }
-  ) {
-    DatePicker(state = datePickerState)
-  }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ScheduleTimePickerDialog(
-  initialTime: LocalTime,
-  onTimeSelected: (LocalTime) -> Unit,
-  onDismiss: () -> Unit
+    initialTime: LocalTime,
+    onTimeSelected: (LocalTime) -> Unit,
+    onDismiss: () -> Unit
 ) {
-  val timePickerState = rememberTimePickerState(
-    initialHour = initialTime.hour,
-    initialMinute = initialTime.minute,
-    is24Hour = false // Строго 12ч формат по ТЗ
-  )
+    val timePickerState = rememberTimePickerState(
+        initialHour = initialTime.hour,
+        initialMinute = initialTime.minute,
+        is24Hour = false // Строго 12ч формат по ТЗ
+    )
 
-  AlertDialog(
-    onDismissRequest = onDismiss,
-    confirmButton = {
-      TextButton(
-        onClick = {
-          val time = DateTimeUtils.toLocalTime(
-            timePickerState.hour,
-            timePickerState.minute
-          )
-          onTimeSelected(time)
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    val time = DateTimeUtils.toLocalTime(
+                        timePickerState.hour,
+                        timePickerState.minute
+                    )
+                    onTimeSelected(time)
+                }
+            ) {
+                Text("ОК")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Отмена")
+            }
+        },
+        text = {
+            TimePicker(state = timePickerState)
         }
-      ) {
-        Text("ОК")
-      }
-    },
-    dismissButton = {
-      TextButton(onClick = onDismiss) {
-        Text("Отмена")
-      }
-    },
-    text = {
-      TimePicker(state = timePickerState)
-    }
-  )
+    )
 }

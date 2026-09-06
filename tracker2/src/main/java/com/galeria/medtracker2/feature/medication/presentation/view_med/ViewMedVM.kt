@@ -5,101 +5,124 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.galeria.medtracker2.domain.model.IntakeDomain
 import com.galeria.medtracker2.domain.model.MedicationDomain
+import com.galeria.medtracker2.domain.repository.IntakesRepository
 import com.galeria.medtracker2.domain.repository.MedicationRepository
 import com.galeria.medtracker2.navigation.AppRoutes
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
 
+/**
+ * UI State for the Medication Details screen.
+ */
 sealed interface ViewMedUiState {
+
     data object Loading : ViewMedUiState
 
     data object Empty : ViewMedUiState
 
-    data class Success(val medication: MedicationDomain) : ViewMedUiState
+    data class Success(
+        val medication: MedicationDomain,
+        val intakes: List<IntakeDomain> = emptyList(),
+        val totalDosage: Double = 0.0,
+        val totalPrice: Long = 0L
+    ) : ViewMedUiState
 
     data class Error(val message: String) : ViewMedUiState
 }
 
+/**
+ * ViewModel responsible for managing and providing state for the [ViewMedScreen].
+ * Observes medication details and associated intake history reactively from repositories.
+ */
 @HiltViewModel
-class ViewMedVM
-@Inject
-constructor(
+class ViewMedVM @Inject constructor(
     private val medicationRepository: MedicationRepository,
+    intakeRepository: IntakesRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<ViewMedUiState>(ViewMedUiState.Empty)
-    val uiState = _uiState.asStateFlow()
-
-    init {
-        viewModelScope.launch {
-            _uiState.value = ViewMedUiState.Loading
-            try {
-                val args = savedStateHandle.toRoute<AppRoutes.MedicationDetails>()
-                val medId = UUID.fromString(args.medicationId)
-                getMedication(medId)
-            } catch (e: Exception) {
-                _uiState.value = ViewMedUiState.Error("${e.localizedMessage}")
-                Log.e("medication", "Error fetching medication data", e)
-            }
-        }
+    private val medicationId: UUID? = try {
+        val (medicationId) = savedStateHandle.toRoute<AppRoutes.MedicationDetails>()
+        UUID.fromString(medicationId)
+    } catch (e: Exception) {
+        if (e is CancellationException) throw e
+        Log.e(TAG, "Failed to parse medicationId from SavedStateHandle", e)
+        null
     }
 
-    fun getMedication(id: UUID) {
-        viewModelScope.launch {
-            try {
-                val medication = medicationRepository.getMedication(id)
-                if (medication == null) {
-                    _uiState.value = ViewMedUiState.Empty
-                } else {
-                    _uiState.value = ViewMedUiState.Success(medication)
-                }
-            } catch (e: Exception) {
-                _uiState.value = ViewMedUiState.Error("${e.localizedMessage}")
+    val uiState: StateFlow<ViewMedUiState> = if (medicationId == null) {
+        flowOf(ViewMedUiState.Error("Invalid or missing medication ID"))
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000L),
+                initialValue = ViewMedUiState.Loading,
+            )
+    } else {
+        combine(
+            medicationRepository.observeMedications().map { medications ->
+                medications.find { it.id == medicationId }
+            },
+            intakeRepository.getAllIntakes().map { intakes ->
+                intakes.filter { it.medicationId == medicationId }
+            },
+            intakeRepository.getTotalDosage(medicationId).map { totalDosage ->
+                totalDosage
+            }
+        ) { medication, intakes, totalDosage ->
+            if (medication == null) {
+                ViewMedUiState.Empty
+            } else {
+                ViewMedUiState.Success(
+                    medication = medication,
+                    intakes = intakes,
+                    totalDosage = totalDosage
+                )
             }
         }
+            .catch { e ->
+                if (e is CancellationException) throw e
+                Log.e(TAG, "Error observing medication details", e)
+                emit(
+                    ViewMedUiState.Error(
+                        e.localizedMessage ?: "Failed to load medication details"
+                    )
+                )
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000L),
+                initialValue = ViewMedUiState.Loading,
+            )
     }
 
+    /**
+     * Deletes the specified medication from the repository.
+     */
     fun deleteMedication(id: UUID) {
         viewModelScope.launch {
             try {
                 medicationRepository.removeMedication(id)
             } catch (e: Exception) {
-                _uiState.value = ViewMedUiState.Error("${e.localizedMessage}")
+                if (e is CancellationException) throw e
+                Log.e(TAG, "Error deleting medication with id: $id", e)
             }
         }
     }
-}
-/*
-data class MedicationUiState(
-    val medication: MedicationCourseSummary? = null,
-    val isLoading: Boolean = true,
-    val errorMessage: String? = null
-)
 
-@HiltViewModel
-class MedicationVM(
-    private val regimentsRepository: MedicationsCourseRepository,
-    private val medicationRepository: MedicationRepository,
-) : ViewModel() {
+    companion object {
 
-    // Получение лекарств в реальном времени.
-    val uiState: StateFlow<MedicationUiState> =
-        regimentsRepository
-            .getActiveCourses()
-            .distinctUntilChanged()
-            .map { allMedications ->
-                MedicationUiState(medication = allMedications, isLoading = false)
-            }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000),
-                initialValue = MedicationUiState(isLoading = true),
-            )
+        private const val TAG = "ViewMedVM"
+    }
 }
-*/

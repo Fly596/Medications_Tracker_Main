@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.galeria.medtracker2.core.database.entity.IntakeEntity
 import kotlinx.coroutines.flow.Flow
+import java.util.UUID
 
 @Dao
 interface IntakeDao {
@@ -21,4 +22,7 @@ interface IntakeDao {
 
     @Query("DELETE FROM intakes WHERE id = :intakeId")
     suspend fun deleteById(intakeId: Long)
+
+    @Query("SELECT SUM(amount) as total FROM intakes WHERE medicationId = :medicationId")
+    fun getTotalDosage(medicationId: UUID): Flow<Double>
 }
