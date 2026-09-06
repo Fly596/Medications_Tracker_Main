@@ -12,11 +12,11 @@ import javax.inject.Inject
 class IntakesRepositoryImpl @Inject constructor(private val intakeDao: IntakeDao) :
     IntakesRepository {
 
-    override suspend fun insertMainIntake(intake: IntakeDomain): Long {
+    override suspend fun insertIntake(intake: IntakeDomain): Long {
         return intakeDao.insert(intake.toEntity())
     }
 
-    override fun getAllMainIntakes(): Flow<List<IntakeDomain>> {
+    override fun getAllIntakes(): Flow<List<IntakeDomain>> {
         return intakeDao.observeAll().map { entitiesList ->
             entitiesList.map { entity ->
                 entity.toDomain()
@@ -24,11 +24,11 @@ class IntakesRepositoryImpl @Inject constructor(private val intakeDao: IntakeDao
         }
     }
 
-    override suspend fun deleteMainIntakeById(intakeId: Long) {
+    override suspend fun deleteIntakeById(intakeId: Long) {
         intakeDao.deleteById(intakeId)
     }
 
-    override suspend fun getMainIntakeById(intakeId: Long): IntakeDomain? {
+    override suspend fun getIntakeById(intakeId: Long): IntakeDomain? {
         return intakeDao.getById(intakeId)?.toDomain()
     }
 }

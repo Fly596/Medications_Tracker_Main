@@ -18,11 +18,12 @@ object DateTimeUtils {
     fun formatLocalDateTime(dateTime: LocalDateTime): String {
         return dateTime.format(dateTimeFormatter)
     }
-    fun formatLocalDate(date: LocalDate): String {
+
+    fun formatDate(date: LocalDate): String {
         return date.format(dateFormatter)
     }
 
-    fun formatLocalTime(time: LocalTime): String {
+    fun formatTime(time: LocalTime): String {
         return time.format(timeFormatter)
     }
 
@@ -32,22 +33,26 @@ object DateTimeUtils {
     }
 
     fun formatLongToLocalDateString(millis: Long?): String {
-        if (millis==null) return "Choose date"
-        return fromLongToLocalDate(millis).format(dateFormatter)
+        if (millis == null) return "Choose date"
+        return parseUtcMillisToLocalDate(millis).format(dateFormatter)
     }
 
     fun formatLongToLocalDateTimeString(millis: Long?): String {
-        if (millis==null) return "Choose date"
+        if (millis == null) return "Choose date"
         return fromLongToLocalDateTime(millis).format(dateTimeFormatter)
     }
 
     // БЕЗОПАСНАЯ конвертация миллисекунд DatePicker'а (UTC) в LocalDate
-    fun fromLongToLocalDate(millis: Long): LocalDate {
+    fun parseUtcMillisToLocalDate(millis: Long): LocalDate {
         return Instant.ofEpochMilli(millis).atZone(ZoneOffset.UTC).toLocalDate()
     }
 
     fun fromLongToLocalDateTime(value: Long): LocalDateTime {
         return Instant.ofEpochMilli(value).atZone(ZoneOffset.systemDefault()).toLocalDateTime()
+    }
+
+    fun toLocalTime(hour: Int, minute: Int): LocalTime {
+        return LocalTime.of(hour, minute)
     }
 
     fun fromLocalDateToLong(date: LocalDate): Long {

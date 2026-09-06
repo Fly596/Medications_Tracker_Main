@@ -9,7 +9,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontWeight
-
+import com.galeria.medtracker2.core.utils.DateTimeUtils
+import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,19 +33,49 @@ fun DatePickerModalInput(onDateSelected: (Long?) -> Unit, onDismiss: () -> Unit)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerModal(initialMillis: Long, onDateSelected: (Long?) -> Unit, onDismiss: () -> Unit) {
-  val datePickerState = rememberDatePickerState(
-    initialSelectedDateMillis = if (initialMillis > 0) initialMillis else System.currentTimeMillis()
-  )
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = if (initialMillis > 0) initialMillis else System.currentTimeMillis()
+    )
 
-  DatePickerDialog(
-    onDismissRequest = onDismiss,
-    confirmButton = {
-      TextButton(onClick = { onDateSelected(datePickerState.selectedDateMillis) }) {
-        Text("OK", fontWeight = FontWeight.Bold)
-      }
-    },
-    dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
-  ) {
-    DatePicker(state = datePickerState)
-  }
+    DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(onClick = { onDateSelected(datePickerState.selectedDateMillis) }) {
+                Text("OK", fontWeight = FontWeight.Bold)
+            }
+        },
+        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+    ) {
+        DatePicker(state = datePickerState)
+    }
+}
+
+@Composable
+private fun ScheduleDatePickerDialog(
+    onDateSelected: (LocalDate) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val datePickerState = rememberDatePickerState()
+
+    DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    datePickerState.selectedDateMillis?.let { millis ->
+                        onDateSelected(DateTimeUtils.parseUtcMillisToLocalDate(millis))
+                    }
+                }
+            ) {
+                Text("ОК")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Отмена")
+            }
+        }
+    ) {
+        DatePicker(state = datePickerState)
+    }
 }

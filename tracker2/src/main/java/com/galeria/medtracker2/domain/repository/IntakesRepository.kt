@@ -5,9 +5,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface IntakesRepository {
 
-    suspend fun insertMainIntake(intake: IntakeDomain): Long
-    fun getAllMainIntakes(): Flow<List<IntakeDomain>>
-    suspend fun deleteMainIntakeById(intakeId: Long)
-    suspend fun getMainIntakeById(intakeId: Long): IntakeDomain?
+    suspend fun insertIntake(intake: IntakeDomain): Long
+    fun getAllIntakes(): Flow<List<IntakeDomain>>
+    suspend fun deleteIntakeById(intakeId: Long)
+    suspend fun getIntakeById(intakeId: Long): IntakeDomain?
 }
 

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -133,7 +134,13 @@ fun ViewMedContent(
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background
-                )
+                ),
+
+                windowInsets =
+                        WindowInsets(
+                            top = 0,
+                            bottom = 0,
+                        ),
             )
         },
         floatingActionButton = {
@@ -143,7 +150,9 @@ fun ViewMedContent(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier.padding(16.dp)
-                ) { }
+                ) {
+                    Text("Add Intake", modifier = Modifier.padding(horizontal = 16.dp))
+                }
             }
 
         }
@@ -200,7 +209,7 @@ fun MedicationOverview(
     modifier: Modifier = Modifier
 ) {
     val formattedDate = remember(medication.creationTimestamp) {
-        DateTimeUtils.formatLocalDate(
+        DateTimeUtils.formatDate(
             medication.creationTimestamp.atZone(ZoneId.systemDefault()).toLocalDate()
         )
     }
