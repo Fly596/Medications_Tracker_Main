@@ -1,6 +1,7 @@
 package com.galeria.medtracker2.domain.repository
 
 import com.galeria.medtracker2.domain.model.IntakeDomain
+import com.galeria.medtracker2.domain.model.MedicationStats
 import kotlinx.coroutines.flow.Flow
 import java.util.UUID
 
@@ -11,8 +12,6 @@ interface IntakesRepository {
     suspend fun deleteIntakeById(intakeId: Long)
     suspend fun getIntakeById(intakeId: Long): IntakeDomain?
 
-    fun getTotalDosage(medicationId: UUID): Flow<Double>
-
-    fun getTotalSpent(medicationId: UUID): Flow<Long>
+    fun getTotalStats(medicationId: UUID): Flow<MedicationStats>
 }
 

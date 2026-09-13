@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.galeria.medtracker2.domain.model.IntakeDomain
 import com.galeria.medtracker2.domain.model.MedicationDomain
+import com.galeria.medtracker2.domain.model.MedicationStats
 import com.galeria.medtracker2.domain.repository.IntakesRepository
 import com.galeria.medtracker2.domain.repository.MedicationRepository
 import com.galeria.medtracker2.navigation.AppRoutes
@@ -35,8 +36,7 @@ sealed interface ViewMedUiState {
     data class Success(
         val medication: MedicationDomain,
         val intakes: List<IntakeDomain> = emptyList(),
-        val totalDosage: Double = 0.0,
-        val totalSpent: Long = 0L
+        val totalStats: MedicationStats = MedicationStats(0.0, 0L),
     ) : ViewMedUiState
 
     data class Error(val message: String) : ViewMedUiState
@@ -61,7 +61,6 @@ class ViewMedVM @Inject constructor(
         Log.e(TAG, "Failed to parse medicationId from SavedStateHandle", e)
         null
     }
-
     val uiState: StateFlow<ViewMedUiState> = if (medicationId == null) {
         flowOf(ViewMedUiState.Error("Invalid or missing medication ID"))
             .stateIn(
@@ -77,21 +76,17 @@ class ViewMedVM @Inject constructor(
             intakeRepository.getAllIntakes().map { intakes ->
                 intakes.filter { it.medicationId == medicationId }
             },
-            intakeRepository.getTotalDosage(medicationId).map { totalDosage ->
-                totalDosage
-            },
-            intakeRepository.getTotalSpent(medicationId).map { totalPrice ->
-                totalPrice
+            intakeRepository.getTotalStats(medicationId).map { stats ->
+                stats
             }
-        ) { medication, intakes, totalDosage, totalPrice ->
+        ) { medication, intakes, stats ->
             if (medication == null) {
                 ViewMedUiState.Empty
             } else {
                 ViewMedUiState.Success(
                     medication = medication,
                     intakes = intakes,
-                    totalDosage = totalDosage,
-                    totalSpent = totalPrice.div(100)
+                    totalStats = stats
                 )
             }
         }

@@ -4,6 +4,7 @@ import com.galeria.medtracker2.core.database.dao.IntakeDao
 import com.galeria.medtracker2.data.mappers.toDomain
 import com.galeria.medtracker2.data.mappers.toEntity
 import com.galeria.medtracker2.domain.model.IntakeDomain
+import com.galeria.medtracker2.domain.model.MedicationStats
 import com.galeria.medtracker2.domain.repository.IntakesRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -33,11 +34,7 @@ class IntakesRepositoryImpl @Inject constructor(private val intakeDao: IntakeDao
         return intakeDao.getById(intakeId)?.toDomain()
     }
 
-    override fun getTotalDosage(medicationId: UUID): Flow<Double> {
-        return intakeDao.getTotalDosage(medicationId)
-    }
-
-    override fun getTotalSpent(medicationId: UUID): Flow<Long> {
-        return intakeDao.getTotalSpent(medicationId)
+    override fun getTotalStats(medicationId: UUID): Flow<MedicationStats> {
+        return intakeDao.getTotalStats(medicationId)
     }
 }

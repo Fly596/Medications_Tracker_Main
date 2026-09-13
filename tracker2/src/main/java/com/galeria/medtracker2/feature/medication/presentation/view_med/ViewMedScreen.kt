@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
@@ -138,7 +139,6 @@ fun ViewMedContent(
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background
                 ),
-
                 windowInsets =
                         WindowInsets(
                             top = 0,
@@ -154,10 +154,19 @@ fun ViewMedContent(
                     contentColor = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier.padding(16.dp)
                 ) {
-                    Text("Add Intake", modifier = Modifier.padding(horizontal = 16.dp))
+                    Row(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Edit medication",
+                        )
+                        Text("Add Intake", modifier = Modifier)
+                    }
                 }
             }
-
         }
     ) { innerPadding ->
         Box(
@@ -233,11 +242,10 @@ fun MedicationOverview(
                 unit = medication.unit.name,
                 pricing = medication.defaultPricePerUnit?.cents ?: 0,
                 createdDate = formattedDate,
-                totalDosage = state?.totalDosage ?: 0.0,
-                totalSpent = state?.totalSpent ?: 0L
+                totalDosage = state?.totalStats?.totalDosage ?: 0.0,
+                totalSpent = state?.totalStats?.totalSpent?.div(100) ?: 0L
             )
         }
-
         // Header for Recent Intakes
         item(key = "recent_activity_header") {
             Text(
@@ -248,7 +256,6 @@ fun MedicationOverview(
                 modifier = Modifier.padding(top = 8.dp)
             )
         }
-
         // Intake History List
         items(
             count = intakes.size,
@@ -273,9 +280,9 @@ fun MedicationSummary(
     unit: String,
     pricing: Long,
     createdDate: String,
+    modifier: Modifier = Modifier,
     totalDosage: Double = 0.0,
     totalSpent: Long = 0L,
-    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -292,7 +299,7 @@ fun MedicationSummary(
             )
             SummaryCard(
                 label = "Price",
-                value = "${toSummedDouble(pricing)}",
+                value = "${toSummedDouble(pricing)} ₽",
                 modifier = Modifier.weight(1f)
             )
         }
@@ -307,7 +314,7 @@ fun MedicationSummary(
             )
             SummaryCard(
                 label = "Total Spent",
-                value = totalSpent.toString(),
+                value = "$totalSpent ₽",
                 modifier = Modifier.weight(1f)
             )
         }
@@ -323,7 +330,7 @@ private fun SummaryCard(
     Card(
         modifier = modifier,
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
         )
     ) {
         Column(
@@ -445,7 +452,6 @@ fun EmptyMedicationPlaceholder(
 // ============================================================================
 // Previews
 // ============================================================================
-
 @Preview(showBackground = true)
 @Composable
 private fun ViewMedContentSuccessPreview() {
@@ -465,7 +471,7 @@ private fun ViewMedContentSuccessPreview() {
         )
     }
 }
-
+/*
 @Preview(showBackground = true)
 @Composable
 private fun ViewMedContentEmptyPreview() {
@@ -477,3 +483,4 @@ private fun ViewMedContentEmptyPreview() {
         )
     }
 }
+*/

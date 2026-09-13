@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.galeria.medtracker2.core.database.entity.IntakeEntity
+import com.galeria.medtracker2.domain.model.MedicationStats
 import kotlinx.coroutines.flow.Flow
 import java.util.UUID
 
@@ -23,17 +24,29 @@ interface IntakeDao {
     @Query("DELETE FROM intakes WHERE id = :intakeId")
     suspend fun deleteById(intakeId: Long)
 
-    @Query("SELECT SUM(amount) as total FROM intakes WHERE medicationId = :medicationId")
-    fun getTotalDosage(medicationId: UUID): Flow<Double>
-
     @Query(
         """
-        SELECT SUM(priceCents) as total_spent
+        SELECT
+            COALESCE(SUM(amount), 0) AS totalDosage,
+            COALESCE(SUM(priceCents), 0) AS totalSpent
         FROM intakes
-        WHERE medicationId = :medicationId AND priceCents IS NOT NULL
-        """
+        WHERE medicationId = :medicationId
+    """
     )
-    fun getTotalSpent(
-        medicationId: UUID
-    ): Flow<Long>
+    fun getTotalStats(medicationId: UUID): Flow<MedicationStats>
+    // region Stats old
+    /*    @Query("SELECT SUM(amount) as total FROM intakes WHERE medicationId = :medicationId")
+        fun getTotalDosage(medicationId: UUID): Flow<Double>
+
+        @Query(
+            """
+            SELECT SUM(priceCents) as total_spent
+            FROM intakes
+            WHERE medicationId = :medicationId AND priceCents IS NOT NULL
+            """
+        )
+        fun getTotalSpent(
+            medicationId: UUID
+        ): Flow<Long>*/
+    // endregion Stats old
 }
