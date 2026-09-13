@@ -36,7 +36,7 @@ sealed interface ViewMedUiState {
         val medication: MedicationDomain,
         val intakes: List<IntakeDomain> = emptyList(),
         val totalDosage: Double = 0.0,
-        val totalPrice: Long = 0L
+        val totalSpent: Long = 0L
     ) : ViewMedUiState
 
     data class Error(val message: String) : ViewMedUiState
@@ -79,15 +79,19 @@ class ViewMedVM @Inject constructor(
             },
             intakeRepository.getTotalDosage(medicationId).map { totalDosage ->
                 totalDosage
+            },
+            intakeRepository.getTotalSpent(medicationId).map { totalPrice ->
+                totalPrice
             }
-        ) { medication, intakes, totalDosage ->
+        ) { medication, intakes, totalDosage, totalPrice ->
             if (medication == null) {
                 ViewMedUiState.Empty
             } else {
                 ViewMedUiState.Success(
                     medication = medication,
                     intakes = intakes,
-                    totalDosage = totalDosage
+                    totalDosage = totalDosage,
+                    totalSpent = totalPrice.div(100)
                 )
             }
         }

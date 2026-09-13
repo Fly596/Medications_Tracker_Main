@@ -36,4 +36,8 @@ class IntakesRepositoryImpl @Inject constructor(private val intakeDao: IntakeDao
     override fun getTotalDosage(medicationId: UUID): Flow<Double> {
         return intakeDao.getTotalDosage(medicationId)
     }
+
+    override fun getTotalSpent(medicationId: UUID): Flow<Long> {
+        return intakeDao.getTotalSpent(medicationId)
+    }
 }

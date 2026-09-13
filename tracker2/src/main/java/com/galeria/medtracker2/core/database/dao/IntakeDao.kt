@@ -25,4 +25,15 @@ interface IntakeDao {
 
     @Query("SELECT SUM(amount) as total FROM intakes WHERE medicationId = :medicationId")
     fun getTotalDosage(medicationId: UUID): Flow<Double>
+
+    @Query(
+        """
+        SELECT SUM(priceCents) as total_spent
+        FROM intakes
+        WHERE medicationId = :medicationId AND priceCents IS NOT NULL
+        """
+    )
+    fun getTotalSpent(
+        medicationId: UUID
+    ): Flow<Long>
 }

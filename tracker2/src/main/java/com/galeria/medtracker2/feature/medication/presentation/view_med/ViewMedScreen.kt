@@ -114,6 +114,7 @@ fun ViewMedContent(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                             contentDescription = "Navigate back",
+                            modifier = Modifier.size(32.dp)
                         )
                     }
                 },
@@ -232,7 +233,8 @@ fun MedicationOverview(
                 unit = medication.unit.name,
                 pricing = medication.defaultPricePerUnit?.cents ?: 0,
                 createdDate = formattedDate,
-                totalDosage = state?.totalDosage ?: 0.0
+                totalDosage = state?.totalDosage ?: 0.0,
+                totalSpent = state?.totalSpent ?: 0L
             )
         }
 
@@ -272,6 +274,7 @@ fun MedicationSummary(
     pricing: Long,
     createdDate: String,
     totalDosage: Double = 0.0,
+    totalSpent: Long = 0L,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -289,7 +292,7 @@ fun MedicationSummary(
             )
             SummaryCard(
                 label = "Price",
-                value = "$${toSummedDouble(pricing)}",
+                value = "${toSummedDouble(pricing)}",
                 modifier = Modifier.weight(1f)
             )
         }
@@ -303,8 +306,8 @@ fun MedicationSummary(
                 modifier = Modifier.weight(1f)
             )
             SummaryCard(
-                label = "Status",
-                value = "Active",
+                label = "Total Spent",
+                value = totalSpent.toString(),
                 modifier = Modifier.weight(1f)
             )
         }
