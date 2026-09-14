@@ -1,5 +1,6 @@
 package com.galeria.medtracker2.feature.medication.presentation.view_med
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -63,6 +64,7 @@ import java.util.UUID
 fun ViewMedScreen(
     onNavigateBack: () -> Unit = {},
     onEditMedication: (UUID) -> Unit = {},
+    onViewIntake: (Long) -> Unit = {},
     viewModel: ViewMedVM = hiltViewModel(),
     onAddIntake: (UUID) -> Unit = {}
 ) {
@@ -76,7 +78,8 @@ fun ViewMedScreen(
             viewModel.deleteMedication(id)
             onNavigateBack()
         },
-        onAddIntake = onAddIntake
+        onAddIntake = onAddIntake,
+        onIntakeClick = onViewIntake
     )
 }
 
@@ -91,7 +94,8 @@ fun ViewMedContent(
     onEditMedication: (UUID) -> Unit,
     modifier: Modifier = Modifier,
     onDeleteMedication: (UUID) -> Unit = {},
-    onAddIntake: (UUID) -> Unit = {}
+    onAddIntake: (UUID) -> Unit = {},
+    onIntakeClick: (Long) -> Unit = {}
 ) {
     val topBarTitle = when (state) {
         is ViewMedUiState.Success -> state.medication.name
@@ -194,8 +198,9 @@ fun ViewMedContent(
                     MedicationOverview(
                         medication = state.medication,
                         intakes = state.intakes,
+                        modifier = Modifier.fillMaxSize(),
                         state = state,
-                        modifier = Modifier.fillMaxSize()
+                        onIntakeClick = onIntakeClick
                     )
                 }
 
@@ -222,8 +227,9 @@ fun ViewMedContent(
 fun MedicationOverview(
     medication: MedicationDomain,
     intakes: List<IntakeDomain>,
+    modifier: Modifier = Modifier,
     state: ViewMedUiState.Success? = null,
-    modifier: Modifier = Modifier
+    onIntakeClick: (Long) -> Unit = {}
 ) {
     val formattedDate = remember(medication.creationTimestamp) {
         DateTimeUtils.formatDate(
@@ -265,8 +271,12 @@ fun MedicationOverview(
                 unit = medication.unit.name,
                 index = index,
                 dosage = intakes[index].dose.amount,
+                modifier = Modifier.fillMaxWidth(),
                 timestamp = intakes[index].intakeDateTime.toEpochMilli(),
-                modifier = Modifier.fillMaxWidth()
+                onCardClick = {
+                    onIntakeClick(intakes[index].id)
+                    Log.d("MedicationOverview", "Card clicked ${intakes[index].id}")
+                }
             )
         }
     }
@@ -362,15 +372,20 @@ private fun SummaryCard(
 private fun IntakeCard(
     unit: String,
     index: Int,
-    dosage: Double = 1.0,
+    dosage: Double,
+    modifier: Modifier = Modifier,
     timestamp: Long = System.currentTimeMillis(),
-    modifier: Modifier = Modifier
+    onCardClick: () -> Unit = {}
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainer
-        )
+        ),
+        onClick = {
+            onCardClick()
+            Log.d("IntakeCard", "Card clicked")
+        }
     ) {
         Row(
             modifier = Modifier

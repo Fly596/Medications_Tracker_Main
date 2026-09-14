@@ -25,4 +25,7 @@ sealed interface AppRoutes {
 
     @Serializable
     data class AddIntake(val medicationId: String) : AppRoutes
+
+    @Serializable
+    data class ViewIntake(val intakeId: Long) : AppRoutes
 }

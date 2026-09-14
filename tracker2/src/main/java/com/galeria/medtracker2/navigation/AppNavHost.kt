@@ -135,10 +135,25 @@ fun AppNavHost(
                     },
                     onAddIntake = { id ->
                         navController.navigate(AppRoutes.AddIntake(id.toString()))
+                    },
+                    onViewIntake = { id ->
+                        navController.navigate(AppRoutes.ViewIntake(id))
                     }
                 )
             }
 
+            composable<AppRoutes.AddIntake> {
+                AddIntakeScreen(onNavigateBack = { navController.navigateUp() })
+            }
+
+            composable<AppRoutes.ViewIntake> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(
+                        text = "Work in progress",
+                        style = MedTrackerTheme.typography.display3Emphasized
+                    )
+                }
+            }
             composable<AppRoutes.EditMedication> { backStackEntry ->
                 //val route = backStackEntry.toRoute<AppRoutes.EditMedication>()
                 //val medicationId = UUID.fromString(route.medicationId)
@@ -150,7 +165,6 @@ fun AppNavHost(
                     )
                 }
             }
-
             composable<AppRoutes.ProfileOverview> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text(
@@ -161,10 +175,6 @@ fun AppNavHost(
                 //ProfileOverviewScreen()
             }
 
-            composable<AppRoutes.AddIntake> {
-                AddIntakeScreen(onNavigateBack = { navController.navigateUp() })
-                //AddIntakeScreen()
-            }
         }
     }
 }
