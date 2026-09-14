@@ -248,48 +248,7 @@ class AddIntakeVM @Inject constructor(
                     )
                 }
             }
-            // 4. Определяем цену приема.
-            /*val medPrice = if (currentState.price.isBlank()) {
-                medicationRepository.getMedication(medId)?.defaultPricePerUnit
-            } else {
-                Money(
-                    cents = currentState.price.trim().replace(',', '.').toLongOrNull() ?: 0L,
-                    currencyCode = "RUB"
-                )
-            }
 
-            if (currentState.price == "") {
-                _uiState.update {
-                    it.copy(price = medPrice.toString())
-                }
-            }
-            val cost = if (currentState.price == "") medPrice?.cents ?: 0L else {
-                currentState.price.toDouble().times(dosageValue).toLong()
-            } // currentState.price.toDouble().times(dosageValue)
-
-            try {
-                intakeRepository.insertIntake(
-                    IntakeDomain(
-                        id = 0,
-                        medicationId = medId,
-                        dose = Dose(
-                            amount = dosageValue,
-                            unit = currentState.unit
-                        ),
-                        cost = Money(cents = cost, currencyCode = "RUB"),
-                        intakeDateTime = instant
-                    )
-                )
-                _uiState.update { it.copy(isLoading = false, isSavedSuccess = true) }
-            } catch (e: Exception) {
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = e.localizedMessage
-                            ?: "Failed to save intake. Please try again."
-                    )
-                }
-            }*/
         }
     }
 }

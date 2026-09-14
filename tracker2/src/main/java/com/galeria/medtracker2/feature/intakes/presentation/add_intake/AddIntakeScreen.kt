@@ -8,13 +8,19 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.outlined.CalendarToday
+import androidx.compose.material.icons.outlined.Payments
+import androidx.compose.material.icons.outlined.Schedule
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -27,12 +33,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -45,6 +52,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -63,12 +72,15 @@ fun AddIntakeScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(uiState.isSavedSuccess, uiState.errorMessage) {
+    LaunchedEffect(uiState.isSavedSuccess) {
         if (uiState.isSavedSuccess) {
-            snackbarHostState.showSnackbar("Успешно сохранено!")
             onAddIntake()
             onNavigateBack()
         }
+    }
+
+    // Ошибки выводим отдельно
+    LaunchedEffect(uiState.errorMessage) {
         uiState.errorMessage?.let { errorMsg ->
             snackbarHostState.showSnackbar(errorMsg)
             viewModel.onEvent(AddIntakeUiEvent.ClearError)
@@ -112,61 +124,128 @@ fun AddIntakeScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .imePadding() // Поднимает контент при открытии клавиатуры
+                .verticalScroll(rememberScrollState()) // Спасет от перекрытия полей
+                .padding(horizontal = 20.dp, vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            TextField(
-                value = uiState.dosage,
-                onValueChange = { viewModel.onEvent(AddIntakeUiEvent.OnDosageChanged(it)) },
-                label = { Text("Dosage") },
-                isError = uiState.errorMessage != null,
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth(),
-            )
-            // Карточка Выбора Даты (месяц-день-год)
-            DateTimeCard(
-                text = DateTimeUtils.formatDate(uiState.selectedDate),
-                icon = Icons.Default.DateRange,
-                contentDescription = "Select Date",
-                onClick = { viewModel.onEvent(AddIntakeUiEvent.OpenDatePicker) }
+            // Блок 1: Дозировка и единица измерения логически объединены в одну строку
+            Text(
+                text = "Дозировка препарата",
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary
             )
 
-            // Карточка Выбора Времени (12h format)
-            DateTimeCard(
-                text = DateTimeUtils.formatTime(uiState.selectedTime),
-                icon = Icons.Default.Schedule,
-                contentDescription = "Select Time",
-                onClick = { viewModel.onEvent(AddIntakeUiEvent.OpenTimePicker) }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                OutlinedTextField(
+                    value = uiState.dosage,
+                    onValueChange = { viewModel.onEvent(AddIntakeUiEvent.OnDosageChanged(it)) },
+                    label = { Text("Количество") },
+                    singleLine = true,
+                    // Вызываем цифровую клавиатуру с разделителем!
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Decimal,
+                        imeAction = ImeAction.Next
+                    ),
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier.weight(1.2f)
+                )
+
+                // Дропдаун с единицами измерения теперь прямо рядом с числом
+                WeightUnitDropdown(
+                    selectedUnit = uiState.unit,
+                    onUnitSelected = { viewModel.onEvent(AddIntakeUiEvent.OnUnitChanged(it)) },
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+            // Блок 2: Дата и время приема (в виде аккуратных кликабельных плашек в ряд)
+            Text(
+                text = "Время приема",
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary
             )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                DateTimeSelectorCard(
+                    title = "Дата",
+                    value = DateTimeUtils.formatDate(uiState.selectedDate),
+                    icon = Icons.Outlined.CalendarToday,
+                    onClick = { viewModel.onEvent(AddIntakeUiEvent.OpenDatePicker) },
+                    modifier = Modifier.weight(1f)
+                )
+
+                DateTimeSelectorCard(
+                    title = "Время",
+                    value = DateTimeUtils.formatTime(uiState.selectedTime),
+                    icon = Icons.Outlined.Schedule,
+                    onClick = { viewModel.onEvent(AddIntakeUiEvent.OpenTimePicker) },
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
             Spacer(modifier = Modifier.height(16.dp))
 
-            WeightUnitDropdown(
-                selectedUnit = uiState.unit,
-                onUnitSelected = { viewModel.onEvent(AddIntakeUiEvent.OnUnitChanged(it)) }
+            // Блок 3: Финансы (цена)
+            Text(
+                text = "Стоимость (необязательно)",
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary
             )
-            TextField(
+
+            OutlinedTextField(
                 value = uiState.price,
                 onValueChange = { viewModel.onEvent(AddIntakeUiEvent.OnPriceChanged(it)) },
-                label = { Text("Price") },
-                isError = uiState.errorMessage != null,
+                label = { Text("Цена приема") },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Outlined.Payments,
+                        contentDescription = null
+                    )
+                },
                 singleLine = true,
-                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Decimal,
+                    imeAction = ImeAction.Done
+                ),
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier.fillMaxWidth()
             )
+
+            Spacer(modifier = Modifier.weight(1f, fill = false))
+            Spacer(modifier = Modifier.height(8.dp))
+
 
             Button(
                 onClick = { viewModel.onEvent(AddIntakeUiEvent.ConfirmAndSave) },
                 enabled = !uiState.isLoading,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth(), // Фиксированная удобная высота для нажатия пальцем
+                shape = RoundedCornerShape(14.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MedTrackerTheme.colors.primary400,
                     contentColor = MaterialTheme.colorScheme.onPrimary
                 )
             ) {
                 if (uiState.isLoading) {
-                    CircularProgressIndicator(color = MaterialTheme.colorScheme.onPrimary)
+                    // Фиксируем размер индикатора, чтобы кнопка не прыгала по высоте
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        strokeWidth = 2.5.dp,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
                 } else {
-                    Text(text = "Подтвердить и Сохранить")
+                    Text(
+                        text = "Сохранить прием",
+                        style = MaterialTheme.typography.titleMedium
+                    )
                 }
             }
 
@@ -174,6 +253,7 @@ fun AddIntakeScreen(
     }
     if (uiState.isDatePickerOpen) {
         ScheduleDatePickerDialog(
+            initialDate = uiState.selectedDate,
             onDateSelected = { viewModel.onEvent(AddIntakeUiEvent.OnDateSelected(it)) },
             onDismiss = { viewModel.onEvent(AddIntakeUiEvent.DismissDatePicker) },
         )
@@ -185,6 +265,59 @@ fun AddIntakeScreen(
             onTimeSelected = { viewModel.onEvent(AddIntakeUiEvent.OnTimeSelected(it)) },
             onDismiss = { viewModel.onEvent(AddIntakeUiEvent.DismissTimePicker) }
         )
+    }
+}
+
+/**
+ * Аккуратная карточка для выбора даты/времени.
+ * Используем OutlinedCard для легкого плоского дизайна без тяжелых теней.
+ */
+@Composable
+private fun DateTimeSelectorCard(
+    title: String,
+    value: String,
+    icon: ImageVector,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    OutlinedCard(
+        onClick = onClick,
+        modifier = modifier,
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.outlinedCardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(14.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    modifier = Modifier.size(18.dp),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            Spacer(modifier = Modifier.height(6.dp))
+
+            Text(
+                text = value,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
     }
 }
 
@@ -226,10 +359,15 @@ private fun DateTimeCard(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ScheduleDatePickerDialog(
+    initialDate: LocalDate,
     onDateSelected: (LocalDate) -> Unit,
     onDismiss: () -> Unit
 ) {
-    val datePickerState = rememberDatePickerState()
+    // Инициализируем DatePicker текущей датой из стейта, а не случайным временем!
+    val initialMillis = remember(initialDate) {
+        DateTimeUtils.fromLocalDateToLong(initialDate)
+    }
+    val datePickerState = rememberDatePickerState(initialSelectedDateMillis = initialMillis)
 
     DatePickerDialog(
         onDismissRequest = onDismiss,

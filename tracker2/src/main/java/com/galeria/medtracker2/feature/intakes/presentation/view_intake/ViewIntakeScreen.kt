@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Medication
 import androidx.compose.material.icons.filled.Payments
@@ -67,8 +67,9 @@ fun ViewIntakeContent(
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Назад"
+                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                            contentDescription = "Navigate back",
+                            modifier = Modifier.size(32.dp)
                         )
                     }
                 },
@@ -98,7 +99,7 @@ fun ViewIntakeContent(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    containerColor = MedTrackerTheme.colors.secondaryTinted,
                     contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                 ),
                 shape = MaterialTheme.shapes.extraLarge
@@ -113,7 +114,7 @@ fun ViewIntakeContent(
                         imageVector = Icons.Default.Medication,
                         contentDescription = null,
                         modifier = Modifier.size(40.dp),
-                        tint = MaterialTheme.colorScheme.primary
+                        tint = MedTrackerTheme.colors.primaryLabel
                     )
 
                     Spacer(modifier = Modifier.width(16.dp))
@@ -121,13 +122,13 @@ fun ViewIntakeContent(
                     Column {
                         Text(
                             text = "Принятая доза",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+                            style = MedTrackerTheme.typography.bodyLargeEmphasized,
+                            color = MedTrackerTheme.colors.primaryLabel.copy(alpha = 0.7f)
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
                             text = "${state.intakeAmount} ${state.intakeUnit}",
-                            style = MaterialTheme.typography.headlineMedium
+                            style = MedTrackerTheme.typography.title2
                         )
                     }
                 }
@@ -137,7 +138,7 @@ fun ViewIntakeContent(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+                    containerColor = MedTrackerTheme.colors.secondaryBackground
                 ),
                 shape = MaterialTheme.shapes.large
             ) {

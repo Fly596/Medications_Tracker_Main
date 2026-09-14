@@ -15,7 +15,7 @@ interface IntakeDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(intake: IntakeEntity): Long
 
-    @Query("SELECT * FROM intakes ORDER BY timestamp DESC")
+    @Query("SELECT * FROM intakes ORDER BY timestamp ASC")
     fun observeAll(): Flow<List<IntakeEntity>>
 
     @Query("SELECT * FROM intakes WHERE id = :intakeId")
