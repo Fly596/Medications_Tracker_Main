@@ -155,7 +155,7 @@ fun ViewMedContent(
             if (state is ViewMedUiState.Success) {
                 FloatingActionButton(
                     onClick = { onAddIntake(state.medication.id) },
-                    containerColor = MaterialTheme.colorScheme.primary,
+                    containerColor = MedTrackerTheme.colors.primary400,
                     contentColor = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier.padding(16.dp)
                 ) {
