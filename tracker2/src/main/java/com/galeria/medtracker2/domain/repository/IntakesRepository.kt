@@ -13,5 +13,7 @@ interface IntakesRepository {
     suspend fun getIntakeById(intakeId: Long): IntakeDomain?
 
     fun getTotalStats(medicationId: UUID): Flow<MedicationStats>
+
+    suspend fun getLatestIntakeTimestamp(medicationId: UUID): Long?
 }
 

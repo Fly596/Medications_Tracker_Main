@@ -34,19 +34,15 @@ interface IntakeDao {
     """
     )
     fun getTotalStats(medicationId: UUID): Flow<MedicationStats>
-    // region Stats old
-    /*    @Query("SELECT SUM(amount) as total FROM intakes WHERE medicationId = :medicationId")
-        fun getTotalDosage(medicationId: UUID): Flow<Double>
 
-        @Query(
-            """
-            SELECT SUM(priceCents) as total_spent
-            FROM intakes
-            WHERE medicationId = :medicationId AND priceCents IS NOT NULL
-            """
-        )
-        fun getTotalSpent(
-            medicationId: UUID
-        ): Flow<Long>*/
-    // endregion Stats old
+    @Query(
+        """
+        SELECT timestamp AS intakeDateTime
+        FROM intakes 
+        WHERE medicationId = :medicationId 
+        ORDER BY timestamp DESC 
+        LIMIT 1
+    """
+    )
+    suspend fun getLatestIntakeTimestamp(medicationId: UUID): Long?
 }

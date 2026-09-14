@@ -37,4 +37,8 @@ class IntakesRepositoryImpl @Inject constructor(private val intakeDao: IntakeDao
     override fun getTotalStats(medicationId: UUID): Flow<MedicationStats> {
         return intakeDao.getTotalStats(medicationId)
     }
+
+    override suspend fun getLatestIntakeTimestamp(medicationId: UUID): Long? {
+        return intakeDao.getLatestIntakeTimestamp(medicationId)
+    }
 }

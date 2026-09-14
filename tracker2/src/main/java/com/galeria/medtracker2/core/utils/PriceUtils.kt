@@ -5,21 +5,21 @@ import java.math.RoundingMode
 import java.util.Locale
 
 fun Double.roundTo(decimals: Int): Double {
-  return BigDecimal(this.toString())
-    .setScale(decimals, RoundingMode.HALF_UP)
-    .toDouble()
+    return BigDecimal(this.toString())
+        .setScale(decimals, RoundingMode.HALF_UP)
+        .toDouble()
 }
 
 // Для UI
 fun Double.toFormattedString(decimals: Int = 2, locale: Locale = Locale.getDefault()): String {
-  return String.format(locale, "%.${decimals}f", this)
+    return String.format(locale, "%.${decimals}f", this)
 }
 
 fun toSummedDouble(value: Long): Double {
-  val divided = value.div(100)
-  val remainder = value.rem(100)
+    val divided = value.toDouble().div(100.toDouble())
+    val remainder = value.toDouble().rem(100.toDouble())
 
-  val dividedDouble = divided.toDouble().plus(remainder)
+    val dividedDouble = divided.toDouble().plus(remainder)
 
-  return dividedDouble
+    return divided
 }

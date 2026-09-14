@@ -39,6 +39,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -245,7 +246,7 @@ fun MedicationOverview(
         // Summary Cards Section
         item(key = "summary_section") {
             MedicationSummary(
-                unit = medication.unit.name,
+                unit = stringResource(medication.unit.label),
                 pricing = medication.defaultPricePerUnit?.cents ?: 0,
                 createdDate = formattedDate,
                 totalDosage = state?.totalStats?.totalDosage ?: 0.0,
@@ -304,12 +305,12 @@ fun MedicationSummary(
         ) {
             SummaryCard(
                 label = "Total Dosage",
-                value = totalDosage.toString(),
+                value = totalDosage.toString() + " " + unit,
                 modifier = Modifier.weight(1f)
             )
             SummaryCard(
                 label = "Price",
-                value = "${toSummedDouble(pricing)} ₽",
+                value = "${toSummedDouble(pricing)} ₽ / ${unit.ifEmpty { "dose" }}",
                 modifier = Modifier.weight(1f)
             )
         }
