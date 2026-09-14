@@ -1,6 +1,6 @@
 [versions]
 # Core
-agp = "9.2.1"
+agp = "9.3.0"
 kotlin = "2.2.10"
 ksp = "2.3.6"
 coreKtx = "1.17.0"
@@ -14,7 +14,7 @@ appcompat = "1.7.1"
 materialIconsExtended = "1.7.8"
 
 # DI & Architecture
-hilt = "2.57.1"
+hilt = "2.60.1"
 androidxHiltNavigationCompose = "1.2.0"
 
 # Database & Async
@@ -82,7 +82,7 @@ androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-man
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+# kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

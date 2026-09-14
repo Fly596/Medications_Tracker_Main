@@ -21,5 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "Speech Recognition App"
 // include(":app")
-include(":medicationstracker")
+//include(":medicationstracker")
 include(":tracker2")

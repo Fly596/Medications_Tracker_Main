@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Medication
 import androidx.compose.material.icons.filled.Payments
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -48,6 +49,7 @@ fun ViewIntakeScreen(
     ViewIntakeContent(state = uiState, onBack = onBack)
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ViewIntakeContent(
     state: ViewIntakeUiState,

@@ -63,6 +63,7 @@ import com.galeria.medtracker2.feature.medication.presentation.add_med.WeightUni
 import java.time.LocalDate
 import java.time.LocalTime
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddIntakeScreen(
     onNavigateBack: () -> Unit = {},
