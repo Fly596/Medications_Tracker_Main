@@ -143,6 +143,12 @@ fun AppNavHost(
                 //val route = backStackEntry.toRoute<AppRoutes.EditMedication>()
                 //val medicationId = UUID.fromString(route.medicationId)
                 //EditMedicationScreen(onNavigateBack = { navController.navigateUp() })
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(
+                        text = "Work in progress",
+                        style = MedTrackerTheme.typography.display3Emphasized
+                    )
+                }
             }
 
             composable<AppRoutes.ProfileOverview> {

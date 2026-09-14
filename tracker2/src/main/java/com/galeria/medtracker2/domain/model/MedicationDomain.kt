@@ -14,6 +14,6 @@ data class MedicationDomain(
 
 data class Money(
     val cents: Long,
-    val currencyCode: String = "USD"
+    val currencyCode: String = "RUR"
 )
 
