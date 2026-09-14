@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Healing
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -101,7 +102,6 @@ fun AddMedContent(
                         )
                     }
                 },
-
                 windowInsets =
                         WindowInsets(
                             top = 0,
@@ -173,7 +173,7 @@ fun AddMedContent(
                 )
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(2.dp))
 
             Button(
                 onClick = {
@@ -181,7 +181,11 @@ fun AddMedContent(
                     onAddMedication()
                 },
                 enabled = !uiState.isLoading,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MedTrackerTheme.colors.primary400,
+                    contentColor = MedTrackerTheme.colors.primaryLabelDark,
+                )
             ) {
                 if (uiState.isLoading) {
                     CircularProgressIndicator(
@@ -238,7 +242,6 @@ fun WeightUnitDropdown(
         }
     }
 }
-
 /*
 @Composable
 fun AddMedScreen(

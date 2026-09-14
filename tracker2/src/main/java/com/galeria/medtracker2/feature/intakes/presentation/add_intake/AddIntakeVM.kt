@@ -11,6 +11,7 @@ import com.galeria.medtracker2.domain.model.Money
 import com.galeria.medtracker2.domain.repository.IntakesRepository
 import com.galeria.medtracker2.domain.repository.MedicationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -62,6 +63,7 @@ sealed interface AddIntakeUiEvent {
     data object ClearError : AddIntakeUiEvent
 }
 
+// TODO: проверять если юнит - мг, а цена в гр, то надо цену делить на 1000.
 @HiltViewModel
 class AddIntakeVM @Inject constructor(
     private val intakeRepository: IntakesRepository,
@@ -162,10 +164,10 @@ class AddIntakeVM @Inject constructor(
     private fun saveSchedule() {
         val currentState = _uiState.value
 
-        // Prevent concurrent double-clicks while save operation is already running
+        // Защита от дурака: если уже сохраняем, игнорируем повторные клики.
         if (currentState.isLoading) return
 
-        // 1. Validate target Medication ID presence
+        // 1. Проверяем наличие ID лекарства.
         val medId = currentState.medicationId
         if (medId == null) {
             _uiState.update {
@@ -174,8 +176,13 @@ class AddIntakeVM @Inject constructor(
             return
         }
 
-        // 2. Validate Dosage Input (supports both comma and dot decimal separators)
-        val dosageValue = currentState.dosage.trim().replace(',', '.').toDoubleOrNull()
+        // 2. Безопасно парсим дозировку (чистим пробелы, меняем запятую на точку).
+        val dosageValue = currentState.dosage
+            .trim()
+            .replace(',', '.')
+            .toDoubleOrNull()
+
+        // Дозировка должна быть валидным числом больше нуля.
         if (dosageValue == null || dosageValue <= 0.0) {
             _uiState.update {
                 it.copy(errorMessage = "Please enter a valid positive numeric dosage.")
@@ -183,18 +190,73 @@ class AddIntakeVM @Inject constructor(
             return
         }
 
-        val priceValue = currentState.price.trim().replace(',', '.').toLongOrNull()
-
-        // 3. Combine selected LocalDate and LocalTime into an Instant
-        val instant = DateTimeUtils.combineDateAndTime(
+        // 3. Формируем временную метку (Instant).
+        val intakeDateTime = DateTimeUtils.combineDateAndTime(
             currentState.selectedDate,
             currentState.selectedTime
         )
 
+        // 4. Безопасно парсим введенную цену (если она вообще введена).
+        // Допустим, пользователь вводит рубли (например: "15.50").
+        val parsedPriceRubles = currentState.price
+            .trim()
+            .replace(',', '.')
+            .toDoubleOrNull()
+
+        // Включаем индикатор загрузки и сбрасываем старые ошибки.
+        _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-            // TODO: get price from medication.
-            val medPrice = medicationRepository.getMedication(medId)?.defaultPricePerUnit
+            try {
+                // 5. Вычисляем стоимость за одну единицу (в копейках):
+                // Если пользователь ничего не ввел — тянем дефолтную цену из репозитория.
+                // Если ввел — переводим рубли в копейки (* 100).
+                val unitPriceInCents: Long = if (parsedPriceRubles != null) {
+                    (parsedPriceRubles * 100).toLong()
+                } else {
+                    medicationRepository.getMedication(medId)?.defaultPricePerUnit?.cents ?: 0L
+                }
+
+                // Общая стоимость = цена за единицу * количество принятого лекарства.
+                val totalCostInCents = (unitPriceInCents * dosageValue).toLong()
+
+                // 6. Формируем модель для базы и сохраняем.
+                val intake = IntakeDomain(
+                    id = 0,
+                    medicationId = medId,
+                    dose = Dose(
+                        amount = dosageValue,
+                        unit = currentState.unit
+                    ),
+                    cost = Money(cents = totalCostInCents, currencyCode = "RUB"),
+                    intakeDateTime = intakeDateTime
+                )
+
+                intakeRepository.insertIntake(intake)
+
+                // Успех: гасим лоадер, флаг успеха выставляем в true.
+                _uiState.update { it.copy(isLoading = false, isSavedSuccess = true) }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                // Обрабатываем только реальные ошибки (база данных, сеть и т.д.).
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = e.localizedMessage
+                            ?: "Failed to save intake. Please try again."
+                    )
+                }
+            }
+            // 4. Определяем цену приема.
+            /*val medPrice = if (currentState.price.isBlank()) {
+                medicationRepository.getMedication(medId)?.defaultPricePerUnit
+            } else {
+                Money(
+                    cents = currentState.price.trim().replace(',', '.').toLongOrNull() ?: 0L,
+                    currencyCode = "RUB"
+                )
+            }
 
             if (currentState.price == "") {
                 _uiState.update {
@@ -202,7 +264,6 @@ class AddIntakeVM @Inject constructor(
                 }
             }
             val cost = if (currentState.price == "") medPrice?.cents ?: 0L else {
-
                 currentState.price.toDouble().times(dosageValue).toLong()
             } // currentState.price.toDouble().times(dosageValue)
 
@@ -228,7 +289,7 @@ class AddIntakeVM @Inject constructor(
                             ?: "Failed to save intake. Please try again."
                     )
                 }
-            }
+            }*/
         }
     }
 }
