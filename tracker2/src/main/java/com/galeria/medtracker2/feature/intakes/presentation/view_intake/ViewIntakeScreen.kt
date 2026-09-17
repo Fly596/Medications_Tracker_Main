@@ -123,7 +123,7 @@ fun ViewIntakeContent(
 
                     Column {
                         Text(
-                            text = "Принятая доза",
+                            text = "Taken dosage:",
                             style = MedTrackerTheme.typography.bodyLargeEmphasized,
                             color = MedTrackerTheme.colors.primaryLabel.copy(alpha = 0.7f)
                         )
@@ -153,7 +153,7 @@ fun ViewIntakeContent(
                     // Строка времени
                     InfoRow(
                         icon = Icons.Default.CalendarToday,
-                        label = "Дата и время",
+                        label = "Date and time",
                         value = DateTimeUtils.formatLongToLocalDateTimeString(state.intakeTimestamp?.toEpochMilli())
                     )
 
@@ -164,7 +164,7 @@ fun ViewIntakeContent(
                     // Строка стоимости
                     InfoRow(
                         icon = Icons.Default.Payments,
-                        label = "Стоимость приема",
+                        label = "Intake cost.",
                         value = "${state.intakePrice} ${state.intakeCurrency}"
                     )
                 }
