@@ -37,6 +37,9 @@ sealed interface ViewMedUiState {
         val medication: MedicationDomain,
         val intakes: List<IntakeDomain> = emptyList(),
         val totalStats: MedicationStats = MedicationStats(0.0, 0L),
+        val name: String = medication.name,
+        val unit: String = medication.unit.name,
+        val price: String = medication.defaultPricePerUnit?.cents.toString() ?: "",
     ) : ViewMedUiState
 
     data class Error(val message: String) : ViewMedUiState

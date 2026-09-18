@@ -157,7 +157,7 @@ fun MyMedsContent(
                 state.isLoading -> {
                     CircularProgressIndicator(
                         modifier = Modifier.align(Alignment.Center),
-                        color = MaterialTheme.colorScheme.primary,
+                        color = MedTrackerTheme.colors.primary400,
                     )
                 }
 
