@@ -24,7 +24,6 @@ data class AddMedUiState(
     val price: String = "10",
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
-    val isDropDownExpanded: Boolean = false
 )
 
 @HiltViewModel
@@ -42,11 +41,7 @@ constructor(
     }
 
     fun onUnitSelected(units: WeightUnits) {
-        _state.update { it.copy(selectedUnit = units, isDropDownExpanded = false) }
-    }
-
-    fun toggleDropDown() {
-        _state.update { it.copy(isDropDownExpanded = !it.isDropDownExpanded) }
+        _state.update { it.copy(selectedUnit = units) }
     }
 
     fun updatePrice(input: String) {
