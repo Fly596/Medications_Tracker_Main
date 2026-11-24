@@ -1,21 +1,6 @@
 package com.galeria.medicationstracker.ui.componentsOld
 
-import android.util.Log
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
-import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.painterResource
-import androidx.navigation.NavHostController
-import com.galeria.medicationstracker.R
-import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
-import com.galeria.medicationstracker.utils.navigation.GraphRoutes
-import com.galeria.medicationstracker.utils.navigation.GraphRoutes.Auth.route
+/*
 
 data class BottomNavItem(
   val title: String,
@@ -133,3 +118,4 @@ fun IconWithBadge(
     Icon(painter = painterResource(id = icon), contentDescription = contentDescription)
   }
 }
+*/

@@ -10,6 +10,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -28,12 +29,18 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun ViewMedicationInfoScreen(
+    medicationId: String = "",
     modifier: Modifier = Modifier,
-    // medicationId: String,
     onNavigateToMedsList: () -> Unit = {},
     viewModel: ViewMedicationViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(medicationId) {
+        if (medicationId.isNotBlank()) {
+            viewModel.loadMedicationDetails(medicationId)
+        }
+    }
     
     MedTrackerTheme {
         Scaffold(

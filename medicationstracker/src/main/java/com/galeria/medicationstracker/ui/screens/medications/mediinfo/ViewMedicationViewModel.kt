@@ -9,7 +9,7 @@ import com.galeria.medicationstracker.data.AuthRepository
 import com.galeria.medicationstracker.data.NewMedicationRepository
 import com.galeria.medicationstracker.data.NewUserIntake
 import com.galeria.medicationstracker.data.NewUserMedication
-import com.galeria.medicationstracker.utils.navigation.MedicationScreen
+import com.galeria.medicationstracker.navigation.NavRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -38,12 +38,25 @@ constructor(
     init {
         viewModelScope.launch {
             try {
-                val uid = authRepository.getUserId().getOrThrow()
-                val args =
-                    savedStateHandle.toRoute<MedicationScreen.ViewMedication>()
-                val medId = args.medicationId
-                
-                getMedDetails(medId, uid.toString())
+                val uid = authRepository.getUserId().getOrNull()
+                val medId = savedStateHandle.get<String>("medicationId")
+                    ?: runCatching { savedStateHandle.toRoute<NavRoute.ViewMedication>().medicationId }.getOrNull()
+                if (uid != null && medId != null) {
+                    getMedDetails(medId, uid)
+                }
+            } catch (e: Exception) {
+                Log.e("checkIntake", "Error fetching intake data", e)
+            }
+        }
+    }
+
+    fun loadMedicationDetails(medId: String) {
+        viewModelScope.launch {
+            try {
+                val uid = authRepository.getUserId().getOrNull()
+                if (uid != null) {
+                    getMedDetails(medId, uid)
+                }
             } catch (e: Exception) {
                 Log.e("checkIntake", "Error fetching intake data", e)
             }

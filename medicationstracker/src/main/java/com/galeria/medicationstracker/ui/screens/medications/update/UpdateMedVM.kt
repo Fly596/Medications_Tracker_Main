@@ -9,8 +9,8 @@ import com.galeria.medicationstracker.data.AuthRepository
 import com.galeria.medicationstracker.data.MedicationForm
 import com.galeria.medicationstracker.data.NewMedicationRepository
 import com.galeria.medicationstracker.data.NewUserMedication
+import com.galeria.medicationstracker.navigation.NavRoute
 import com.galeria.medicationstracker.utils.FirestoreFunctions.FirestoreService
-import com.galeria.medicationstracker.utils.navigation.MedicationScreen
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -40,7 +40,7 @@ constructor(
     private val authRepository: AuthRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-    
+
     // TODO
     private val _uiState = MutableStateFlow(UpdateMedUiState())
     val uiState = _uiState.asStateFlow()
@@ -48,15 +48,15 @@ constructor(
     val db = FirestoreService.db
     private var _selectedMedication = MutableStateFlow<NewUserMedication?>(null)
     private var _selectedDocumentId = MutableStateFlow<String?>(null)
-    
+
     init {
         viewModelScope.launch {
-            val args =
-                savedStateHandle.toRoute<MedicationScreen.UpdateMedication>()
-            val medId = args.medicationId
-            _uiState.update { it.copy(medId = medId) }
-            
-            fetchSelectedMedication(medId)
+            val medId = savedStateHandle.get<String>("medicationId")
+                ?: runCatching { savedStateHandle.toRoute<NavRoute.UpdateMedication>().medicationId }.getOrNull()
+            if (medId != null) {
+                _uiState.update { it.copy(medId = medId) }
+                fetchSelectedMedication(medId)
+            }
         }
     }
 
@@ -65,7 +65,7 @@ constructor(
             repository.deleteMedication(currentUserId.toString(), medId)
         }
     }
-    
+
     private fun fetchSelectedMedication(medId: String) {
         viewModelScope.launch {
             val drug = repository.getMedication(currentUserId.toString(), medId)
