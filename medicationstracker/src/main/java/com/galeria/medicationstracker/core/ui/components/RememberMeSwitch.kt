@@ -11,7 +11,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.galeria.medicationstracker.R
 import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme
-import com.galeria.medicationstracker.ui.componentsOld.MySwitch
 
 @Composable
 fun RememberMeSwitch(checked: Boolean, onCheckedChange: (Boolean) -> Unit) {

@@ -21,10 +21,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medicationstracker.R
+import com.galeria.medicationstracker.core.ui.components.GPrimaryButton
 import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme.typography
 import com.galeria.medicationstracker.feature.medications.presentation.MoodTrackerViewModel
-import com.galeria.medicationstracker.ui.components.GPrimaryButton
 
 // Для записи оценки самочувствия.
 @Composable

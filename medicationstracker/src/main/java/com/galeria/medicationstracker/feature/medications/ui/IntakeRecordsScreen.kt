@@ -19,9 +19,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.galeria.medicationstracker.core.ui.components.FlySimpleCard
 import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.feature.medications.presentation.IntakeRecordsViewModel
-import com.galeria.medicationstracker.ui.componentsOld.FlySimpleCard
 
 @Composable
 fun IntakeRecordsScreen(

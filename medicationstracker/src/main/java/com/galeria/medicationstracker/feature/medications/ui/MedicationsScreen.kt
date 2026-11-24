@@ -25,12 +25,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medicationstracker.R
+import com.galeria.medicationstracker.core.ui.components.GFABButton
+import com.galeria.medicationstracker.core.ui.components.GTextButton
 import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme.typography
 import com.galeria.medicationstracker.data.NewUserMedication
 import com.galeria.medicationstracker.feature.medications.presentation.MedicationsViewModel
-import com.galeria.medicationstracker.ui.components.GFABButton
-import com.galeria.medicationstracker.ui.components.GTextButton
 
 @Composable
 fun MedicationsScreen(

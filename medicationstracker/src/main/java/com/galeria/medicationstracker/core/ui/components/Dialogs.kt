@@ -1,4 +1,4 @@
-package com.galeria.medicationstracker.ui.componentsOld
+package com.galeria.medicationstracker.core.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -32,8 +32,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme
-import com.galeria.medicationstracker.ui.components.GOutlinedButton
-import com.galeria.medicationstracker.ui.components.GPrimaryButton
 import com.galeria.medicationstracker.utils.timeToFirestoreTimestamp
 import com.google.firebase.Timestamp
 import java.time.LocalDateTime

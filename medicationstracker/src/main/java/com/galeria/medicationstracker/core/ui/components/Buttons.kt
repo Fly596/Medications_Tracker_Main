@@ -1,5 +1,6 @@
-package com.galeria.medicationstracker.ui.componentsOld
+package com.galeria.medicationstracker.core.ui.components
 
+import android.content.res.Configuration
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -9,15 +10,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
@@ -29,10 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,142 +36,7 @@ import com.galeria.medicationstracker.core.ui.theme.ButtonShape
 import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme.colors
 
-enum class HIGButtonStyle {
-    Filled,
-    Bezeled,
-    Borderless,
-}
 
-// TODO: вынести цвета в тему.
-@Composable
-fun HIGButton(
-    text: String,
-    onClick: () -> Unit,
-    enabled: Boolean = true,
-    style: HIGButtonStyle = HIGButtonStyle.Filled,
-    modifier: Modifier = Modifier,
-) {
-    val buttonColors =
-        when (style) {
-            HIGButtonStyle.Filled ->
-                ButtonDefaults.buttonColors(
-                    containerColor = colors.primary400,
-                    contentColor = colors.sysWhite,
-                    disabledContainerColor = colors.tertiaryFill,
-                    disabledContentColor = colors.tertiaryLabel,
-                )
-
-            HIGButtonStyle.Bezeled ->
-                ButtonDefaults.buttonColors(
-                    containerColor = colors.primary400, /*Fills, tertiary*/
-                    contentColor = colors.primaryLabelDark,
-                    /*.defaultLight*/
-                    /*Labels, tertiary*/
-                    disabledContainerColor = Color(0x1f787880),
-                    disabledContentColor = Color(0x4d3c3c43),
-                )
-
-            HIGButtonStyle.Borderless ->
-                ButtonDefaults.outlinedButtonColors(
-                    contentColor = colors.primary400,
-                    disabledContentColor = Color(0x4d3c3c43),
-                )
-        }
-
-    Button(
-        onClick = onClick,
-        enabled = enabled,
-        shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large)),
-        modifier = modifier,
-        colors = buttonColors,
-    ) {
-        Text(text = text, style = MedTrackerTheme.typography.bodyMedium)
-    }
-}
-
-@Composable
-fun HIGListButton(
-    text: String,
-    onClick: () -> Unit,
-    enabled: Boolean = true,
-    style: HIGButtonStyle = HIGButtonStyle.Bezeled,
-    textStyle: TextStyle = MedTrackerTheme.typography.bodyMedium,
-    icon: ImageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
-    leftIcon: ImageVector? = null,
-    rightText: String? = null
-) {
-    val buttonColors =
-        when (style) {
-            HIGButtonStyle.Filled ->
-                ButtonDefaults.elevatedButtonColors(
-                    containerColor = colors.primaryBackgroundGrouped,
-                    /*Fills, tertiary*/
-                    contentColor = Color.White,
-                    disabledContainerColor = Color(0x1f787880),
-                    disabledContentColor = Color(0x4d3c3c43),
-                )
-
-            HIGButtonStyle.Bezeled ->
-                ButtonDefaults.elevatedButtonColors(
-                    containerColor = colors.primaryBackground,
-                    /*Fills, tertiary*/
-                    contentColor = colors.primaryLabel,
-                    disabledContainerColor = Color(0x1f787880),
-                    disabledContentColor = Color(0x4d3c3c43),
-                )
-
-            HIGButtonStyle.Borderless ->
-                ButtonDefaults.elevatedButtonColors(
-                    contentColor = colors.primary400,
-                    disabledContentColor = Color(0x4d3c3c43),
-                )
-        }
-
-    ElevatedButton(
-        onClick = onClick,
-        enabled = enabled,
-        shape = RoundedCornerShape(dimensionResource(R.dimen.list_corner_radius_default)),
-        colors = buttonColors,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            if (leftIcon != null) {
-                Icon(
-                    imageVector = leftIcon,
-                    contentDescription = null,
-                    tint = colors.primaryLabel,
-                    modifier = Modifier.size(24.dp),
-                )
-            }
-
-            Text(
-                text = text,
-                style = textStyle,
-                modifier = Modifier.padding(vertical = 8.dp),
-            )
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            Text(
-                text = rightText ?: "",
-                style = MedTrackerTheme.typography.bodyMedium,
-                modifier = Modifier.padding(vertical = 8.dp),
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Icon(
-                imageVector = icon,
-                contentDescription = "Show options",
-                tint = colors.secondaryLabel,
-                modifier = Modifier.size(16.dp),
-            )
-        }
-    }
-}
 
 // Region rework
 @Composable
@@ -447,7 +305,7 @@ fun GLargeButton(
     showSystemUi = true,
     device = "spec:parent=pixel_8,navigation=buttons", showBackground = true,
     backgroundColor = 0xFFD4CBCB,
-    uiMode = android.content.res.Configuration.UI_MODE_NIGHT_NO or android.content.res.Configuration.UI_MODE_TYPE_NORMAL,
+    uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL,
 )
 @Composable
 private fun PreviewButtons() {

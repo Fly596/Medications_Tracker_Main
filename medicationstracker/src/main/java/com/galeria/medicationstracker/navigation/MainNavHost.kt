@@ -68,7 +68,8 @@ fun MainNavHost(modifier: Modifier = Modifier) {
                     }
                 }
             }
-        }
+        },
+        modifier = modifier
     ) { innerPadding ->
         NavDisplay(
             modifier = Modifier.padding(innerPadding),

@@ -32,12 +32,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.galeria.medicationstracker.core.ui.components.FlyButton
+import com.galeria.medicationstracker.core.ui.components.FlySimpleCard
+import com.galeria.medicationstracker.core.ui.components.FlyTextButton
+import com.galeria.medicationstracker.core.ui.components.FlyTonalButton
 import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.feature.profile.presentation.ProfileViewModel
-import com.galeria.medicationstracker.ui.componentsOld.FlyButton
-import com.galeria.medicationstracker.ui.componentsOld.FlySimpleCard
-import com.galeria.medicationstracker.ui.componentsOld.FlyTextButton
-import com.galeria.medicationstracker.ui.componentsOld.FlyTonalButton
 import java.util.Date
 import java.util.Locale
 

@@ -1,5 +1,6 @@
-package com.galeria.medicationstracker.ui.componentsOld
+package com.galeria.medicationstracker.core.ui.components
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,7 +28,6 @@ import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme.colors
 import com.galeria.medicationstracker.feature.medications.presentation.AddMedicationViewModel
 import com.galeria.medicationstracker.feature.medications.presentation.UpdateMedVM
-import com.galeria.medicationstracker.ui.components.GOutlinedButton
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -174,7 +174,7 @@ fun DayItem(
 
 @Preview(
     showBackground = true, device = "spec:width=411dp,height=891dp", showSystemUi = true,
-    uiMode = android.content.res.Configuration.UI_MODE_NIGHT_NO or android.content.res.Configuration.UI_MODE_TYPE_NORMAL,
+    uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL,
     backgroundColor = 0xFFFFFFFF
 )
 @Composable

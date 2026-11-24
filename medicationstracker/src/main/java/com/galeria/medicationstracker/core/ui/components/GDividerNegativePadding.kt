@@ -1,4 +1,4 @@
-package com.galeria.medicationstracker.ui.components
+package com.galeria.medicationstracker.core.ui.components
 
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.HorizontalDivider

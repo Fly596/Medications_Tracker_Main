@@ -1,4 +1,4 @@
-package com.galeria.medicationstracker.ui.components
+package com.galeria.medicationstracker.core.ui.components
 
 import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource

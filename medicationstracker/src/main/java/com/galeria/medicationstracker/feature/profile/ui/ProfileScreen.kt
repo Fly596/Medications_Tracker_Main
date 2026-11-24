@@ -42,14 +42,14 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medicationstracker.R
+import com.galeria.medicationstracker.core.ui.components.FlySimpleCard
+import com.galeria.medicationstracker.core.ui.components.GPrimaryButton
+import com.galeria.medicationstracker.core.ui.components.GSecondaryButton
 import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme.colors
 import com.galeria.medicationstracker.data.NewUserIntake
 import com.galeria.medicationstracker.data.NewUserMedication
 import com.galeria.medicationstracker.feature.profile.presentation.ProfileViewModel
-import com.galeria.medicationstracker.ui.components.GPrimaryButton
-import com.galeria.medicationstracker.ui.components.GSecondaryButton
-import com.galeria.medicationstracker.ui.componentsOld.FlySimpleCard
 
 @Composable
 fun ProfileScreen(

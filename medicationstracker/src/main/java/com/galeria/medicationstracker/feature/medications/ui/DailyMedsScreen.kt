@@ -32,15 +32,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.galeria.medicationstracker.core.ui.components.FLySimpleCardContainer
+import com.galeria.medicationstracker.core.ui.components.GFABButton
+import com.galeria.medicationstracker.core.ui.components.LogMedicationTimeDialog
+import com.galeria.medicationstracker.core.ui.components.WeeklyCalendarView
 import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme.typography
 import com.galeria.medicationstracker.data.IntakeStatus
 import com.galeria.medicationstracker.data.NewUserMedication
 import com.galeria.medicationstracker.feature.medications.presentation.DailyMedsViewModel
-import com.galeria.medicationstracker.ui.components.GFABButton
-import com.galeria.medicationstracker.ui.componentsOld.FLySimpleCardContainer
-import com.galeria.medicationstracker.ui.componentsOld.LogMedicationTimeDialog
-import com.galeria.medicationstracker.ui.componentsOld.WeeklyCalendarView
 import com.galeria.medicationstracker.utils.getTodaysDate
 import java.time.format.DateTimeFormatter
 

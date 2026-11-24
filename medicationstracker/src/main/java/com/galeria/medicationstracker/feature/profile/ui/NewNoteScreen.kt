@@ -32,11 +32,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medicationstracker.R
+import com.galeria.medicationstracker.core.ui.components.GBasicTextField
+import com.galeria.medicationstracker.core.ui.components.GPrimaryButton
+import com.galeria.medicationstracker.core.ui.components.GTextField
 import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.feature.profile.presentation.NewNoteViewModel
-import com.galeria.medicationstracker.ui.components.GBasicTextField
-import com.galeria.medicationstracker.ui.components.GPrimaryButton
-import com.galeria.medicationstracker.ui.components.GTextField
 
 @Composable
 fun NewNoteScreen(
