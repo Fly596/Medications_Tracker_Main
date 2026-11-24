@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
+import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme
 
 @Composable
 fun InputDialog(

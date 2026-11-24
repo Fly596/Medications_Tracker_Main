@@ -33,8 +33,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.data.NewUserMedication
-import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 
 @Composable
 fun FlySimpleCard(

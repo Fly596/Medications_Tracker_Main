@@ -15,15 +15,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
-import com.galeria.medicationstracker.feature.auth.login.ALoginScreen
-import com.galeria.medicationstracker.ui.screens.auth.accountrecovery.ResetPasswordScreen
-import com.galeria.medicationstracker.ui.screens.auth.signup.SignupScreen
-import com.galeria.medicationstracker.ui.screens.dashboard.DailyMedsScreen
-import com.galeria.medicationstracker.ui.screens.dashboard.moodtracker.MoodTrackerScreen
-import com.galeria.medicationstracker.ui.screens.medications.MedicationsScreen
-import com.galeria.medicationstracker.ui.screens.medications.mediinfo.ViewMedicationInfoScreen
-import com.galeria.medicationstracker.ui.screens.medications.newmed.NewMedicationDataScreen
-import com.galeria.medicationstracker.ui.screens.profile.UserProfileScreen
+import com.galeria.medicationstracker.feature.auth.ui.ALoginScreen
+import com.galeria.medicationstracker.feature.auth.ui.ResetPasswordScreen
+import com.galeria.medicationstracker.feature.auth.ui.SignupScreen
+import com.galeria.medicationstracker.feature.medications.ui.AddMedicationScreen
+import com.galeria.medicationstracker.feature.medications.ui.DailyMedsScreen
+import com.galeria.medicationstracker.feature.medications.ui.MedicationInfoScreen
+import com.galeria.medicationstracker.feature.medications.ui.MedicationsScreen
+import com.galeria.medicationstracker.feature.medications.ui.MoodTrackerScreen
+import com.galeria.medicationstracker.feature.medications.ui.UpdateMedScreen
+import com.galeria.medicationstracker.feature.profile.ui.NewNoteScreen
+import com.galeria.medicationstracker.feature.profile.ui.ProfileDetailsScreen
+import com.galeria.medicationstracker.feature.profile.ui.ProfileScreen
 
 @Composable
 fun MainNavHost(modifier: Modifier = Modifier) {
@@ -140,7 +143,7 @@ fun MainNavHost(modifier: Modifier = Modifier) {
 
                     is NavRoute.AddMedication -> {
                         NavEntry(key) {
-                            NewMedicationDataScreen(
+                            AddMedicationScreen(
                                 navigateBack = { navigator.popBack() }
                             )
                         }
@@ -148,7 +151,7 @@ fun MainNavHost(modifier: Modifier = Modifier) {
 
                     is NavRoute.ViewMedication -> {
                         NavEntry(key) {
-                            ViewMedicationInfoScreen(
+                            MedicationInfoScreen(
                                 medicationId = key.medicationId,
                                 onNavigateToMedsList = { navigator.popBack() }
                             )
@@ -157,17 +160,33 @@ fun MainNavHost(modifier: Modifier = Modifier) {
 
                     is NavRoute.UpdateMedication -> {
                         NavEntry(key) {
-                            // UpdateMedicationScreen()
+                            UpdateMedScreen(
+                                medicationId = key.medicationId,
+                            )
                         }
                     }
 
                     is NavRoute.Profile -> {
                         NavEntry(key) {
-                            UserProfileScreen(
+                            ProfileScreen(
                                 onEditProfileClick = {
                                     navigator.navigateTo(NavRoute.ProfileOverview)
                                 },
                                 onNotesClick = { navigator.navigateTo(NavRoute.Notes) },
+                            )
+                        }
+                    }
+
+                    is NavRoute.ProfileOverview -> {
+                        NavEntry(key) {
+                            ProfileDetailsScreen(
+                            )
+                        }
+                    }
+
+                    is NavRoute.Notes -> {
+                        NavEntry(key) {
+                            NewNoteScreen(
                             )
                         }
                     }

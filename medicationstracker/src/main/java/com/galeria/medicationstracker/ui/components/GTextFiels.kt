@@ -25,10 +25,10 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
-import com.galeria.medicationstracker.ui.theme.MedTrackerTheme.colors
-import com.galeria.medicationstracker.ui.theme.MedTrackerTheme.shapes
-import com.galeria.medicationstracker.ui.theme.MedTrackerTheme.typography
+import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme
+import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme.colors
+import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme.shapes
+import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme.typography
 
 @Composable
 fun GTextField(
@@ -82,7 +82,6 @@ fun GTextField(
                         colors.primaryBackground
                     } else {
                         colors.secondaryBackground
-
                     },
                 unfocusedIndicatorColor = colors.sysBlack,
                 disabledIndicatorColor = colors.sysTransparent,

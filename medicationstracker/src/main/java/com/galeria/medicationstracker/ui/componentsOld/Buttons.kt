@@ -39,9 +39,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.galeria.medicationstracker.R
-import com.galeria.medicationstracker.ui.theme.ButtonShape
-import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
-import com.galeria.medicationstracker.ui.theme.MedTrackerTheme.colors
+import com.galeria.medicationstracker.core.ui.theme.ButtonShape
+import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme
+import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme.colors
 
 enum class HIGButtonStyle {
     Filled,
@@ -318,7 +318,8 @@ fun FlyIconButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
     size: Dp = 24.dp,
-    @DrawableRes icon: Int = R.drawable.male_symbol
+    @DrawableRes
+    icon: Int = R.drawable.male_symbol
 ) {
     Box(
         modifier = modifier
@@ -345,7 +346,8 @@ fun FlyIconButtonWithText(
     text: String = "Fuck Me",
     onClick: () -> Unit = {},
     size: Dp = 20.dp,
-    @DrawableRes icon: Int = R.drawable.male_symbol
+    @DrawableRes
+    icon: Int = R.drawable.male_symbol
 ) {
     Row(
         modifier = modifier
@@ -356,7 +358,6 @@ fun FlyIconButtonWithText(
         FlyIconButton(onClick = onClick, size = size, icon = icon)
         Text(text = text, style = MedTrackerTheme.typography.labelLargeEmphasized)
     }
-
 }
 
 @Composable

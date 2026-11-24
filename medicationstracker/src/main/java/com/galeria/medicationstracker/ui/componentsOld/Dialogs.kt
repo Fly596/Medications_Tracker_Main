@@ -31,9 +31,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.ui.components.GOutlinedButton
 import com.galeria.medicationstracker.ui.components.GPrimaryButton
-import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.utils.timeToFirestoreTimestamp
 import com.google.firebase.Timestamp
 import java.time.LocalDateTime
@@ -67,7 +67,6 @@ fun ConfirmationDialog(
             )
         }
     }
-    
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -86,10 +85,10 @@ fun LogMedicationTimeDialog(
         is24Hour = false
     )
     var selectedTime: TimePickerState? by remember { mutableStateOf(null) }
-    
+
     var timeSelected by remember { mutableStateOf("") }
     var showDialog by remember { mutableStateOf(false) }
-    
+
     Dialog(onDismissRequest = { onDismiss() }) {
         // Draw a rectangle shape with rounded corners inside the dialog
         Card(
@@ -114,7 +113,7 @@ fun LogMedicationTimeDialog(
                     modifier = Modifier.padding(16.dp),
                     style = MedTrackerTheme.typography.title2Emphasized
                 )
-                
+
                 LogDialogMedicationCard(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
@@ -170,7 +169,7 @@ fun LogMedicationTimeDialog(
                                     timeState.hour,
                                     timeState.minute
                                 )
-                            
+
                             onConfirmTime(timeStamp)
                             showDialog = false
                             onDismiss.invoke()
@@ -178,7 +177,6 @@ fun LogMedicationTimeDialog(
                     ) {
                         Text("Confirm")
                     }
-                    
                 }
                 /*                 GPrimaryButton(
                                     modifier = Modifier.fillMaxWidth(),

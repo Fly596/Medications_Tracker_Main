@@ -12,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
+import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme
 
 @Composable
 fun HeaderWithIconButtonAndTitle(
@@ -35,7 +35,7 @@ fun HeaderWithIconButtonAndTitle(
             )
         }
         // Spacer(modifier = Modifier.weight(1f))
-        
+
         Text(
             title,
             style = MedTrackerTheme.typography.display3Emphasized

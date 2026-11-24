@@ -42,7 +42,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
+import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme
 
 @Composable
 fun FlyTableTextField(
@@ -232,7 +232,6 @@ fun MyTextField(
                         MedTrackerTheme.colors.primaryBackground
                     } else {
                         MedTrackerTheme.colors.secondaryBackground
-
                     },
                 unfocusedIndicatorColor = MedTrackerTheme.colors.sysTransparent,
                 disabledIndicatorColor = MedTrackerTheme.colors.sysTransparent,
@@ -435,7 +434,6 @@ fun FlyTextFieldPreview() {
               keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             ) */
     }
-
 }
 
 class FlyTableTextFieldPreviewParameterProvider :

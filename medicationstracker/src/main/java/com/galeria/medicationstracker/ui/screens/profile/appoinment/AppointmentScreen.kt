@@ -32,12 +32,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme
+import com.galeria.medicationstracker.feature.profile.presentation.ProfileViewModel
 import com.galeria.medicationstracker.ui.componentsOld.FlyButton
 import com.galeria.medicationstracker.ui.componentsOld.FlySimpleCard
 import com.galeria.medicationstracker.ui.componentsOld.FlyTextButton
 import com.galeria.medicationstracker.ui.componentsOld.FlyTonalButton
-import com.galeria.medicationstracker.ui.screens.profile.ProfileVM
-import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
 import java.util.Date
 import java.util.Locale
 
@@ -45,7 +45,7 @@ import java.util.Locale
 @Composable
 fun AppointmentScreen(
     modifier: Modifier = Modifier,
-    viewModel: ProfileVM = viewModel(),
+    viewModel: ProfileViewModel = viewModel(),
     onBackClick: () -> Unit = {}
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
@@ -97,24 +97,24 @@ fun AppointmentScreen(
                 ) {
                     Text("Select Date")
                 }
- /*                if (showDatePicker) {
-                    DatePickerModalInput(
-                        onDateSelected = {
-                            selectedDate = it
-                            viewModel.updateSelectedDate(
-                                parseDateForFirestore(
-                                    convertMillisToDate(
-                                        selectedDate
-                                    )
-                                )
-                            )
-                            showDatePicker = false
-                        },
-                        onDismiss = {
-                            showDatePicker = false
-                        }
-                    )
-                } */
+                /*                if (showDatePicker) {
+                                   DatePickerModalInput(
+                                       onDateSelected = {
+                                           selectedDate = it
+                                           viewModel.updateSelectedDate(
+                                               parseDateForFirestore(
+                                                   convertMillisToDate(
+                                                       selectedDate
+                                                   )
+                                               )
+                                           )
+                                           showDatePicker = false
+                                       },
+                                       onDismiss = {
+                                           showDatePicker = false
+                                       }
+                                   )
+                               } */
             }
         }
 
@@ -138,20 +138,19 @@ fun AppointmentScreen(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
 
-
- /*                if (showTimePicker) {
-                    InputExample(
-                        onDismiss = {
-                            showTimePicker = false
-                        },
-                        onConfirm = { time ->
-                            viewModel.updateSelectedTime("${time.hour}:${time.minute}")
-                            selectedTimeState = time
-                            showTimePicker = false
-                        }
-                    )
-                }
- */
+                /*                if (showTimePicker) {
+                                   InputExample(
+                                       onDismiss = {
+                                           showTimePicker = false
+                                       },
+                                       onConfirm = { time ->
+                                           viewModel.updateSelectedTime("${time.hour}:${time.minute}")
+                                           selectedTimeState = time
+                                           showTimePicker = false
+                                       }
+                                   )
+                               }
+                */
 
                 if (selectedTimeState != null) {
                     val cal = Calendar.getInstance()
@@ -208,7 +207,6 @@ fun AppointmentScreen(
             }
         }
     }
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

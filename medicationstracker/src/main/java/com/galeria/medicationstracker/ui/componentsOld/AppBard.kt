@@ -23,7 +23,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
+import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,7 +52,7 @@ fun FlyTopAppBar(
                 .padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 0.dp),
             verticalAlignment = Alignment.Top,
 
-            ) {
+        ) {
             Text(text = title, style = textStyle)
 
             // Spacer(modifier = Modifier.weight(1f))
@@ -89,5 +89,4 @@ fun FlyTopAppBar(
         )
 
     }
-
 }

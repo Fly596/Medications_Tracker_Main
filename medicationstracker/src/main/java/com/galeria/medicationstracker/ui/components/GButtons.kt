@@ -28,9 +28,9 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.galeria.medicationstracker.ui.theme.GAppTheme
-import com.galeria.medicationstracker.ui.theme.MedTrackerTheme
-import com.galeria.medicationstracker.ui.theme.MedTrackerTheme.colors
+import com.galeria.medicationstracker.core.ui.theme.GAppTheme
+import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme
+import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme.colors
 
 @Composable
 fun GFABButton(
@@ -71,7 +71,7 @@ fun GPrimaryButton(
                     disabledContentColor = colors.tertiaryLabel,
                 )
             }
-            
+
             false -> {
                 ButtonDefaults.buttonColors(
                     containerColor = colors.sysBlack,
@@ -178,7 +178,7 @@ fun GOutlinedButton(
                     disabledContentColor = colors.tertiaryLabel,
                 )
             }
-            
+
             false -> {
                 ButtonDefaults.outlinedButtonColors(
                     contentColor = colors.primaryLabel,
@@ -186,7 +186,7 @@ fun GOutlinedButton(
                 )
             }
         }
-    
+
     OutlinedButton(
         onClick,
         modifier,
@@ -266,7 +266,6 @@ fun GRadioButton(
             )
         }
     }
-    
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
@@ -376,7 +375,6 @@ fun GPrimaryButtonPreview() {
             }
         }
     }
-    
 }
 /* @Composable
 fun GIconButton(
