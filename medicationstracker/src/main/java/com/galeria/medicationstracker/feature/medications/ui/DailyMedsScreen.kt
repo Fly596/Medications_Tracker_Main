@@ -51,7 +51,7 @@ fun DailyMedsScreen(
     onAddIntake: () -> Unit,
     dashboardViewModel: DailyMedsViewModel = hiltViewModel(),
 ) {
-    val uiState = dashboardViewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by dashboardViewModel.uiState.collectAsStateWithLifecycle()
 
     MedTrackerTheme {
         Scaffold(
@@ -90,7 +90,7 @@ fun DailyMedsScreen(
                 MedsByIntakeTimeList(
                     viewModel = dashboardViewModel,
                     onAddNoteClick = { onAddIntake.invoke() },
-                    medicationsForIntakeTime = uiState.value.currentTakenMedications,
+                    medicationsForIntakeTime = uiState.currentTakenMedications,
                 )
             }
         }
@@ -236,8 +236,8 @@ fun DailyMedsScreenNew(
     onAddIntake: (String) -> Unit = {},
     dashboardViewModel: DailyMedsViewModel = hiltViewModel(),
 ) {
-    val state = dashboardViewModel.uiState.collectAsStateWithLifecycle()
-    val inputState = dashboardViewModel.intakeInputState.collectAsStateWithLifecycle()
+    val state by dashboardViewModel.uiState.collectAsStateWithLifecycle()
+    val inputState by dashboardViewModel.intakeInputState.collectAsStateWithLifecycle()
 
     MedTrackerTheme {
         Scaffold(

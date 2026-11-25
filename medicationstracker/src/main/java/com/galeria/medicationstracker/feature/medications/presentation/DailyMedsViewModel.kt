@@ -15,7 +15,6 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.Source
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -47,10 +46,9 @@ constructor(
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DailyMedsUiState())
-    val uiState: StateFlow<DailyMedsUiState> = _uiState.asStateFlow()
+    val uiState = _uiState.asStateFlow()
     private val _intakeInputState = MutableStateFlow(AddIntakeUiState())
-    val intakeInputState: StateFlow<AddIntakeUiState> =
-        _intakeInputState.asStateFlow()
+    val intakeInputState = _intakeInputState.asStateFlow()
     // private val _currentUserId = MutableStateFlow<String?>(null)
     // val currentUserId = _currentUserId.asStateFlow()
     // private lateinit var currentUserId: String
