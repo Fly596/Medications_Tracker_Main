@@ -37,11 +37,11 @@ import com.galeria.medicationstracker.core.ui.components.FlyButton
 import com.galeria.medicationstracker.core.ui.components.FlyErrorButton
 import com.galeria.medicationstracker.core.ui.components.FlySimpleCard
 import com.galeria.medicationstracker.core.ui.components.FlyTonalButton
+import com.galeria.medicationstracker.core.ui.components.MyTextField
 import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme.typography
 import com.galeria.medicationstracker.data.MedicationForm
 import com.galeria.medicationstracker.feature.medications.presentation.UpdateMedVM
-import com.galeria.medicationstracker.ui.componentsOld.MyTextField
 import com.galeria.medicationstracker.utils.convertMillisToDate
 import com.galeria.medicationstracker.utils.formatDateStringToTimestampMMMMddyyyy
 import com.google.firebase.Timestamp

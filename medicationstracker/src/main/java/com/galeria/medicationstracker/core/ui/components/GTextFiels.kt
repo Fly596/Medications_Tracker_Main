@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -225,6 +226,74 @@ fun GBasicTextField(
             }
         )
     }
+}
+
+@Composable
+fun MyTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    isPrimaryColor: Boolean = false,
+    supportingText: String? = null,
+    placeholder: String? = null,
+    enabled: Boolean = true,
+    isError: Boolean = false,
+    errorMessage: String? = null,
+    readOnly: Boolean = false,
+    maxLines: Int = 100,
+    modifier: Modifier = Modifier,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+) {
+    TextField(
+        value = value,
+        singleLine = true,
+        readOnly = readOnly,
+        isError = isError,
+        textStyle = MedTrackerTheme.typography.bodyMedium,
+        onValueChange = onValueChange,
+        placeholder = { placeholder?.let { Text(it) } },
+        maxLines = maxLines,
+        label = {
+            Text(
+                if (isError) {
+                    errorMessage!!
+                } else {
+                    label
+                }
+            )
+        },
+        supportingText = { supportingText?.let { Text(it) } },
+        enabled = enabled,
+        keyboardOptions = keyboardOptions,
+        visualTransformation = visualTransformation,
+        modifier = modifier,
+        shape = RoundedCornerShape(
+            topStart = 12.dp,
+            topEnd = 12.dp,
+            bottomEnd = 12.dp,
+            bottomStart = 12.dp
+        ),
+        colors =
+            TextFieldDefaults.colors(
+                unfocusedContainerColor =
+                    if (isPrimaryColor) {
+                        MedTrackerTheme.colors.primaryBackground
+                    } else {
+                        MedTrackerTheme.colors.secondaryBackground
+                    },
+                unfocusedIndicatorColor = MedTrackerTheme.colors.sysTransparent,
+                disabledIndicatorColor = MedTrackerTheme.colors.sysTransparent,
+                focusedIndicatorColor = MedTrackerTheme.colors.primary400,
+                focusedContainerColor = MedTrackerTheme.colors.primaryBackground,
+                errorIndicatorColor = MedTrackerTheme.colors.sysError,
+                focusedLabelColor = MedTrackerTheme.colors.primary400,
+                unfocusedLabelColor = MedTrackerTheme.colors.secondaryLabel,
+                errorLabelColor = MedTrackerTheme.colors.sysError,
+                errorSupportingTextColor = MedTrackerTheme.colors.sysError,
+                errorCursorColor = MedTrackerTheme.colors.sysError,
+            ),
+    )
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)

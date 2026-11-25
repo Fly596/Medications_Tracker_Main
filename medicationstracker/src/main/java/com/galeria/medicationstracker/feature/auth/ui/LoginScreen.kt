@@ -29,11 +29,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.galeria.medicationstracker.R
 import com.galeria.medicationstracker.core.ui.components.FlyButton
 import com.galeria.medicationstracker.core.ui.components.FlyTonalButton
+import com.galeria.medicationstracker.core.ui.components.MyTextField
 import com.galeria.medicationstracker.core.ui.components.RememberMeSwitch
 import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.feature.auth.presentation.LoginUiEvent
 import com.galeria.medicationstracker.feature.auth.presentation.LoginViewModel
-import com.galeria.medicationstracker.ui.componentsOld.MyTextField
 
 @Composable
 fun ALoginScreen(
