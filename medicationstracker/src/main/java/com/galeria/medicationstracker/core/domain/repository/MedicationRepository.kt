@@ -41,4 +41,6 @@ interface MedicationRepository {
      * Deletes a medication by its unique ID.
      */
     suspend fun deleteMedication(medicationId: String): Result<Unit>
+
+    fun getTodayIntakes(): Flow<List<Medication>>
 }

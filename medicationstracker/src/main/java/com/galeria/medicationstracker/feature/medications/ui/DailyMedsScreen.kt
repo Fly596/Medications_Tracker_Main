@@ -40,6 +40,7 @@ import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme.typography
 import com.galeria.medicationstracker.data.NewUserMedication
 import com.galeria.medicationstracker.domain.medications.model.IntakeStatus
+import com.galeria.medicationstracker.domain.medications.model.Medication
 import com.galeria.medicationstracker.feature.medications.presentation.DailyMedsViewModel
 import com.galeria.medicationstracker.utils.getTodaysDate
 import java.time.format.DateTimeFormatter
@@ -53,46 +54,44 @@ fun DailyMedsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    MedTrackerTheme {
-        Scaffold(
-            containerColor = MedTrackerTheme.colors.secondaryBackground,
-            topBar = {
-                Column(modifier = Modifier.padding(vertical = 24.dp, horizontal = 16.dp)) {
-                    // today's date.
-                    Text(
-                        text = getTodaysDate().format(DateTimeFormatter.ofPattern("MMM d")),
-                        style = typography.display3Emphasized,
-                    )
-                }
-            },
-            floatingActionButton = {
-                GFABButton(
-                    onClick = {
-                        onAddMood.invoke()
-                        // mood tracker
-                    }
-                )
-            },
-        ) { innerPadding ->
-            Column(
-                modifier =
-                    modifier
-                        .fillMaxWidth()
-                        .padding(innerPadding)
-                        .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-
-                // Календарь на неделю.
-                WeeklyCalendarView()
-
-                // Medication Cards List.
-                MedsByIntakeTimeList(
-                    viewModel = viewModel,
-                    onAddNoteClick = { onAddIntake.invoke() },
-                    medicationsForIntakeTime = uiState.currentTakenMedications,
+    Scaffold(
+        containerColor = MedTrackerTheme.colors.secondaryBackground,
+        topBar = {
+            Column(modifier = Modifier.padding(vertical = 24.dp, horizontal = 16.dp)) {
+                // today's date.
+                Text(
+                    text = getTodaysDate().format(DateTimeFormatter.ofPattern("MMM d")),
+                    style = typography.display3Emphasized,
                 )
             }
+        },
+        floatingActionButton = {
+            GFABButton(
+                onClick = {
+                    onAddMood.invoke()
+                    // mood tracker
+                }
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier =
+                modifier
+                    .fillMaxWidth()
+                    .padding(innerPadding)
+                    .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+
+            // Календарь на неделю.
+            WeeklyCalendarView()
+
+            // Medication Cards List.
+            MedsByIntakeTimeList(
+                viewModel = viewModel,
+                onAddNoteClick = { onAddIntake.invoke() },
+                medicationsForIntakeTime = uiState.currentTakenMedications,
+            )
         }
     }
 }
@@ -102,6 +101,7 @@ fun DailyMedsScreen(
 fun MedsByIntakeTimeList(
     viewModel: DailyMedsViewModel,
     onAddNoteClick: () -> Unit = {},
+    //medicationsForIntakeTime: List<Medication> = emptyList(),
     medicationsForIntakeTime: List<NewUserMedication> = emptyList(),
 ) {
     // Группируем лекарства по времени приема.
@@ -143,8 +143,10 @@ fun MedsByIntakeTimeList(
 @Composable
 fun MedicationItem(
     viewModel: DailyMedsViewModel,
+    //medication: Medication,
     medication: NewUserMedication,
     icon: ImageVector = Icons.Filled.Medication,
+    fetchStatus: (Medication) -> Unit = {},
     onAddNoteClick: () -> Unit = {},
 ) {
     val showLogDialog = rememberSaveable { mutableStateOf(false) }

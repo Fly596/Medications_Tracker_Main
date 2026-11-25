@@ -3,6 +3,7 @@ package com.galeria.medicationstracker.feature.medications.presentation
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.galeria.medicationstracker.core.domain.repository.MedicationRepository
 import com.galeria.medicationstracker.data.AuthRepository
 import com.galeria.medicationstracker.data.NewIntakeRepository
 import com.galeria.medicationstracker.data.NewMedicationRepository
@@ -40,8 +41,9 @@ data class AddIntakeUiState(
 class DailyMedsViewModel
 @Inject
 constructor(
-    private val intakeRepository: NewIntakeRepository,
-    private val medicationRepository: NewMedicationRepository,
+    private val newIntakeRepository: NewIntakeRepository,
+    private val newMedicationRepository: NewMedicationRepository,
+    private val medicationRepository: MedicationRepository,
     private val authRepository: AuthRepository,
 ) : ViewModel() {
 
@@ -83,7 +85,7 @@ constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             val intakes =
-                medicationRepository.getTodaysIntakes(userId)
+                newMedicationRepository.getTodaysIntakes(userId)
                     .collect { intakesList ->
                         if (intakesList.isEmpty()) {
                             //
@@ -93,8 +95,44 @@ constructor(
                             }
                         }
                     }
+            /*val intakes =
+                medicationRepository.getTodaysIntakes(userId)
+                    .collect { intakesList ->
+                        if (intakesList.isEmpty()) {
+                            //
+                        } else {
+                            _uiState.update {
+                                it.copy(currentTakenMedications = intakesList)
+                            }
+                        }
+                    }*/
         }
     }
+
+    /*fun addNewIntake(
+        intakeTime: Timestamp = Timestamp.now(),
+        medicationId: String,
+        presetTime: LocalTime,
+        status: IntakeStatus,
+    ) {
+        if (_intakeInputState.value.selectedMedication == null) {
+            return
+        }
+        val uiState = _intakeInputState.value
+
+        viewModelScope.launch {
+            val uid = authRepository.getUserId().getOrThrow()
+            val intake: Intake =
+                Intake(
+                    id = UUID.randomUUID().toString(),
+                    medicationId = medicationId,
+                    presetTime = uiState.selectedMedication.intakeTime.toString(),
+                    intakeTime = uiState.selectedIntakeTime,
+                    status = uiState.status,
+                )
+            newIntakeRepository.addUserIntake(uid.toString(), intake)
+        }
+    }*/
 
     fun addNewIntake(
         intakeTime: Timestamp = Timestamp.now(),
@@ -111,7 +149,7 @@ constructor(
                     presetTime = medication.intakeTime,
                     timestamp = intakeTime
                 )
-            intakeRepository.addUserIntake(uid.toString(), intake)
+            newIntakeRepository.addUserIntake(uid.toString(), intake)
         }
     }
 

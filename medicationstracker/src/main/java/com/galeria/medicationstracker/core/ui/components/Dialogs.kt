@@ -176,12 +176,7 @@ fun LogMedicationTimeDialog(
                         Text("Confirm")
                     }
                 }
-                /*                 GPrimaryButton(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    onClick = { onConfirmation.invoke(timeSelected) }, // Pass the selected time
-                                ) {
-                                    Text("Confirm")
-                                } */
+
             }
         }
     }

@@ -9,6 +9,7 @@ import com.galeria.medicationstracker.domain.medications.model.Medication
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.time.LocalDate
 import java.util.UUID
 import javax.inject.Inject
 
@@ -53,6 +54,14 @@ class MedicationRepositoryImpl @Inject constructor(
         runCatchingCancellable {
             medicationDao.deleteMedicationById(medicationId)
         }
+
+    override fun getTodayIntakes(): Flow<List<Medication>> {
+        val today = LocalDate.now()
+        val dayOfWeek = today.dayOfWeek.name
+        return medicationDao.getMedicationsForDate(today, dayOfWeek).map { list ->
+            list.map { it.toDomain() }
+        }
+    }
 
     /**
      * Inline helper function to execute suspending blocks wrapped in [Result],

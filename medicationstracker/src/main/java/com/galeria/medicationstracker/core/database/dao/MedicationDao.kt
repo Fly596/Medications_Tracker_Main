@@ -24,7 +24,8 @@ interface MedicationDao : BaseDao<MedicationEntity> {
     @Query(
         """
         SELECT * FROM medications 
-        WHERE :date BETWEEN startDate AND endDate 
+        WHERE (startDate IS NULL OR startDate <= :date)
+          AND (endDate IS NULL OR endDate >= :date)
           AND daysOfWeek LIKE '%' || :dayOfWeek || '%'
     """
     )
