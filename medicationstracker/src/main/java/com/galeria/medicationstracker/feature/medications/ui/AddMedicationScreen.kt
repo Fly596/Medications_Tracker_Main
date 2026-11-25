@@ -271,7 +271,7 @@ fun AddMedicationScreen(
                         modifier = Modifier.fillMaxWidth(),
                         onClick = {
                             //viewModel.addMedicationt()
-                            viewModel.addMedicationt()
+                            viewModel.addMedication()
                             navigateBack.invoke()
                         },
                         content = { Text(text = stringResource(R.string.add_medication)) },

@@ -3,10 +3,10 @@ package com.galeria.medicationstracker.feature.medications.presentation
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.galeria.medicationstracker.core.database.dao.MedicationDao
+import com.galeria.medicationstracker.core.domain.repository.MedicationRepository
 import com.galeria.medicationstracker.data.AuthRepository
 import com.galeria.medicationstracker.data.NewMedicationRepository
-import com.galeria.medicationstracker.data.NewUserMedication
+import com.galeria.medicationstracker.domain.medications.model.Medication
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class MedicationsUiState(
-    val userMedications: List<NewUserMedication> = emptyList()
+    val userMedications: List<Medication> = emptyList()
     // val medication: Medication = Medication()
 )
 
@@ -23,9 +23,9 @@ data class MedicationsUiState(
 class MedicationsViewModel
 @Inject
 constructor(
-    private val medicationRepository: NewMedicationRepository,
+    private val newMedicationRepository: NewMedicationRepository,
+    private val medicationRepository: MedicationRepository,
     private val authRepository: AuthRepository,
-    val medicationDao: MedicationDao
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MedicationsUiState())
@@ -46,10 +46,13 @@ constructor(
 
     private fun fetchMedications(uid: String) {
         viewModelScope.launch {
-            medicationRepository.observeUserMedications(uid)
+            medicationRepository.getMedicationsFlow().collect { medications ->
+                _uiState.update { it.copy(userMedications = medications) }
+            }
+            /*newMedicationRepository.observeUserMedications(uid)
                 .collect { medications ->
                     _uiState.update { it.copy(userMedications = medications) }
-                }
+                }*/
         }
     }
 
@@ -59,7 +62,7 @@ constructor(
         viewModelScope.launch {
             try {
                 val uid = authRepository.getUserId().getOrThrow()
-                medicationRepository.deleteMedication(uid.toString(), medId)
+                newMedicationRepository.deleteMedication(uid.toString(), medId)
             } catch (e: Exception) {
                 Log.e("ERROR REMOVE", "Error deleting medication", e)
             }

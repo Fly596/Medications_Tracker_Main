@@ -27,3 +27,5 @@ data class IntakeEntity(
     val intakeTime: Instant = Instant.now(),
     val status: IntakeStatus = IntakeStatus.PENDING,
 )
+
+

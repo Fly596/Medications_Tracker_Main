@@ -29,7 +29,7 @@ import com.galeria.medicationstracker.core.ui.components.GFABButton
 import com.galeria.medicationstracker.core.ui.components.GTextButton
 import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme.typography
-import com.galeria.medicationstracker.data.NewUserMedication
+import com.galeria.medicationstracker.domain.medications.model.Medication
 import com.galeria.medicationstracker.feature.medications.presentation.MedicationsViewModel
 
 @Composable
@@ -94,7 +94,7 @@ fun FlyElevatedCardMedsList(
     onEditClick: () -> Unit,
     onRemoveMedClick: () -> Unit,
     onViewMed: () -> Unit,
-    medication: NewUserMedication? = null,
+    medication: Medication? = null,
     shape: Shape = MedTrackerTheme.shapes.medium,
 ) {
     ElevatedCard(
@@ -139,7 +139,8 @@ fun FlyElevatedCardMedsList(
                     style = typography.bodyMedium
                 )
                 Text(
-                    medication?.intakeTime ?: "Intake Time",
+                    //TODO: форматировать время.
+                    medication?.intakeTime.toString() ?: "Intake Time",
                     style = typography.bodyMedium
                 )
                 Text(
