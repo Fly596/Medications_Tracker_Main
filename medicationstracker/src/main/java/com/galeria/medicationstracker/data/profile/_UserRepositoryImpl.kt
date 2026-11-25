@@ -1,11 +1,11 @@
 package com.galeria.medicationstracker.data.profile
 
 import com.galeria.medicationstracker.core.database.dao.UserDao
-import com.galeria.medicationstracker.core.domain.model.User
 import com.galeria.medicationstracker.core.domain.repository._UserRepository
 import com.galeria.medicationstracker.core.firebase.datasource.UserDataSource
 import com.galeria.medicationstracker.data.toDomain
 import com.galeria.medicationstracker.data.toEntity
+import com.galeria.medicationstracker.domain.auth.model.User
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

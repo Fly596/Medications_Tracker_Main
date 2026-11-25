@@ -1,13 +1,13 @@
 package com.galeria.medicationstracker.data.auth
 
 import com.galeria.medicationstracker.core.database.dao.UserDao
-import com.galeria.medicationstracker.core.domain.model.User
 import com.galeria.medicationstracker.core.domain.repository._AuthRepository
 import com.galeria.medicationstracker.core.firebase.datasource.AuthDataSource
 import com.galeria.medicationstracker.core.firebase.datasource.UserDataSource
 import com.galeria.medicationstracker.core.firebase.model.UserDocument
 import com.galeria.medicationstracker.data.toDomain
 import com.galeria.medicationstracker.data.toEntity
+import com.galeria.medicationstracker.domain.auth.model.User
 import com.google.firebase.Timestamp
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

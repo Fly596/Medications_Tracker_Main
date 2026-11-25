@@ -3,6 +3,7 @@ package com.galeria.medicationstracker.core.database.di
 import android.content.Context
 import androidx.room.Room
 import com.galeria.medicationstracker.core.database.AppDatabase
+import com.galeria.medicationstracker.core.database.dao.IntakeDao
 import com.galeria.medicationstracker.core.database.dao.MedicationDao
 import com.galeria.medicationstracker.core.database.dao.UserDao
 import dagger.Module
@@ -27,6 +28,7 @@ object DatabaseModule {
             AppDatabase::class.java,
             "app-database",
         )
+            .fallbackToDestructiveMigration(dropAllTables = true)
             .build()
 
     @Provides
@@ -38,4 +40,9 @@ object DatabaseModule {
     fun providesMedicationDao(
         database: AppDatabase,
     ): MedicationDao = database.medicationDao()
+
+    @Provides
+    fun providesIntakeDao(
+        database: AppDatabase,
+    ): IntakeDao = database.intakeDao()
 }

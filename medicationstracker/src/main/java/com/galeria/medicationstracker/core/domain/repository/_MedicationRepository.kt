@@ -1,6 +1,6 @@
 package com.galeria.medicationstracker.core.domain.repository
 
-import com.galeria.medicationstracker.core.domain.model.Medication
+import com.galeria.medicationstracker.domain.medications.model.Medication
 import kotlinx.coroutines.flow.Flow
 
 interface _MedicationRepository {

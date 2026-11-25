@@ -2,10 +2,10 @@ package com.galeria.medicationstracker.data
 
 import com.galeria.medicationstracker.core.database.entity.MedicationEntity
 import com.galeria.medicationstracker.core.database.entity.UserEntity
-import com.galeria.medicationstracker.core.domain.model.Medication
-import com.galeria.medicationstracker.core.domain.model.User
 import com.galeria.medicationstracker.core.firebase.model.MedicationDocument
 import com.galeria.medicationstracker.core.firebase.model.UserDocument
+import com.galeria.medicationstracker.domain.auth.model.User
+import com.galeria.medicationstracker.domain.medications.model.Medication
 import com.galeria.medicationstracker.utils.toTimestamp
 import com.google.firebase.Timestamp
 import java.time.DayOfWeek
@@ -14,6 +14,8 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
 import java.util.Date
+
+// --- User Mappers ---
 
 // DTO -> Entity
 fun UserDocument.toEntity(): UserEntity = UserEntity(
@@ -45,8 +47,20 @@ fun UserEntity.toDomain(): User = User(
     dateOfBirth = dateOfBirth
 )
 
-// --- Domain -> Room Entity ---
-fun Medication.toEntity() = MedicationEntity(
+// Domain -> Entity
+fun User.toEntity(): UserEntity = UserEntity(
+    id = id,
+    email = email,
+    name = name,
+    weight = weight,
+    height = height,
+    dateOfBirth = dateOfBirth
+)
+
+// --- Medication Mappers ---
+
+// Domain -> Room Entity
+fun Medication.toEntity(): MedicationEntity = MedicationEntity(
     id = id,
     name = name,
     dosage = dosage,
@@ -57,8 +71,8 @@ fun Medication.toEntity() = MedicationEntity(
     intakeTime = intakeTime
 )
 
-// --- Room Entity -> Domain ---
-fun MedicationEntity.toDomain() = Medication(
+// Room Entity -> Domain
+fun MedicationEntity.toDomain(): Medication = Medication(
     id = id,
     name = name,
     dosage = dosage,
@@ -69,7 +83,7 @@ fun MedicationEntity.toDomain() = Medication(
     intakeTime = intakeTime
 )
 
-// --- Firebase Document -> Domain ---
+// Firebase Document -> Domain
 fun MedicationDocument.toDomain(): Medication {
     val zone = ZoneId.systemDefault()
     val startLocalDate = startDate?.let {
@@ -92,11 +106,14 @@ fun MedicationDocument.toDomain(): Medication {
     )
 }
 
-// --- Domain -> Firebase Document ---
+// Firebase Document -> Room Entity
+fun MedicationDocument.toEntity(): MedicationEntity = toDomain().toEntity()
+
+// Domain -> Firebase Document
 fun Medication.toDocument(): MedicationDocument {
     val zone = ZoneId.systemDefault()
     val startTimestamp = Timestamp(Date.from(startDate.atStartOfDay(zone).toInstant()))
-    val endTimestamp = Timestamp(java.util.Date.from(endDate.atStartOfDay(zone).toInstant()))
+    val endTimestamp = Timestamp(Date.from(endDate.atStartOfDay(zone).toInstant()))
 
     return MedicationDocument(
         id = id,
@@ -109,16 +126,3 @@ fun Medication.toDocument(): MedicationDocument {
         intakeTimeInSeconds = intakeTime.toSecondOfDay()
     )
 }
-
-/*
-fun MedicationEntity.toDomain(): Medication = Medication(
-  id = id,
-  userId = userId,
-  dosage = dosage,
-  name = name,
-  form = form,
-  startDate = startDate,
-  endDate = endDate,
-  daysOfWeek = daysOfWeek,
-  intakeTime = intakeTime
-)*/

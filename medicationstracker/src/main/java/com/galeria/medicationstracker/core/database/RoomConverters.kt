@@ -1,38 +1,56 @@
 package com.galeria.medicationstracker.core.database
 
 import androidx.room.TypeConverter
+import com.galeria.medicationstracker.domain.medications.model.IntakeStatus
 import kotlinx.serialization.json.Json
 import java.time.DayOfWeek
+import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 
 class RoomConverters {
 
-  @TypeConverter
-  fun localDateToString(date: LocalDate?): String? =
-      date?.format(DateTimeFormatter.ofPattern("mm-dd-yyyy"))
+    @TypeConverter
+    fun localDateToString(date: LocalDate?): String? =
+        date?.toString()
 
-  @TypeConverter
-  fun stringToLocalDate(dateString: String?): LocalDate? = dateString?.let {
-    LocalDate.parse(it, DateTimeFormatter.ofPattern("mm-dd-yyyy"))
-  }
+    @TypeConverter
+    fun stringToLocalDate(dateString: String?): LocalDate? =
+        dateString?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
 
-  @TypeConverter
-  fun fromLocalTime(time: LocalTime?): Int? = time?.toSecondOfDay()
+    @TypeConverter
+    fun fromLocalTime(time: LocalTime?): Int? =
+        time?.toSecondOfDay()
 
-  @TypeConverter
-  fun toLocalTime(seconds: Int?): LocalTime? = seconds?.let { LocalTime.ofSecondOfDay(it.toLong()) }
+    @TypeConverter
+    fun toLocalTime(seconds: Int?): LocalTime? =
+        seconds?.let { runCatching { LocalTime.ofSecondOfDay(it.toLong()) }.getOrNull() }
 
-  @TypeConverter
-  fun fromDayOfWeekList(value: List<DayOfWeek>): String {
-    return Json.encodeToString(value)
-    // Результат в БД будет выглядеть как TEXT: '["MONDAY","WEDNESDAY"]'
-  }
+    @TypeConverter
+    fun fromDayOfWeekList(value: List<DayOfWeek>?): String? =
+        value?.let { Json.encodeToString(it) }
 
-  // 2. Из строки JSON обратно в объект List<DayOfWeek> при чтении из SQLite
-  @TypeConverter
-  fun toDayOfWeekList(value: String): List<DayOfWeek> {
-    return Json.decodeFromString(value)
-  }
+    @TypeConverter
+    fun toDayOfWeekList(value: String?): List<DayOfWeek>? =
+        value?.let {
+            runCatching { Json.decodeFromString<List<DayOfWeek>>(it) }.getOrDefault(
+                emptyList()
+            )
+        }
+
+    @TypeConverter
+    fun instantToLong(value: Instant?): Long? =
+        value?.toEpochMilli()
+
+    @TypeConverter
+    fun longToInstant(value: Long?): Instant? =
+        value?.let { Instant.ofEpochMilli(it) }
+
+    @TypeConverter
+    fun intakeStatusToString(status: IntakeStatus?): String? =
+        status?.name
+
+    @TypeConverter
+    fun stringToIntakeStatus(value: String?): IntakeStatus? =
+        value?.let { runCatching { IntakeStatus.valueOf(it) }.getOrDefault(IntakeStatus.PENDING) }
 }

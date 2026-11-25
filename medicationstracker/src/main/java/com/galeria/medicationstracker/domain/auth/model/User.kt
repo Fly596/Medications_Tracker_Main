@@ -1,4 +1,4 @@
-package com.galeria.medicationstracker.core.domain.model
+package com.galeria.medicationstracker.domain.auth.model
 
 import java.time.Instant
 

@@ -38,8 +38,8 @@ import com.galeria.medicationstracker.core.ui.components.LogMedicationTimeDialog
 import com.galeria.medicationstracker.core.ui.components.WeeklyCalendarView
 import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme.typography
-import com.galeria.medicationstracker.data.IntakeStatus
 import com.galeria.medicationstracker.data.NewUserMedication
+import com.galeria.medicationstracker.domain.medications.model.IntakeStatus
 import com.galeria.medicationstracker.feature.medications.presentation.DailyMedsViewModel
 import com.galeria.medicationstracker.utils.getTodaysDate
 import java.time.format.DateTimeFormatter

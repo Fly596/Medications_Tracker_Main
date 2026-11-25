@@ -8,14 +8,14 @@ import java.time.LocalTime
 
 @Entity(tableName = "medications")
 data class MedicationEntity(
-  @PrimaryKey()
-  val id: String,
-  val name: String,
-  val dosage: String,
-  val form: String,
-  val startDate: LocalDate,
-  val endDate: LocalDate,
-  val daysOfWeek: List<DayOfWeek>,
-  val intakeTime: LocalTime, // Колво секунд с начала дня.
+    @PrimaryKey
+    val id: String,
+    val name: String,
+    val dosage: String,
+    val form: String,
+    val startDate: LocalDate,
+    val endDate: LocalDate,
+    val daysOfWeek: List<DayOfWeek>,
+    val intakeTime: LocalTime,
 )
 

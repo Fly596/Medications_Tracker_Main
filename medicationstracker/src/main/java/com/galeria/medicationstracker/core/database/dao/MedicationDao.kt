@@ -9,24 +9,15 @@ import java.time.LocalDate
 @Dao
 interface MedicationDao : BaseDao<MedicationEntity> {
 
-    /**
-     * Запрос 1: Получить ВСЕ лекарства со всеми днями приема.
-     */
     @Query("SELECT * FROM medications")
     fun observeMedications(): Flow<List<MedicationEntity>>
 
     @Query("SELECT * FROM medications WHERE id = :medicationId")
     suspend fun getMedicationById(medicationId: String): MedicationEntity?
 
-    /**
-     * Запрос 2: Получить конкретное лекарство по его ID.
-     */
     @Query("SELECT * FROM medications WHERE id = :medicationId")
-    fun getMedicationByIdFlow(medicationId: String): Flow<MedicationEntity>
+    fun getMedicationByIdFlow(medicationId: String): Flow<MedicationEntity?>
 
-    /**
-     * Запрос 3: Получить лекарства, которые нужно принимать сегодня.
-     */
     @Query(
         """
         SELECT * FROM medications 
@@ -36,6 +27,12 @@ interface MedicationDao : BaseDao<MedicationEntity> {
     )
     fun getMedicationsForDate(
         date: LocalDate,
-        dayOfWeek: String // Сюда передаем dayOfWeek.name (например, "MONDAY")
+        dayOfWeek: String
     ): Flow<List<MedicationEntity>>
+
+    @Query("DELETE FROM medications WHERE id = :medicationId")
+    suspend fun deleteMedicationById(medicationId: String)
+
+    @Query("DELETE FROM medications")
+    suspend fun clearAll()
 }

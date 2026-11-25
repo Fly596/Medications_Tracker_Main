@@ -1,24 +1,24 @@
 package com.galeria.medicationstracker.core.domain.repository
 
-import com.galeria.medicationstracker.core.domain.model.User
+import com.galeria.medicationstracker.domain.auth.model.User
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 
 interface _AuthRepository {
 
-  // Наблюдение за состоянием аутентификации (null — не залогинен)
-  val authStateFlow: Flow<User?>
+    // Наблюдение за состоянием аутентификации (null — не залогинен)
+    val authStateFlow: Flow<User?>
 
-  // Вход по логину и паролю.
-  suspend fun signIn(email: String, pass: String): Result<User>
+    // Вход по логину и паролю.
+    suspend fun signIn(email: String, pass: String): Result<User>
 
-  // Регистрация с сохранением имени пользователя.
-  suspend fun signUp(
-    email: String,
-    password: String,
-    name: String,
-    birthDate: LocalDate? = null
-  ): Result<User>
+    // Регистрация с сохранением имени пользователя.
+    suspend fun signUp(
+        email: String,
+        password: String,
+        name: String,
+        birthDate: LocalDate? = null
+    ): Result<User>
 
-  suspend fun resetPassword(email: String)
+    suspend fun resetPassword(email: String)
 }
