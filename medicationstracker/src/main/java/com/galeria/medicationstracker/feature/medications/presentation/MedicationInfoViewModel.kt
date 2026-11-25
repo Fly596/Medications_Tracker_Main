@@ -5,10 +5,11 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.galeria.medicationstracker.core.domain.repository.MedicationRepository
 import com.galeria.medicationstracker.data.AuthRepository
 import com.galeria.medicationstracker.data.NewMedicationRepository
 import com.galeria.medicationstracker.data.NewUserIntake
-import com.galeria.medicationstracker.data.NewUserMedication
+import com.galeria.medicationstracker.domain.medications.model.Medication
 import com.galeria.medicationstracker.navigation.NavRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +19,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class MedicationInfoUiState(
-    val medication: NewUserMedication? = null,
+    //val medication: NewUserMedication? = null,
+    val medication: Medication? = null,
     val medicationIntakes: List<NewUserIntake> = emptyList(),
     val isLoading: Boolean = false,
 )
@@ -27,7 +29,8 @@ data class MedicationInfoUiState(
 class MedicationInfoViewModel
 @Inject
 constructor(
-    private val medicationRepository: NewMedicationRepository,
+    private val newMedicationRepository: NewMedicationRepository,
+    private val medicationRepository: MedicationRepository,
     private val authRepository: AuthRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
@@ -62,19 +65,32 @@ constructor(
             }
         }
     }
-    
+
     private fun getMedDetails(medId: String? = null, uid: String? = null) {
         viewModelScope.launch {
             try {
                 val result = medicationRepository.getMedication(
-                    uid.toString(),
                     medId.toString()
                 ).getOrThrow()
-                
+
                 _uiState.update { it.copy(medication = result) }
             } catch (e: Exception) {
                 Log.e("checkIntake", "Error fetching intake data", e)
             }
         }
     }
+    /*   private fun getMedDetails(medId: String? = null, uid: String? = null) {
+           viewModelScope.launch {
+               try {
+                   val result = newMedicationRepository.getMedication(
+                       uid.toString(),
+                       medId.toString()
+                   ).getOrThrow()
+
+                   _uiState.update { it.copy(medication = result) }
+               } catch (e: Exception) {
+                   Log.e("checkIntake", "Error fetching intake data", e)
+               }
+           }
+       }*/
 }

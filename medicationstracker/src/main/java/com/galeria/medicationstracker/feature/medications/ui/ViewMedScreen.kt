@@ -3,12 +3,21 @@ package com.galeria.medicationstracker.feature.medications.ui
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -23,15 +32,16 @@ import com.galeria.medicationstracker.core.ui.components.FlySimpleCard
 import com.galeria.medicationstracker.core.ui.components.FlyTonalButton
 import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme.typography
-import com.galeria.medicationstracker.data.NewUserMedication
+import com.galeria.medicationstracker.domain.medications.model.Medication
 import com.galeria.medicationstracker.feature.medications.presentation.MedicationInfoViewModel
 import com.galeria.medicationstracker.utils.getTodaysDate
 import java.time.format.DateTimeFormatter
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MedicationInfoScreen(
-    medicationId: String = "",
     modifier: Modifier = Modifier,
+    medicationId: String = "",
     onNavigateToMedsList: () -> Unit = {},
     viewModel: MedicationInfoViewModel = hiltViewModel(),
 ) {
@@ -45,41 +55,62 @@ fun MedicationInfoScreen(
 
     MedTrackerTheme {
         Scaffold(
+
+            modifier = modifier.fillMaxSize(),
             containerColor = MedTrackerTheme.colors.secondaryBackground,
             topBar = {
-                Row(
-                    modifier = Modifier.padding(
-                        vertical = 24.dp,
-                        horizontal = 16.dp
-                    )
-                ) {
-                    IconButton(
-                        onClick = onNavigateToMedsList,
-                        modifier = Modifier.padding(end = 16.dp),
-                    ) {
-                    }
-                    // today's date.
-                    Text(
-                        text = getTodaysDate().format(
-                            DateTimeFormatter.ofPattern(
-                                "MMM d"
+                TopAppBar(
+                    title = {
+                        Text(
+                            text = getTodaysDate().format(
+                                DateTimeFormatter.ofPattern(
+                                    "MMM d"
+                                )
+                            ),
+                            style = typography.display3Emphasized,
+                        )
+                    },
+                    navigationIcon = {
+                        IconButton(
+                            onClick = onNavigateToMedsList,
+                            modifier = Modifier.padding(end = 16.dp),
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.ArrowBackIosNew,
+                                contentDescription = "Back",
+                                tint = MedTrackerTheme.colors.primaryLabel,
+                                modifier = Modifier.size(24.dp)
                             )
+                        }
+                    },
+                    windowInsets =
+                        WindowInsets(
+                            top = 0,
+                            bottom = 0,
                         ),
-                        style = typography.display3Emphasized,
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        containerColor = MedTrackerTheme.colors.secondaryBackground,
+                        navigationIconContentColor = MedTrackerTheme.colors.primaryLabel,
+                        titleContentColor = MedTrackerTheme.colors.primaryLabel,
                     )
-                }
+                )
             },
         ) { innerPadding ->
             Column(
                 modifier =
-                    modifier
+                    Modifier
                         .fillMaxWidth()
                         .padding(innerPadding)
                         .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 // имя и дни приема.
-                MedInfoHeader(medName = uiState.medication?.name ?: "")
+                Text(
+                    text = uiState.medication?.name ?: "",
+                    style = typography.title1Emphasized,
+                    modifier = Modifier.padding(vertical = 16.dp)
+                )
+                //MedInfoHeader(medName = uiState.medication?.name ?: "")
                 // начальная дата, total taken/skipped.
                 MedStatCard(
                     medication = uiState.medication,
@@ -93,7 +124,8 @@ fun MedicationInfoScreen(
 @Composable
 fun MedStatCard(
     modifier: Modifier = Modifier,
-    medication: NewUserMedication? = null,
+    //medication: NewUserMedication? = null,
+    medication: Medication? = null,
 ) {
     FlySimpleCard(modifier = modifier) {
         // начальная дата.
@@ -144,19 +176,6 @@ fun MedStatCardBody(totalTaken: Int = 0, totalSkipped: Int = 0) {
                 style = typography.title2Emphasized
             )
         }
-    }
-}
-
-@Composable
-fun MedInfoHeader(
-    modifier: Modifier = Modifier,
-    medName: String = "Doxycycline"
-) {
-    Column(modifier.padding(vertical = 16.dp)) {
-        Text(
-            text = medName,
-            style = typography.title1Emphasized
-        )
     }
 }
 
