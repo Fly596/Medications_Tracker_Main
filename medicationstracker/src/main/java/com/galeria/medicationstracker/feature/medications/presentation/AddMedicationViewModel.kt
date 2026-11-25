@@ -6,7 +6,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.galeria.medicationstracker.core.domain.repository._MedicationRepository
+import com.galeria.medicationstracker.core.domain.repository.MedicationRepository
 import com.galeria.medicationstracker.data.MedicationForm
 import com.galeria.medicationstracker.data.old.MedicationUnit
 import com.galeria.medicationstracker.domain.medications.model.Medication
@@ -17,7 +17,6 @@ import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import java.time.DayOfWeek
 import java.time.LocalTime
 import javax.inject.Inject
 
@@ -41,7 +40,7 @@ data class AddMedicationUiState(
 
 @HiltViewModel
 class AddMedicationViewModel @Inject constructor(
-    private val repository: _MedicationRepository
+    private val repository: MedicationRepository
 ) : ViewModel() {
 
     var uiState = MutableStateFlow(AddMedicationUiState())
@@ -51,6 +50,25 @@ class AddMedicationViewModel @Inject constructor(
     val auth = FirebaseAuth.getInstance()
     val userId = auth.currentUser?.uid
     val userLogin = auth.currentUser?.email
+
+    fun addMedicationt() {
+        val medication = Medication(
+            id = "",
+            name = uiState.value.medName,
+            dosage = uiState.value.medStrength.toString() + uiState.value.medUnit,
+            form = MedicationForm.valueOf(uiState.value.medForm),
+            startDate = DateTimeUtils.timestampToLocalDate(uiState.value.medStartDate),
+            endDate = DateTimeUtils.timestampToLocalDate(uiState.value.medEndDate),
+            daysOfWeek = uiState.value.intakeDays,
+            intakeTime = LocalTime.parse(
+                uiState.value.medIntakeTime,
+                DateTimeUtils.timeFormatter
+            ),
+        )
+        viewModelScope.launch {
+            repository.addMedication(medication)
+        }
+    }
 
     // Добавление нового лекарства в Firestore.
     fun addMedication(context: Context) {
@@ -126,13 +144,7 @@ class AddMedicationViewModel @Inject constructor(
                 form = MedicationForm.valueOf(uiState.value.medForm),
                 startDate = DateTimeUtils.timestampToLocalDate(uiState.value.medStartDate),
                 endDate = DateTimeUtils.timestampToLocalDate(uiState.value.medEndDate),
-                daysOfWeek = uiState.value.intakeDays.mapNotNull {
-                    runCatching {
-                        DayOfWeek.valueOf(
-                            it
-                        )
-                    }.getOrNull()
-                },
+                daysOfWeek = uiState.value.intakeDays,
                 intakeTime = LocalTime.parse(
                     uiState.value.medIntakeTime,
                     DateTimeUtils.timeFormatter

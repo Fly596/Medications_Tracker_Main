@@ -6,17 +6,20 @@ import com.galeria.medicationstracker.core.database.entity.MedicationEntity
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 
+/**
+ * Data Access Object for handling [MedicationEntity] table operations in Room.
+ */
 @Dao
 interface MedicationDao : BaseDao<MedicationEntity> {
 
     @Query("SELECT * FROM medications")
     fun observeMedications(): Flow<List<MedicationEntity>>
 
-    @Query("SELECT * FROM medications WHERE id = :medicationId")
-    suspend fun getMedicationById(medicationId: String): MedicationEntity?
+    @Query("SELECT * FROM medications")
+    suspend fun getMedications(): List<MedicationEntity>
 
     @Query("SELECT * FROM medications WHERE id = :medicationId")
-    fun getMedicationByIdFlow(medicationId: String): Flow<MedicationEntity?>
+    suspend fun getMedicationById(medicationId: String): MedicationEntity?
 
     @Query(
         """

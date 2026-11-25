@@ -2,7 +2,7 @@ package com.galeria.medicationstracker.core.database.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.time.DayOfWeek
+import com.galeria.medicationstracker.data.MedicationForm
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -12,10 +12,10 @@ data class MedicationEntity(
     val id: String,
     val name: String,
     val dosage: String,
-    val form: String,
-    val startDate: LocalDate,
-    val endDate: LocalDate,
-    val daysOfWeek: List<DayOfWeek>,
+    val form: MedicationForm,
+    val startDate: LocalDate? = null,
+    val endDate: LocalDate? = null,
+    val daysOfWeek: List<String>,
     val intakeTime: LocalTime,
 )
 

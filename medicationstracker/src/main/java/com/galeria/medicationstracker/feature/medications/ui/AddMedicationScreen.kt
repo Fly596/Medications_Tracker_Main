@@ -270,7 +270,8 @@ fun AddMedicationScreen(
                     GPrimaryButton(
                         modifier = Modifier.fillMaxWidth(),
                         onClick = {
-                            viewModel.addMedication(context)
+                            //viewModel.addMedicationt()
+                            viewModel.addMedicationt()
                             navigateBack.invoke()
                         },
                         content = { Text(text = stringResource(R.string.add_medication)) },

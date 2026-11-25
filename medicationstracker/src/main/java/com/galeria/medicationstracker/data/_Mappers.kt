@@ -8,9 +8,7 @@ import com.galeria.medicationstracker.domain.auth.model.User
 import com.galeria.medicationstracker.domain.medications.model.Medication
 import com.galeria.medicationstracker.utils.toTimestamp
 import com.google.firebase.Timestamp
-import java.time.DayOfWeek
 import java.time.Instant
-import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
 import java.util.Date
@@ -22,8 +20,8 @@ fun UserDocument.toEntity(): UserEntity = UserEntity(
     id = id,
     email = email,
     name = name,
-    weight = weight,
-    height = height,
+    weightKg = weight,
+    heightCm = height,
     dateOfBirth = dateOfBirth?.toInstant()
 )
 
@@ -42,8 +40,8 @@ fun UserEntity.toDomain(): User = User(
     id = id,
     email = email,
     name = name,
-    weight = weight,
-    height = height,
+    weight = weightKg,
+    height = heightCm,
     dateOfBirth = dateOfBirth
 )
 
@@ -52,8 +50,8 @@ fun User.toEntity(): UserEntity = UserEntity(
     id = id,
     email = email,
     name = name,
-    weight = weight,
-    height = height,
+    weightKg = weight,
+    heightCm = height,
     dateOfBirth = dateOfBirth
 )
 
@@ -64,7 +62,7 @@ fun Medication.toEntity(): MedicationEntity = MedicationEntity(
     id = id,
     name = name,
     dosage = dosage,
-    form = form.name,
+    form = form,
     startDate = startDate,
     endDate = endDate,
     daysOfWeek = daysOfWeek,
@@ -76,7 +74,7 @@ fun MedicationEntity.toDomain(): Medication = Medication(
     id = id,
     name = name,
     dosage = dosage,
-    form = runCatching { MedicationForm.valueOf(form) }.getOrDefault(MedicationForm.UNKNOWN),
+    form = form,
     startDate = startDate,
     endDate = endDate,
     daysOfWeek = daysOfWeek,
@@ -88,11 +86,11 @@ fun MedicationDocument.toDomain(): Medication {
     val zone = ZoneId.systemDefault()
     val startLocalDate = startDate?.let {
         Instant.ofEpochMilli(it.seconds * 1000).atZone(zone).toLocalDate()
-    } ?: LocalDate.now()
+    }
 
     val endLocalDate = endDate?.let {
         Instant.ofEpochMilli(it.seconds * 1000).atZone(zone).toLocalDate()
-    } ?: LocalDate.now()
+    }
 
     return Medication(
         id = id,
@@ -101,7 +99,7 @@ fun MedicationDocument.toDomain(): Medication {
         form = runCatching { MedicationForm.valueOf(form) }.getOrDefault(MedicationForm.UNKNOWN),
         startDate = startLocalDate,
         endDate = endLocalDate,
-        daysOfWeek = daysOfWeek.mapNotNull { runCatching { DayOfWeek.valueOf(it) }.getOrNull() },
+        daysOfWeek = daysOfWeek,
         intakeTime = LocalTime.ofSecondOfDay(intakeTimeInSeconds.toLong())
     )
 }
@@ -112,8 +110,8 @@ fun MedicationDocument.toEntity(): MedicationEntity = toDomain().toEntity()
 // Domain -> Firebase Document
 fun Medication.toDocument(): MedicationDocument {
     val zone = ZoneId.systemDefault()
-    val startTimestamp = Timestamp(Date.from(startDate.atStartOfDay(zone).toInstant()))
-    val endTimestamp = Timestamp(Date.from(endDate.atStartOfDay(zone).toInstant()))
+    val startTimestamp = startDate?.let { Timestamp(Date.from(it.atStartOfDay(zone).toInstant())) }
+    val endTimestamp = endDate?.let { Timestamp(Date.from(it.atStartOfDay(zone).toInstant())) }
 
     return MedicationDocument(
         id = id,
@@ -122,7 +120,7 @@ fun Medication.toDocument(): MedicationDocument {
         form = form.name,
         startDate = startTimestamp,
         endDate = endTimestamp,
-        daysOfWeek = daysOfWeek.map { it.name },
+        daysOfWeek = daysOfWeek,
         intakeTimeInSeconds = intakeTime.toSecondOfDay()
     )
 }

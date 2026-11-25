@@ -1,6 +1,7 @@
 package com.galeria.medicationstracker.core.database
 
 import androidx.room.TypeConverter
+import com.galeria.medicationstracker.data.MedicationForm
 import com.galeria.medicationstracker.domain.medications.model.IntakeStatus
 import kotlinx.serialization.json.Json
 import java.time.DayOfWeek
@@ -34,7 +35,19 @@ class RoomConverters {
     fun toDayOfWeekList(value: String?): List<DayOfWeek>? =
         value?.let {
             runCatching { Json.decodeFromString<List<DayOfWeek>>(it) }.getOrDefault(
-                emptyList()
+                emptyList(),
+            )
+        }
+
+    @TypeConverter
+    fun fromStringList(value: List<String>?): String? =
+        value?.let { Json.encodeToString(it) }
+
+    @TypeConverter
+    fun toStringList(value: String?): List<String>? =
+        value?.let {
+            runCatching { Json.decodeFromString<List<String>>(it) }.getOrDefault(
+                emptyList(),
             )
         }
 
@@ -45,6 +58,14 @@ class RoomConverters {
     @TypeConverter
     fun longToInstant(value: Long?): Instant? =
         value?.let { Instant.ofEpochMilli(it) }
+
+    @TypeConverter
+    fun medicationFormToString(form: MedicationForm?): String? =
+        form?.name
+
+    @TypeConverter
+    fun stringToMedicationForm(value: String?): MedicationForm? =
+        value?.let { runCatching { MedicationForm.valueOf(it) }.getOrDefault(MedicationForm.UNKNOWN) }
 
     @TypeConverter
     fun intakeStatusToString(status: IntakeStatus?): String? =

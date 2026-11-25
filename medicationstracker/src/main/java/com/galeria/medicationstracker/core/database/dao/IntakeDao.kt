@@ -14,10 +14,10 @@ interface IntakeDao : BaseDao<IntakeEntity> {
     @Query("SELECT * FROM intakes WHERE id = :id")
     suspend fun getIntakeById(id: String): IntakeEntity?
 
-    @Query("SELECT * FROM intakes WHERE medicationId = :medicationId ORDER BY timestamp DESC")
+    @Query("SELECT * FROM intakes WHERE medicationId = :medicationId ORDER BY intakeTime DESC")
     fun observeIntakesForMedication(medicationId: String): Flow<List<IntakeEntity>>
 
-    @Query("SELECT * FROM intakes WHERE medicationId = :medicationId ORDER BY timestamp DESC")
+    @Query("SELECT * FROM intakes WHERE medicationId = :medicationId ORDER BY intakeTime DESC")
     suspend fun getIntakesForMedication(medicationId: String): List<IntakeEntity>
 
     @Query("DELETE FROM intakes WHERE medicationId = :medicationId")

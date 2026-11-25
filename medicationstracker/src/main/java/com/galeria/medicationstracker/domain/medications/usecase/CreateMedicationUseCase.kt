@@ -1,10 +1,10 @@
 package com.galeria.medicationstracker.domain.medications.usecase
 
-import com.galeria.medicationstracker.core.domain.repository._MedicationRepository
+import com.galeria.medicationstracker.core.domain.repository.MedicationRepository
 import javax.inject.Inject
 
 class CreateMedicationUseCase @Inject constructor(
-    private val medicationRepository: _MedicationRepository
+    private val medicationRepository: MedicationRepository
 ) {
 
 }
