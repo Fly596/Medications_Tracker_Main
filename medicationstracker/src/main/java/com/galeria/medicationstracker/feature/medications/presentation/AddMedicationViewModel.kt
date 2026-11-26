@@ -6,10 +6,10 @@ import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.galeria.medicationstracker.core.domain.repository.MedicationRepository
 import com.galeria.medicationstracker.data.MedicationForm
 import com.galeria.medicationstracker.data.old.MedicationUnit
 import com.galeria.medicationstracker.domain.medications.model.Medication
+import com.galeria.medicationstracker.domain.medications.repository.MedicationRepository
 import com.galeria.medicationstracker.utils.DateTimeUtils
 import com.galeria.medicationstracker.utils.FirestoreFunctions.FirestoreService
 import com.google.firebase.Timestamp

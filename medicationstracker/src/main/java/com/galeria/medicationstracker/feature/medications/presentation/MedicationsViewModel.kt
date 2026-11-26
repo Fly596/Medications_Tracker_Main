@@ -3,10 +3,10 @@ package com.galeria.medicationstracker.feature.medications.presentation
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.galeria.medicationstracker.core.domain.repository.MedicationRepository
 import com.galeria.medicationstracker.data.AuthRepository
 import com.galeria.medicationstracker.data.NewMedicationRepository
 import com.galeria.medicationstracker.domain.medications.model.Medication
+import com.galeria.medicationstracker.domain.medications.repository.MedicationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

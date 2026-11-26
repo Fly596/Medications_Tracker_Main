@@ -5,12 +5,10 @@ import com.galeria.medicationstracker.core.domain.repository._AuthRepository
 import com.galeria.medicationstracker.core.firebase.datasource.AuthDataSource
 import com.galeria.medicationstracker.core.firebase.datasource.UserDataSource
 import com.galeria.medicationstracker.core.firebase.model.UserDocument
-import com.galeria.medicationstracker.data.toDomain
+import com.galeria.medicationstracker.data.medications.mapper.toDomain
 import com.galeria.medicationstracker.data.toEntity
 import com.galeria.medicationstracker.domain.auth.model.User
 import com.google.firebase.Timestamp
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -21,15 +19,15 @@ class _AuthRepositoryImpl @Inject constructor(
 ) : _AuthRepository {
 
     // Следим за состоянием сессии
-    override val authStateFlow: Flow<User?> = authRemote.authStateFlow
-        .map { firebaseUser ->
-            if (firebaseUser == null) {
-                null
-            } else {
-                // Если пользователь авторизован, пытаемся взять его данные из локального кеша
-                userDao.getUserById(firebaseUser.uid)?.toDomain()
-            }
-        }
+    /*    override val authStateFlow: Flow<User?> = authRemote.authStateFlow
+            .map { firebaseUser ->
+                if (firebaseUser == null) {
+                    null
+                } else {
+                    // Если пользователь авторизован, пытаемся взять его данные из локального кеша
+                    userDao.getUserById(firebaseUser.uid)?.toDomain()
+                }
+            }*/
 
     override suspend fun signIn(email: String, pass: String): Result<User> = runCatching {
         // 1. Авторизуемся через Firebase Auth

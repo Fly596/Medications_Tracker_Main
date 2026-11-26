@@ -27,8 +27,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.galeria.medicationstracker.core.ui.components.FlyErrorButton
 import com.galeria.medicationstracker.core.ui.components.GFABButton
-import com.galeria.medicationstracker.core.ui.components.GTextButton
+import com.galeria.medicationstracker.core.ui.components.GPrimaryButton
 import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme
 import com.galeria.medicationstracker.core.ui.theme.MedTrackerTheme.typography
 import com.galeria.medicationstracker.domain.medications.model.Medication
@@ -153,7 +154,7 @@ fun FlyElevatedCardMedsList(
         ) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier
+                modifier = Modifier.weight(0.8f)
             ) {
                 Text(
                     medication?.name ?: "Med Name",
@@ -173,17 +174,17 @@ fun FlyElevatedCardMedsList(
                 )
                 Text(
                     medication?.daysOfWeek.toString() ?: "Days of Week",
-                    style = typography.bodyMedium
+                    style = typography.bodyMedium,
+                    maxLines = 2
                 )
             }
 
-            Spacer(modifier = Modifier.weight(1f))
 
-            Column(Modifier, horizontalAlignment = Alignment.End) {
-                GTextButton(onEditClick) { Text("Edit") }
+            Column(Modifier.weight(0.2f), horizontalAlignment = Alignment.End) {
+                GPrimaryButton(onEditClick) { Text("Edit") }
 
-                GTextButton(
-                    errorButton = true,
+                FlyErrorButton(
+                    // errorButton = true,
                     onClick = { onRemoveMedClick.invoke() },
                     textStyle = typography.labelLargeEmphasized,
                 ) {

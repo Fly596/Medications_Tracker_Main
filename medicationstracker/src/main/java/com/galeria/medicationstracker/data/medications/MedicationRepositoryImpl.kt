@@ -1,11 +1,11 @@
 package com.galeria.medicationstracker.data.medications
 
 import com.galeria.medicationstracker.core.database.dao.MedicationDao
-import com.galeria.medicationstracker.core.domain.repository.MedicationRepository
 import com.galeria.medicationstracker.core.firebase.datasource.MedicationDataSource
-import com.galeria.medicationstracker.data.toDomain
-import com.galeria.medicationstracker.data.toEntity
+import com.galeria.medicationstracker.data.medications.mapper.toDomain
+import com.galeria.medicationstracker.data.medications.mapper.toEntity
 import com.galeria.medicationstracker.domain.medications.model.Medication
+import com.galeria.medicationstracker.domain.medications.repository.MedicationRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

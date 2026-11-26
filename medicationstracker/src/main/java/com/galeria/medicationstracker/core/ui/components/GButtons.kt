@@ -376,25 +376,3 @@ fun GPrimaryButtonPreview() {
         }
     }
 }
-/* @Composable
-fun GIconButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    textStyle: TextStyle = GappTheme.typography.labelLarge,
-    @DrawableRes icon: Int = R.drawable.male_symbol,
-) {
-    Box(
-        modifier = modifier
-            .padding(vertical = 8.dp)
-            .clickable(onClick = { onClick.invoke() })
-            .size(32.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Icon(
-            painterResource(icon),
-            contentDescription = null,
-            tint = MedTrackerTheme.colors.primary400,
-        )
-    }
-} */

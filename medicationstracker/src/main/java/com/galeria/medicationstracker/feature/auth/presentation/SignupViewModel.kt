@@ -2,7 +2,6 @@ package com.galeria.medicationstracker.feature.auth.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.galeria.medicationstracker.core.domain.repository._AuthRepository
 import com.galeria.medicationstracker.data.AuthRepository
 import com.galeria.medicationstracker.data.NewUser
 import com.galeria.medicationstracker.data.NewUserRepository
@@ -36,7 +35,7 @@ class SignupViewModel
 @Inject
 constructor(
     private val repository: AuthRepository,
-    private val authRepository: _AuthRepository,
+    private val authRepository: AuthRepository,
     private val userRepo: NewUserRepository,
 ) :
     ViewModel() {
@@ -53,8 +52,6 @@ constructor(
             authRepository.signUp(
                 _uiState.value.email,
                 _uiState.value.password,
-                _uiState.value.name,
-                _uiState.value.selectedBirthDate
             )
             _uiState.update { it.copy(isLoading = false) }
         }

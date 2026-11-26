@@ -1,6 +1,7 @@
 package com.galeria.medicationstracker.di
 
-import com.galeria.medicationstracker.core.domain.repository.MedicationRepository
+import com.galeria.medicationstracker.core.domain.repository.IntakeRepository
+import com.galeria.medicationstracker.core.domain.repository.IntakeRepositoryImpl
 import com.galeria.medicationstracker.core.domain.repository._AuthRepository
 import com.galeria.medicationstracker.core.domain.repository._UserRepository
 import com.galeria.medicationstracker.core.firebase.datasource.AuthDataSource
@@ -24,6 +25,7 @@ import com.galeria.medicationstracker.data.NewUserRepositoryImpl
 import com.galeria.medicationstracker.data.auth._AuthRepositoryImpl
 import com.galeria.medicationstracker.data.medications.MedicationRepositoryImpl
 import com.galeria.medicationstracker.data.profile._UserRepositoryImpl
+import com.galeria.medicationstracker.domain.medications.repository.MedicationRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -39,6 +41,9 @@ abstract class NewRepositoryModule {
 
     @Binds
     abstract fun bindNewIntakeRepository(impl: NewIntakeRepositoryImpl): NewIntakeRepository
+
+    @Binds
+    abstract fun bindIntakeRepository(impl: IntakeRepositoryImpl): IntakeRepository
 
     @Binds
     abstract fun bindNewMedicationRepository(

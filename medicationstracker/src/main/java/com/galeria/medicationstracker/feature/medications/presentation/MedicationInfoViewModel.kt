@@ -5,11 +5,11 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.galeria.medicationstracker.core.domain.repository.MedicationRepository
 import com.galeria.medicationstracker.data.AuthRepository
 import com.galeria.medicationstracker.data.NewMedicationRepository
 import com.galeria.medicationstracker.data.NewUserIntake
 import com.galeria.medicationstracker.domain.medications.model.Medication
+import com.galeria.medicationstracker.domain.medications.repository.MedicationRepository
 import com.galeria.medicationstracker.navigation.NavRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

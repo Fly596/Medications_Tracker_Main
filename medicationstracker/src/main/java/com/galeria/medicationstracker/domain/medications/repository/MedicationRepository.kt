@@ -1,4 +1,4 @@
-package com.galeria.medicationstracker.core.domain.repository
+package com.galeria.medicationstracker.domain.medications.repository
 
 import com.galeria.medicationstracker.domain.medications.model.Medication
 import kotlinx.coroutines.flow.Flow

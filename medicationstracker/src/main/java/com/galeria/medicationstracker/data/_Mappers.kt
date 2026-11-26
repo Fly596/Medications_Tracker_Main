@@ -4,6 +4,7 @@ import com.galeria.medicationstracker.core.database.entity.MedicationEntity
 import com.galeria.medicationstracker.core.database.entity.UserEntity
 import com.galeria.medicationstracker.core.firebase.model.MedicationDocument
 import com.galeria.medicationstracker.core.firebase.model.UserDocument
+import com.galeria.medicationstracker.data.medications.mapper.toEntity
 import com.galeria.medicationstracker.domain.auth.model.User
 import com.galeria.medicationstracker.domain.medications.model.Medication
 import com.galeria.medicationstracker.utils.toTimestamp
@@ -36,50 +37,10 @@ fun User.toDocument(): UserDocument = UserDocument(
 )
 
 // Entity -> Domain
-fun UserEntity.toDomain(): User = User(
-    id = id,
-    email = email,
-    name = name,
-    weight = weightKg,
-    height = heightCm,
-    dateOfBirth = dateOfBirth
-)
-
-// Domain -> Entity
-fun User.toEntity(): UserEntity = UserEntity(
-    id = id,
-    email = email,
-    name = name,
-    weightKg = weight,
-    heightCm = height,
-    dateOfBirth = dateOfBirth
-)
 
 // --- Medication Mappers ---
 
 // Domain -> Room Entity
-fun Medication.toEntity(): MedicationEntity = MedicationEntity(
-    id = id,
-    name = name,
-    dosage = dosage,
-    form = form,
-    startDate = startDate,
-    endDate = endDate,
-    daysOfWeek = daysOfWeek,
-    intakeTime = intakeTime
-)
-
-// Room Entity -> Domain
-fun MedicationEntity.toDomain(): Medication = Medication(
-    id = id,
-    name = name,
-    dosage = dosage,
-    form = form,
-    startDate = startDate,
-    endDate = endDate,
-    daysOfWeek = daysOfWeek,
-    intakeTime = intakeTime
-)
 
 // Firebase Document -> Domain
 fun MedicationDocument.toDomain(): Medication {
