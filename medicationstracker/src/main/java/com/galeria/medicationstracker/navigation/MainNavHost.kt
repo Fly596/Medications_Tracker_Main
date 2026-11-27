@@ -30,7 +30,7 @@ import com.galeria.medicationstracker.feature.profile.ui.ProfileScreen
 
 @Composable
 fun MainNavHost(modifier: Modifier = Modifier) {
-    val navigationState = NavRoute.Login.navigationState()
+    val navigationState = NavRoute.TodayMedications.navigationState()
     val navigator = remember { AppNavigator(navigationState) }
 
     // 1. Достаем текущий роут из вершины стэка

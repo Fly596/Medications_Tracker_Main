@@ -55,7 +55,6 @@ import com.galeria.medicationstracker.R
 import com.galeria.medicationstracker.core.ui.components.DayOfWeekSelector
 import com.galeria.medicationstracker.core.ui.components.FlySimpleCard
 import com.galeria.medicationstracker.core.ui.components.GDropdownList
-import com.galeria.medicationstracker.core.ui.components.GOutlinedButton
 import com.galeria.medicationstracker.core.ui.components.GPrimaryButton
 import com.galeria.medicationstracker.core.ui.components.GRadioButton
 import com.galeria.medicationstracker.core.ui.components.GSecondaryButton
@@ -68,9 +67,7 @@ import com.galeria.medicationstracker.feature.medications.presentation.AddMedica
 import com.galeria.medicationstracker.utils.DateTimeUtils
 import com.galeria.medicationstracker.utils.convertMillisToDate
 import com.galeria.medicationstracker.utils.formatDateStringToTimestampMMMMddyyyy
-import com.galeria.medicationstracker.utils.formatTimestampTillTheDayMMMMddyyyy
 import com.galeria.medicationstracker.utils.toLocalDate
-import com.galeria.medicationstracker.utils.toTimestamp
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
@@ -435,72 +432,6 @@ fun IntakeTimePicker(
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun ModalDatePickerOld(viewModel: AddMedicationViewModel) {
-    val state = viewModel.uiState.collectAsStateWithLifecycle()
-    var showPicker by remember { mutableStateOf(false) }
-    val label =
-        when {
-            state.value.medStartDate != null && state.value.medEndDate != null ->
-                "Start: ${
-                    formatTimestampTillTheDayMMMMddyyyy(
-                        state.value.medStartDate!!
-                    )
-                }\nEnd: ${formatTimestampTillTheDayMMMMddyyyy(state.value.medEndDate!!)}"
-
-            state.value.medStartDate != null ->
-                "Start: ${
-                    formatTimestampTillTheDayMMMMddyyyy(
-                        state.value.medStartDate!!
-                    )
-                }"
-
-            state.value.medEndDate != null ->
-                "End: ${
-                    formatTimestampTillTheDayMMMMddyyyy(
-                        state.value.medEndDate!!
-                    )
-                }"
-
-            else -> ""
-        }
-    Column {
-        GTextField(
-            modifier = Modifier.fillMaxWidth(),
-            minLines = 2,
-            value = "",
-            label = label,
-            onValueChange = {},
-            singleLine = false,
-            readOnly = true,
-            isPrimaryColor = true,
-        )
-        GOutlinedButton(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = { showPicker = !showPicker },
-        ) {
-            Text(text = stringResource(R.string.select_start_and_end_dates))
-        }
-
-        if (showPicker) {
-            DateRangePickerModalOld(
-                onDateRangeSelected = {
-                    viewModel.updateStartDate(
-                        it.first?.toLocalDate()?.toTimestamp()
-                        // formatDateStringToTimestampMMMMddyyyy(convertMillisToDate(it.first))
-                    )
-                    viewModel.updateEndDate(
-                        it.second?.toLocalDate()?.toTimestamp()
-                    )
-
-                    showPicker = !showPicker
-                },
-                onDismiss = { showPicker = !showPicker },
-            )
         }
     }
 }
