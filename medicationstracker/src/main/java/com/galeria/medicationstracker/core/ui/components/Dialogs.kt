@@ -225,25 +225,7 @@ fun LogDialogMedicationCard(
                     )
                 }
             }
-            /*        Spacer(modifier = Modifier.height(16.dp))
-                   // Buttons.
-                   Row(
-                       horizontalArrangement = Arrangement.spacedBy(12.dp),
-                       modifier = Modifier.fillMaxWidth()
-                   ) {
-                       GTonalButton(
-                           modifier = Modifier.weight(0.5f),
-                           onClick = onSkipped,
-                       ) {
-                           Text(text = "Skipped")
-                       }
-                       GTonalButton(
-                           modifier = Modifier.weight(0.5f),
-                           onClick = onTaken,
-                       ) {
-                           Text(text = "Taken")
-                       }
-                   } */
+
         }
     }
 }
