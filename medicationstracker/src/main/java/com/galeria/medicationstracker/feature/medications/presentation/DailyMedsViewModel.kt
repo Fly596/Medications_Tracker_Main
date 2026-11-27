@@ -9,6 +9,7 @@ import com.galeria.medicationstracker.data.NewMedicationRepository
 import com.galeria.medicationstracker.data.NewUserIntake
 import com.galeria.medicationstracker.data.NewUserMedication
 import com.galeria.medicationstracker.domain.medications.model.IntakeStatus
+import com.galeria.medicationstracker.domain.medications.model.toNewUserMedication
 import com.galeria.medicationstracker.domain.medications.repository.MedicationRepository
 import com.galeria.medicationstracker.utils.FirestoreFunctions.FirestoreService.db
 import com.galeria.medicationstracker.utils.toTimestamp
@@ -27,6 +28,7 @@ import javax.inject.Inject
 data class DailyMedsUiState(
     val isLoading: Boolean = true, // Добавим состояние загрузки
     val errorMessage: String? = null, // Для отображения ошибок
+    //val currentTakenMedications: List<NewUserMedication> = emptyList(),
     val currentTakenMedications: List<NewUserMedication> = emptyList(),
 )
 
@@ -84,28 +86,31 @@ constructor(
     private fun getCurrentMedications(userId: String) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
+            /* val intakes =
+                 newMedicationRepository.getTodaysIntakes(userId)
+                     .collect { intakesList ->
+                         if (intakesList.isEmpty()) {
+                             //
+                         } else {
+                             _uiState.update {
+                                 it.copy(currentTakenMedications = intakesList)
+                             }
+                         }
+                     }*/
             val intakes =
-                newMedicationRepository.getTodaysIntakes(userId)
+                medicationRepository.getTodayIntakes()
                     .collect { intakesList ->
                         if (intakesList.isEmpty()) {
                             //
                         } else {
                             _uiState.update {
-                                it.copy(currentTakenMedications = intakesList)
+                                val currentTakenMedications = intakesList.map { medication ->
+                                    medication.toNewUserMedication()
+                                }
+                                it.copy(currentTakenMedications = currentTakenMedications)
                             }
                         }
                     }
-            /*val intakes =
-                medicationRepository.getTodaysIntakes(userId)
-                    .collect { intakesList ->
-                        if (intakesList.isEmpty()) {
-                            //
-                        } else {
-                            _uiState.update {
-                                it.copy(currentTakenMedications = intakesList)
-                            }
-                        }
-                    }*/
         }
     }
 
